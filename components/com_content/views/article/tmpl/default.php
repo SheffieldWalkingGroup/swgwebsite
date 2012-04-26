@@ -73,9 +73,9 @@ if (!empty($this->item->pagination) AND $this->item->pagination && !$this->item-
 	</ul>
 <?php endif; ?>
 
-<?php  /*if (!$params->get('show_intro')) :
+<?php  if (!$params->get('show_intro')) :
 	echo $this->item->event->afterDisplayTitle;
-endif;*/ ?>
+endif; ?>
 
 <?php echo $this->item->event->beforeDisplayContent; ?>
 
