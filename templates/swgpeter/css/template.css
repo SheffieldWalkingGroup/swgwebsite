@@ -1,0 +1,525 @@
+/* Colour scheme: #6b8eac (blue), #ab6a8d (magenta), #8dab6a (green) */
+
+@font-face {
+    font-family: 'Lora';
+    src: url('/templates/swgpeter/fonts/lora/lora-bold-webfont.eot');
+    src: url('/templates/swgpeter/fonts/lora/lora-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/templates/swgpeter/fonts/lora/lora-bold-webfont.woff') format('woff'),
+         url('/templates/swgpeter/fonts/lora/lora-bold-webfont.ttf') format('truetype'),
+         url('/templates/swgpeter/fonts/lora/lora-bold-webfont.svg#LoraBold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Lora';
+    src: url('/templates/swgpeter/fonts/lora/lora-bolditalic-webfont.eot');
+    src: url('/templates/swgpeter/fonts/lora/lora-bolditalic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/templates/swgpeter/fonts/lora/lora-bolditalic-webfont.woff') format('woff'),
+         url('/templates/swgpeter/fonts/lora/lora-bolditalic-webfont.ttf') format('truetype'),
+         url('/templates/swgpeter/fonts/lora/lora-bolditalic-webfont.svg#LoraBoldItalic') format('svg');
+    font-weight: bold;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'Lora';
+    src: url('/templates/swgpeter/fonts/lora/lora-italic-webfont.eot');
+    src: url('/templates/swgpeter/fonts/lora/lora-italic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/templates/swgpeter/fonts/lora/lora-italic-webfont.woff') format('woff'),
+         url('/templates/swgpeter/fonts/lora/lora-italic-webfont.ttf') format('truetype'),
+         url('/templates/swgpeter/fonts/lora/lora-italic-webfont.svg#LoraItalic') format('svg');
+    font-weight: normal;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'Lora';
+    src: url('/templates/swgpeter/fonts/lora/lora-regular-webfont.eot');
+    src: url('/templates/swgpeter/fonts/lora/lora-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/templates/swgpeter/fonts/lora/lora-regular-webfont.woff') format('woff'),
+         url('/templates/swgpeter/fonts/lora/lora-regular-webfont.ttf') format('truetype'),
+         url('/templates/swgpeter/fonts/lora/lora-regular-webfont.svg#LoraRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+h1, h2 {
+    font-family:'Lora',serif;
+    font-weight:normal;
+    color:#0c0c0c;
+    font-style:normal;
+}
+
+h1 {
+    font-size:32px;
+    text-shadow:1px 1px 2px #999;
+}
+
+h2 {
+    font-size:22px;
+    text-shadow:1px 1px 2px #999;
+}
+
+.item-page h1 {
+	margin:10px 10px 10px 15px;
+}
+
+html {
+    /* TODO: This only works on IE 9 - what happens on IE 8? */
+    background: url(/images/backdrops/summer-daledyke.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+body {
+    font-family:sans-serif;
+    font-size:12px;
+    margin-top:0;
+}
+
+div.wrapper {
+    background-color:rgba(255,255,255,0.85);
+    position:relative;
+    margin:15px auto;
+    width:990px;
+    height:auto;
+    border:1px solid #999;
+    border-radius:15px;
+    box-shadow:4px 10px 10px #222;
+    
+    
+}
+
+nav {
+    width:190px;
+    height:100%;
+    float:left;
+    margin:15px 0 15px 10px;
+    padding-right:10px;
+    
+/*                 height:500px; */
+/*                 border:1px solid black; */
+}
+
+nav .moduletable_menu, nav .moduletable {
+    margin:15px 0 5px 4px;
+    border-style:solid;
+    border-color:#555;
+    border-width:1px 0;
+}
+
+nav .moduletable_menu h3, nav .moduletable h3 {
+    border-bottom:1px solid #555;
+    margin:0;
+    padding:3px 10px;
+    font-weight:normal;
+    font-family:sans-serif;
+/*     font-family:Lora,serif; */
+}
+
+nav .moduletable_menu h3{
+    background:url(/templates/swgpeter/images/menuhead-ltblue.png);
+}
+
+nav .menu, nav .menu ul {
+    list-style-type:none;
+    font-size:14px;
+    margin:0;
+    padding:0;
+    width:184px;
+}
+
+nav .menu li a {
+    display:inline-block;
+    width:174px;
+    padding:2px 5px;
+    color:#64707d;
+    text-decoration:none;
+}
+
+nav  .menu li a:hover, .left .menu li a#active_menumainnav {
+    text-decoration:underline;
+}
+nav .menu ul {
+    margin-left:20px;
+    width:164px;
+}
+
+nav .menu ul a {
+    width:154px;
+}
+
+nav .menu  ul ul {
+    width:144px;
+}
+
+nav .menu  ul ul a {
+    width:134px;
+}
+
+nav .moduletable h3 {
+    background:url(/templates/swgpeter/images/lboxhead-ltgreen.png);
+}
+
+nav .feed ul {
+    list-style-type:none;
+    margin:0;
+    padding-left:10px;
+}
+
+div.main {
+    margin:0 0 0 210px;
+    border:none;
+    padding-top:5px;
+}
+
+div.random-imagebanner {
+	margin-top:8px;
+}
+
+div.slideshow {
+    position:relative;
+    width:561px;
+    margin:10px 0;
+}
+
+.slideshow h1, .slideshow h2 {
+    position:absolute;
+    margin:0;
+    z-index:10;
+}
+
+.slideshow h1 {
+    top:10px;
+    left:15px;
+}
+
+.slideshow h2 {
+    top:52px;
+    left:50px;
+}
+
+/* On the homepage, the tagline should be right-aligned and smaller than normal */
+.homepage .slideshow h2 {
+	font-size:19.5px;
+    text-shadow:0px 0px 1px #999;
+	left:100px;
+}
+
+.slideshow p.author {
+    font-size:x-small;
+    position:absolute;
+    bottom:70px;
+    right:10px;
+}
+
+.slideshow ul {
+    list-style-type:none;
+    margin:0;
+    padding:2px 0 2px 4px;
+}
+
+.slideshow ul li {
+    float:left;
+    margin-right:7px;
+    width:105px;
+    height:70px;
+    position:relative;
+}
+
+.slideshow ul li:last-child {
+    margin-right:0;
+}
+
+.slideshow ul li.selected img {
+    z-index:0;
+}
+
+.slideshow ul li.selected img:after {
+    content:"SELECTED";
+    position:absolute;
+    left:50px;
+    bottom:0px;
+    z-index:1;
+}
+
+.homepage div.intro {
+    float:right;
+    width:200px;
+    border:none;
+    margin:15px 10px;
+    margin-right:10px;
+}
+
+.intro h2 {
+    margin-top:7px;
+}
+
+.boxes {
+    margin-top:5px;
+    clear:right;
+}
+
+.boxes .box {
+    float:left;
+    margin-right:10px;
+    width:250px;
+    height:180px;
+}
+
+.boxes h3 {
+    background-image:url(/templates/swgpeter/images/boxhead-ltgreen.png) !important;
+}
+
+.moduletable {
+    position:relative;
+    border-style:solid;
+    border-color:#555;
+    border-width:1px 0;
+}
+
+.boxes .last-box {
+    margin-right:0px;
+/*  margin-left:1px; */
+}
+
+.moduletable h3 {
+    background:url(/templates/swgpeter/images/rboxhead-ltgreen.png);
+    border-bottom:1px solid #555;
+    margin:0 0 5px;
+    padding:3px 10px;
+    font-weight:normal;
+/*     font-family:'Lora',serif; */
+    font-family:sans-serif;
+    font-size:18px;
+}
+
+.moduletable ul {
+    list-style-type:none;
+    margin:0;
+    padding-left:10px;
+}
+
+.moduletable li {
+    margin-bottom:5px;
+}
+
+.moduletable .date {
+    font-style:italic;
+    margin-left:0;
+}
+
+.moduletable h4 {
+    font-weight:normal;
+    font-size:14px;
+    margin:0;
+}
+
+.moduletable li>* {
+    margin-left:10px;
+}
+
+.moduletable p {
+    margin:0;
+}
+
+.moduletable a {
+    font-size:13px;
+    margin-left:0;
+}
+
+.moduletable a.more {
+    font-size:12px;
+    position:absolute;
+    right:5px;
+    bottom:2px;
+}
+
+.clear {
+    clear:both;
+}
+
+.popup {
+    border:1px solid #A8D3A9;
+    background-color:#fff;
+    position:absolute;
+    z-index:5;
+    left:250px;
+    bottom:150px;
+    width:650px;
+    height:250px;
+}
+
+.popup .header {
+    background-color:#A8D3A9;
+}
+
+.popup .header * {
+    margin:0;
+    font-family: sans-serif;
+    font-weight: normal;
+    padding: 3px 10px;
+    font-size:18px;
+}
+
+.popup .header p.date {
+    position:absolute;
+    left:5px;
+    top:3px;
+    font-size:14px;
+}
+
+.popup .header h3 {
+    text-align:center;
+}
+
+.popup .info {
+/*     background-color:#A8D3A9; */
+    float:right;
+    margin-left:10px;
+    padding:5px;
+    border-left:1px solid #a8d3a9;
+    width:145px;
+    height:212px;
+}
+
+.popup p {
+    padding:0 10px;
+}
+
+.popup .info p {
+    padding:5px 10px 5px 30px;
+    line-height:25px;
+    background:transparent left no-repeat
+}
+.popup .info .linear {
+    background-image:url(linearwalk.png);
+}
+.popup .info .dog-friendly {
+    background-image:url(dogs.png);
+}
+
+.popup .contacts {
+    margin-top:20px;
+    border-top:1px solid #a8d3a9;
+    width:495px;
+}
+
+.popup .contacts .leader {
+    float:left;
+    margin-top:0;
+    margin-bottom:5px;
+}
+
+.popup .booking {
+    clear:left;
+}
+
+.popup-shadow {
+    position:absolute;
+    z-index:4;
+    left:255px;
+    bottom:145px;
+    background-color:rgba(0,0,0,0.7);
+    width:650px;
+    height:250px;
+}
+
+.walkkey ul {
+    margin:10px 0 0;
+}
+
+.walkkey ul li {
+    clear:both;
+    height:35px;
+}
+.walkkey ul li span {
+    float:left;
+    width:50px;
+    display:inline-block;
+    text-align:center;
+    margin-left:0;
+}
+
+.walkkey ul li img {
+}
+
+.walk {
+    width:766px;
+    border-style:solid;
+    border-color:#555;
+    border-width:1px 0;
+    clear:right;
+	position:relative;
+	margin-bottom:10px;
+}
+
+.walksaturday {
+	background:url(/templates/swgpeter/images/contentbody-green.png);
+}
+
+.walksaturday .walkheader {
+	background:url(/templates/swgpeter/images/contenthead-green.png);
+}
+
+.walkheader {
+	border-bottom:1px solid #555;
+	font-size:16px;
+	background-repeat:repeat-y;
+	padding:5px 10px 3px;
+}
+
+.walkheader .date {
+	float:left;
+}
+
+.walkheader h3 {
+	text-align:center;
+	font-size:20px;
+	margin:0;
+}
+
+.walkheader .rating {
+	float:right;
+}
+
+.walkinfo {
+	font-size:0.8em;
+	width:250px;
+	margin:0 10px;
+	display:inline-block;
+	position:relative;
+}
+
+.walkinfo p {
+	margin-left:10px;
+	text-indent:55px;
+}
+
+.walkinfo p span {
+	width:70px;
+	display:inline-block;
+	position:absolute;
+	left:0px;
+	text-indent:0px;
+}
+
+.walkdescription {
+	float:right;
+	width:470px;
+	margin:0 10px 25px; /* Make sure there's room for the icons*/
+}
+
+.walk .icons {
+	position:absolute;
+	right:15px;
+	bottom:5px;
+	margin:0;
+}

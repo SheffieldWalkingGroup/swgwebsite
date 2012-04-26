@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE install PUBLIC "-//Joomla! 1.5//DTD template 1.0//EN" "http://www.joomla.org/xml/dtd/1.5/template-install.dtd">
+<install version="2.5" type="template">
+        <name>SWG 2012 Template</name>
+        <creationDate>2012-03-30</creationDate>
+        <author>Peter Copeland</author>
+        <authorEmail>tech@sheffieldwalkinggroup.org.uk</authorEmail>
+        <authorUrl>http://www.sheffieldwalkinggroup.org.uk</authorUrl>
+        <copyright>Peter Copeland 2012</copyright>
+        <license>Proprietary</license>
+        <version>0.0.1</version>
+        <description>SWG Website template, 2012 redesign</description>
+        <files>
+                <filename>index.php</filename>
+                <filename>templateDetails.xml</filename>
+                <folder>images</folder>
+                <folder>css</folder>
+                <folder>html</folder>
+        </files>
+        <positions>
+                <position>breadcrumb</position>
+                <position>left</position>
+                <position>right</position>
+                <position>top</position>
+                <position>user1</position>
+                <position>user2</position>
+                <position>user3</position>
+                <position>user4</position>
+                <position>footer</position>
+                <position>precontent</position>
+                <position>boxes</position>
+        </positions>
+</install>

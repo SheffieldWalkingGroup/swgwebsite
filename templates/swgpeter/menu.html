@@ -1,0 +1,23 @@
+<patTemplate:tmpl name="menu" whitespace="trim">
+<div class="menu{CLASS_SUFFIX}">
+<h2>{TITLE}</h2>
+{MENU_LIST}
+</div>
+</patTemplate:tmpl>
+
+<patTemplate:tmpl name="menu_list" whitespace="trim">
+<ul
+  id="menulist_{HIERARCHY}{CLASS_SUFFIX}"
+<patTemplate:tmpl name="condition_LEVEL" type="condition" conditionvar="LEVEL" varscope="menu_list" whitespace="trim">
+<patTemplate:sub condition="0">
+  class="mainlevel{CLASS_SUFFIX}"
+</patTemplate:sub>
+</patTemplate:tmpl>
+>{MENU_ITEMS}</ul>
+</patTemplate:tmpl>
+
+<patTemplate:tmpl name="menu_item" whitespace="trim">
+<li
+  id="menuitem_{HIERARCHY}{CLASS_SUFFIX}"
+>{LINK_OPEN}{CAPTION}{LINK_CLOSE}{SUB_MENU_ITEMS}</li>
+</patTemplate:tmpl>

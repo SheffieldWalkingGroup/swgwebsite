@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="content" method="upgrade">
+	<name>Simple Picture Slideshow</name>
+	<author>Andreas Berger</author>
+	<creationDate>2012-03-19</creationDate>	
+	<copyright>Copyright (C) 2012 Andreas Berger - http://www.bretteleben.de. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>andreas_berger@bretteleben.de</authorEmail>
+	<authorUrl>www.bretteleben.de</authorUrl>
+	<version>1.5.5</version>
+	<description>Slideshow. Include with {besps}foldername{/besps}. Start automatically or by link/button.</description>
+
+	<files>
+		<filename plugin="simplepictureslideshow">simplepictureslideshow.php</filename>
+		<folder>files</folder>
+		<filename>index.html</filename>
+	</files>
+
+	<config>
+		<fields name="params">
+			<fieldset name="basic" addfieldpath="plugins/content/simplepictureslideshow/files/">
+				<field name="desc" type="bexml" view="intro" label="" description="" />
+
+				<field name="slideshow" type="bexml" view="slideshow" label=" " description="" />
+				<field name="im_width" type="text" default="400" size="5" label="Slideshow width" description="Width of the slideshow in pixels." />
+				<field name="im_height" type="text" default="300" size="5" label="Slideshow height" description="Height of the slideshow in pixels." />
+				<field name="im_align" type="list" default="1" label="Align the slideshow" description="This setting tells the plugin how to align the slideshow in relation to the available space.">
+					<option value="2">left</option>
+					<option value="1">center</option>
+					<option value="0">right</option>
+					<option value="3">float left</option>
+					<option value="4">float right</option>
+				</field>
+				<field name="sl_bgcol" type="text" default="FFFFFF" size="8" label="Backgroundcolor (hex.)" description="The background color of the DIV-container holding the images (without leading #)." />
+				<field name="bs_sort" type="list" default="0" label="Sort order" description="The sort order your images get displayed.">
+					<option value="0">A-Z</option>
+					<option value="1">Z-A</option>
+					<option value="2">old-new</option>
+					<option value="3">new-old</option>
+					<option value="4">random</option>
+				</field>
+		
+				<field name="animation" type="bexml" view="animation" label=" " description="" />
+				<field name="sl_sdur" type="text" default="3" size="5" label="Time to show (sec.)" description="Time to show a picture in seconds." />
+				<field name="sl_fdur" type="text" default="1" size="5" label="Duration of fading (sec.)" description="Duration of fading in seconds." />
+				<field name="sl_steps" type="text" default="20" size="5" label="Fading steps" description="Steps to fade out a picture (1-100)." />
+				<field name="autostart" type="radio" default="1" label="Start at pageload?" description="If set to yes, the slideshow starts automatically at pageload. If set to no, one has to use the following controls.">
+					<option value="1">Yes</option>
+					<option value="0">No</option>
+				</field>
+		
+				<field name="controls" type="bexml" view="controls" label=" " description="" />
+				<field name="ctrl_show" type="radio" default="1" label="Show controls?" description="If set to yes, the text or image you enter will be displayed below the slideshow. To use images upload them to 'images/stories/besps_buttons' and insert the filenames e.g. 'start.png'. The plugin detects '.jpg', '.gif' and '.png'.">
+					<option value="1">Yes</option>
+					<option value="0">No</option>
+				</field>
+				<field name="ctrl_sort" type="text" default="1-2345" size="15" label="Sort" description="The sort order and alignment of the control elements. '-' marks the split between left and right. if it is not present, controls are shown right. '1' marks the counter." />
+				<field name="ctrl_start" type="text" default="" size="15" label="Start (2)" description="Text/image for the link to start the slideshow (leave empty for default button). This element is represented by the number 2 in sorting." />
+				<field name="ctrl_stop" type="text" default="" size="15" label="Stop (3)" description="Text/image for the link to stop the slideshow (leave empty for default button). This element is represented by the number 3 in sorting." />
+				<field name="ctrl_back" type="text" default="" size="15" label="Back (4)" description="Text/image for the link to the previous image (leave empty for default button). This element is represented by the number 4 in sorting." />
+				<field name="ctrl_fwd" type="text" default="" size="15" label="Forward (5)" description="Text/image for the link to the next image (leave empty for default button). This element is represented by the number 5 in sorting." />
+				<field name="captions" type="bexml" view="captions" label=" " description="" />
+				<field name="cap_show" type="radio" default="1" label="Show captions?" description="If set to yes, found captions are shown, if set to no, they get hidden.">
+					<option value="1">Yes</option>
+					<option value="0">No</option>
+				</field>
+				<field name="cap_pos" type="radio" default="1" label="Position of captions?" description="Choose where to show the captions, inside the main image or below.">
+					<option value="1">Inside</option>
+					<option value="0">Below</option>
+				</field>
+				<field name="links" type="bexml" view="links" label=" " description="" />
+				<field name="link_use" type="radio" default="1" label="Use links?" description="Choose whether to use found links.">
+					<option value="1">Yes</option>
+					<option value="0">No</option>
+				</field>
+		
+				<field name="others" type="bexml" view="others" label=" " description="" />
+				<field name="imagepath" type="text" default="/images/" size="50" label="Image root" description="The path to the root folder in which your folders with images are stored (by default /images/).This part of the path is added by the plugin automatically to the foldername/path you specify in the code in your article. Usually there is no need to change this." />
+				<field name="buttonpath" type="text" default="/images/besps_buttons/" size="50" label="Buttonfolder" description="If you have set custom buttons for controls, this is the folder the plugin looks for them (by default /images/besps_buttons/)." />
+				<field name="stylesheet" type="filelist" default="besps.css" label="Stylesheet" description="Select the stylesheet to use. This param allows to use custom stylesheets uploaded to the folder /plugins/content/simplepictureslideshow/files/" directory="/plugins/content/simplepictureslideshow/files" filter="\.css$" exclude="" stripext="" hide_none="TRUE" hide_default="TRUE" />
+				<field name="javascript" type="filelist" default="besps.js" label="JavaScript" description="Select the JavaScript to use. This param allows to use custom scripts uploaded to the folder /plugins/content/simplepictureslideshow/files/" directory="/plugins/content/simplepictureslideshow/files" filter="\.js$" exclude="" stripext="" hide_none="TRUE" hide_default="TRUE" />
+				<field name="preld" type="text" default="" size="5" label="Preload" description="Number of pictures statically loaded (minimum: 3, default: all). Visit bretteleben.de for more information on how to use this feature." />
+				<field name="setid" type="radio" default="0" label="Foldername as ID?" description="If set to yes, the name of the given folder is also set as identity of the toplevel DIV, allowing the use of custom styles for each slideshow.">
+					<option value="1">Yes</option>
+					<option value="0">No</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>
