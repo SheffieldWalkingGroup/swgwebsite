@@ -342,6 +342,15 @@ div.slideshow {
     bottom:2px;
 }
 
+.moduletable .cancelled {
+	text-decoration:line-through;
+	color:red;
+}
+.moduletable .cancelled a {
+	color:red;
+	text-decoration:none;
+}
+
 .clear {
     clear:both;
 }

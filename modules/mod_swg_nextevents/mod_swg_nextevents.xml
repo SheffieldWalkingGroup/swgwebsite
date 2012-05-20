@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="2.5.0" method="upgrade">
+ 
+        <name>SWG Next Events</name>
+        <!-- The following elements are optional and free of formatting constraints -->
+        <creationDate>2012-05-18</creationDate>
+        <author>Peter Copeland</author>
+        <authorEmail>tech@sheffieldwalkinggroup.org.uk</authorEmail>
+        <authorUrl>http://www.sheffieldwalkinggroup.org.uk</authorUrl>
+        <!--  The version string is stored in the extension table -->
+        <version>0.0.1</version>
+        <!-- Note the folder attribute: This attribute describes what to copy
+                into the module folder -->
+        <files>
+                <filename module="mod_swg_nextevents">mod_swg_nextevents.php</filename>
+                <filename>mod_swg_nextevents.xml</filename>
+                <folder>tmpl</folder>
+        </files>
+        
+        <config>
+        	<fields name="params">
+        		<fieldset name="basic">
+        			<field name="eventType" type="radio" label="Event Type" description="The type of events to display">
+        				<!-- These need to match the constants in swg.php -->
+        				<option value="1">Walks</option>
+        				<option value="2">Socials</option>
+        				<option value="3">Weekends Away</option>
+        			</field>
+        			<field name="numberOfEvents" type="text" label="Number of events" default="3" description="The number of events to display" />
+        		</fieldset>
+        		<fieldset
+				name="advanced">
+				<field
+					name="layout"
+					type="modulelayout"
+					label="JFIELD_ALT_LAYOUT_LABEL"
+					description="JFIELD_ALT_MODULE_LAYOUT_DESC" />
+
+				<field
+					name="moduleclass_sfx"
+					type="text"
+					label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+					description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC" />
+
+				<field
+					name="cache"
+					type="list"
+					default="1"
+					label="COM_MODULES_FIELD_CACHING_LABEL"
+					description="COM_MODULES_FIELD_CACHING_DESC">
+					<option
+						value="1">JGLOBAL_USE_GLOBAL</option>
+					<option
+						value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+				</field>
+
+				<field
+					name="cache_time"
+					type="text"
+					default="900"
+					label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+					description="COM_MODULES_FIELD_CACHE_TIME_DESC" />
+				<field
+					name="cachemode"
+					type="hidden"
+					default="static">
+					<option
+						value="static"></option>
+				</field>
+			</fieldset>
+        	</fields>
+        </config>
+ 
+</extension>
