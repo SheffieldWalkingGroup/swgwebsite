@@ -1,4 +1,5 @@
 <?php
+require_once("Event.php");
 /**
  * An instance of a walk, i.e. a walk with a date and a leader etc.
  * @author peter
@@ -44,33 +45,38 @@ class WalkInstance extends Event {
     $this->description = $dbArr['routedescription'];
     $this->okToPublish = $dbArr['readytopublish'];
     
-    $this->walk = $dbArr[''];
-    $this->distanceGrade = $dbArr[''];
-    $this->difficultyGrade = $dbArr[''];
-    $this->miles = $dbArr[''];
-    $this->location = $dbArr[''];
-    $this->startGridRef = $dbArr[''];
-    $this->startPlaceName = $dbArr[''];
-    $this->endGridRef = $dbArr[''];
-    $this->endPlaceName = $dbArr[''];
+    $this->walk = $dbArr['walklibraryid']; // TODO: Load it?
+    $this->distanceGrade = $dbArr['distancegrade'];
+    $this->difficultyGrade = $dbArr['difficultygrade'];
+    $this->miles = $dbArr['miles'];
+    $this->location = $dbArr['location'];
+    $this->startGridRef = $dbArr['startgridref'];
+    $this->startPlaceName = $dbArr['startplacename'];
+    $this->endGridRef = $dbArr['endgridref'];
+    $this->endPlaceName = $dbArr['endplacename'];
     
-    $this->childFriendly = $dbArr[''];
-    $this->dogFriendly = $dbArr[''];
-    $this->speedy = $dbArr[''];
-    $this->isLinear = $dbArr[''];
-    $this->transportByCar = $dbArr[''];
-    $this->transportPublic = $dbArr[''];
+    $this->childFriendly = $dbArr['childfriendly'];
+    $this->dogFriendly = $dbArr['dogfriendly'];
+    $this->speedy = $dbArr['speedy'];
+    $this->isLinear = $dbArr['islinear'];
+//     $this->transportByCar = $dbArr['transport'];
+//     $this->transportPublic = $dbArr[''];
     
-    $this->leaderID = $dbArr[''];
-    $this->backmarkerID = $dbArr[''];
-    $this->meetPlace = $dbArr[''];
-    $this->meetTime = $dbArr[''];
-    $this->dateAltered = $dbArr[''];
+    $this->leaderID = $dbArr['leaderid'];
+    $this->backmarkerID = $dbArr['backmarkerid'];
+//     $this->meetPlace = $dbArr[''];
+//     $this->meetTime = $dbArr[''];
+//     $this->dateAltered = $dbArr[''];
     
-    $this->headCount = $dbArr[''];
-    $this->mileometer = $dbArr[''];
-    $this->reviewComments = $dbArr[''];
-    $this->deleted = $dbArr[''];
+//     $this->headCount = $dbArr[''];
+//     $this->mileometer = $dbArr[''];
+//     $this->reviewComments = $dbArr[''];
+//     $this->deleted = $dbArr[''];
+  }
+  
+  public function __get($name)
+  {
+    return $this->$name; // TODO: What params should be exposed?
   }
   
   /**
@@ -92,12 +98,21 @@ class WalkInstance extends Event {
         "readytopublish",
     ));
     $query->order(array("WalkDate ASC", "meettime ASC"));
-    $db->setQuery($query, 0, $iNumToGet);
+    $db->setQuery($query);
+    $walkData = $db->loadAssocList();
     
     // Build an array of WalkInstances
+    // TODO: Set actual SQL limit
     $walks = array();
-    while ($walkArr = $db->loadAssoc()) {
-      $walk = new Walk($walkArr)
+    while (count($walkData > 0) && count($walks) < $iNumToGet) {
+      $walk = new WalkInstance(array_shift($walkData));
+      $walks[] = $walk;
     }
+    
+    return $walks;
+  }
+  
+  public function isCancelled() {
+    return false;
   }
 }

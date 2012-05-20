@@ -1,4 +1,5 @@
 <?php
+jimport('joomla.application.component.modelitem');
 /**
  * Any event organised by the group
  * @author peter
