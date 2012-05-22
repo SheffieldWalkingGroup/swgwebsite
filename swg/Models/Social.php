@@ -2,6 +2,7 @@
 /**
  * A social
  */
+require_once("Event.php");
 class Social extends Event {
   
   private $bookingsInfo;
@@ -10,7 +11,7 @@ class Social extends Event {
   public function __construct($dbArr)
   {
     $this->name = $dbArr['title'];
-    $this->startDate = $dbArr['on_date'];
+    $this->startDate = strtotime($dbArr['on_date']);
     $this->description = $dbArr['fulldescription'];
     $this->okToPublish = $dbArr['readytopublish'];
     
@@ -28,7 +29,8 @@ class Social extends Event {
    * @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
    * @return array Array of Socials
    */
-  public static function getNext($iNumToGet = 0) {
+  public static function getNext($iNumToGet = -1) {
+    
     // Build a query to get future socials
     $db = JFactory::getDBO();
     $query = $db->getQuery(true);
@@ -42,11 +44,11 @@ class Social extends Event {
     $query->order(array("on_date ASC", "title ASC"));
     $db->setQuery($query);
     $socialData = $db->loadAssocList();
-  
+      
     // Build an array of Socials
     // TODO: Set actual SQL limit
     $socials = array();
-    while (count($socialData > 0) && count($socials) < $iNumToGet) {
+    while (count($socialData) > 0 && count($socials) != $iNumToGet) {
       $social = new Social(array_shift($socialData));
       $socials[] = $social;
     }

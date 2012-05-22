@@ -1,4 +1,5 @@
 <?php
+require_once("Event.php");
 /**
  * A weekend away
  */
@@ -18,8 +19,8 @@ class Weekend extends Event {
   public function __construct($dbArr)
   {
     $this->name = $dbArr['name'];
-    $this->startDate = $dbArr['startdate'];
-    $this->endDate = $dbArr['enddate'];
+    $this->startDate = strtotime($dbArr['startdate']);
+    $this->endDate = strtotime($dbArr['enddate']);
     $this->placeName = $dbArr['placename'];
     $this->area = $dbArr['area'];
     
@@ -46,7 +47,7 @@ class Weekend extends Event {
    * @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
    * @return array Array of Weekends
    */
-  public static function getNext($iNumToGet = 0) {
+  public static function getNext($iNumToGet = 7) {
     // Build a query to get future weekends
     $db = JFactory::getDBO();
     $query = $db->getQuery(true);
@@ -64,7 +65,7 @@ class Weekend extends Event {
     // Build an array of Weekends
     // TODO: Set actual SQL limit
     $weekends = array();
-    while (count($weekendData > 0) && count($weekends) < $iNumToGet) {
+    while (count($weekendData) > 0 && count($weekends) != $iNumToGet) {
       $weekend = new Weekend(array_shift($weekendData));
       $weekends[] = $weekend;
     }

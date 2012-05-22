@@ -41,7 +41,7 @@ class WalkInstance extends Event {
   public function __construct($dbArr)
   {
     $this->name = $dbArr['name'];
-    $this->startDate = $dbArr['WalkDate'];
+    $this->startDate = strtotime($dbArr['WalkDate']);
     $this->description = $dbArr['routedescription'];
     $this->okToPublish = $dbArr['readytopublish'];
     
@@ -84,7 +84,7 @@ class WalkInstance extends Event {
    * @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
    * @return array Array of WalkInstances
    */
-  public static function getNext($iNumToGet = 0) {
+  public static function getNext($iNumToGet = -1) {
     // Build a query to get future walks that haven't been deleted.
     // We do want cancelled walks - users should be notified about these.
     $db = JFactory::getDBO();
@@ -104,7 +104,7 @@ class WalkInstance extends Event {
     // Build an array of WalkInstances
     // TODO: Set actual SQL limit
     $walks = array();
-    while (count($walkData > 0) && count($walks) < $iNumToGet) {
+    while (count($walkData) > 0 && count($walks) != $iNumToGet) {
       $walk = new WalkInstance(array_shift($walkData));
       $walks[] = $walk;
     }
@@ -114,5 +114,9 @@ class WalkInstance extends Event {
   
   public function isCancelled() {
     return false;
+  }
+  
+  public function getEventType() {
+    return "walk";
   }
 }

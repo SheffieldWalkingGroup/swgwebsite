@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+	<layout title="SWG Event Listing">
+		<message>Sheffield Walking Group</message>
+	</layout>
+	<fields name="request">
+		<fieldset name="request">
+			<field
+				name="includeWalks"
+				type="checkbox"
+				label="Include Walks"
+				description="Include walks"
+				value="1"
+			/>
+			<field
+				name="includeSocials"
+				type="checkbox"
+				label="Include Socials"
+				description="Include socials"
+				value="1"
+			/>
+			<field
+				name="includeWeekends"
+				type="checkbox"
+				label="Include Weekends"
+				description="Include weekends"
+				value="1"
+			/>
+		</fieldset>
+	</fields>
+</metadata>
