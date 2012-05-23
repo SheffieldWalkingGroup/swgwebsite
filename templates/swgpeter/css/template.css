@@ -460,7 +460,8 @@ div.slideshow {
 .walkkey ul li img {
 }
 
-.walk {
+/* Events list */
+.event {
     width:766px;
     border-style:solid;
     border-color:#555;
@@ -474,32 +475,65 @@ div.slideshow {
 	background:url(/templates/swgpeter/images/contentbody-green.png);
 }
 
-.walksaturday .walkheader {
+.walksaturday .eventheader {
 	background:url(/templates/swgpeter/images/contenthead-green.png);
 }
 
-.walkheader {
+.walksunday {
+	background:url(/templates/swgpeter/images/contentbody-blue.png);
+}
+
+.walksunday .eventheader {
+	background:url(/templates/swgpeter/images/contenthead-blue.png);
+}
+
+.walkweekday {
+	background:url(/templates/swgpeter/images/contentbody-magenta.png);
+}
+
+.walkweekday .eventheader {
+	background:url(/templates/swgpeter/images/contenthead-magenta.png);
+}
+
+.weekend {
+	background:url(/templates/swgpeter/images/contentbody-yellow.png);
+}
+
+.weekend .eventheader {
+	background:url(/templates/swgpeter/images/contenthead-yellow.png);
+}
+
+/* TODO: Different colour */
+.social {
+	background:url(/templates/swgpeter/images/contentbody-yellow.png);
+}
+
+.social .eventheader {
+	background:url(/templates/swgpeter/images/contenthead-yellow.png);
+}
+
+.eventheader {
 	border-bottom:1px solid #555;
 	font-size:16px;
 	background-repeat:repeat-y;
 	padding:5px 10px 3px;
 }
 
-.walkheader .date {
+.eventheader .date {
 	float:left;
 }
 
-.walkheader h3 {
+.eventheader h3 {
 	text-align:center;
 	font-size:20px;
 	margin:0;
 }
 
-.walkheader .rating {
+.eventheader .rating {
 	float:right;
 }
 
-.walkinfo {
+.eventinfo {
 	font-size:0.8em;
 	width:250px;
 	margin:0 10px;
@@ -507,12 +541,12 @@ div.slideshow {
 	position:relative;
 }
 
-.walkinfo p {
+.eventinfo p {
 	margin-left:10px;
 	text-indent:55px;
 }
 
-.walkinfo p span {
+.eventinfo p span {
 	width:70px;
 	display:inline-block;
 	position:absolute;
@@ -520,13 +554,23 @@ div.slideshow {
 	text-indent:0px;
 }
 
-.walkdescription {
+/* Slightly different layout for weekend away info to allow for "Bookings open:" */
+.weekend .eventinfo p {
+	margin-left:80px;
+	text-indent:0;
+}
+
+.weekend .eventinfo p span {
+	width:80px;
+}
+
+.event .description {
 	float:right;
 	width:470px;
 	margin:0 10px 25px; /* Make sure there's room for the icons*/
 }
 
-.walk .icons {
+.event .icons {
 	position:absolute;
 	right:15px;
 	bottom:5px;

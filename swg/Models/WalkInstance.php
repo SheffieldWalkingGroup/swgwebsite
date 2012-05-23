@@ -119,4 +119,11 @@ class WalkInstance extends Event {
   public function getEventType() {
     return "walk";
   }
+  
+  public function getWalkDay() {
+    if (date("N",$this->startDate) < 6)
+      return "Weekday";
+    else
+      return date("l",$this->startDate);
+  }
 }
