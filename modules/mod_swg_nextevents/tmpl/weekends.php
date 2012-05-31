@@ -1,4 +1,4 @@
-<div class="box">
+<div class="events box weekends">
   <ul>
     <?php foreach ($events as $event) {?>
       <li>
@@ -15,7 +15,7 @@
             echo "-".date("jS M", strtotime($event->endDate));
           ?>
         </span>
-        <h4><a href="#"><?php echo $event->name; ?></a></h4>
+        <h4><a href="#" class="eventinfopopup" rel="weekend_<?php echo $event->id; ?>"><?php echo $event->name; ?></a></h4>
         <p>(<?php echo $event->area; ?>)</p>
         <p>Booking opens <?php echo $event->bookingsOpen; ?></p>
       </li>

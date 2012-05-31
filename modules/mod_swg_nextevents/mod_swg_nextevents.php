@@ -13,6 +13,10 @@ require_once JPATH_BASE."/swg/swg.php";
 $events = array();
 $numEvents = $params->get("numberOfEvents",3);
 
+// Load the JS stuff to run the popup
+JHtml::_('behavior.framework', true);
+JHTML::script("modules/mod_swg_nextevents/script/nextevents.js",true);
+
 switch($params->get('eventType')) {
   case SWG::EventType_Walk:
     JLoader::register('WalkInstance', JPATH_BASE."/swg/Models/WalkInstance.php");
