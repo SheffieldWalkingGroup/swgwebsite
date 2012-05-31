@@ -40,6 +40,7 @@ class WalkInstance extends Event {
    */
   public function __construct($dbArr)
   {
+    $this->id = $dbArr['SequenceID'];
     $this->name = $dbArr['name'];
     $this->startDate = strtotime($dbArr['WalkDate']);
     $this->description = $dbArr['routedescription'];
@@ -125,5 +126,28 @@ class WalkInstance extends Event {
       return "Weekday";
     else
       return date("l",$this->startDate);
+  }
+  
+  public static function getSingle($id) {
+    $db = JFactory::getDBO();
+    $query = $db->getQuery(true);
+    $query->select("*");
+    $query->from("walkprogrammewalks");
+  
+    $query->where(array("SequenceID = ".intval($id)));
+    $db->setQuery($query);
+    $res = $db->query();
+    if ($db->getNumRows($res) == 1)
+      return new WalkInstance($db->loadAssoc());
+    else
+      return null;
+  
+  }
+  
+  public function jsonEncode() {
+    $json = array();
+    foreach ($this as $key => $value)
+      $json[$key] = $value;
+    return json_encode($json);
   }
 }

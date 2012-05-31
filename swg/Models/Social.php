@@ -10,6 +10,7 @@ class Social extends Event {
   
   public function __construct($dbArr)
   {
+    $this->id = $dbArr['SequenceID'];
     $this->name = $dbArr['title'];
     $this->startDate = strtotime($dbArr['on_date']);
     $this->description = $dbArr['fulldescription'];
@@ -54,6 +55,29 @@ class Social extends Event {
     }
   
     return $socials;
+  }
+  
+  public static function getSingle($id) {
+    $db = JFactory::getDBO();
+    $query = $db->getQuery(true);
+    $query->select("*");
+    $query->from("socialsdetails");
+    
+    $query->where(array("SequenceID = ".intval($id)));
+    $db->setQuery($query);
+    $res = $db->query();
+    if ($db->getNumRows($res) == 1)
+      return new Social($db->loadAssoc());
+    else
+      return null;
+    
+  }
+  
+  public function jsonEncode() {
+    $json = array();
+    foreach ($this as $key => $value)
+      $json[$key] = $value;
+    return json_encode($json);
   }
   
 }

@@ -5,24 +5,39 @@ jimport('joomla.application.component.modelitem');
  * @author peter
  *
  */
-abstract class Event extends JModelItem {
+abstract class Event {
+  
+  // Event properties
+  protected $id;
   protected $name;
   protected $startDate;
   protected $description;
   protected $okToPublish;
   
-  public $id = 1; // FIXME: Make dynamic
+  
   
   /**
    * Gets the next few events of this type as an array
-   * @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
+   * @param int $numToGet Maximum number of events to fetch. Default is no limit.
    * @return array Array of Events
    */
-  abstract static function getNext($iNumToGet = 0);
+  abstract static function getNext($numToGet = 0);
+  
+  /**
+   * Gets a single event by its ID
+   * @param int $id Event ID to fetch
+   * @return Event object
+   */
+  abstract static function getSingle($id);
   
   public function getEventType() {
     return strtolower(get_class($this));
   }
+  
+  /**
+   * JSON encode this class, including private/protected properties 
+   */
+  public abstract function jsonEncode();
   
   
 

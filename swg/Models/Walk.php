@@ -7,7 +7,7 @@ defined('_JEXEC') or die('Restricted access');
  * @author peter
  *
  */
-class Walk extends JModelItem {
+class Walk {
   private $walkName;
   private $distanceGrade;
   private $difficultyGrade;

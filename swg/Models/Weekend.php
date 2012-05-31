@@ -18,6 +18,7 @@ class Weekend extends Event {
   
   public function __construct($dbArr)
   {
+    $this->id = $dbArr['ID'];
     $this->name = $dbArr['name'];
     $this->startDate = strtotime($dbArr['startdate']);
     $this->endDate = strtotime($dbArr['enddate']);
@@ -71,5 +72,28 @@ class Weekend extends Event {
     }
   
     return $weekends;
+  }
+  
+  public function jsonEncode() {
+    $json = array();
+    foreach ($this as $key => $value)
+      $json[$key] = $value;
+    return json_encode($json);
+  }
+  
+  public static function getSingle($id) {
+    $db = JFactory::getDBO();
+    $query = $db->getQuery(true);
+    $query->select("*");
+    $query->from("weekendsaway");
+    
+    $query->where(array("ID = ".intval($id)));
+    $db->setQuery($query);
+    $res = $db->query();
+    if ($db->getNumRows($res) == 1)
+      return new Weekend($db->loadAssoc());
+    else
+      return null;
+    
   }
 }
