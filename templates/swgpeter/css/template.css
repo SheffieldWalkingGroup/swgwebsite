@@ -508,13 +508,12 @@ div.slideshow {
 	background:url(/templates/swgpeter/images/contenthead-yellow.png);
 }
 
-/* TODO: Different colour */
 .social {
-	background:url(/templates/swgpeter/images/contentbody-yellow.png);
+	background:url(/templates/swgpeter/images/contentbody-orange.png);
 }
 
 .social .eventheader {
-	background:url(/templates/swgpeter/images/contenthead-yellow.png);
+	background:url(/templates/swgpeter/images/contenthead-orange.png);
 }
 
 .eventheader {
@@ -590,4 +589,26 @@ div.slideshow {
 	right:15px;
 	bottom:5px;
 	margin:0;
+}
+
+footer {
+	margin:0 10px;
+}
+
+footer>.social-icons {
+	border:none !important;
+	float:left;
+}
+
+.social-icons p {
+	margin-left:25px;
+}
+
+.social-icons a{
+	margin-right:20px;
+}
+
+p.footer {
+	font-size:0.9em;
+	margin:5px 10px 5px 210px;
 }
