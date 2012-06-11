@@ -17,6 +17,10 @@ $numEvents = $params->get("numberOfEvents",3);
 JHtml::_('behavior.framework', true);
 JHTML::script("modules/mod_swg_nextevents/script/nextevents.js",true);
 
+// Load the menu item for the list page
+$listPageID = $params->get("listPage");
+$listPage = JRoute::_("index.php?Itemid={$listPageID}");
+
 switch($params->get('eventType')) {
   case SWG::EventType_Walk:
     JLoader::register('WalkInstance', JPATH_BASE."/swg/Models/WalkInstance.php");

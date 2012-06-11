@@ -21,12 +21,13 @@
         	<fields name="params">
         		<fieldset name="basic">
         			<field name="eventType" type="radio" label="Event Type" description="The type of events to display">
-        				<!-- These need to match the constants in swg.php -->
+        				<!-- These values need to match the constants in swg.php -->
         				<option value="1">Walks</option>
         				<option value="2">Socials</option>
         				<option value="3">Weekends Away</option>
         			</field>
         			<field name="numberOfEvents" type="text" label="Number of events" default="3" description="The number of events to display" />
+        			<field name="listPage" type="menuItem" label="List page" description="The page to go to if the visitor clicks the more link or clicks on an event" />
         		</fieldset>
         		<fieldset
 				name="advanced">
