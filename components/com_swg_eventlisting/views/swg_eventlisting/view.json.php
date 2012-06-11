@@ -1,4 +1,7 @@
 <?php
+// No direct access to this file
+defined('_JEXEC') or die('Restricted access');
+
 // What type of event to we want?
 // TODO: Probably shouldn't return anything that isn't OK to publish - this is publicly accessible.
 $type = JRequest::getVar('eventtype',null,"get");
