@@ -2,7 +2,6 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// TODO: Classes for events on different days
 foreach ($this->events as $event) {?>
   <div class="event published <?php echo $event->getEventType(); if ($event instanceof WalkInstance) echo " walk".strtolower($event->getWalkDay());?>">
     <div class="eventheader">
