@@ -29,5 +29,6 @@
                 <position>footer</position>
                 <position>precontent</position>
                 <position>boxes</position>
+                <position>footer</position>
         </positions>
 </install>
