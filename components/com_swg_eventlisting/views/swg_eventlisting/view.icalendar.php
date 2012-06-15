@@ -25,4 +25,14 @@ class SWG_EventListingViewSWG_EventListing extends JView
 		// Display the view
 		parent::display($tpl);
 	}
+	
+	/**
+	 * Parse a text field (e.g. description) into valid iCalendar format
+	 * 
+	 * @param unknown_type $input
+	 */
+	function parseText($text) {
+	  $text = str_replace(array("\n","\r","\r\n"), "\\n", $text);
+	  return $text;
+	}
 }

@@ -42,7 +42,7 @@ class WalkInstance extends Event {
   {
     $this->id = $dbArr['SequenceID'];
     $this->name = $dbArr['name'];
-    $this->startDate = strtotime($dbArr['WalkDate']);
+    $this->startDate = strtotime($dbArr['WalkDate']." ".$dbArr['meettime']);
     $this->description = $dbArr['routedescription'];
     $this->okToPublish = $dbArr['readytopublish'];
     
@@ -65,7 +65,7 @@ class WalkInstance extends Event {
     
     $this->leaderID = $dbArr['leaderid'];
     $this->backmarkerID = $dbArr['backmarkerid'];
-//     $this->meetPlace = $dbArr[''];
+    $this->meetPlace = $dbArr['meetplace'];
 //     $this->meetTime = $dbArr[''];
 //     $this->dateAltered = $dbArr[''];
     
@@ -126,6 +126,20 @@ class WalkInstance extends Event {
       return "Weekday";
     else
       return date("l",$this->startDate);
+  }
+  
+  /**
+   * Estimate the finish time as:
+   *   1 hour after the start time (unless the meet point is the walk start)
+   *   + 0.5 hours per mile
+   *   TODO: Rounded up to the nearest hour
+   */
+  public function estimateFinishTime() {
+    $finish = $this->startDate;
+    if ($this->meetPlace != 4) // TODO: remove magic number
+      $finish += 3600;
+    $hoursWalking = 0.5*$this->miles;
+    return ($finish + 3600*$hoursWalking);
   }
   
   public static function getSingle($id) {
