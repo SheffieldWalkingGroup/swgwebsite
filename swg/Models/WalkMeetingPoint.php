@@ -1,22 +1,23 @@
 <?php
+require_once("SWGBaseModel.php");
 /**
  * A meeting point for a walk,
  * and an instance of meeting there.
  * Generates information about meeting for a walk:
  * place, time, etc.
  */
-class WalkMeetingPoint {
+class WalkMeetingPoint extends SWGBaseModel {
   const Meet_FITZ = 1;
   const Meet_TESCO = 2;
   const Meet_UNIV = 3;
   const Meet_START = 4;
   const Meet_OTHER = 7;
   
-  private $id;
-  private $shortDesc;
-  private $longDesc;
-  private $extra;
-  private $meetTime;
+  protected $id;
+  protected $shortDesc;
+  protected $longDesc;
+  protected $extra;
+  protected $meetTime;
   
   /**
    * Constructs a meeting point for the specified WalkInstance

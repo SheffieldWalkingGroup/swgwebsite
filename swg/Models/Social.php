@@ -5,8 +5,8 @@
 require_once("Event.php");
 class Social extends Event {
   
-  private $bookingsInfo;
-  private $clipartFilename;
+  protected $bookingsInfo;
+  protected $clipartFilename;
   
   public function __construct($dbArr)
   {
@@ -71,13 +71,6 @@ class Social extends Event {
     else
       return null;
     
-  }
-  
-  public function jsonEncode() {
-    $json = array();
-    foreach ($this as $key => $value)
-      $json[$key] = $value;
-    return json_encode($json);
   }
   
 }

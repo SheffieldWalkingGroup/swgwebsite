@@ -1,5 +1,6 @@
 <?php
 defined('_JEXEC') or die('Restricted access');
+require_once("SWGBaseModel");
 
 /**
  * A walk in our library.
@@ -7,7 +8,7 @@ defined('_JEXEC') or die('Restricted access');
  * @author peter
  *
  */
-class Walk {
+class Walk extends SWGBaseModel {
   private $walkName;
   private $distanceGrade;
   private $difficultyGrade;

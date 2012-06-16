@@ -4,17 +4,17 @@ require_once("Event.php");
  * A weekend away
  */
 class Weekend extends Event {
-  private $endDate;
-  private $placeName;
-  private $area;
-  private $url;
-  private $places;
-  private $cost;
-  private $contact;
-  private $noContactOfficeHours;
-  private $bookingsOpen;
-  private $challenge;
-  private $swg;
+  protected $endDate;
+  protected $placeName;
+  protected $area;
+  protected $url;
+  protected $places;
+  protected $cost;
+  protected $contact;
+  protected $noContactOfficeHours;
+  protected $bookingsOpen;
+  protected $challenge;
+  protected $swg;
   
   public function __construct($dbArr)
   {
@@ -72,13 +72,6 @@ class Weekend extends Event {
     }
   
     return $weekends;
-  }
-  
-  public function jsonEncode() {
-    $json = array();
-    foreach ($this as $key => $value)
-      $json[$key] = $value;
-    return json_encode($json);
   }
   
   public static function getSingle($id) {

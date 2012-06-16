@@ -11,33 +11,33 @@ class WalkInstance extends Event {
   
   
   
-  private $walk;
-  private $distanceGrade;
-  private $difficultyGrade;
-  private $miles;
-  private $location;
-  private $startGridRef;
-  private $startPlaceName;
-  private $endGridRef;
-  private $endPlaceName;
+  protected $walk;
+  protected $distanceGrade;
+  protected $difficultyGrade;
+  protected $miles;
+  protected $location;
+  protected $startGridRef;
+  protected $startPlaceName;
+  protected $endGridRef;
+  protected $endPlaceName;
   
-  private $childFriendly;
-  private $dogFriendly;
-  private $speedy;
-  private $isLinear;
-  private $transportByCar;
-  private $transportPublic;
+  protected $childFriendly;
+  protected $dogFriendly;
+  protected $speedy;
+  protected $isLinear;
+  protected $transportByCar;
+  protected $transportPublic;
   
-  private $leader;
-  private $backmarker;
-  private $meetPoint;
+  protected $leader;
+  protected $backmarker;
+  protected $meetPoint;
   
-  private $dateAltered;
+  protected $dateAltered;
   
-  private $headCount;
-  private $mileometer;
-  private $reviewComments;
-  private $deleted;
+  protected $headCount;
+  protected $mileometer;
+  protected $reviewComments;
+  protected $deleted;
   
   /**
    * Constructs a walk object from an array of database fields
@@ -164,12 +164,5 @@ class WalkInstance extends Event {
     else
       return null;
   
-  }
-  
-  public function jsonEncode() {
-    $json = array();
-    foreach ($this as $key => $value)
-      $json[$key] = $value;
-    return json_encode($json);
   }
 }

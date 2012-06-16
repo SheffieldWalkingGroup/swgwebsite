@@ -1,11 +1,12 @@
 <?php
 jimport('joomla.application.component.modelitem');
+require_once("SWGBaseModel.php");
 /**
  * Any event organised by the group
  * @author peter
  *
  */
-abstract class Event {
+abstract class Event extends SWGBaseModel {
   
   // Event properties
   protected $id;
@@ -34,10 +35,7 @@ abstract class Event {
     return strtolower(get_class($this));
   }
   
-  /**
-   * JSON encode this class, including private/protected properties 
-   */
-  public abstract function jsonEncode();
+  
   
   
 

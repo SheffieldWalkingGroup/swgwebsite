@@ -1,20 +1,21 @@
 <?php
 
+require_once("SWGBaseModel.php");
 /**
  * A walk leader or backmarker
  */
-class Leader {
-  private $id;
+class Leader extends SWGBaseModel {
+  protected $id;
   private $surname;
   private $forename;
-  private $displayName;
-  private $telephone;
+  protected $displayName;
+  protected $telephone;
   private $email;
   private $notes;
-  private $noContactOfficeHours;
-  private $active;
-  private $dogFriendly;
-  private $publishInOtherSites;
+  protected $noContactOfficeHours;
+  protected $active;
+  protected $dogFriendly;
+  protected $publishInOtherSites;
   
   function __construct($dbArr) {
     $this->id = $dbArr['ID'];
