@@ -579,7 +579,7 @@ div.slideshow {
 	margin-bottom:25px; /* Make sure there's room for the icons*/
 }
 
-.event.description {
+.event .description {
 	width:470px;
 	margin-left:10px;
 }
