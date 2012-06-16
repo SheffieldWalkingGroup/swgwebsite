@@ -38,13 +38,25 @@ foreach ($this->events as $event) {?>
           <p class="end"><span>End:</span> <?php echo $event->endGridRef.", ".$event->endPlaceName;?></p>
         <?php endif; ?>
         <p class="transport">
-          <span>Transport:</span> TODO: Transport
+          <span>Transport:</span>
+          <?php if (!$event->meetPoint->isOther()) {
+            echo "Meet at ".strftime("%H:%M", $event->meetPoint->meetTime)." at ".$event->meetPoint->longDesc.". ";
+          }
+          if ($event->meetPoint->hasExtraInfo()) {
+            echo $event->meetPoint->extra;
+          }
+          ?>
         </p>
         <p class="leader">
-          <span>Walk Leader:</span> TODO: Leader
+          <span>Walk Leader:</span>
+          <?php
+            echo $event->leader->displayName." (".$event->leader->telephone.")"; 
+            if ($event->leader->noContactOfficeHours)
+              echo " &ndash; don't call during office hours";
+          ?>
         </p>
         <p class="backmarker">
-          <span>Backmarker:</span> TODO: Backmarker
+          <span>Backmarker:</span> <?php echo $event->backmarker->displayName; ?>
         </p>
       <?php elseif ($event instanceof Social):?>
         <p class="socialbooking">

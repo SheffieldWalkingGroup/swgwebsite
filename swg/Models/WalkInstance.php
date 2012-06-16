@@ -1,11 +1,16 @@
 <?php
 require_once("Event.php");
+include_once("WalkMeetingPoint.php");
+include_once("Leader.php");
 /**
  * An instance of a walk, i.e. a walk with a date and a leader etc.
  * @author peter
  *
  */
 class WalkInstance extends Event {
+  
+  
+  
   private $walk;
   private $distanceGrade;
   private $difficultyGrade;
@@ -23,10 +28,10 @@ class WalkInstance extends Event {
   private $transportByCar;
   private $transportPublic;
   
-  private $leaderID;
-  private $backmarkerID;
-  private $meetPlace;
-  private $meetTime;
+  private $leader;
+  private $backmarker;
+  private $meetPoint;
+  
   private $dateAltered;
   
   private $headCount;
@@ -63,10 +68,13 @@ class WalkInstance extends Event {
 //     $this->transportByCar = $dbArr['transport'];
 //     $this->transportPublic = $dbArr[''];
     
-    $this->leaderID = $dbArr['leaderid'];
-    $this->backmarkerID = $dbArr['backmarkerid'];
-    $this->meetPlace = $dbArr['meetplace'];
-//     $this->meetTime = $dbArr[''];
+    $this->meetPoint = new WalkMeetingPoint($dbArr['meetplace'], $dbArr['meettime'], $dbArr['meetplacetime']);
+    $this->leader = Leader::getLeader($dbArr['leaderid']);
+    $this->backmarker = Leader::getLeader($dbArr['backmarkerid']);
+    if (!empty($dbArr['leadername']))
+      $this->leader->setDisplayName($dbArr['leadername']);
+    if (!empty($dbArr['backmarkername']))
+      $this->backmarker->setDisplayName($dbArr['backmarkername']);
 //     $this->dateAltered = $dbArr[''];
     
 //     $this->headCount = $dbArr[''];
@@ -136,8 +144,8 @@ class WalkInstance extends Event {
    */
   public function estimateFinishTime() {
     $finish = $this->startDate;
-    if ($this->meetPlace != 4) // TODO: remove magic number
-      $finish += 3600;
+    if (!$this->meetPoint->isAtWalkStart())
+      $finish += 3600; // Add 1 hour travelling time
     $hoursWalking = 0.5*$this->miles;
     return ($finish + 3600*$hoursWalking);
   }
