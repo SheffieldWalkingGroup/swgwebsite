@@ -111,11 +111,39 @@ var showPopup = function(eventType, eventID, link) {
 							"class":"end", 
 							"html":
 								"<span>End:</span> " +
-								"<a title='Streetmap view of approximate location' href='http://www.streetmap.com/loc/"+event.startGridRef+"'>"+event.startGridRef+", "+event.startPlaceName+"</a>"
+								event.startGridRef+", "+event.startPlaceName
 						});
 						eventInfo.adopt(end);
 					}
-					// TODO: Transport, leader, backmarker
+					
+					var transportText = "";
+					if (event.meetPoint.id != 7) // TODO: Remove magic number
+						transportText += "Meet at "+event.meetPoint.meetTime+" at "+event.meetPoint.longDesc+". ";
+					if (event.meetPoint.extra != null) // TODO: Use function? Note: doesn't matter if it's empty
+						transportText += event.meetPoint.extra;
+											
+					var transport = new Element("p", {
+						"class":"transport",
+						"html":"<span>Transport:</span> " + transportText
+					});
+					eventInfo.adopt(transport);
+					
+					var leaderText = event.leader.displayName+
+						" ("+event.leader.telephone+")";
+					if (event.leader.noContactOfficeHours)
+						leaderText += " &ndash; don't call during office hours";
+					
+					var leader = new Element("p", {
+						"class":"leader",
+						"html":"<span>Leader:</span> "+leaderText
+					});
+					eventInfo.adopt(leader);
+					
+					var backmarker = new Element("p", {
+						"class":"backmarker",
+						"html":"<span>Backmarker:</span> "+event.backmarker.displayName
+					});
+					eventInfo.adopt(backmarker);
 					
 					break;
 				case "weekend":
