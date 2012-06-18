@@ -164,7 +164,7 @@ var showPopup = function(eventType, eventID, link) {
 				case "social":
 					var contact = new Element("p",{
 						"class":eventType+"booking",
-						"html":"<span>Contact:</span> "+event.contact
+						"html":"<span>Contact:</span> "+event.bookingsInfo
 					});
 					eventInfo.adopt(contact);
 					
