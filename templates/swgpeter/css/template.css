@@ -359,7 +359,7 @@ div.slideshow {
     border:1px solid #A8D3A9;
     background-color:rgba(255,255,255,0.95) !important;
     z-index:5;
-    width:550px;
+    width:580px;
     height:250px;
     border:1px solid #999999;
     border-radius:15px;
@@ -395,13 +395,33 @@ div.slideshow {
 .popup .description {
 	width:300px;
 	margin-left:0;
+	margin-right:0;
 	height:170px; /* TODO: Fancy fadeout and pretty scroll bars - only if needed! */
-	overflow:auto;
+	overflow:hidden; /* We use fancy scrollbars */
+}
+
+.popup .description p {
+	float:left;
+}
+
+.scrollbar-vert{
+	background-color: none;
+	height: 146px;
+	width: 10px;
+	float:right;
+	margin:12px 10px 12px 0;
+}
+.handle-vert{
+	height: 42px;
+	width: 10px;
+	background: #555 no-repeat;
+	border-radius: 5px;
+	
 }
 
 .popup .eventinfo {
 	margin-right:0;
-	width:230px;
+	width:260px;
 }
 
 .popup .info {
@@ -575,13 +595,13 @@ div.slideshow {
 
 .event .description, .popup .description {
 	float:right;
-	margin-right:10px;
 	margin-bottom:25px; /* Make sure there's room for the icons*/
 }
 
 .event .description {
 	width:470px;
 	margin-left:10px;
+	margin-right:10px;
 }
 
 .event .icons {
