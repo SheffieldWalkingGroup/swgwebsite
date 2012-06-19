@@ -149,13 +149,13 @@ class SWG_EventListingModelSWG_EventListing extends JModelItem
 	{
 	  switch ($eventType) {
 	    case SWG::EventType_Walk:
-	      $this->walks = WalkInstance::getNext();
+	      $this->walks = WalkInstance::get();
 	      break;
 	    case SWG::EventType_Social:
-	      $this->socials = Social::getNext();
+	      $this->socials = Social::get();
 	      break;
 	    case SWG::EventType_Weekend:
-	      $this->weekends = Weekend::getNext();
+	      $this->weekends = Weekend::get();
 	      break;
 	  }
 	}

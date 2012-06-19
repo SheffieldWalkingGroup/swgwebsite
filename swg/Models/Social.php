@@ -30,7 +30,7 @@ class Social extends Event {
    * @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
    * @return array Array of Socials
    */
-  public static function getNext($iNumToGet = -1) {
+  public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1) {
     
     // Build a query to get future socials
     $db = JFactory::getDBO();
@@ -39,7 +39,8 @@ class Social extends Event {
     $query->from("socialsdetails");
     // TODO: This is a stored proc currently - can we use this?
     $query->where(array(
-        "on_date >= CURDATE()",
+        "on_date >= '".self::timeToDate($startDate)."'",
+        "on_date <= '".self::timeToDate($endDate)."'",
         "readytopublish",
     ));
     $query->order(array("on_date ASC", "title ASC"));
@@ -49,12 +50,21 @@ class Social extends Event {
     // Build an array of Socials
     // TODO: Set actual SQL limit
     $socials = array();
-    while (count($socialData) > 0 && count($socials) != $iNumToGet) {
+    while (count($socialData) > 0 && count($socials) != $numToGet) {
       $social = new Social(array_shift($socialData));
       $socials[] = $social;
     }
   
     return $socials;
+  }
+  
+  /**
+   * Gets a limited number of events, starting today and going forwards
+   * Partly for backwards-compatibility, but also to improve readability
+   * @param int $numEvents Maximum number of events to get
+   */
+  public static function getNext($numEvents) {
+    return self::get(self::DateToday, self::DateEnd, $numEvents);
   }
   
   public static function getSingle($id) {

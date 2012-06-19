@@ -44,11 +44,20 @@ class Weekend extends Event {
   }
   
   /**
+   * Gets a limited number of events, starting today and going forwards
+   * Partly for backwards-compatibility, but also to improve readability
+   * @param int $numEvents Maximum number of events to get
+   */
+  public static function getNext($numEvents) {
+    return self::get(self::DateToday, self::DateEnd, $numEvents);
+  }
+  
+  /**
    * Gets the next few scheduled weekends
    * @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
    * @return array Array of Weekends
    */
-  public static function getNext($iNumToGet = 7) {
+  public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1) {
     // Build a query to get future weekends
     $db = JFactory::getDBO();
     $query = $db->getQuery(true);
@@ -56,7 +65,8 @@ class Weekend extends Event {
     $query->from("weekendsaway");
     // TODO: This is a stored proc currently - can we use this?
     $query->where(array(
-        "enddate >= CURDATE()",
+        "enddate >= '".self::timeToDate($startDate)."'",
+        "startdate <= '".self::timeToDate($endDate)."'",
         "oktopublish",
     ));
     $query->order(array("startdate ASC"));
@@ -66,7 +76,7 @@ class Weekend extends Event {
     // Build an array of Weekends
     // TODO: Set actual SQL limit
     $weekends = array();
-    while (count($weekendData) > 0 && count($weekends) != $iNumToGet) {
+    while (count($weekendData) > 0 && count($weekends) != $numToGet) {
       $weekend = new Weekend(array_shift($weekendData));
       $weekends[] = $weekend;
     }

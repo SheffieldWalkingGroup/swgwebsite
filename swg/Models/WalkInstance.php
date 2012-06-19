@@ -8,9 +8,6 @@ include_once("Leader.php");
  *
  */
 class WalkInstance extends Event {
-  
-  
-  
   protected $walk;
   protected $distanceGrade;
   protected $difficultyGrade;
@@ -89,20 +86,31 @@ class WalkInstance extends Event {
   }
   
   /**
+   * Gets a limited number of events, starting today and going forwards
+   * Partly for backwards-compatibility, but also to improve readability
+   * @param int $numEvents Maximum number of events to get
+   */
+  public static function getNext($numEvents) {
+    return self::get(self::DateToday, self::DateEnd, $numEvents);
+  }
+  
+  /**
    * Gets the next few scheduled walks
    * @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
    * @return array Array of WalkInstances
    */
-  public static function getNext($iNumToGet = -1) {
+  public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1) {
     // Build a query to get future walks that haven't been deleted.
     // We do want cancelled walks - users should be notified about these.
     $db = JFactory::getDBO();
     $query = $db->getQuery(true);
     $query->select("*");
     $query->from("walkprogrammewalks");
+    
     // TODO: This is a stored proc currently - can we use this?
     $query->where(array(
-        "WalkDate >= CURDATE()",
+        "WalkDate >= '".self::timeToDate($startDate)."'",
+        "WalkDate <= '".self::timeToDate($endDate)."'",
         "NOT deleted",
         "readytopublish",
     ));
@@ -113,7 +121,7 @@ class WalkInstance extends Event {
     // Build an array of WalkInstances
     // TODO: Set actual SQL limit
     $walks = array();
-    while (count($walkData) > 0 && count($walks) != $iNumToGet) {
+    while (count($walkData) > 0 && count($walks) != $numToGet) {
       $walk = new WalkInstance(array_shift($walkData));
       $walks[] = $walk;
     }
