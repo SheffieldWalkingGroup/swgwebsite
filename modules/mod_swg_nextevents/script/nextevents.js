@@ -111,7 +111,7 @@ var showPopup = function(eventType, eventID, link) {
 							"class":"end", 
 							"html":
 								"<span>End:</span> " +
-								event.startGridRef+", "+event.startPlaceName
+								event.endGridRef+", "+event.endPlaceName
 						});
 						eventInfo.adopt(end);
 					}
@@ -159,8 +159,12 @@ var showPopup = function(eventType, eventID, link) {
 						"class":"bookingopen",
 						"html":"<span>Bookings open:</span> "+event.bookingsOpen
 					});
-					eventInfo.adopt(moreInfo,places);
-					// Fall through - contact is common
+					var contact = new Element("p",{
+						"class":eventType+"booking",
+						"html":"<span>Contact:</span> "+event.contact
+					});
+					eventInfo.adopt(moreInfo,places,contact);
+					break;
 				case "social":
 					var contact = new Element("p",{
 						"class":eventType+"booking",
