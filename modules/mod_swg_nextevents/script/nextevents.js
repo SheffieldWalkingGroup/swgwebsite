@@ -208,7 +208,7 @@ var showPopup = function(eventType, eventID, link) {
 	
 	// Display the popup
 	infoPopup.set("opacity",0);
-	infoPopup.fade(0.95);
+	infoPopup.fade(1);
 	
 	// Allow the user to move the mouse into the popup without it vanishing
 	infoPopup.addEvent("mouseover",function(event) {

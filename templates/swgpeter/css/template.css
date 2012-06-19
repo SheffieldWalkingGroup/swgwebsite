@@ -1,4 +1,13 @@
-/* Colour scheme: #6b8eac (blue), #ab6a8d (magenta), #8dab6a (green) */
+/* Colour scheme: 
+	#6b8eac (blue - Sunday walks), 
+	#ab6a8d (magenta - Weekday walks), 
+	#8dab6a (green - Saturday walks),
+	#F6F5D4 (yellow - Weekends away only),
+	#FF9555 (orange - Socials only)
+	
+	Blue, green & magenta are used throughout. Yellow and orange are generally reserved for weekends & socials.
+	Event body backgrounds are at 50% opacity
+ */
 
 @font-face {
     font-family: 'Lora';
@@ -357,7 +366,7 @@ div.slideshow {
 
 .popup {
     border:1px solid #A8D3A9;
-    background-color:rgba(255,255,255,0.95) !important;
+    background-color:rgba(255,255,255,0.92) !important;
     z-index:5;
     width:580px;
     height:250px;
@@ -414,9 +423,8 @@ div.slideshow {
 .handle-vert{
 	height: 42px;
 	width: 10px;
-	background: #555 no-repeat;
+	background: #222 no-repeat;
 	border-radius: 5px;
-	
 }
 
 .popup .eventinfo {
