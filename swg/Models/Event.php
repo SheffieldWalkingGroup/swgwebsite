@@ -16,6 +16,8 @@ abstract class Event extends SWGBaseModel {
   protected $okToPublish;
   
   const DateToday = -1;
+  const DateYesterday = -2;
+  const DateTomorrow = -3;
   const DateEnd = 2147483647; // This is the end of Unix time, 19th January 2038. I expect this system to be replaced by then
   
   
@@ -45,6 +47,10 @@ abstract class Event extends SWGBaseModel {
     $time = intval($time);
     if ($time == self::DateToday)
       $rawDate = getdate();
+    else if ($time == self::DateYesterday)
+      $rawDate = getdate(time()-86400);
+    else if ($time == self::DateTomorrow)
+      $rawDate = getDate(time()+86400);
     else
       $rawDate = getdate($time);
     

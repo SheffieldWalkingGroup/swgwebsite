@@ -8,6 +8,7 @@ require_once JPATH_BASE."/swg/swg.php";
 JLoader::register('WalkInstance', JPATH_BASE."/swg/Models/WalkInstance.php");
 JLoader::register('Social', JPATH_BASE."/swg/Models/Social.php");
 JLoader::register('Weekend', JPATH_BASE."/swg/Models/Weekend.php");
+JLoader::register('Event', JPATH_BASE."/swg/Models/Event.php");
  
 /**
  * HelloWorld Model
@@ -82,7 +83,13 @@ class SWG_EventListingModelSWG_EventListing extends JModelItem
 	  $socialPointer = 0;
 	  $weekendPointer = 0;
 	  
-	  $nextEvent = $this->nextEventAfterIndex();
+	  // Order 0 = ascending, 1 = descending
+	  if (JRequest::getInt("order") == 1) {
+	    $this->walks = array_reverse($this->walks);
+	    $this->socials = array_reverse($this->socials);
+	    $this->weekends = array_reverse($this->weekends);
+	  }
+	  $nextEvent = $this->nextEventAfterIndex(0,0,0,(JRequest::getInt("order")==1));
 	  
 	  $events = array();
 	  
@@ -103,7 +110,7 @@ class SWG_EventListingModelSWG_EventListing extends JModelItem
 	    }
 	    
 	    // Get the dates of each next event
-	    $nextEvent = $this->nextEventAfterIndex($walkPointer, $socialPointer, $weekendPointer);
+        $nextEvent = $this->nextEventAfterIndex($walkPointer, $socialPointer, $weekendPointer, (JRequest::getInt("order") == 1));
 	     
 	  } while ((count($this->walks) > $walkPointer+1) || (count($this->socials) > $socialPointer+1) || (count($this->weekends) > $weekendPointer+1));
 	  return $events;
@@ -116,24 +123,30 @@ class SWG_EventListingModelSWG_EventListing extends JModelItem
 	 * @param int $weekendIndex Index to start at in the weekends array
 	 * @return int Timestamp of next date with an event
 	 */
-	private function nextEventAfterIndex($walkIndex = 0, $socialIndex = 0, $weekendIndex = 0)
+	private function nextEventAfterIndex($walkIndex = 0, $socialIndex = 0, $weekendIndex = 0, $reversed = false)
 	{
 	  $nextEvent = false;
-	  if (isset($this->walks[$walkIndex]))
-	  {
+	  if (isset($this->walks[$walkIndex])) {
 	    $nextEvent = $this->walks[$walkIndex]->startDate;
 	  }
-	  if (isset($this->socials[$socialIndex]))
-	  {
-	    if (isset($nextEvent))
-	      $nextEvent = min($nextEvent, $this->socials[$socialIndex]->startDate);
-	    else
+	  
+	  if (isset($this->socials[$socialIndex])) {
+	    if (isset($nextEvent)) {
+	      if ($reversed)
+	        $nextEvent = max($nextEvent, $this->socials[$socialIndex]->startDate);
+	      else
+	        $nextEvent = min($nextEvent, $this->socials[$socialIndex]->startDate);
+	    }else
 	      $nextEvent = $this->socials[$socialIndex]->startDate;
 	  }
-	  if (isset($this->weekends[$weekendIndex]))
-	  {
-	    if (isset($nextEvent))
-	      $nextEvent = min($nextEvent, $this->weekends[$weekendIndex]->startDate);
+	  
+	  if (isset($this->weekends[$weekendIndex])) {
+	    if (isset($nextEvent)) {
+	      if ($reversed)
+	        $nextEvent = max($nextEvent, $this->weekends[$weekendIndex]->startDate);
+	      else
+	        $nextEvent = min($nextEvent, $this->weekends[$weekendIndex]->startDate);
+	    }
 	    else
 	      $nextEvent = $this->$weekendIndex[0]->startDate;
 	  }
@@ -147,16 +160,43 @@ class SWG_EventListingModelSWG_EventListing extends JModelItem
 	 */
 	private function loadEvents($eventType)
 	{
+	  // Get the parameters set
+	  $startDate = $this->paramDateToValue(JRequest::getInt("startDateType"), JRequest::getString("startDateSpecify"));
+	  $endDate = $this->paramDateToValue(JRequest::getInt("endDateType"), JRequest::getString("endDateSpecify"));
+	  
 	  switch ($eventType) {
 	    case SWG::EventType_Walk:
-	      $this->walks = WalkInstance::get();
+	      $this->walks = WalkInstance::get($startDate, $endDate);
 	      break;
 	    case SWG::EventType_Social:
-	      $this->socials = Social::get();
+	      $this->socials = Social::get($startDate, $endDate);
 	      break;
 	    case SWG::EventType_Weekend:
-	      $this->weekends = Weekend::get();
+	      $this->weekends = Weekend::get($startDate, $endDate);
 	      break;
+	  }
+	}
+	
+	/**
+	 * Parses a date selected by Joomla component parameters into a known constant or Unix time
+	 * @param int $dateType Type of date (0=beginning, 1=yesterday, 2=today, 3=tomorrow, 4=end, 5=specify
+	 * @param String $specifiedDate Specified date (pass 5 for dateType to use this)
+	 */
+	private function paramDateToValue($dateType, $specifiedDate="") {
+	  switch ($dateType) {
+	    case 0: // The beginning
+	      return 0;
+	    case 1: // Yesterday
+	      return Event::DateYesterday;
+	    case 2: // Today
+	    default:
+	      return Event::DateToday;
+	    case 3: // Tomorrow
+	      return Event::DateTomorrow;
+	    case 4: // The end
+	      return Event::DateEnd;
+	    case 5:
+	      return strtotime($specifiedDate);
 	  }
 	}
 	

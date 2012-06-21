@@ -8,24 +8,74 @@
 			<field
 				name="includeWalks"
 				type="checkbox"
-				label="Include Walks"
+				label="Include walks"
 				description="Include walks"
 				value="1"
 			/>
 			<field
 				name="includeSocials"
 				type="checkbox"
-				label="Include Socials"
+				label="Include socials"
 				description="Include socials"
 				value="1"
 			/>
 			<field
 				name="includeWeekends"
 				type="checkbox"
-				label="Include Weekends"
+				label="Include weekends"
 				description="Include weekends"
 				value="1"
 			/>
+			<field
+				name="startDateType"
+				type="list"
+				label="Earliest date"
+				default="1"
+				description="Display events on or after this day"
+				>
+				<option value="0">The beginning</option>
+				<option value="1">Yesterday</option>
+				<option value="2">Today</option>
+				<option value="3">Tomorrow</option>
+				<option value="4">The end</option>
+				<option value="5">Specify</option>
+			</field>
+			<field
+				name="startDateSpecify"
+				type="calendar"
+				label="Specify earliest date"
+				description="Only needed if earliest date is 'Specify'"
+			/>
+			<field
+				name="endDateType"
+				type="list"
+				label="Latest date"
+				default="2"
+				description="Display events on or before this day"
+				>
+				<option value="0">The beginning</option>
+				<option value="1">Yesterday</option>
+				<option value="2">Today</option>
+				<option value="3">Tomorrow</option>
+				<option value="4">The end</option>
+				<option value="5">Specify</option>
+			</field>
+			<field
+				name="endDateSpecify"
+				type="calendar"
+				label="Specify latest date"
+				description="Only needed if latest date is 'Specify'"
+			/>
+			<field
+				name="order"
+				type="radio"
+				label="Ordering"
+				default="0"
+			>
+				<option value="0">Oldest first</option>
+				<option value="1">Newest first</option>
+			</field>
+			
 		</fieldset>
 	</fields>
 </metadata>

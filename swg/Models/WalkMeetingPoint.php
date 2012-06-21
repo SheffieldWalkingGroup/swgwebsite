@@ -23,7 +23,7 @@ class WalkMeetingPoint extends SWGBaseModel {
    * Constructs a meeting point for the specified WalkInstance
    * TODO: Might want constructors that don't take a WalkInstance.
    * If so, will need a global constructor that hands the job out to worker methods
-   * (simulating overloading)
+   * (simulating method overloading)
    * @param WalkInstance $walk
    */
   public function __construct($meetPoint, $meetTime, $meetPlaceTime) {
@@ -45,7 +45,11 @@ class WalkMeetingPoint extends SWGBaseModel {
       $this->extra = $meetPlaceTime;
     }
     else
-      throw new BadMethodCallException("Invalid meeting point");
+    {
+      $this->shortDesc = "NONE";
+      $this->longDesc = "unspecified meeting place";
+    }
+      
   }
   
   /**
