@@ -6,7 +6,7 @@ foreach ($this->events as $event) {?>
   <div class="event published <?php echo $event->getEventType(); if ($event instanceof WalkInstance) echo " walk".strtolower($event->getWalkDay());?>">
     <div class="eventheader">
       <span class="date" id="<?php echo $event->getEventType();?>No<?php echo $event->id?>">
-        <?php echo date("l jS F",$event->startDate); // TODO: End date for weekends?>
+        <?php echo date("l jS F".($this->notThisYear($event->startDate)?" Y":""),$event->startDate); // TODO: End date for weekends?>
       </span>
       <?php if ($event instanceof WalkInstance):?>
         <span class="rating">
@@ -50,7 +50,7 @@ foreach ($this->events as $event) {?>
         <p class="leader">
           <span>Walk Leader:</span>
           <?php
-            echo $event->leader->displayName." (".$event->leader->telephone.")"; 
+            echo $event->leader->displayName.(!empty($event->leader->telephone)?" (".$event->leader->telephone.")":""); 
             if ($event->leader->noContactOfficeHours)
               echo " &ndash; don't call during office hours";
           ?>

@@ -25,4 +25,9 @@ class SWG_EventListingViewSWG_EventListing extends JView
 		// Display the view
 		parent::display($tpl);
 	}
+	
+	function notThisYear($date)
+	{
+	  return (date("Y", $date) != date("Y"));
+	}
 }
