@@ -6,7 +6,13 @@ foreach ($this->events as $event) {?>
   <div class="event published <?php echo $event->getEventType(); if ($event instanceof WalkInstance) echo " walk".strtolower($event->getWalkDay());?>">
     <div class="eventheader">
       <span class="date" id="<?php echo $event->getEventType();?>No<?php echo $event->id?>">
-        <?php echo date("l jS F".($this->notThisYear($event->startDate)?" Y":""),$event->startDate); // TODO: End date for weekends?>
+        <?php 
+          if ($event instanceof Weekend)
+            // Display start and end dates for weekends. Only display month for start if the weekend straddles a month boundary
+            echo date("l jS".($this->notSameMonth($event->startDate, $event->endDate)?" F":""), $event->startDate)." - ".date("l jS F".($this->notThisYear($event->endDate)?" Y":""), $event->endDate); 
+          else
+            echo date("l jS F".($this->notThisYear($event->startDate)?" Y":""),$event->startDate); // Just start date for other things
+        ?>
       </span>
       <?php if ($event instanceof WalkInstance):?>
         <span class="rating">

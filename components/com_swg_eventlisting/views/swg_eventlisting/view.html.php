@@ -26,8 +26,23 @@ class SWG_EventListingViewSWG_EventListing extends JView
 		parent::display($tpl);
 	}
 	
+	/**
+	 * True if the given date is NOT this year
+	 * @param unknown_type $date
+	 * @return boolean
+	 */
 	function notThisYear($date)
 	{
 	  return (date("Y", $date) != date("Y"));
+	}
+	
+	/**
+	 * True if two dates have DIFFERENT months. Ignores year
+	 * @param unknown_type $date1
+	 * @param unknown_type $date2
+	 */
+	function notSameMonth($date1, $date2)
+	{
+	  return (date("m", $date1) != date("m",$date2));
 	}
 }
