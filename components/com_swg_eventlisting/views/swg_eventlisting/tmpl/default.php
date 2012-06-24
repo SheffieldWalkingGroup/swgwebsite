@@ -78,9 +78,11 @@ foreach ($this->events as $event) {?>
           <span>Contact:</span> <?php echo $event->bookingsInfo; ?>
         </p>
       <?php elseif ($event instanceof Weekend):?>
-        <p class="moreinfo">
-          <span>More info:</span> <?php echo $event->url?>
-        </p>
+        <?php if ($event->url != ""): // empty() doesn't work for some reason?>
+          <p class="moreinfo">
+            <span>More info:</span> <a href="<?php echo $event->url?>">Here</a>
+          </p>
+        <?php endif; ?>
         <p class="places">
           <!-- TODO: Link to booking policy -->
           <span>Places:</span> <?php echo $event->places." at ".$event->cost?> (remember the booking and refunds policy)

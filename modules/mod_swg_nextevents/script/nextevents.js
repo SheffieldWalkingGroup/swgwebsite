@@ -151,10 +151,12 @@ var showPopup = function(eventType, eventID, link) {
 					
 					break;
 				case "weekend":
-					var moreInfo = new Element("p",{
-						"class":"moreinfo",
-						"html":"<span>More info:</span> "+event.url
-					});
+					if (event.url != "") {
+						var moreInfo = new Element("p",{
+							"class":"moreinfo",
+							"html":"<span>More info:</span> <a href='"+event.url+"'>Here"
+						});
+					}
 					var places = new Element("p",{
 						"class":"places",
 						"html":"<span>Places:</span> "+event.places+" at "+event.cost+" (remember the booking and refunds policy)"
