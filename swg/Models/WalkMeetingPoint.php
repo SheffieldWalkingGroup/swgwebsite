@@ -24,7 +24,9 @@ class WalkMeetingPoint extends SWGBaseModel {
    * TODO: Might want constructors that don't take a WalkInstance.
    * If so, will need a global constructor that hands the job out to worker methods
    * (simulating method overloading)
-   * @param WalkInstance $walk
+   * @param int $meetPoint Meeting point ID
+   * @param int $meetTime Meeting time as a Unix timestamp
+   * @param String $meetPlaceTime Additional information about meeting for this walk 
    */
   public function __construct($meetPoint, $meetTime, $meetPlaceTime) {
     $db = JFactory::getDBO();
@@ -40,7 +42,7 @@ class WalkMeetingPoint extends SWGBaseModel {
       $this->id = $row['SequenceID'];
       $this->shortDesc = $row['ShortDesc'];
       $this->longDesc = $row['LongDesc'];
-      $this->meetTime = strtotime($meetTime);
+      $this->meetTime = $meetTime;
       // Usually public transport info
       $this->extra = $meetPlaceTime;
     }

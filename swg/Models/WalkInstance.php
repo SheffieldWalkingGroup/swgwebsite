@@ -65,7 +65,7 @@ class WalkInstance extends Event {
 //     $this->transportByCar = $dbArr['transport'];
 //     $this->transportPublic = $dbArr[''];
     
-    $this->meetPoint = new WalkMeetingPoint($dbArr['meetplace'], $dbArr['meettime'], $dbArr['meetplacetime']);
+    $this->meetPoint = new WalkMeetingPoint($dbArr['meetplace'], $this->startDate, $dbArr['meetplacetime']);
     $this->leader = Leader::getLeader($dbArr['leaderid']);
     $this->backmarker = Leader::getLeader($dbArr['backmarkerid']);
     if (!empty($dbArr['leadername']))

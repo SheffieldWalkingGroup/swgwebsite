@@ -118,7 +118,11 @@ var showPopup = function(eventType, eventID, link) {
 					
 					var transportText = "";
 					if (event.meetPoint.id != 7) // TODO: Remove magic number
-						transportText += "Meet at "+event.meetPoint.meetTime+" at "+event.meetPoint.longDesc+". ";
+					{
+						// Parse the meeting time
+						var meetTime = new Date(event.meetPoint.meetTime*1000);
+						transportText += "Meet at "+meetTime.format("%H:%M")+" at "+event.meetPoint.longDesc+". ";
+					}
 					if (event.meetPoint.extra != null) // TODO: Use function? Note: doesn't matter if it's empty
 						transportText += event.meetPoint.extra;
 											
