@@ -333,7 +333,7 @@ div.slideshow {
     background-color:rgba(255,255,255,0.92) !important;
     z-index:5;
     width:580px;
-    height:250px;
+    min-height:250px;
     border:1px solid #999999;
     border-radius:15px;
     box-shadow:4px 7px 10px #222;
