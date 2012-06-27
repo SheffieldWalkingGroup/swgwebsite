@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-	<layout title="SWG Event Listing">
+	<layout title="Event Listing">
 		<message>Sheffield Walking Group</message>
 	</layout>
 	<fields name="request">

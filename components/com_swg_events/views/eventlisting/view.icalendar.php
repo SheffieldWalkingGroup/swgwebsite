@@ -6,9 +6,9 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.view');
  
 /**
- * HTML View class for the SWG_EventListing Component
+ * iCalendar output from the eventlisting view of the SWG Events component
  */
-class SWG_EventListingViewSWG_EventListing extends JView
+class SWG_EventsViewEventListing extends JView
 {
 	// Overwriting JView display method
 	function display($tpl = "icalendar") 

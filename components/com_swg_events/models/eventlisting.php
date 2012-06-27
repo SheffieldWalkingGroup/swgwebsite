@@ -13,7 +13,7 @@ JLoader::register('Event', JPATH_BASE."/swg/Models/Event.php");
 /**
  * HelloWorld Model
  */
-class SWG_EventListingModelSWG_EventListing extends JModelItem
+class SWG_EventsModelEventlisting extends JModelItem
 {
 	/**
 	 * @var string msg

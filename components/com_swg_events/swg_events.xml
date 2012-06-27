@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="2.5.0" method="upgrade">
  
-	<name>SWG Event Listing</name>
+	<name>SWG Events</name>
 	<!-- The following elements are optional and free of formatting constraints -->
 	<creationDate>May 2012</creationDate>
 	<author>Peter Copeland</author>
@@ -22,14 +22,14 @@
 		in this section are copied from /site/ in the package -->
 	<files folder="site">
 		<filename>index.html</filename>
-		<filename>swg_eventlisting.php</filename>
+		<filename>swg_events.php</filename>
 		<folder>views</folder>
 		<folder>models</folder>
 	</files>
  
 	<administration>
 		<!-- Administration Menu Section -->
-		<menu>SWG Event Listing</menu>
+		<menu>Event Listing</menu>
 		<!-- Administration Main File Copy Section -->
 		<!-- Note the folder attribute: This attribute describes the folder
 			to copy FROM in the package to install therefore files copied
@@ -37,7 +37,7 @@
 		<files folder="admin">
 			<!-- Admin Main File Copy Section -->
 			<filename>index.html</filename>
-			<filename>swg_eventlisting.php</filename>
+			<filename>swg_events.php</filename>
 		</files>
 	</administration>
  
