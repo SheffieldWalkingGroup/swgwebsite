@@ -8,16 +8,24 @@ class Social extends Event {
   protected $bookingsInfo;
   protected $clipartFilename;
   
+  protected $start;
+  protected $end;
+  
   public function __construct($dbArr)
   {
     $this->id = $dbArr['SequenceID'];
     $this->name = $dbArr['title'];
-    $this->startDate = strtotime($dbArr['on_date']);
+    $this->start = strtotime($dbArr['on_date']." ".$dbArr['starttime']);
     $this->description = $dbArr['fulldescription'];
     $this->okToPublish = $dbArr['readytopublish'];
     
     $this->bookingsInfo = $dbArr['bookingsinfo'];
     $this->clipartFilename = $dbArr['clipartfilename'];
+    
+    if (!empty($dbArr['endtime']))
+      $this->end = strtotime($dbArr['on_date']." ".$dbArr['endtime']);
+    else
+      $this->end = $this->start + 30*60;
   }
   
   public function __get($name)

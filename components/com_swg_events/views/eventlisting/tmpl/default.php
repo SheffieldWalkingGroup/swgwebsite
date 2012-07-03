@@ -9,9 +9,9 @@ foreach ($this->events as $event) {?>
         <?php 
           if ($event instanceof Weekend)
             // Display start and end dates for weekends. Only display month for start if the weekend straddles a month boundary
-            echo date("l jS".($this->notSameMonth($event->startDate, $event->endDate)?" F":""), $event->startDate)." - ".date("l jS F".($this->notThisYear($event->endDate)?" Y":""), $event->endDate); 
+            echo date("l jS".($this->notSameMonth($event->start, $event->endDate)?" F":""), $event->start)." - ".date("l jS F".($this->notThisYear($event->endDate)?" Y":""), $event->endDate); 
           else
-            echo date("l jS F".($this->notThisYear($event->startDate)?" Y":""),$event->startDate); // Just start date for other things
+            echo date("l jS F".($this->notThisYear($event->start)?" Y":""),$event->start); // Just start date for other things
         ?>
       </span>
       <?php if ($event instanceof WalkInstance):?>
@@ -74,6 +74,10 @@ foreach ($this->events as $event) {?>
           <span>Backmarker:</span> <?php echo $event->backmarker->displayName; ?>
         </p>
       <?php elseif ($event instanceof Social):?>
+        <?php if ($this->isTimeSet($event->start)):?>
+          <p class="start"><span>Start: </span><?php echo date("H:i", $event->start); ?></p>
+          <p class="end"><span>End: </span><?php echo date("H:i", $event->end); ?> (approx)</p>
+        <?php endif; ?>
         <p class="socialbooking">
           <span>Contact:</span> <?php echo $event->bookingsInfo; ?>
         </p>

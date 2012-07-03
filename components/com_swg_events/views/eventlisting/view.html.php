@@ -45,4 +45,15 @@ class SWG_EventsViewEventListing extends JView
 	{
 	  return (date("m", $date1) != date("m",$date2));
 	}
+	
+	/**
+	 * True if time is not midnight. 
+	 * We're making an assumption here that no event will start at midnight,
+	 * but if that's wrong all that happens is the start time doesn't appear in the event info
+	 * @param  $timestamp
+	 */
+	function isTimeSet($timestamp)
+	{
+	  return (date("His", $timestamp) != 0);
+	}
 }

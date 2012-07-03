@@ -96,15 +96,15 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  do {
 	    
 	    // Get events happening on this date
-	    while (isset($this->weekends[$weekendPointer]) && $this->weekends[$weekendPointer]->startDate == $nextEvent) {
+	    while (isset($this->weekends[$weekendPointer]) && Event::timeToDate($this->weekends[$weekendPointer]->start) == $nextEvent) {
 	      $events[] = $this->weekends[$weekendPointer];
 	      $weekendPointer++;
 	    }
-	    while (isset($this->walks[$walkPointer]) && $this->walks[$walkPointer]->startDate == $nextEvent) {
+	    while (isset($this->walks[$walkPointer]) && Event::timeToDate($this->walks[$walkPointer]->start) == $nextEvent) {
 	      $events[] = $this->walks[$walkPointer];
 	      $walkPointer++;
 	    }
-	    while (isset($this->socials[$socialPointer]) && $this->socials[$socialPointer]->startDate == $nextEvent) {
+	    while (isset($this->socials[$socialPointer]) && Event::timeToDate($this->socials[$socialPointer]->start) == $nextEvent) {
 	      $events[] = $this->socials[$socialPointer];
 	      $socialPointer++;
 	    }
@@ -127,28 +127,28 @@ class SWG_EventsModelEventlisting extends JModelItem
 	{
 	  $nextEvent = false;
 	  if (isset($this->walks[$walkIndex])) {
-	    $nextEvent = $this->walks[$walkIndex]->startDate;
+	    $nextEvent = Event::timeToDate($this->walks[$walkIndex]->start);
 	  }
 	  
 	  if (isset($this->socials[$socialIndex])) {
 	    if (isset($nextEvent)) {
 	      if ($reversed)
-	        $nextEvent = max($nextEvent, $this->socials[$socialIndex]->startDate);
+	        $nextEvent = max($nextEvent, Event::timeToDate($this->socials[$socialIndex]->start));
 	      else
-	        $nextEvent = min($nextEvent, $this->socials[$socialIndex]->startDate);
+	        $nextEvent = min($nextEvent, Event::timeToDate($this->socials[$socialIndex]->start));
 	    }else
-	      $nextEvent = $this->socials[$socialIndex]->startDate;
+	      $nextEvent = Event::timeToDate($this->socials[$socialIndex]->start);
 	  }
 	  
 	  if (isset($this->weekends[$weekendIndex])) {
 	    if (isset($nextEvent)) {
 	      if ($reversed)
-	        $nextEvent = max($nextEvent, $this->weekends[$weekendIndex]->startDate);
+	        $nextEvent = max($nextEvent, Event::timeToDate($this->weekends[$weekendIndex]->start));
 	      else
-	        $nextEvent = min($nextEvent, $this->weekends[$weekendIndex]->startDate);
+	        $nextEvent = min($nextEvent, Event::timeToDate($this->weekends[$weekendIndex]->start));
 	    }
 	    else
-	      $nextEvent = $this->$weekendIndex[0]->startDate;
+	      $nextEvent = Event::timeToDate($this->$weekendIndex[0]->start);
 	  }
 	  return $nextEvent;
 	}

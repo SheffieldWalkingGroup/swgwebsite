@@ -44,7 +44,7 @@ class WalkInstance extends Event {
   {
     $this->id = $dbArr['SequenceID'];
     $this->name = $dbArr['name'];
-    $this->startDate = strtotime($dbArr['WalkDate']." ".$dbArr['meettime']);
+    $this->start = strtotime($dbArr['WalkDate']." ".$dbArr['meettime']);
     $this->description = $dbArr['routedescription'];
     $this->okToPublish = $dbArr['readytopublish'];
     
@@ -65,7 +65,7 @@ class WalkInstance extends Event {
 //     $this->transportByCar = $dbArr['transport'];
 //     $this->transportPublic = $dbArr[''];
     
-    $this->meetPoint = new WalkMeetingPoint($dbArr['meetplace'], $this->startDate, $dbArr['meetplacetime']);
+    $this->meetPoint = new WalkMeetingPoint($dbArr['meetplace'], $this->start, $dbArr['meetplacetime']);
     $this->leader = Leader::getLeader($dbArr['leaderid']);
     $this->backmarker = Leader::getLeader($dbArr['backmarkerid']);
     if (!empty($dbArr['leadername']))
@@ -138,10 +138,10 @@ class WalkInstance extends Event {
   }
   
   public function getWalkDay() {
-    if (date("N",$this->startDate) < 6)
+    if (date("N",$this->start) < 6)
       return "Weekday";
     else
-      return date("l",$this->startDate);
+      return date("l",$this->start);
   }
   
   /**
@@ -151,7 +151,7 @@ class WalkInstance extends Event {
    *   TODO: Rounded up to the nearest hour
    */
   public function estimateFinishTime() {
-    $finish = $this->startDate;
+    $finish = $this->start;
     if (!$this->meetPoint->isAtWalkStart())
       $finish += 3600; // Add 1 hour travelling time
     $hoursWalking = 0.5*$this->miles;

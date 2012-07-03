@@ -73,7 +73,7 @@ var showPopup = function(eventType, eventID, link) {
 			// Build up the basic components that apply to all event types
 			var infoHeader = new Element("div", {"class":"eventheader"});
 			var eventName = new Element("h3", {"text":event.name,"style":"clear:both;"});
-			var eventDate = new Element("span",{"class":"date","text":timestampToDate(event.startDate)});
+			var eventDate = new Element("span",{"class":"date","text":timestampToDate(event.start)});
 			infoHeader.adopt(eventDate, eventName);
 			infoPopup.adopt(infoHeader);
 			
@@ -87,11 +87,11 @@ var showPopup = function(eventType, eventID, link) {
 			switch(eventType) {
 				case "walk":
 					// Add the day to the class
-					var startDate = new Date(event.startDate*1000);
+					var start = new Date(event.start*1000);
 					var day = "weekday";
-					if (startDate.getDay() == 0)
+					if (start.getDay() == 0)
 						day = "sunday";
-					else if (startDate.getDay() == 6)
+					else if (start.getDay() == 6)
 						day = "saturday";
 					infoPopup.addClass("walk"+day);
 					

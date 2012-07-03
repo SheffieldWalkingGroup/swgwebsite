@@ -20,7 +20,7 @@ class Weekend extends Event {
   {
     $this->id = $dbArr['ID'];
     $this->name = $dbArr['name'];
-    $this->startDate = strtotime($dbArr['startdate']);
+    $this->start = strtotime($dbArr['startdate']);
     $this->endDate = strtotime($dbArr['enddate']);
     $this->placeName = $dbArr['placename'];
     $this->area = $dbArr['area'];

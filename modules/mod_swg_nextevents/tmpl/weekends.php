@@ -7,10 +7,10 @@
             // If the start and end are in the same month, just output the date of the start
             // and get the month from the end (e.g. 20th-22nd Apr)
             // If they're in different months, display the month for each.
-            if (date("M",$event->startDate == date("M",$event->endDate))) {
-             echo date("jS", $event->startDate);
+            if (date("M",$event->start == date("M",$event->endDate))) {
+             echo date("jS", $event->start);
             } else {
-              echo date("jS M", $event->startDate);
+              echo date("jS M", $event->start);
             }
             echo "-".date("jS M", $event->endDate);
           ?>

@@ -11,7 +11,7 @@ abstract class Event extends SWGBaseModel {
   // Event properties
   protected $id;
   protected $name;
-  protected $startDate;
+  protected $start;
   protected $description;
   protected $okToPublish;
   
@@ -43,7 +43,7 @@ abstract class Event extends SWGBaseModel {
    * @param int $time Timestamp. Supports DateToday constant.
    * @param bool $after True to return the day after this timestamp, false (default) to return the day of the timestamp
    */
-  protected static function timeToDate($time, $after=false) {
+  public static function timeToDate($time, $after=false) {
     $time = intval($time);
     if ($time == self::DateToday)
       $rawDate = getdate();

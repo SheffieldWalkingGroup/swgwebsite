@@ -75,6 +75,15 @@
 				<option value="0">Oldest first</option>
 				<option value="1">Newest first</option>
 			</field>
+			<field
+				name="protocolReminders"
+				type="textarea"
+				label="Protocol reminders"
+				description="One reminder on each line. These will be displayed between events."
+				rows="10"
+				cols="60"
+				filter="raw"
+			/>
 			
 		</fieldset>
 	</fields>
