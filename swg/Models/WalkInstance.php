@@ -17,25 +17,26 @@ class WalkInstance extends Event {
   protected $startPlaceName;
   protected $endGridRef;
   protected $endPlaceName;
-  
+
   protected $childFriendly;
   protected $dogFriendly;
   protected $speedy;
   protected $isLinear;
   protected $transportByCar;
   protected $transportPublic;
-  
+
   protected $leader;
   protected $backmarker;
   protected $meetPoint;
-  
+
   protected $dateAltered;
-  
+
   protected $headCount;
   protected $mileometer;
   protected $reviewComments;
   protected $deleted;
-  
+  protected $cancelled;
+
   /**
    * Constructs a walk object from an array of database fields
    * @param array $dbArr Associative array from the walkprogramewalks table
@@ -47,7 +48,7 @@ class WalkInstance extends Event {
     $this->start = strtotime($dbArr['WalkDate']." ".$dbArr['meettime']);
     $this->description = $dbArr['routedescription'];
     $this->okToPublish = $dbArr['readytopublish'];
-    
+
     $this->walk = $dbArr['walklibraryid']; // TODO: Load it?
     $this->distanceGrade = $dbArr['distancegrade'];
     $this->difficultyGrade = $dbArr['difficultygrade'];
@@ -57,14 +58,14 @@ class WalkInstance extends Event {
     $this->startPlaceName = $dbArr['startplacename'];
     $this->endGridRef = $dbArr['endgridref'];
     $this->endPlaceName = $dbArr['endplacename'];
-    
+
     $this->childFriendly = $dbArr['childfriendly'];
     $this->dogFriendly = $dbArr['dogfriendly'];
     $this->speedy = $dbArr['speedy'];
     $this->isLinear = $dbArr['islinear'];
-//     $this->transportByCar = $dbArr['transport'];
-//     $this->transportPublic = $dbArr[''];
-    
+    //     $this->transportByCar = $dbArr['transport'];
+    //     $this->transportPublic = $dbArr[''];
+
     $this->meetPoint = new WalkMeetingPoint($dbArr['meetplace'], $this->start, $dbArr['meetplacetime']);
     $this->leader = Leader::getLeader($dbArr['leaderid']);
     $this->backmarker = Leader::getLeader($dbArr['backmarkerid']);
@@ -72,19 +73,20 @@ class WalkInstance extends Event {
       $this->leader->setDisplayName($dbArr['leadername']);
     if (!empty($dbArr['backmarkername']))
       $this->backmarker->setDisplayName($dbArr['backmarkername']);
-//     $this->dateAltered = $dbArr[''];
-    
-//     $this->headCount = $dbArr[''];
-//     $this->mileometer = $dbArr[''];
-//     $this->reviewComments = $dbArr[''];
-//     $this->deleted = $dbArr[''];
+    //     $this->dateAltered = $dbArr[''];
+
+    //     $this->headCount = $dbArr[''];
+    //     $this->mileometer = $dbArr[''];
+    //     $this->reviewComments = $dbArr[''];
+    //     $this->deleted = $dbArr[''];
+    $this->cancelled = $dbArr['cancelled'];
   }
-  
+
   public function __get($name)
   {
     return $this->$name; // TODO: What params should be exposed?
   }
-  
+
   /**
    * Gets a limited number of events, starting today and going forwards
    * Partly for backwards-compatibility, but also to improve readability
@@ -93,7 +95,7 @@ class WalkInstance extends Event {
   public static function getNext($numEvents) {
     return self::get(self::DateToday, self::DateEnd, $numEvents);
   }
-  
+
   /**
    * Gets the next few scheduled walks
    * @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
@@ -106,7 +108,7 @@ class WalkInstance extends Event {
     $query = $db->getQuery(true);
     $query->select("*");
     $query->from("walkprogrammewalks");
-    
+
     // TODO: This is a stored proc currently - can we use this?
     $query->where(array(
         "WalkDate >= '".self::timeToDate($startDate)."'",
@@ -117,7 +119,7 @@ class WalkInstance extends Event {
     $query->order(array("WalkDate ASC", "meettime ASC"));
     $db->setQuery($query);
     $walkData = $db->loadAssocList();
-    
+
     // Build an array of WalkInstances
     // TODO: Set actual SQL limit
     $walks = array();
@@ -125,25 +127,25 @@ class WalkInstance extends Event {
       $walk = new WalkInstance(array_shift($walkData));
       $walks[] = $walk;
     }
-    
+
     return $walks;
   }
-  
+
   public function isCancelled() {
-    return false;
+    return $this->cancelled;
   }
-  
+
   public function getEventType() {
     return "walk";
   }
-  
+
   public function getWalkDay() {
     if (date("N",$this->start) < 6)
       return "Weekday";
     else
       return date("l",$this->start);
   }
-  
+
   /**
    * Estimate the finish time as:
    *   1 hour after the start time (unless the meet point is the walk start)
@@ -157,13 +159,13 @@ class WalkInstance extends Event {
     $hoursWalking = 0.5*$this->miles;
     return ($finish + 3600*$hoursWalking);
   }
-  
+
   public static function getSingle($id) {
     $db = JFactory::getDBO();
     $query = $db->getQuery(true);
     $query->select("*");
     $query->from("walkprogrammewalks");
-  
+
     $query->where(array("SequenceID = ".intval($id)));
     $db->setQuery($query);
     $res = $db->query();
@@ -171,6 +173,6 @@ class WalkInstance extends Event {
       return new WalkInstance($db->loadAssoc());
     else
       return null;
-  
+
   }
 }

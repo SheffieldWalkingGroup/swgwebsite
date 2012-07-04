@@ -73,6 +73,10 @@ abstract class Event extends SWGBaseModel {
     return strtolower(get_class($this));
   }
   
+  public function isCancelled() {
+    return false;
+  }
+  
   
   
   

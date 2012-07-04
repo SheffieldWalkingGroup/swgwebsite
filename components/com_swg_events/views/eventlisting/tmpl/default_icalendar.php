@@ -21,14 +21,14 @@ $description = $event->description."\n\n";
 
 // Contacts are specified in different formats for different events
 if ($event instanceof WalkInstance) {
-  $description .= "Leader ".$event->leader->displayName." (".$event->leader->telephone.")";
+  $description .= "Leader: ".$event->leader->displayName." (".$event->leader->telephone.")";
   if ($event->leader->noContactOfficeHours)
     $description .= " - don't call during office hours";
-  $description .= "\\nBackmarker ".$event->backmarker->displayName;
+  $description .= "\\nBackmarker: ".$event->backmarker->displayName;
 } else if ($event instanceof Social) {
-  $description .= "Contact ".$event->bookingsInfo;
+  $description .= "Contact: ".$event->bookingsInfo;
 } else if ($event instanceof Weekend) {
-  $description .= "Contact ".$event->contact;
+  $description .= "Contact: ".$event->contact;
 }
 echo "DESCRIPTION: ". $this->parseText($description)."\r\n";
    
@@ -41,6 +41,15 @@ echo "DTEND:";
   } else if ($event instanceof Social) {
     echo strftime("%Y%m%dT%H%M%S", $event->end);
   }
+echo "\r\n";
+
+echo "STATUS:";
+  if ($event->okToPublish && ! $event->isCancelled())
+    echo "CONFIRMED";
+  else if ($event->isCancelled())
+    echo "CANCELLED";
+  else
+    echo "TENTATIVE";
 echo "\r\n";
 // TODO: iCalendar can handle cancelled events & updates. Look up full documentation. ?>
 END:VEVENT
