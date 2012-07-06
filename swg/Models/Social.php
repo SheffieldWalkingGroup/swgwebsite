@@ -13,6 +13,7 @@ class Social extends Event {
   
   public function __construct($dbArr)
   {
+    parent::__construct();
     $this->id = $dbArr['SequenceID'];
     $this->name = $dbArr['title'];
     $this->start = strtotime($dbArr['on_date']." ".$dbArr['starttime']);

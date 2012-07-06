@@ -14,12 +14,17 @@ abstract class Event extends SWGBaseModel {
   protected $start;
   protected $description;
   protected $okToPublish;
+  protected $alterations;
   
   const DateToday = -1;
   const DateYesterday = -2;
   const DateTomorrow = -3;
   const DateEnd = 2147483647; // This is the end of Unix time, 19th January 2038. I expect this system to be replaced by then
   
+  
+  public function __construct() {
+    $this->alterations = new EventAlterations();
+  }
   
   
   /**
@@ -76,9 +81,58 @@ abstract class Event extends SWGBaseModel {
   public function isCancelled() {
     return false;
   }
-  
-  
-  
-  
+}
 
+/**
+ * Keeps track of alterations to an event
+ * @author peter
+ *
+ */
+class EventAlterations extends SWGBaseModel {
+  
+  protected $details = false;
+  protected $cancelled = false;
+  protected $placeTime = false;
+  protected $organiser = false;
+  protected $date = false;
+
+  public function setDetails($d) {
+    $this->details = (bool)$d; 
+  }
+  
+  public function setCancelled($c) {
+    $this->cancelled = (bool)$c;
+  }
+  
+  public function setPlaceTime($m) {
+    $this->placeTime = (bool)$m;
+  }
+  
+  public function setOrganiser($l) {
+    $this->organiser = (bool)$l;
+  }
+  
+  public function setDate($d) {
+    $this->date = (bool)$d;
+  }
+  
+  public function __get($name)
+  {
+    return $this->$name; // TODO: What params should be exposed?
+  }
+  
+  public function anyAlterations()
+  {
+    return ($this->details || $this->cancelled || $this->placeTime || $this->organiser || $this->date);
+  }
+  
+  /**
+   * Add in anyAlterations
+   * @see SWGBaseModel::sharedProperties()
+   */
+  protected function sharedProperties() {
+    $prop = parent::sharedProperties();
+    $prop['any'] = $this->anyAlterations();
+    return $prop;
+  }
 }

@@ -54,8 +54,12 @@ var showPopup = function(eventType, eventID, link) {
 	if (infoPopup != null)
 		infoPopup.dispose();
 	infoPopup = new Element("div",{
-		"class":"popup "+eventType
+		"class":"popup "
 	});
+	var popupContents = new Element("div",{
+		"class":"content "+eventType
+	});
+	infoPopup.adopt(popupContents);
 	document.body.adopt(infoPopup);
 	// Move the popup to the right position based on the current cursor position
 	// Making sure it is inside the visible screen area
@@ -70,18 +74,38 @@ var showPopup = function(eventType, eventID, link) {
 		method:"get",
 		onSuccess: function(event) {
 			
+			// Add alterations to the whole popup
+			if (event.alterations.any) {
+				infoPopup.addClass("popup-altered");
+			}
+			
+			if (event.alterations.cancelled) {
+				popupContents.addClass("cancelled");
+				var cancelledText = new Element("p", {
+					"class":"cancelled-message",
+					"html":"Cancelled"
+				});
+				infoPopup.adopt(cancelledText);
+			}
+				
+			
 			// Build up the basic components that apply to all event types
 			var infoHeader = new Element("div", {"class":"eventheader"});
 			var eventName = new Element("h3", {"text":event.name,"style":"clear:both;"});
 			var eventDate = new Element("span",{"class":"date","text":timestampToDate(event.start)});
+			if (event.alterations.date)
+				eventDate.addClass("altered");
+			
 			infoHeader.adopt(eventDate, eventName);
-			infoPopup.adopt(infoHeader);
+			popupContents.adopt(infoHeader);
 			
 			var description = new Element("div", {"class":"description","html":"<p>"+event.description+"</p>"});
-			infoPopup.adopt(description);
+			popupContents.adopt(description);
+			if (event.alterations.details)
+				description.addClass("altered");
 			
 			var eventInfo = new Element("div", {"class":"eventinfo"});
-			infoPopup.adopt(eventInfo);
+			popupContents.adopt(eventInfo);
 			
 			// Now do specific components
 			switch(eventType) {
@@ -93,7 +117,7 @@ var showPopup = function(eventType, eventID, link) {
 						day = "sunday";
 					else if (start.getDay() == 6)
 						day = "saturday";
-					infoPopup.addClass("walk"+day);
+					popupContents.addClass("walk"+day);
 					
 					var rating = new Element("span", {"class":"rating", "text":event.distanceGrade+event.difficultyGrade+" ("+event.miles+" miles)"});
 					rating.inject(eventName,'before');
@@ -131,6 +155,8 @@ var showPopup = function(eventType, eventID, link) {
 						"html":"<span>Transport:</span> " + transportText
 					});
 					eventInfo.adopt(transport);
+					if (event.alterations.placeTime)
+						transport.addClass("altered");
 					
 					var leaderText = event.leader.displayName+
 						" ("+event.leader.telephone+")";
@@ -141,6 +167,8 @@ var showPopup = function(eventType, eventID, link) {
 						"class":"leader",
 						"html":"<span>Leader:</span> "+leaderText
 					});
+					if (event.alterations.organiser)
+						leader.addClass("altered");
 					eventInfo.adopt(leader);
 					
 					var backmarker = new Element("p", {
@@ -169,6 +197,8 @@ var showPopup = function(eventType, eventID, link) {
 						"class":eventType+"booking",
 						"html":"<span>Contact:</span> "+event.contact
 					});
+					if (event.alterations.organiser)
+						contact.addClass("altered");
 					eventInfo.adopt(moreInfo,places,contact);
 					break;
 				case "social":
@@ -176,6 +206,8 @@ var showPopup = function(eventType, eventID, link) {
 						"class":eventType+"booking",
 						"html":"<span>Contact:</span> "+event.bookingsInfo
 					});
+					if (event.alterations.organiser)
+						contact.addClass("altered");
 					eventInfo.adopt(contact);
 					
 					if (eventType == "weekend")

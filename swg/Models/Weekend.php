@@ -18,6 +18,7 @@ class Weekend extends Event {
   
   public function __construct($dbArr)
   {
+    parent::__construct();
     $this->id = $dbArr['ID'];
     $this->name = $dbArr['name'];
     $this->start = strtotime($dbArr['startdate']);

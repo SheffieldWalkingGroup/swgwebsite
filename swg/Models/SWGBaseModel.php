@@ -15,7 +15,7 @@ abstract class SWGBaseModel {
   /**
    * Gets a nested array of all non-private properties
    */
-  private function sharedProperties() {
+  protected function sharedProperties() {
     $properties = array();
     
     foreach ($this as $key => $value) {

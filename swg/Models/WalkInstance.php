@@ -43,6 +43,7 @@ class WalkInstance extends Event {
    */
   public function __construct($dbArr)
   {
+    parent::__construct();
     $this->id = $dbArr['SequenceID'];
     $this->name = $dbArr['name'];
     $this->start = strtotime($dbArr['WalkDate']." ".$dbArr['meettime']);
@@ -79,7 +80,11 @@ class WalkInstance extends Event {
     //     $this->mileometer = $dbArr[''];
     //     $this->reviewComments = $dbArr[''];
     //     $this->deleted = $dbArr[''];
-    $this->cancelled = $dbArr['cancelled'];
+    $this->alterations->setDetails($dbArr['detailsaltered']);
+    $this->alterations->setCancelled($dbArr['cancelled']);
+    $this->alterations->setPlaceTime($dbArr['meetplacetimedetailsaltered']);
+    $this->alterations->setOrganiser($dbArr['walkleaderdetailsaltered']);
+    $this->alterations->setDate($dbArr['datealtered']);
   }
 
   public function __get($name)

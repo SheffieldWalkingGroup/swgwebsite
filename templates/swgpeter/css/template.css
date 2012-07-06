@@ -320,8 +320,12 @@ div.slideshow {
 	color:red;
 }
 .moduletable .cancelled a {
-	color:red;
 	text-decoration:none;
+	color:red;
+}
+
+.moduletable li.altered {
+	border:1px solid red;
 }
 
 .clear {
@@ -329,14 +333,27 @@ div.slideshow {
 }
 
 .popup {
-    border:1px solid #A8D3A9;
-    background-color:rgba(255,255,255,0.92) !important;
     z-index:5;
-    width:580px;
+    width:582px;
+}
+
+.popup .content {
+    background-color:rgba(255,255,255,0.92) !important;
     min-height:250px;
+    border:1px solid #A8D3A9;
     border:1px solid #999999;
     border-radius:15px;
     box-shadow:4px 7px 10px #222;
+    width:580px;
+	
+}
+
+.popup-altered {
+	width:584px;
+}
+
+.popup-altered .content {
+	width:582px;
 }
 
 .popup .header, .popup .eventheader {
@@ -508,6 +525,26 @@ div.slideshow {
 	background:url(/templates/swgpeter/images/contenthead-orange.png);
 }
 
+.event .cancelled, .popup .cancelled * {
+	opacity:0.5;
+}
+
+.cancelled-message {
+	position:absolute;
+	font:6em bold sans-serif;
+	color:red;
+	z-index:6;
+	text-align:center;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	-moz-transform: rotate(-10deg);
+	-webkit-transform: rotate(-10deg);
+	-ms-transform: rotate(-10deg);
+	-o-transform: rotate(-10deg);
+}
+
 .eventheader {
 	border-bottom:1px solid #555;
 	font-size:16px;
@@ -543,16 +580,16 @@ div.slideshow {
 }
 
 .eventinfo p {
-	margin-left:10px;
-	text-indent:55px;
+	padding-left:10px;
+	text-indent:57px;
 }
 
 .eventinfo p span {
-	width:70px;
+	width:72px;
 	display:inline-block;
 	position:absolute;
 	left:0px;
-	text-indent:0px;
+	text-indent:2px;
 }
 
 /* Slightly different layout for weekend away info to allow for "Bookings open:" */
@@ -581,6 +618,10 @@ div.slideshow {
 	right:15px;
 	bottom:5px;
 	margin:0;
+}
+
+.event .altered, .popup .altered {
+	border:1px solid red;
 }
 
 footer {
