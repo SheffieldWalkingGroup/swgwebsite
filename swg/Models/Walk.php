@@ -105,7 +105,9 @@ class Walk extends SWGBaseModel {
     $start = new LatLng($firstPoint->attributes->getNamedItem("lat")->nodeValue, $firstPoint->attributes->getNamedItem("lon")->nodeValue);
     $start->WGS84ToOSGB36();
     $this->startGridRef = $start->toOSRef()->toSixFigureString();
-    // TODO: Attempt to get a place name
+    $startPlace = $this->reverseGeocode($start->toOSRef());
+    if ($startPlace)
+      $this->startPlaceName = $startPlace;
 
     /* Now we start to iterate through all the waypoints. We start at the second point.
      * For each point, we want the distance from the last point (added to cumulative
@@ -150,7 +152,9 @@ class Walk extends SWGBaseModel {
     $end = new LatLng($lastPoint->attributes->getNamedItem("lat")->nodeValue, $lastPoint->attributes->getNamedItem("lon")->nodeValue);
     $end->WGS84ToOSGB36();
     $this->endGridRef = $end->toOSRef()->toSixFigureString();
-    // TODO: Attempt to get a place name
+    $endPlace = $this->reverseGeocode($end->toOSRef());
+    if ($endPlace)
+      $this->endPlaceName = $endPlace;
     
     // Is this a linear walk?
     $deltaEasting = $end->toOSRef()->easting - $start->toOSRef()->easting;
@@ -168,5 +172,101 @@ class Walk extends SWGBaseModel {
       $this->distanceGrade = "B";
     else
       $this->distanceGrade = "C";
+  }
+  
+  /**
+   * Attempts to get a place name by reverse geocoding.
+   * TODO: Look in our own database for common points
+   * If we don't have a reference for this point in our own database,
+   * we use OpenStreetMap's Nominatim API (CC-BY-SA)
+   * See http://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding_.2F_Address_lookup
+   * We only use the returned value if it's one of the following, in this order (first is kept):
+   * * information
+   * * parking
+   * * suburb (TODO: Not always useful - King's Tree is reported as Bradfield
+   * * townhall
+   * If none of these match, the following combinations are also valid:
+   * * place_of_worship, suburb
+   * * bus_stop, suburb
+   * * pub, suburb
+   * (Note: Suburb is usually the village name, e.g. Tideswell CP)
+   * TODO: Remove "CP" and similar
+   * TODO: Maybe display location type, e.g. pub, car park...
+   * @param $point LatLng|OSRef Point to look up. LatLng is assumed to be in WGS84, OSRef in OSGB36
+   */
+  public function reverseGeocode($point)
+  {
+    $validLocationTypes = array(
+       "information","parking",
+       "townhall",
+    );
+    
+    $backupLocations = array(
+        "place_of_worship",
+        "bus_stop",
+        "pub",
+    );
+    $return = false; // We return false if no suitable place found
+    
+    if ($point instanceof OSRef)
+    {
+      $point = $point->toLatLng();
+      $point->OSGB36ToWGS84();
+    }
+    // TODO: Reject point if it isn't now a LatLng
+    
+    // TODO: Our own database
+    
+    // Connect to Nominatim with CURL, get results in XML format
+    $options = array(
+        'format=xml',
+        "lat=".$point->lat,
+        "lon=".$point->lng,
+        'addressdetails=1',
+        );
+    
+    $curl = curl_init("http://nominatim.openstreetmap.org/reverse?".implode("&", $options));
+    curl_setopt($curl,CURLOPT_USERAGENT, "Sheffield Walking Group Leaders' area - admin contact tech@sheffieldwalkinggroup.org.uk");
+    curl_setopt($curl,CURLOPT_RETURNTRANSFER, true);
+    
+    $res = curl_exec($curl);
+    if ($res)
+    {
+      // Use the DOM parser
+      $result = DomDocument::loadXML($res);
+      $address = $result->getElementsByTagName("addressparts")->item(0)->childNodes;
+      
+      // Get a suitable place name
+      $possibleLocation = ""; // Store second-class location data here until we find something better 
+      foreach($address as $addressPart)
+      {
+        if (in_array($addressPart->nodeName, $validLocationTypes))
+        {
+          $return = $addressPart->nodeValue;
+          break;
+        }
+        
+        if (empty($possibleLocation) && in_array($addressPart->nodeName, $backupLocations))
+        {
+          $possibleLocation = $addressPart->nodeValue;
+          
+          if ($addressPart->nodeName != "suburb")
+          {
+            $suburbs = $result->getElementsByTagName("addressparts")->item(0)->getElementsByTagName("suburb");
+            if (!empty($suburbs))
+              $possibleLocation.= ", ".$suburbs->item(0)->nodeValue;
+          }
+        }
+      }
+      
+      if (!empty($possibleLocation))
+        return $possibleLocation;
+    }
+    else
+    {
+      var_dump(curl_error($curl));
+    }
+    
+    return $return;
   }
 }

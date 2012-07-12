@@ -2,7 +2,7 @@
 define("_JEXEC",true);
 include_once("../Models/Walk.php");
 $walk = new Walk();
-$walk->loadRoute(file_get_contents("/home/peter/Documents/Outdoors/Derwent_hd_loop.gpx"), true);
+$walk->loadRoute(file_get_contents($argv[1]), true);
 
 echo "Distance: ".$walk->miles." miles (".$walk->distanceGrade.")\n";
 if ($walk->isLinear) echo "Linear"; else echo "Circular"; echo "\n";
