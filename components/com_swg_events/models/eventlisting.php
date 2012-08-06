@@ -89,70 +89,63 @@ class SWG_EventsModelEventlisting extends JModelItem
 	    $this->socials = array_reverse($this->socials);
 	    $this->weekends = array_reverse($this->weekends);
 	  }
-	  $nextEvent = $this->nextEventAfterIndex(0,0,0,(JRequest::getInt("order")==1));
-	  
+	  $nextEvent = null;
 	  $events = array();
-	  
 	  do {
-	    
-	    // Get events happening on this date
-	    while (isset($this->weekends[$weekendPointer]) && Event::timeToDate($this->weekends[$weekendPointer]->start) == $nextEvent) {
-	      $events[] = $this->weekends[$weekendPointer];
-	      $weekendPointer++;
-	    }
-	    while (isset($this->walks[$walkPointer]) && Event::timeToDate($this->walks[$walkPointer]->start) == $nextEvent) {
-	      $events[] = $this->walks[$walkPointer];
+	    $nextEvent = $this->nextEvent($nextEvent, $walkPointer, $socialPointer, $weekendPointer, (JRequest::getInt("order") == 1));
+	    $events[] = $nextEvent;
+	    // Increment the pointer for this event type
+	    if ($nextEvent instanceof WalkInstance)
 	      $walkPointer++;
-	    }
-	    while (isset($this->socials[$socialPointer]) && Event::timeToDate($this->socials[$socialPointer]->start) == $nextEvent) {
-	      $events[] = $this->socials[$socialPointer];
+	    else if ($nextEvent instanceof Social)
 	      $socialPointer++;
-	    }
-	    
-	    // Get the dates of each next event
-        $nextEvent = $this->nextEventAfterIndex($walkPointer, $socialPointer, $weekendPointer, (JRequest::getInt("order") == 1));
+	    else if ($nextEvent instanceof Weekend)
+	      $weekendPointer++;
 	     
-	  } while ((count($this->walks) > $walkPointer+1) || (count($this->socials) > $socialPointer+1) || (count($this->weekends) > $weekendPointer+1));
+	  } while (
+          (count($this->walks) > $walkPointer+1) || 
+          (count($this->socials) > $socialPointer+1) || 
+          (count($this->weekends) > $weekendPointer+1)
+      );
 	  return $events;
 	}
 	
 	/**
-	 * Returns the date of the next event after the given date
-	 * @param int $walkIndex Index to start at in the walks array 
-	 * @param int $socialIndex Index to start at in the socials array
-	 * @param int $weekendIndex Index to start at in the weekends array
-	 * @return int Timestamp of next date with an event
+	 * Returns the next event after the one given
+	 * @param Event $event Event to search from. Set to null if starting at the beginning
+	 * @param int $minWalk Earliest possible walk to consider (pointer to class-level array). Not required, but makes this function much faster
+	 * @param int $minSocial Earliest possible social to consider (pointer to class-level array). Not required, but makes this function much faster
+	 * @param int $minWeekend Earliest possible weekend to consider (pointer to class-level array). Not required, but makes this function much faster
 	 */
-	private function nextEventAfterIndex($walkIndex = 0, $socialIndex = 0, $weekendIndex = 0, $reversed = false)
+	private function nextEvent(Event $event=null, $minWalk=0, $minSocial=0, $minWeekend=0)
 	{
-	  $nextEvent = false;
-	  if (isset($this->walks[$walkIndex])) {
-	    $nextEvent = Event::timeToDate($this->walks[$walkIndex]->start);
-	  }
+	  // Get the first possible event of each type. Start at $minXX, ignoring any events that are the same as the one passed in, or with an earlier start time
+	  do {
+	    $nextWalk = $this->walks[$minWalk];
+	    $minWalk++;
+	  } while (isset($event) && (($event instanceof Walk && $nextWalk->id == $event->id) || $nextWalk->start < $event->start));
 	  
-	  if (isset($this->socials[$socialIndex])) {
-	    if (isset($nextEvent)) {
-	      if ($reversed)
-	        $nextEvent = max($nextEvent, Event::timeToDate($this->socials[$socialIndex]->start));
-	      else
-	        $nextEvent = min($nextEvent, Event::timeToDate($this->socials[$socialIndex]->start));
-	    }else
-	      $nextEvent = Event::timeToDate($this->socials[$socialIndex]->start);
-	  }
+	  do {
+	    $nextSocial = $this->socials[$minSocial];
+	    $minSocial++;
+	  } while (isset($event) && (($event instanceof Social && $nextSocial->id == $event->id) || $nextSocial->start < $event->start));
 	  
-	  if (isset($this->weekends[$weekendIndex])) {
-	    if (isset($nextEvent)) {
-	      if ($reversed)
-	        $nextEvent = max($nextEvent, Event::timeToDate($this->weekends[$weekendIndex]->start));
-	      else
-	        $nextEvent = min($nextEvent, Event::timeToDate($this->weekends[$weekendIndex]->start));
-	    }
-	    else
-	      $nextEvent = Event::timeToDate($this->$weekendIndex[0]->start);
-	  }
-	  return $nextEvent;
+	  do {
+	    $nextWeekend = $this->weekends[$minWeekend];
+	    $minWeekend++;
+	  } while (isset($event) && (($event instanceof Weekend && $nextWeekend->id == $event->id) || $nextWeekend->start < $event->start));
+	  
+	  // Now find whether a walk, a social or a weekend is the next event
+	  // If two are equal, put walks first, then socials, then weekends.
+	  // Two events of the same type will go in the order they are in the database
+	  $start = min($nextWalk->start, $nextSocial->start, $nextWeekend->start);
+	  if ($nextWalk->start == $start)
+	    return $nextWalk;
+	  else if ($nextSocial->start == $start)
+	    return $nextSocial;
+	  else
+	    return $nextWeekend;
 	}
-	
 	
 	/**
 	 * Loads and caches events of a specified type
