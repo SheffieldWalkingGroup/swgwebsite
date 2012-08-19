@@ -1,6 +1,7 @@
 <?php
 defined('_JEXEC') or die('Restricted access');
 require_once("SWGBaseModel.php");
+require_once("Leader.php");
 
 /**
  * A walk in our library.
@@ -9,7 +10,8 @@ require_once("SWGBaseModel.php");
  *
  */
 class Walk extends SWGBaseModel {
-  private $walkName;
+  private $id;
+  private $name;
   private $distanceGrade;
   private $difficultyGrade;
   private $miles;
@@ -40,23 +42,141 @@ class Walk extends SWGBaseModel {
    */
   private $route;
   
+  /**
+   * Constructs a walk object from an array of database fields
+   * @param array $dbArr Associative array from the walks table
+   */
+  public function __construct($dbArr = null)
+  {
+    if (empty($dbArr))
+      return;
+    
+    $this->id = $dbArr['ID'];
+    $this->name = $dbArr['walkname'];
+    $this->distanceGrade = $dbArr['distancegrade'];
+    $this->difficultyGrade = $dbArr['difficultygrade'];
+    $this->miles = $dbArr['miles'];
+    $this->location = $dbArr['location'];
+    $this->isLinear = $dbArr['islinear'];
+    $this->startGridRef = $dbArr['startgridref'];
+    $this->startPlaceName = $dbArr['startplacename'];
+    $this->endGridRef = $dbArr['endgridref'];
+    $this->endPlaceName = $dbArr['endplacename'];
+    $this->description = $dbArr['routedescription'];
+    $this->fileLinks = $dbArr['filelinks'];
+    $this->information = $dbArr['information'];
+    $this->routeImage = $dbArr['routeimage'];
+    $this->suggestedBy = Leader::getLeader($dbArr['suggestedby']);
+    $this->status = $dbArr['status'];
+    $this->specialTBC = $dbArr['special_tbc'];
+    $this->childFriendly = $dbArr['childfriendly'];
+    $this->dogFriendly = $dbArr['dogfriendly'];
+    //     $this->transportByCar = $dbArr['transport'];
+    //     $this->transportPublic = $dbArr[''];
+    
+  }
+  
   public function __get($name)
   {
     return $this->$name; // TODO: What params should be exposed?
+  }
+  
+  public function __set($name, $value)
+  {
+    switch ($name)
+    {
+      // Strings - just save them (TODO: Safety checks?)
+      case "name":
+      case "startPlaceName":
+      case "endPlaceName":
+      case "routeDescription":
+      case "information":
+        $this->$name = $value;
+        break;
+      // Booleans
+      case "isLinear":
+      case "dogFriendly":
+      case "transportByCar":
+      case "transportPublic":
+      case "childFriendly":
+        $this->$name = (bool)$value;
+        break;
+      // More specific processing
+      case "distanceGrade":
+        $value = strtoupper($value);
+        if ($value == "A" || $value == "B" || $value == "C")
+          $this->$name = $value;
+        else
+          throw new UnexpectedValueException("Distance grade must be A, B or C");
+        break;
+      case "difficultyGrade":
+        $value = (int)$value;
+        if ($value == 1 || $value == 2 || $value == 3)
+          $this->$name = $value;
+        else
+          throw new UnexpectedValueException("Difficulty grade must be 1, 2 or 3");
+        break;
+        
+      case "miles":
+        $value = (float)$value;
+        if ($value >= 0)
+        {
+          $this->$name = $value;
+          $this->distanceGrade = $this->getDistanceGrade($value);
+        }
+        else
+          throw new UnexpectedValueException("Distance must be positive"); // TODO: Validate >0 when saving
+        break;
+        
+      // Grid references - start with two letters, then an even number of digits - at least 6
+      case "startGridRef":
+      case "endGridRef":
+        $value = str_replace(" ","",$value);
+        if (preg_match("/[A-Z][A-Z]([0-9][0-9]){3,}/", $value))
+          $this->$name = $value;
+        else
+          throw new UnexpectedValueException("Grid references must be at least 6-figures, with the grid square letters before (e.g. SK123456)");
+        break;
+        
+        
+      // Checks TODO 
+      case "location":
+      case "fileLinks":
+      case "routeImage":
+      case "suggestedBy":
+      case "status":
+      case "specialTBC":
+        $this->$name = $value;
+        break;
+    }
   }
   
   /**
    * Import a route data file
    * 
    * TODO: Needs to handle imperfect files
-   * @param unknown_type $data
+   * @param DOMDocument $data
    * @param unknown_type $parse
    */
-  public function loadRoute($data, $parse = true)
+  public function loadRoute(DOMDocument $data, $parse = true)
   {
-    $this->route = DOMDocument::loadXML($data);
+    $this->route = $data;
     if ($parse)
       $this->parseRoute();
+  }
+  
+  /**
+   * Calculate the distance grade of a walk
+   * @param float $miles Number of miles
+   */
+  private function getDistanceGrade($miles)
+  {
+    if ($miles <= 8)
+      return "A";
+    else if ($miles <= 12)
+      return "B";
+    else
+      return "C";
   }
   
   /**
@@ -85,7 +205,7 @@ class Walk extends SWGBaseModel {
   public function parseRoute()
   {
     // TODO: Error if we can't load this
-    include_once("../lib/phpcoord/phpcoord-2.3.php");
+    include_once(JPATH_ROOT."/swg/lib/phpcoord/phpcoord-2.3.php");
     
     $route = $this->route->getElementsByTagName("rte")->item(0);
     /**
@@ -166,12 +286,7 @@ class Walk extends SWGBaseModel {
     // Resolution is half a mile
     // TODO: Magic numbers
     $this->miles = round($distance*0.000621371192*2)/2;
-    if ($this->miles <= 8)
-      $this->distanceGrade = "A";
-    else if ($this->miles <= 12)
-      $this->distanceGrade = "B";
-    else
-      $this->distanceGrade = "C";
+    $this->distanceGrade = $this->getDistanceGrade($this->miles);
   }
   
   /**
@@ -183,7 +298,7 @@ class Walk extends SWGBaseModel {
    * We only use the returned value if it's one of the following, in this order (first is kept):
    * * information
    * * parking
-   * * suburb (TODO: Not always useful - King's Tree is reported as Bradfield
+   * * building
    * * townhall
    * If none of these match, the following combinations are also valid:
    * * place_of_worship, suburb
@@ -197,7 +312,7 @@ class Walk extends SWGBaseModel {
   public function reverseGeocode($point)
   {
     $validLocationTypes = array(
-       "information","parking",
+       "information","parking","building",
        "townhall",
     );
     
@@ -253,8 +368,13 @@ class Walk extends SWGBaseModel {
           if ($addressPart->nodeName != "suburb")
           {
             $suburbs = $result->getElementsByTagName("addressparts")->item(0)->getElementsByTagName("suburb");
-            if (!empty($suburbs))
-              $possibleLocation.= ", ".$suburbs->item(0)->nodeValue;
+            if (!empty($suburbs) && !empty($suburbs->item(0)->nodeValue))
+            {
+              $suburb = $suburbs->item(0)->nodeValue;
+              // Strip out "CP" if present
+              $suburb = trim(str_replace("CP", "", $suburb));
+              $possibleLocation.= ", ".$suburb;
+            }
           }
         }
       }
@@ -268,5 +388,35 @@ class Walk extends SWGBaseModel {
     }
     
     return $return;
+  }
+
+  /**
+   * Gets walks suggested by a specified person 
+   * @param Leader $suggester
+   */
+  public static function getWalksBySuggester(Leader $suggester)
+  {
+    $db = JFactory::getDBO();
+    $query = $db->getQuery(true);
+    $query->select("*");
+    $query->from("walks");
+    
+    // TODO: This is a stored proc currently - can we use this?
+    $query->where(array(
+        "suggestedby = ".(int)$suggester->id,
+    ));
+    $query->order(array("walkname ASC"));
+    $db->setQuery($query);
+    $walkData = $db->loadAssocList();
+    
+    // Build an array of WalkInstances
+    // TODO: Set actual SQL limit
+    $walks = array();
+    while (count($walkData) > 0) {
+      $walk = new Walk(array_shift($walkData));
+      $walks[] = $walk;
+    }
+    
+    return $walks;
   }
 }

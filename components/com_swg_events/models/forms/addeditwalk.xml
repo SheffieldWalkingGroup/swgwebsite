@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<form name="addeditwalk">
+		<fieldset name="publicity">
+			<field name="name" type="text" label="Name for walk" />
+			<field
+				name="routeDescription" type="textarea" rows="10" cols="50" 
+				label="Description of walk (suitable for publication in the walks programme)"
+			/>
+		</fieldset>
+		<fieldset name="gpx">
+			<field name="route" type="file" label="GPX File" />
+			<field
+				name="routeOverwrite" type="checkbox" label="Overwrite existing info" value="0" 
+				description="If you select this and upload a GPX file, any fields that can be filled from the GPX file will be overwritten"
+			/>
+		</fieldset>
+		<fieldset name="location">
+			<field
+				name="location" type="sql" label="General area" 
+				query="SELECT SequenceID, Name from walkareas" 
+				key_field="SequenceID" value_field="Name"
+			/>
+			<field name="startPlaceName" type="text" label="Start place name" />
+			<field name="startGridRef" type="text" label="Start grid reference" />
+			<field name="transportByCar" type="checkbox" label="Transport by car" value="0" />
+			<field name="transportPublic" type="checkbox" label="Transport by bus/train/tram" value="0" />
+			<field name="isLinear" type="radio" label="Shape">
+				<option value="0">Circular</option>
+				<option value="1">Linear</option>
+			</field>
+			<field name="endPlaceName" type="text" label="End place name (if linear)" />
+			<field name="endGridRef" type="text" label="End grid reference (if linear)" />
+		</fieldset>
+		<fieldset name="route">
+			<field name="miles" type="text" label="Estimated distance (miles)" />
+			<field name="difficultyGrade" type="radio" label="Difficulty grade">
+				<option value="1">1 (easy)</option>
+				<option value="2">2 (medium)</option>
+				<option value="3">3 (hard)</option>
+			</field>
+			<field
+				name="information" type="textarea" rows="10" cols="56" 
+				label="Extra info for walk planners/leaders"
+			/>
+			<field name="dogFriendly" type="checkbox" label="Route doesn't forbid dogs" value="1" />
+			<field name="childFriendly" type="checkbox" label="Route can take infant pushchairs/buggies" />
+		</fieldset>
+		
+	</form>

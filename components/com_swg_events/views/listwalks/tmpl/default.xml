@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+	<layout title="List unscheduled walks">
+		<message>Sheffield Walking Group</message>
+	</layout>
+	<fields name="request">
+		<fieldset name="request">
+			<field name="initialView" type="list" label="Initial view">
+				<option value="0">Blank</option>
+				<option value="1">Show this leader's walks</option>
+				<option value="2">Show all suggested walk</option>
+				<option value="3">Show a search form</option>
+			</field>
+		</fieldset>
+	</fields>
+</metadata>

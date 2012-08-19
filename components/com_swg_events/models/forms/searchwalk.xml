@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<form name="searchwalk">
+		<fieldset name="route">
+			<field name="keywords" label="Search in name/description" type="text" />
+			<field name="location" type="sql" label="Filter by general area" query="SELECT SequenceID, Name from walkareas" key_field="SequenceID" value_field="Name" />
+			<field name="grades" type="checkboxes" label="Filter by grades">
+				<option value="A1"></option>
+				<option value="A2"></option>
+				<option value="A3"></option>
+				
+				<option value="B1"></option>
+				<option value="B2"></option>
+				<option value="B3"></option>
+				
+				<option value="C1"></option>
+				<option value="C2"></option>
+				<option value="C3"></option>
+			</field>
+		</fieldset>
+		<fieldset name="transport">
+			<field name="transport" type="checkboxes" label="Transport by">
+				<option value="public">Bus/train/tram</option>
+				<option value="car">Car</option>
+			</field>
+		</fieldset>
+		<fieldset name="instances">
+			<field name="leader" type="sql" label="Led by" query="SELECT ID, CONCAT(Forename,' ',Surname) as name FROM walkleaders ORDER BY Forename ASC, Surname ASC" key_field="ID" value_field="name" />
+		</fieldset>
+	</form>

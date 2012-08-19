@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This class handles
+ * This class handles searching for walks
  * @author peter
  *
  */
