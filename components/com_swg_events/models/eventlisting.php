@@ -82,18 +82,11 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  $walkPointer = 0;
 	  $socialPointer = 0;
 	  $weekendPointer = 0;
-	  
-	  // Order 0 = ascending, 1 = descending
-	  if (JRequest::getInt("order") == 1) {
-	    $this->walks = array_reverse($this->walks);
-	    $this->socials = array_reverse($this->socials);
-	    $this->weekends = array_reverse($this->weekends);
-	  }
+	  	  
 	  $nextEvent = null;
 	  $events = array();
 	  do {
 	    $nextEvent = $this->nextEvent($nextEvent, $walkPointer, $socialPointer, $weekendPointer, (JRequest::getInt("order") == 1));
-	    $events[] = $nextEvent;
 	    // Increment the pointer for this event type
 	    if ($nextEvent instanceof WalkInstance)
 	      $walkPointer++;
@@ -101,12 +94,23 @@ class SWG_EventsModelEventlisting extends JModelItem
 	      $socialPointer++;
 	    else if ($nextEvent instanceof Weekend)
 	      $weekendPointer++;
+	    else 
+	      // Unknown event - probably run out: stop looping and don't add it to the list
+	      break;
+	    
+	    $events[] = $nextEvent;
 	     
 	  } while (
           (count($this->walks) > $walkPointer+1) || 
           (count($this->socials) > $socialPointer+1) || 
           (count($this->weekends) > $weekendPointer+1)
       );
+	  
+	  // Order 0 = ascending, 1 = descending
+	  if (JRequest::getInt("order") == 1) {
+	    $events = array_reverse($events);
+	  }
+	  
 	  return $events;
 	}
 	
@@ -120,31 +124,41 @@ class SWG_EventsModelEventlisting extends JModelItem
 	private function nextEvent(Event $event=null, $minWalk=0, $minSocial=0, $minWeekend=0)
 	{
 	  // Get the first possible event of each type. Start at $minXX, ignoring any events that are the same as the one passed in, or with an earlier start time
-	  do {
-	    $nextWalk = $this->walks[$minWalk];
-	    $minWalk++;
-	  } while (isset($event) && (($event instanceof Walk && $nextWalk->id == $event->id) || $nextWalk->start < $event->start));
+	  if (isset($this->walks[$minWalk]))
+	  {
+    	  do {
+    	    $nextWalk = $this->walks[$minWalk];
+    	    $minWalk++;
+    	  } while (isset($event) && (($event instanceof Walk && $nextWalk->id == $event->id) || $nextWalk->start < $event->start));
+	  }
 	  
-	  do {
-	    $nextSocial = $this->socials[$minSocial];
-	    $minSocial++;
-	  } while (isset($event) && (($event instanceof Social && $nextSocial->id == $event->id) || $nextSocial->start < $event->start));
-	  
-	  do {
-	    $nextWeekend = $this->weekends[$minWeekend];
-	    $minWeekend++;
-	  } while (isset($event) && (($event instanceof Weekend && $nextWeekend->id == $event->id) || $nextWeekend->start < $event->start));
+	  if (isset($this->socials[$minSocial]))
+	  {
+	    do {
+    	    $nextSocial = $this->socials[$minSocial];
+    	    $minSocial++;
+    	  } while (isset($event) && (($event instanceof Social && $nextSocial->id == $event->id) || $nextSocial->start < $event->start));
+	  }
+	  if (isset($this->weekends[$minWeekend]))
+	  {
+    	  do {
+    	    $nextWeekend = $this->weekends[$minWeekend];
+    	    $minWeekend++;
+    	  } while (isset($event) && (($event instanceof Weekend && $nextWeekend->id == $event->id) || $nextWeekend->start < $event->start));
+	  }
 	  
 	  // Now find whether a walk, a social or a weekend is the next event
 	  // If two are equal, put walks first, then socials, then weekends.
 	  // Two events of the same type will go in the order they are in the database
-	  $start = min($nextWalk->start, $nextSocial->start, $nextWeekend->start);
-	  if ($nextWalk->start == $start)
+	  $start = min(@$nextWalk->start, @$nextSocial->start, @$nextWeekend->start);
+	  if (isset($nextWalk) && $nextWalk->start == $start)
 	    return $nextWalk;
-	  else if ($nextSocial->start == $start)
+	  else if (isset($nextSocial) && $nextSocial->start == $start)
 	    return $nextSocial;
-	  else
+	  else if (isset($nextWeekend))
 	    return $nextWeekend;
+	  else
+	    return null;
 	}
 	
 	/**
