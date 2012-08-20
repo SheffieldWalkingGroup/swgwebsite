@@ -21,7 +21,7 @@ class Walk extends SWGBaseModel {
   private $startPlaceName;
   private $endGridRef;
   private $endPlaceName;
-  private $routeDescription;
+  private $description;
   private $fileLinks;
   private $information;
   private $routeImage;
@@ -418,5 +418,45 @@ class Walk extends SWGBaseModel {
     }
     
     return $walks;
+  }
+  
+  public static function getSingle($id) {
+    $db = JFactory::getDBO();
+    $query = $db->getQuery(true);
+    $query->select("*");
+    $query->from("walks");
+  
+    $query->where(array("ID = ".intval($id)));
+    $db->setQuery($query);
+    $res = $db->query();
+    if ($db->getNumRows($res) == 1)
+      return new Walk($db->loadAssoc());
+    else
+      return null;
+  
+  }
+  
+  /**
+   * Returns an array of instances of this walk, oldest first
+   */
+  public function getInstances() {
+    require_once("WalkInstance.php");
+    $db = JFactory::getDBO();
+    $query = $db->getQuery(true);
+    $query->select("*");
+    $query->from("walkprogrammewalks");
+  
+    $query->where(array("walklibraryid = ".intval($this->id)));
+    $db->setQuery($query);
+    
+    $instanceData = $db->loadAssocList();
+    
+    $instances = array();
+    while (count($instanceData) > 0) {
+      $instance = new WalkInstance(array_shift($instanceData));
+      $instances[] = $instance;
+    }
+
+    return $instances;
   }
 }

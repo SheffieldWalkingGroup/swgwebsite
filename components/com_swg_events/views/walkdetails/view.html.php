@@ -13,18 +13,19 @@ jimport('joomla.form.form');
  * Because most (all?) fields can be changed on a WalkInstance,
  * this can take either a Walk or a WalkInstance
  */
-class SWG_EventsViewAddEditWalk extends JView
+class SWG_EventsViewWalkDetails extends JView
 {
   function display($tpl = null)
   {
     $app		= JFactory::getApplication();
 	$params		= $app->getParams();
 	$dispatcher = JDispatcher::getInstance();
-    $model	    = $this->getModel('addeditwalk');
+    $model	    = $this->getModel('walkdetails');
 
 	// Get some data from the models
 	$state		= $this->get('State');
-	$walk		= $this->get('Walk');
+	$this->walk	= $this->get('Walk');
+	$this->walkInstances = $this->walk->getInstances();
 
 	// Check for errors.
 	if (count($errors = $this->get('Errors'))) 
