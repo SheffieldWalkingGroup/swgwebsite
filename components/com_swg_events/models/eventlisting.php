@@ -58,10 +58,10 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  if (!$this->loadedEvents) {
 	    if (JRequest::getBool("includeWalks"))
 	      $this->loadEvents(SWG::EventType_Walk);
-	    if (JRequest::getBool("includeSocials"))
+	    /*if (JRequest::getBool("includeSocials"))
 	      $this->loadEvents(SWG::EventType_Social);
 	    if (JRequest::getBool("includeWeekends"))
-	      $this->loadEvents(SWG::EventType_Weekend);
+	      $this->loadEvents(SWG::EventType_Weekend);*/
 	    $this->loadedEvents = true;
 	  }
 	  
@@ -101,9 +101,9 @@ class SWG_EventsModelEventlisting extends JModelItem
 	    $events[] = $nextEvent;
 	     
 	  } while (
-          (count($this->walks) > $walkPointer+1) || 
-          (count($this->socials) > $socialPointer+1) || 
-          (count($this->weekends) > $weekendPointer+1)
+          (count($this->walks) > $walkPointer) || 
+          (count($this->socials) > $socialPointer) || 
+          (count($this->weekends) > $weekendPointer)
       );
 	  
 	  // Order 0 = ascending, 1 = descending
@@ -150,7 +150,28 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  // Now find whether a walk, a social or a weekend is the next event
 	  // If two are equal, put walks first, then socials, then weekends.
 	  // Two events of the same type will go in the order they are in the database
-	  $start = min(@$nextWalk->start, @$nextSocial->start, @$nextWeekend->start);
+	  // First, try to match all three
+	  if (isset($nextWalk,$nextSocial,$nextWeekend))
+	    $start = min($nextWalk->start, $nextSocial->start, $nextWeekend->start);
+	  // Now, match any two
+	  elseif (isset($nextWalk, $nextSocial))
+	    $start = min($nextWalk->start, $nextSocial->start);
+	  else if (isset($nextWalk, $nextWeekend))
+	    $start = min($nextWalk->start, $nextSocial->start);
+	  else if (isset($nextSocial, $nextWeekend))
+	    $start = min($nextSocial->start, $nextWeekend->start);
+	  // We only have one - return that straight away without bothering to go to the next step
+	  else if (isset($nextWalk))
+	    return $nextWalk;
+	  else if (isset($nextSocial))
+	    return $nextSocial;
+	  else if (isset($nextWeekend))
+	    return $nextWeekend;
+	  // Nothing...
+	  else
+	    return null;
+	  
+	  // If we get here, we found multiple possible events. Check which one it was and return it
 	  if (isset($nextWalk) && $nextWalk->start == $start)
 	    return $nextWalk;
 	  else if (isset($nextSocial) && $nextSocial->start == $start)
@@ -170,7 +191,7 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  // Get the parameters set
 	  $startDate = $this->paramDateToValue(JRequest::getInt("startDateType"), JRequest::getString("startDateSpecify"));
 	  $endDate = $this->paramDateToValue(JRequest::getInt("endDateType"), JRequest::getString("endDateSpecify"));
-	  
+	  	  
 	  switch ($eventType) {
 	    case SWG::EventType_Walk:
 	      $this->walks = WalkInstance::get($startDate, $endDate);
