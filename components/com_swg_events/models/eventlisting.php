@@ -58,10 +58,10 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  if (!$this->loadedEvents) {
 	    if (JRequest::getBool("includeWalks"))
 	      $this->loadEvents(SWG::EventType_Walk);
-	    /*if (JRequest::getBool("includeSocials"))
+	    if (JRequest::getBool("includeSocials"))
 	      $this->loadEvents(SWG::EventType_Social);
 	    if (JRequest::getBool("includeWeekends"))
-	      $this->loadEvents(SWG::EventType_Weekend);*/
+	      $this->loadEvents(SWG::EventType_Weekend);
 	    $this->loadedEvents = true;
 	  }
 	  
