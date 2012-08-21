@@ -3,7 +3,7 @@
   $currentPage = JFactory::getApplication()->getMenu()->getActive();
 ?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" 
+<html xmlns="http://www.w3.org/1999/xhtml" class="<?php echo $currentPage->alias; ?>"
    xml:lang="<?php echo $this->language; ?>" lang="<?php echo $this->language; ?>" >
     <head>
         <jdoc:include type="head" />

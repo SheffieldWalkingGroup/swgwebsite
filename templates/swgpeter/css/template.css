@@ -51,6 +51,14 @@ html {
     background-size: cover;
 }
 
+html.thinking-of-joining {
+	background-image:url(/images/backdrops/joinus-10thanniversary.jpg);
+}
+
+html.thinking-of-joining div.wrapper {
+	background-color:rgba(255,255,255,0.92); /* This background has more contrast, so need to fade it more */
+}
+
 body {
     font-family:sans-serif;
     font-size:12px;
