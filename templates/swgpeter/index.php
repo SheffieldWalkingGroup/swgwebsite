@@ -32,6 +32,8 @@
                 
                 <jdoc:include type="component" />
                 
+                <jdoc:include type="modules" name="postcontent" style="xhtml" />
+                
                 <div class="boxes">
                     <jdoc:include type="modules" name="boxes" style="xhtml" />
                     <div class="clear" style="clear:right;">&nbsp;</div>

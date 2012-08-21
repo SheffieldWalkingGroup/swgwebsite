@@ -28,6 +28,7 @@
                 <position>user4</position>
                 <position>footer</position>
                 <position>precontent</position>
+                <position>postcontent</position>
                 <position>boxes</position>
                 <position>footer</position>
         </positions>
