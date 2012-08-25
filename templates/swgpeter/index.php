@@ -28,11 +28,15 @@
                 </div>
                 <?php endif ?>
                 
-                <jdoc:include type="modules" name="precontent" style="xhtml" />
+		<div class="precontent">
+		  <jdoc:include type="modules" name="precontent" style="xhtml" />
+		</div>
                 
                 <jdoc:include type="component" />
                 
-                <jdoc:include type="modules" name="postcontent" style="xhtml" />
+                <div class="postcontent">
+		  <jdoc:include type="modules" name="postcontent" style="xhtml" />
+		</div>
                 
                 <div class="boxes">
                     <jdoc:include type="modules" name="boxes" style="xhtml" />
