@@ -9,6 +9,7 @@
 	Event body backgrounds are at 50% opacity
  */
 
+/* Basic elements & text styles */
 @font-face {
     font-family: 'Lora';
     src: url('/templates/swgpeter/fonts/lora/lora-regular-webfont.eot');
@@ -41,6 +42,12 @@ h2 {
 .item-page h1 {
 	margin:10px 10px 10px 15px;
 }
+
+.clear {
+    clear:both;
+}
+
+/* Overall page styles */
 
 html {
     /* TODO: This only works on IE 9 - what happens on IE 8? */
@@ -78,15 +85,14 @@ div.wrapper {
     
 }
 
+/* Main navigation menu */
+
 nav {
     width:190px;
     height:100%;
     float:left;
     margin:15px 0 15px 10px;
     padding-right:10px;
-    
-/*                 height:500px; */
-/*                 border:1px solid black; */
 }
 
 nav .moduletable_menu, nav .moduletable {
@@ -102,7 +108,6 @@ nav .moduletable_menu h3, nav .moduletable h3 {
     padding:3px 10px;
     font-weight:normal;
     font-family:sans-serif;
-/*     font-family:Lora,serif; */
 }
 
 nav .moduletable_menu h3{
@@ -155,14 +160,18 @@ nav .feed ul {
     padding-left:10px;
 }
 
+/* Main content area */
+
 div.main {
     margin:0 0 0 210px;
     border:none;
     padding-top:5px;
 }
 
+/* Slideshow & random image banners */
+
 div.random-imagebanner {
-	margin-top:8px;
+    margin-top:8px;
 }
 
 div.slideshow {
@@ -201,35 +210,7 @@ div.slideshow {
     right:10px;
 }
 
-.slideshow ul {
-    list-style-type:none;
-    margin:0;
-    padding:2px 0 2px 4px;
-}
-
-.slideshow ul li {
-    float:left;
-    margin-right:7px;
-    width:105px;
-    height:70px;
-    position:relative;
-}
-
-.slideshow ul li:last-child {
-    margin-right:0;
-}
-
-.slideshow ul li.selected img {
-    z-index:0;
-}
-
-.slideshow ul li.selected img:after {
-    content:"SELECTED";
-    position:absolute;
-    left:50px;
-    bottom:0px;
-    z-index:1;
-}
+/* Who are we, info for new members */
 
 .homepage div.intro {
     float:right;
@@ -242,6 +223,8 @@ div.slideshow {
 .intro h2 {
     margin-top:7px;
 }
+
+/* Upcoming event boxes */
 
 .boxes {
     margin-top:5px;
@@ -259,7 +242,7 @@ div.slideshow {
     background-image:url(/templates/swgpeter/images/boxhead-ltgreen.png) !important;
 }
 
-.moduletable {
+.boxes .moduletable, .intro .moduletable {
     position:relative;
     border-style:solid;
     border-color:#555;
@@ -324,21 +307,19 @@ div.slideshow {
 }
 
 .moduletable .cancelled {
-	text-decoration:line-through;
-	color:red;
+    text-decoration:line-through;
+    color:red;
 }
 .moduletable .cancelled a {
-	text-decoration:none;
-	color:red;
+    text-decoration:none;
+    color:red;
 }
 
 .moduletable li.altered {
-	border:1px solid red;
+    border:1px solid red;
 }
 
-.clear {
-    clear:both;
-}
+/* Event detail popups */
 
 .popup {
     z-index:5;
@@ -391,38 +372,37 @@ div.slideshow {
 }
 
 .popup .description {
-	width:300px;
-	margin-left:0;
-	margin-right:0;
-	height:170px; /* TODO: Fancy fadeout and pretty scroll bars - only if needed! */
-	overflow:hidden; /* We use fancy scrollbars */
+    width:300px;
+    margin-left:0;
+    margin-right:0;
+    height:170px;
+    overflow:hidden;
 }
 
 .popup .description p {
-	float:left;
+    float:left;
 }
 
 .scrollbar-vert{
-	background-color: none;
-	height: 146px;
-	width: 10px;
-	float:right;
-	margin:12px 10px 12px 0;
+    background-color: none;
+    height: 146px;
+    width: 10px;
+    float:right;
+    margin:12px 10px 12px 0;
 }
 .handle-vert{
-	height: 42px;
-	width: 10px;
-	background: #222;
-	border-radius: 5px;
+    height: 42px;
+    width: 10px;
+    background: #222;
+    border-radius: 5px;
 }
 
 .popup .eventinfo {
-	margin-right:0;
-	width:260px;
+    margin-right:0;
+    width:260px;
 }
 
 .popup .info {
-/*     background-color:#A8D3A9; */
     float:right;
     margin-left:10px;
     padding:5px;
@@ -463,6 +443,11 @@ div.slideshow {
     clear:left;
 }
 
+/*
+ * Events listing pages
+ */
+
+/* Walk symbols key */
 .walkkey ul {
     margin:10px 0 0;
 }
@@ -489,75 +474,75 @@ div.slideshow {
     border-color:#555;
     border-width:1px 0;
     clear:right;
-	position:relative;
-	margin-bottom:10px;
+    position:relative;
+    margin-bottom:10px;
 }
 
 .walksaturday {
-	background:url(/templates/swgpeter/images/contentbody-green.png);
+    background:url(/templates/swgpeter/images/contentbody-green.png);
 }
 
 .walksaturday .eventheader {
-	background:url(/templates/swgpeter/images/contenthead-green.png);
+    background:url(/templates/swgpeter/images/contenthead-green.png);
 }
 
 .walksunday {
-	background:url(/templates/swgpeter/images/contentbody-blue.png);
+    background:url(/templates/swgpeter/images/contentbody-blue.png);
 }
 
 .walksunday .eventheader {
-	background:url(/templates/swgpeter/images/contenthead-blue.png);
+    background:url(/templates/swgpeter/images/contenthead-blue.png);
 }
 
 .walkweekday {
-	background:url(/templates/swgpeter/images/contentbody-magenta.png);
+    background:url(/templates/swgpeter/images/contentbody-magenta.png);
 }
 
 .walkweekday .eventheader {
-	background:url(/templates/swgpeter/images/contenthead-magenta.png);
+    background:url(/templates/swgpeter/images/contenthead-magenta.png);
 }
 
 .weekend {
-	background:url(/templates/swgpeter/images/contentbody-yellow.png);
+    background:url(/templates/swgpeter/images/contentbody-yellow.png);
 }
 
 .weekend .eventheader {
-	background:url(/templates/swgpeter/images/contenthead-yellow.png);
+    background:url(/templates/swgpeter/images/contenthead-yellow.png);
 }
 
 .social {
-	background:url(/templates/swgpeter/images/contentbody-orange.png);
+    background:url(/templates/swgpeter/images/contentbody-orange.png);
 }
 
 .social .eventheader {
-	background:url(/templates/swgpeter/images/contenthead-orange.png);
+    background:url(/templates/swgpeter/images/contenthead-orange.png);
 }
 
 .event .cancelled, .popup .cancelled * {
-	opacity:0.5;
+    opacity:0.5;
 }
 
 .cancelled-message {
-	position:absolute;
-	font:6em bold sans-serif;
-	color:red;
-	z-index:6;
-	text-align:center;
-	left:0;
-	right:0;
-	top:0;
-	bottom:0;
-	-moz-transform: rotate(-10deg);
-	-webkit-transform: rotate(-10deg);
-	-ms-transform: rotate(-10deg);
-	-o-transform: rotate(-10deg);
+    position:absolute;
+    font:6em bold sans-serif;
+    color:red;
+    z-index:6;
+    text-align:center;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    -moz-transform: rotate(-10deg);
+    -webkit-transform: rotate(-10deg);
+    -ms-transform: rotate(-10deg);
+    -o-transform: rotate(-10deg);
 }
 
 .eventheader {
-	border-bottom:1px solid #555;
-	font-size:16px;
-	background-repeat:repeat-y;
-	padding:5px 10px 3px;
+    border-bottom:1px solid #555;
+    font-size:16px;
+    background-repeat:repeat-y;
+    padding:5px 10px 3px;
 }
 
 .popup .eventheader h3 {
@@ -631,6 +616,8 @@ div.slideshow {
 .event .altered, .popup .altered {
 	border:1px solid red;
 }
+
+/* Page footer */
 
 footer {
 	margin:0 10px;
