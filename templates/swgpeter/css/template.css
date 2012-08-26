@@ -443,6 +443,25 @@ div.slideshow {
     clear:left;
 }
 
+.popup .loadindicator {
+	position:absolute;
+	/* Centre it in the empty popup */
+	left:282px;
+	top:117px;
+}
+
+/*
+ * Generic internal page styles
+ */
+
+/* Pre/post content text blocks */
+.precontent .moduletable, .postcontent .moduletable {
+	margin:10px 14px 10px 0;
+	border-style:solid;
+	border-width:1px 0;
+	border-color:#555;
+}
+
 /*
  * Events listing pages
  */

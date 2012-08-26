@@ -59,6 +59,7 @@ var showPopup = function(eventType, eventID, link) {
 	var popupContents = new Element("div",{
 		"class":"content "+eventType
 	});
+	
 	infoPopup.adopt(popupContents);
 	document.body.adopt(infoPopup);
 	// Move the popup to the right position based on the current cursor position
@@ -73,6 +74,8 @@ var showPopup = function(eventType, eventID, link) {
 		data:{"eventtype":eventType,"id":eventID},
 		method:"get",
 		onSuccess: function(event) {
+			// Destroy the load indicator
+			loadIndicator.dispose();
 			
 			// Add alterations to the whole popup
 			if (event.alterations.any) {
@@ -233,6 +236,13 @@ var showPopup = function(eventType, eventID, link) {
 	
 	
 	// Add a loading indicator to the popup
+	var loadIndicator = new Element("img",{
+		"src":"/templates/swgpeter/images/ajax-loader.gif",
+		"width":"32",
+		"height":"32",
+		"class":"loadindicator"
+	});
+	popupContents.adopt(loadIndicator);
 	
 	// Set the popup's position. It should be 20px above the link,
 	// and at least 50px from the edge of the window.
