@@ -1,6 +1,12 @@
 var infoPopup = null;
+var popupContents = null;
 var enterDelay = null;
 var exitDelay = null;
+var cachedEvents = {
+  "walk":new Array(),
+  "social":new Array(),
+  "weekend":new Array()
+};
 
 function registerPopupLinks() {
 	// Get all the event info popup links (for all event types)
@@ -47,8 +53,6 @@ function clearTimers() {
  * TODO: Could request data immediately so it's preloaded,
  * as long as we can handle race conditions as the user moves around
  */
-
-
 var showPopup = function(eventType, eventID, link) {
 	// Create a new popup
 	if (infoPopup != null)
@@ -56,193 +60,12 @@ var showPopup = function(eventType, eventID, link) {
 	infoPopup = new Element("div",{
 		"class":"popup "
 	});
-	var popupContents = new Element("div",{
+	popupContents = new Element("div",{
 		"class":"content "+eventType
 	});
 	
 	infoPopup.adopt(popupContents);
 	document.body.adopt(infoPopup);
-	// Move the popup to the right position based on the current cursor position
-	// Making sure it is inside the visible screen area
-	
-	
-	// Request data for this event (will be displayed when available)
-	// TODO: Variable URL
-	var a = new Request.JSON({
-		url:"/index.php/homepage/walks",
-		format:"json",
-		data:{"eventtype":eventType,"id":eventID},
-		method:"get",
-		onSuccess: function(event) {
-			// Destroy the load indicator
-			loadIndicator.dispose();
-			
-			// Add alterations to the whole popup
-			if (event.alterations.any) {
-				infoPopup.addClass("popup-altered");
-			}
-			
-			if (event.alterations.cancelled) {
-				popupContents.addClass("cancelled");
-				var cancelledText = new Element("p", {
-					"class":"cancelled-message",
-					"html":"Cancelled"
-				});
-				infoPopup.adopt(cancelledText);
-			}
-				
-			
-			// Build up the basic components that apply to all event types
-			var infoHeader = new Element("div", {"class":"eventheader"});
-			var eventName = new Element("h3", {"text":event.name,"style":"clear:both;"});
-			var eventDate = new Element("span",{"class":"date","text":timestampToDate(event.start)});
-			if (event.alterations.date)
-				eventDate.addClass("altered");
-			
-			infoHeader.adopt(eventDate, eventName);
-			popupContents.adopt(infoHeader);
-			
-			var description = new Element("div", {"class":"description","html":"<p>"+event.description+"</p>"});
-			popupContents.adopt(description);
-			if (event.alterations.details)
-				description.addClass("altered");
-			
-			var eventInfo = new Element("div", {"class":"eventinfo"});
-			popupContents.adopt(eventInfo);
-			
-			// Now do specific components
-			switch(eventType) {
-				case "walk":
-					// Add the day to the class
-					var start = new Date(event.start*1000);
-					var day = "weekday";
-					if (start.getDay() == 0)
-						day = "sunday";
-					else if (start.getDay() == 6)
-						day = "saturday";
-					popupContents.addClass("walk"+day);
-					
-					var rating = new Element("span", {"class":"rating", "text":event.distanceGrade+event.difficultyGrade+" ("+event.miles+" miles)"});
-					rating.inject(eventName,'before');
-					
-					// TODO: icons
-					var start = new Element("p", {
-						"class":"start", 
-						"html":
-							"<span>Start:</span> " +
-							"<a title='Streetmap view of approximate location' href='http://www.streetmap.com/loc/"+event.startGridRef+"'>"+event.startGridRef+", "+event.startPlaceName+"</a>"
-						});
-					eventInfo.adopt(start);
-					if (event.isLinear == true) {
-						var end = new Element("p", {
-							"class":"end", 
-							"html":
-								"<span>End:</span> " +
-								event.endGridRef+", "+event.endPlaceName
-						});
-						eventInfo.adopt(end);
-					}
-					
-					var transportText = "";
-					if (event.meetPoint.id != 7) // TODO: Remove magic number
-					{
-						// Parse the meeting time
-						var meetTime = new Date(event.meetPoint.meetTime*1000);
-						transportText += "Meet at "+meetTime.format("%H:%M")+" at "+event.meetPoint.longDesc+". ";
-					}
-					if (event.meetPoint.extra != null) // TODO: Use function? Note: doesn't matter if it's empty
-						transportText += event.meetPoint.extra;
-											
-					var transport = new Element("p", {
-						"class":"transport",
-						"html":"<span>Transport:</span> " + transportText
-					});
-					eventInfo.adopt(transport);
-					if (event.alterations.placeTime)
-						transport.addClass("altered");
-					
-					var leaderText = event.leader.displayName+
-						" ("+event.leader.telephone+")";
-					if (event.leader.noContactOfficeHours)
-						leaderText += " &ndash; don't call during office hours";
-					
-					var leader = new Element("p", {
-						"class":"leader",
-						"html":"<span>Leader:</span> "+leaderText
-					});
-					if (event.alterations.organiser)
-						leader.addClass("altered");
-					eventInfo.adopt(leader);
-					
-					var backmarker = new Element("p", {
-						"class":"backmarker",
-						"html":"<span>Backmarker:</span> "+event.backmarker.displayName
-					});
-					eventInfo.adopt(backmarker);
-					
-					break;
-				case "weekend":
-					if (event.url != "") {
-						var moreInfo = new Element("p",{
-							"class":"moreinfo",
-							"html":"<span>More info:</span> <a href='"+event.url+"'>Here"
-						});
-					}
-					var places = new Element("p",{
-						"class":"places",
-						"html":"<span>Places:</span> "+event.places+" at "+event.cost+" (remember the booking and refunds policy)"
-					});
-					var bookingsOpen = new Element("p",{
-						"class":"bookingopen",
-						"html":"<span>Bookings open:</span> "+event.bookingsOpen
-					});
-					var contact = new Element("p",{
-						"class":eventType+"booking",
-						"html":"<span>Contact:</span> "+event.contact
-					});
-					if (event.alterations.organiser)
-						contact.addClass("altered");
-					eventInfo.adopt(moreInfo,places,contact);
-					break;
-				case "social":
-					var contact = new Element("p",{
-						"class":eventType+"booking",
-						"html":"<span>Contact:</span> "+event.bookingsInfo
-					});
-					if (event.alterations.organiser)
-						contact.addClass("altered");
-					eventInfo.adopt(contact);
-					
-					if (eventType == "weekend")
-						eventInfo.adopt(bookingsOpen);
-					
-					break;
-			}
-			
-			// Add a fancy scrollbar to the description
-			if (description.getScrollSize().y > description.getSize().y) {
-				description.style.width="290px"; // Make room for the scrollbar
-				var scrollbar = new Element("div",{"class":"scrollbar-vert", "id":"scrollbar"});
-				var scrollHandle = new Element("div",{"class":"handle-vert", "id":"scrollHandle"});
-				description.grab(scrollbar,'before');
-				scrollbar.adopt(scrollHandle);
-				
-				makeScrollbar(description,scrollbar,scrollHandle,false,false);
-			}
-		}
-	});
-	a.get();
-	
-	
-	
-	// Add a loading indicator to the popup
-	var loadIndicator = new Element("img",{
-		"src":"/templates/swgpeter/images/ajax-loader.gif",
-		"width":"32",
-		"height":"32",
-		"class":"loadindicator"
-	});
-	popupContents.adopt(loadIndicator);
 	
 	// Set the popup's position. It should be 20px above the link,
 	// and at least 50px from the edge of the window.
@@ -271,8 +94,195 @@ var showPopup = function(eventType, eventID, link) {
 		return false;
 	});
 	
+	// See if we've previously cached this event
+	if (cachedEvents[eventType][eventID] != undefined)
+	{
+		displayPopup(cachedEvents[eventType][eventID], eventType);
+	}
+	else
+	{
+		// Request data for this event (will be displayed when available)
+		// TODO: Variable URL
+		var a = new Request.JSON({
+			url:"/index.php/homepage/walks",
+			format:"json",
+			data:{"eventtype":eventType,"id":eventID},
+			method:"get",
+			onSuccess: function(event) {
+				// Destroy the load indicator
+				loadIndicator.dispose();
+				cachedEvents[eventType][eventID] = event;
+				displayPopup(event, eventType);
+			}
+		});
+		a.get();
 	
 	
+	
+		// Add a loading indicator to the popup
+		var loadIndicator = new Element("img",{
+			"src":"/templates/swgpeter/images/ajax-loader.gif",
+			"width":"32",
+			"height":"32",
+			"class":"loadindicator"
+		});
+		popupContents.adopt(loadIndicator);
+	}
+}
+
+function displayPopup(event, eventType) {
+	// Add alterations to the whole popup
+	if (event.alterations.any) {
+		infoPopup.addClass("popup-altered");
+	}
+	
+	if (event.alterations.cancelled) {
+		popupContents.addClass("cancelled");
+		var cancelledText = new Element("p", {
+			"class":"cancelled-message",
+			"html":"Cancelled"
+		});
+		infoPopup.adopt(cancelledText);
+	}
+		
+	
+	// Build up the basic components that apply to all event types
+	var infoHeader = new Element("div", {"class":"eventheader"});
+	var eventName = new Element("h3", {"text":event.name,"style":"clear:both;"});
+	var eventDate = new Element("span",{"class":"date","text":timestampToDate(event.start)});
+	if (event.alterations.date)
+		eventDate.addClass("altered");
+	
+	infoHeader.adopt(eventDate, eventName);
+	popupContents.adopt(infoHeader);
+	
+	var description = new Element("div", {"class":"description","html":"<p>"+event.description+"</p>"});
+	popupContents.adopt(description);
+	if (event.alterations.details)
+		description.addClass("altered");
+	
+	var eventInfo = new Element("div", {"class":"eventinfo"});
+	popupContents.adopt(eventInfo);
+	
+	// Now do specific components
+	switch(eventType) {
+		case "walk":
+			// Add the day to the class
+			var start = new Date(event.start*1000);
+			var day = "weekday";
+			if (start.getDay() == 0)
+				day = "sunday";
+			else if (start.getDay() == 6)
+				day = "saturday";
+			popupContents.addClass("walk"+day);
+			
+			var rating = new Element("span", {"class":"rating", "text":event.distanceGrade+event.difficultyGrade+" ("+event.miles+" miles)"});
+			rating.inject(eventName,'before');
+			
+			// TODO: icons
+			var start = new Element("p", {
+				"class":"start", 
+				"html":
+					"<span>Start:</span> " +
+					"<a title='Streetmap view of approximate location' href='http://www.streetmap.com/loc/"+event.startGridRef+"'>"+event.startGridRef+", "+event.startPlaceName+"</a>"
+				});
+			eventInfo.adopt(start);
+			if (event.isLinear == true) {
+				var end = new Element("p", {
+					"class":"end", 
+					"html":
+						"<span>End:</span> " +
+						event.endGridRef+", "+event.endPlaceName
+				});
+				eventInfo.adopt(end);
+			}
+			
+			var transportText = "";
+			if (event.meetPoint.id != 7) // TODO: Remove magic number
+			{
+				// Parse the meeting time
+				var meetTime = new Date(event.meetPoint.meetTime*1000);
+				transportText += "Meet at "+meetTime.format("%H:%M")+" at "+event.meetPoint.longDesc+". ";
+			}
+			if (event.meetPoint.extra != null) // TODO: Use function? Note: doesn't matter if it's empty
+				transportText += event.meetPoint.extra;
+									
+			var transport = new Element("p", {
+				"class":"transport",
+				"html":"<span>Transport:</span> " + transportText
+			});
+			eventInfo.adopt(transport);
+			if (event.alterations.placeTime)
+				transport.addClass("altered");
+			
+			var leaderText = event.leader.displayName+
+				" ("+event.leader.telephone+")";
+			if (event.leader.noContactOfficeHours)
+				leaderText += " &ndash; don't call during office hours";
+			
+			var leader = new Element("p", {
+				"class":"leader",
+				"html":"<span>Leader:</span> "+leaderText
+			});
+			if (event.alterations.organiser)
+				leader.addClass("altered");
+			eventInfo.adopt(leader);
+			
+			var backmarker = new Element("p", {
+				"class":"backmarker",
+				"html":"<span>Backmarker:</span> "+event.backmarker.displayName
+			});
+			eventInfo.adopt(backmarker);
+			
+			break;
+		case "weekend":
+			if (event.url != "") {
+				var moreInfo = new Element("p",{
+					"class":"moreinfo",
+					"html":"<span>More info:</span> <a href='"+event.url+"'>Here"
+				});
+			}
+			var places = new Element("p",{
+				"class":"places",
+				"html":"<span>Places:</span> "+event.places+" at "+event.cost+" (remember the booking and refunds policy)"
+			});
+			var bookingsOpen = new Element("p",{
+				"class":"bookingopen",
+				"html":"<span>Bookings open:</span> "+event.bookingsOpen
+			});
+			var contact = new Element("p",{
+				"class":eventType+"booking",
+				"html":"<span>Contact:</span> "+event.contact
+			});
+			if (event.alterations.organiser)
+				contact.addClass("altered");
+			eventInfo.adopt(moreInfo,places,contact);
+			break;
+		case "social":
+			var contact = new Element("p",{
+				"class":eventType+"booking",
+				"html":"<span>Contact:</span> "+event.bookingsInfo
+			});
+			if (event.alterations.organiser)
+				contact.addClass("altered");
+			eventInfo.adopt(contact);
+			
+			if (eventType == "weekend")
+				eventInfo.adopt(bookingsOpen);
+			
+			break;
+	}
+	
+	// Add a fancy scrollbar to the description
+	if (description.getScrollSize().y > description.getSize().y) {
+		description.style.width="290px"; // Make room for the scrollbar
+		var scrollbar = new Element("div",{"class":"scrollbar-vert", "id":"scrollbar"});
+		var scrollHandle = new Element("div",{"class":"handle-vert", "id":"scrollHandle"});
+		description.grab(scrollbar,'before');
+		scrollbar.adopt(scrollHandle);
+		
+		makeScrollbar(description,scrollbar,scrollHandle,false,false);
+	}
 }
 
 function timestampToDate(timestamp) {
