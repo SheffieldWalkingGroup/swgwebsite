@@ -1,7 +1,18 @@
+/**
+ * The outer wrapper around the popup
+ */
 var infoPopup = null;
+/**
+ * The contents of the popup
+ */
 var popupContents = null;
 var enterDelay = null;
 var exitDelay = null;
+/**
+ * The ID of the currently loading event: used to avoid race conditions
+ * If the incoming event has the wrong ID, it is saved in the cache but not displayed
+ */
+var currentlyLoading = null;
 var cachedEvents = {
   "walk":new Array(),
   "social":new Array(),
@@ -101,6 +112,8 @@ var showPopup = function(eventType, eventID, link) {
 	}
 	else
 	{
+		// Cache this as the currently loading event
+		currentlyLoading = eventID;
 		// Request data for this event (will be displayed when available)
 		// TODO: Variable URL
 		var a = new Request.JSON({
@@ -109,10 +122,15 @@ var showPopup = function(eventType, eventID, link) {
 			data:{"eventtype":eventType,"id":eventID},
 			method:"get",
 			onSuccess: function(event) {
-				// Destroy the load indicator
-				loadIndicator.dispose();
 				cachedEvents[eventType][eventID] = event;
-				displayPopup(event, eventType);
+				
+				// Is this the event we want now?
+				if (event.id == currentlyLoading)
+				{
+					// Destroy the load indicator
+					loadIndicator.dispose();
+					displayPopup(event, eventType);
+				}
 			}
 		});
 		a.get();
