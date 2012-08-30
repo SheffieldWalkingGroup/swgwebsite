@@ -150,7 +150,7 @@ nav .menu  ul ul a {
     width:134px;
 }
 
-nav .moduletable h3 {
+nav .moduletable h3, .boxes .moduletable h3 {
     background:url(/templates/swgpeter/images/lboxhead-ltgreen.png);
 }
 
@@ -238,7 +238,7 @@ div.slideshow {
     height:180px;
 }
 
-.boxes h3 {
+.boxes h3, .intro .moduletable h3 {
     background-image:url(/templates/swgpeter/images/boxhead-ltgreen.png) !important;
 }
 
@@ -249,13 +249,18 @@ div.slideshow {
     border-width:1px 0;
 }
 
+.boxes .box ul, .newmembers .newmembers ul {
+	list-style-type:none;
+	margin:0;
+	padding:0 0 0 10px;
+}
+
 .boxes .last-box {
     margin-right:0px;
 /*  margin-left:1px; */
 }
 
 .moduletable h3 {
-    background:url(/templates/swgpeter/images/rboxhead-ltgreen.png);
     border-bottom:1px solid #555;
     margin:0 0 5px;
     padding:3px 10px;
@@ -265,10 +270,13 @@ div.slideshow {
     font-size:18px;
 }
 
+.main .moduletable h3 {
+	background:url(/templates/swgpeter/images/contenthead-green.png);
+}
+
 .moduletable ul {
-    list-style-type:none;
-    margin:0;
-    padding-left:10px;
+    margin:10px 0;
+    padding-left:25px;
 }
 
 .moduletable li {
