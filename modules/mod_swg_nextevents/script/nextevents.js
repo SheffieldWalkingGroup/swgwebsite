@@ -330,8 +330,11 @@ function timestampToDate(timestamp) {
  * Fade the popup out and destroy it
  */
 function hidePopup() {
-	infoPopup.fade("out");
-	infoPopup.dispose.delay(500); // After the fade
+	if (infoPopup != undefined && infoPopup != null)
+	{
+		infoPopup.fade("out");
+		infoPopup.dispose.delay(500); // After the fade
+	}
 	
 }
 
