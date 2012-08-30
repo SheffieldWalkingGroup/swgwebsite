@@ -283,9 +283,15 @@ div.slideshow {
     margin-bottom:5px;
 }
 
-.moduletable .date {
+.box .date {
     font-style:italic;
     margin-left:0;
+}
+
+.box .weekends .area {
+	font-style:italic;
+	float:right;
+	margin-right:5px;
 }
 
 .moduletable h4 {

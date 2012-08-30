@@ -15,8 +15,8 @@
             echo "-".date("jS M", $event->endDate);
           ?>
         </span>
+        <span class="area"><?php echo $event->area; ?></span>
         <h4><a href="<?php echo $listPage."#weekendNo".$event->id?>" class="eventinfopopup" rel="weekend_<?php echo $event->id; ?>"><?php echo $event->name; ?></a></h4>
-        <p>(<?php echo $event->area; ?>)</p>
         <p>Booking opens <?php echo $event->bookingsOpen; ?></p>
       </li>
     <?php } ?>
