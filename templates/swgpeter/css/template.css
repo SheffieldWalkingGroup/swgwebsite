@@ -224,6 +224,23 @@ div.slideshow {
     margin-top:7px;
 }
 
+.intro .box p {
+	margin: 10px;
+}
+
+.intro .box>h4 {
+	border-style:solid;
+	border-color:#aaa;
+	border-width:1px 0;
+	margin:5px 0;
+	padding:5px 10px;
+	font-size:16px;
+}
+
+.intro .box ul h4 {
+	border:none;
+}
+
 /* Upcoming event boxes */
 
 .boxes {
@@ -249,7 +266,7 @@ div.slideshow {
     border-width:1px 0;
 }
 
-.boxes .box ul, .newmembers .newmembers ul {
+.boxes .box ul, .intro .box ul {
 	list-style-type:none;
 	margin:0;
 	padding:0 0 0 10px;
