@@ -9,5 +9,5 @@
       </li>
     <?php } ?>
   </ul>
-  <p><a href="<?php echo $listPage;?>" class="more">More</a></p>
+  <p><a href="<?php echo $listPage;?>" class="more" title="All upcoming walks">More</a></p>
 </div>
