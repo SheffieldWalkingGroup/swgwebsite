@@ -135,8 +135,6 @@ var showPopup = function(eventType, eventID, link) {
 		});
 		a.get();
 	
-	
-	
 		// Add a loading indicator to the popup
 		var loadIndicator = new Element("img",{
 			"src":"/templates/swgpeter/images/ajax-loader.gif",
@@ -254,6 +252,11 @@ function displayPopup(event, eventType) {
 			
 			break;
 		case "weekend":
+			var area = new Element("span", {
+				"class":"area",
+				"text":event.area
+			});
+			area.inject(eventName,'before');
 			if (event.url != "") {
 				var moreInfo = new Element("p",{
 					"class":"moreinfo",

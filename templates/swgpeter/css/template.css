@@ -610,7 +610,7 @@ div.slideshow {
 	margin:0;
 }
 
-.eventheader .rating {
+.eventheader .rating, .eventheader .area {
 	float:right;
 }
 
