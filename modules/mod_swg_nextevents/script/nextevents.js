@@ -16,7 +16,7 @@ var currentlyLoading = null;
 var cachedEvents = {
   "walk":new Array(),
   "social":new Array(),
-  "weekend":new Array()
+  "weekend":new Array(),
 };
 
 function registerPopupLinks() {
@@ -27,10 +27,11 @@ function registerPopupLinks() {
 			// Get the event type and ID
 			var eventType = link.rel.substr(0,link.rel.indexOf("_"));
 			var eventID = link.rel.substr(link.rel.indexOf("_")+1);
+			var newMembers = link.hasClass("newmembers");
 			link.addEvent("mouseover", function(event) {
 				// Delay 300ms before showing
 				clearTimers();
-				enterDelay = showPopup.delay(300,window,[eventType,eventID,link]);
+				enterDelay = showPopup.delay(300,window,[eventType,eventID,link,newMembers]);
 				return false;
 			});
 			link.addEvent("mouseout", function(event) {
@@ -64,7 +65,7 @@ function clearTimers() {
  * TODO: Could request data immediately so it's preloaded,
  * as long as we can handle race conditions as the user moves around
  */
-var showPopup = function(eventType, eventID, link) {
+var showPopup = function(eventType, eventID, link, newMembers) {
 	// Create a new popup
 	if (infoPopup != null)
 		infoPopup.dispose();
@@ -108,7 +109,7 @@ var showPopup = function(eventType, eventID, link) {
 	// See if we've previously cached this event
 	if (cachedEvents[eventType][eventID] != undefined)
 	{
-		displayPopup(cachedEvents[eventType][eventID], eventType);
+		displayPopup(cachedEvents[eventType][eventID], eventType, newMembers);
 	}
 	else
 	{
@@ -129,7 +130,7 @@ var showPopup = function(eventType, eventID, link) {
 				{
 					// Destroy the load indicator
 					loadIndicator.dispose();
-					displayPopup(event, eventType);
+					displayPopup(event, eventType, newMembers);
 				}
 			}
 		});
@@ -146,7 +147,7 @@ var showPopup = function(eventType, eventID, link) {
 	}
 }
 
-function displayPopup(event, eventType) {
+function displayPopup(event, eventType, newMembers) {
 	// Add alterations to the whole popup
 	if (event.alterations.any) {
 		infoPopup.addClass("popup-altered");
@@ -288,6 +289,40 @@ function displayPopup(event, eventType) {
 				contact.addClass("altered");
 			eventInfo.adopt(contact);
 			
+			// Get the start and end time
+			// For new members, take the new member times if they exist and the normal times if not.
+			// Otherwise, just use normal times
+			var startTime, endTime;
+			
+			if (newMembers && event.newMemberStart != undefined)
+				startTime = timestampToTime(event.newMemberStart);
+			else if (event.start != undefined)
+				startTime = timestampToTime(event.start);
+			
+			if (newMembers && event.newMemberEnd != undefined)
+				endTime = timestampToTime(event.newMemberEnd);
+			else if (event.end != undefined)
+				endTime = timestampToTime(event.end);
+			
+			// Now build the elements to display them (if they exist)
+			// Only display the end time if the start time is set.
+			if (startTime != undefined)
+			{
+				var start = new Element("p", {
+					"class":"start",
+					"html":"<span>Start:</span> "+startTime
+				});
+				eventInfo.adopt(start);
+				if (endTime != undefined)
+				{
+					var end = new Element("p",{
+						"class":"end",
+						"html":"<span>End:</span> "+endTime
+					});
+					eventInfo.adopt(end);
+				}
+			}
+			
 			if (eventType == "weekend")
 				eventInfo.adopt(bookingsOpen);
 			
@@ -324,6 +359,15 @@ function timestampToDate(timestamp) {
 	else if (dayDate == 3 || dayDate == 23)
 		suffix = "rd";
 	return dayName+" "+dayDate+suffix+" "+month;
+}
+
+function timestampToTime(timestamp) {
+	var date = new Date(timestamp*1000);
+	var hours = date.getHours();
+	var minutes = date.getMinutes();
+	if (minutes < 10)
+		minutes = "0"+minutes;
+	return hours+":"+minutes;
 }
 
 /**

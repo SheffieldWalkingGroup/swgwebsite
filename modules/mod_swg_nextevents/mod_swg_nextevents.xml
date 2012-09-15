@@ -25,9 +25,14 @@
         				<option value="1">Walks</option>
         				<option value="2">Socials</option>
         				<option value="3">Weekends Away</option>
+        				<option value="21">New members' socials</option>
         			</field>
         			<field name="numberOfEvents" type="text" label="Number of events" default="3" description="The number of events to display" />
         			<field name="listPage" type="menuItem" label="List page" description="The page to go to if the visitor clicks the more link or clicks on an event" />
+        			<field name="moreLink" type="radio" label="Show more link" default="1" description="Show a link to the full listing page">
+        				<option value="1">Yes</option>
+        				<option value="0">No</option>
+        			</field>
         		</fieldset>
         		<fieldset
 				name="advanced">

@@ -99,7 +99,7 @@ nav .moduletable_menu, nav .moduletable {
     margin:15px 0 5px 4px;
     border-style:solid;
     border-color:#555;
-    border-width:1px 0;
+    border-width:0 0 1px;
 }
 
 nav .moduletable_menu h3, nav .moduletable h3 {
@@ -111,6 +111,7 @@ nav .moduletable_menu h3, nav .moduletable h3 {
 }
 
 nav .moduletable_menu h3{
+	border-top:1px solid #555;
     background:url(/templates/swgpeter/images/menuhead-ltblue.png);
 }
 
@@ -229,16 +230,24 @@ div.slideshow {
 }
 
 .intro .box>h4 {
-	border-style:solid;
-	border-color:#aaa;
-	border-width:1px 0;
-	margin:5px 0;
-	padding:5px 10px;
-	font-size:16px;
+	padding:0px 10px;
+	font-size:13px;
 }
 
 .intro .box ul h4 {
 	border:none;
+}
+
+.intro .eventdate {
+	font-style:italic;
+	margin-left:10px;
+}
+
+.intro a {
+}
+
+.intro a:last-of-type {
+	float:right;
 }
 
 /* Upcoming event boxes */
@@ -263,7 +272,7 @@ div.slideshow {
     position:relative;
     border-style:solid;
     border-color:#555;
-    border-width:1px 0;
+    border-width:0 0 1px;
 }
 
 .boxes .box ul, .intro .box ul {
@@ -278,6 +287,7 @@ div.slideshow {
 }
 
 .moduletable h3 {
+	border-top:1px solid #555;
     border-bottom:1px solid #555;
     margin:0 0 5px;
     padding:3px 10px;
@@ -353,7 +363,7 @@ div.slideshow {
 /* Event detail popups */
 
 .popup {
-    z-index:5;
+    z-index:100;
     width:582px;
 }
 

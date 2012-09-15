@@ -9,5 +9,7 @@
       </li>
     <?php } ?>
   </ul>
-  <p><a href="<?php echo $listPage;?>" class="more" title="All upcoming walks">More</a></p>
+  <?php if ($showMoreLink): ?>
+    <p><a href="<?php echo $listPage;?>" class="more" title="All upcoming walks">More</a></p>
+  <?php endif; ?>
 </div>
