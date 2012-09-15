@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE install
+  PUBLIC "-//Joomla! 1.5//DTD plugin 1.0//EN" "http://www.joomla.org/xml/dtd/1.5/plugin-install.dtd">
+<extension version="2.5" type="plugin" group="content">
+	<name>plg_content_swg_nextevent</name>
+	<author>Peter Copeland</author>
+	<authorEmail>tech@sheffieldwalkinggroup.org.uk</authorEmail>
+	<version>0.1</version>
+	<description>Displays the date or time of the next event of a specified type</description>
+	<files>
+		<filename plugin="swg_nextevent">swg_nextevent.php</filename>
+	</files>
+</extension>
+
