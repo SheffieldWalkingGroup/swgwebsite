@@ -35,19 +35,6 @@ class SWG_EventsModelEventlisting extends JModelItem
 	}
  
 	/**
-	 * Get the message
-	 * @return string The message to be displayed to the user
-	 */
-	public function getMsg() 
-	{
-		if (!isset($this->msg)) 
-		{
-			$this->msg = 'Hello World!! Woo!!';
-		}
-		return $this->msg;
-	}
-	
-	/**
 	 * Gets all the events we want to display:
 	 * the main events we're listing and the others we want to mix in.
 	 * @return array of events
