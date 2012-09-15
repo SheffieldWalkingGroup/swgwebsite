@@ -144,7 +144,7 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  elseif (isset($nextWalk, $nextSocial))
 	    $start = min($nextWalk->start, $nextSocial->start);
 	  else if (isset($nextWalk, $nextWeekend))
-	    $start = min($nextWalk->start, $nextSocial->start);
+	    $start = min($nextWalk->start, $nextWeekend->start);
 	  else if (isset($nextSocial, $nextWeekend))
 	    $start = min($nextSocial->start, $nextWeekend->start);
 	  // We only have one - return that straight away without bothering to go to the next step
