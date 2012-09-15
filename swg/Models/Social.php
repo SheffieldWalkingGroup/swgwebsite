@@ -11,6 +11,10 @@ class Social extends Event {
   protected $start;
   protected $end;
   
+  // Start and end times for the new members' part (if applicable)
+  protected $newMemberStart;
+  protected $newMemberEnd;
+  
   public function __construct($dbArr)
   {
     parent::__construct();
@@ -26,7 +30,14 @@ class Social extends Event {
     if (!empty($dbArr['endtime']))
       $this->end = strtotime($dbArr['on_date']." ".$dbArr['endtime']);
     else
-      $this->end = $this->start + 30*60;
+      $this->end = $this->start + 120*60;
+    
+    if (!empty($dbArr['newmemberstart']))
+    {
+      $this->newMemberStart = strtotime($dbArr['on_date']." ".$dbArr['newmemberstart']);
+      if (!empty($dbArr['newmemberend']))
+        $this->newMemberEnd = strtotime($dbArr['on_date']." ".$dbArr['newmemberend']);
+    }
   }
   
   public function __get($name)
@@ -39,7 +50,7 @@ class Social extends Event {
    * @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
    * @return array Array of Socials
    */
-  public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1) {
+  public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $getNormal = true, $getNewMember = true) {
     
     // Build a query to get future socials
     $db = JFactory::getDBO();
@@ -47,11 +58,22 @@ class Social extends Event {
     $query->select("*");
     $query->from("socialsdetails");
     // TODO: This is a stored proc currently - can we use this?
-    $query->where(array(
+    $where = array(
         "on_date >= '".self::timeToDate($startDate)."'",
         "on_date <= '".self::timeToDate($endDate)."'",
         "readytopublish",
-    ));
+    );
+    // Hide normal/new member events if we're not interested
+    if (!$getNormal || !$getNewMember)
+    {
+      if ($getNormal)
+        $where[] = "shownormal";
+      else if ($getNewMember)
+        $where[] = "shownewmember";
+      else
+        $where[] = "false";
+    }
+    $query->where($where);
     $query->order(array("on_date ASC", "title ASC"));
     $db->setQuery($query);
     $socialData = $db->loadAssocList();
@@ -72,8 +94,8 @@ class Social extends Event {
    * Partly for backwards-compatibility, but also to improve readability
    * @param int $numEvents Maximum number of events to get
    */
-  public static function getNext($numEvents) {
-    return self::get(self::DateToday, self::DateEnd, $numEvents);
+  public static function getNext($numEvents, $getNormal = true, $getNewMember = true) {
+    return self::get(self::DateToday, self::DateEnd, $numEvents, $getNormal, $getNewMember);
   }
   
   public static function getSingle($id) {
