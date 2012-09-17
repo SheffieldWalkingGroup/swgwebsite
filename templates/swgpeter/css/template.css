@@ -264,8 +264,12 @@ div.slideshow {
     height:180px;
 }
 
-.boxes h3, .intro .moduletable h3 {
+.boxes h3 {
     background-image:url(/templates/swgpeter/images/boxhead-ltgreen.png) !important;
+}
+
+.intro .moduletable h3 {
+	background-image:url(/templates/swgpeter/images/rboxhead-ltgreen.png) !important;
 }
 
 .boxes .moduletable, .intro .moduletable {
