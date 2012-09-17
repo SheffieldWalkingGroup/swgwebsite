@@ -88,6 +88,7 @@ div.wrapper {
 /* Main navigation menu */
 
 nav {
+	display:block; /* For non-HTML 5 browsers */
     width:190px;
     height:100%;
     float:left;
@@ -684,6 +685,7 @@ div.slideshow {
 /* Page footer */
 
 footer {
+	display:block;
 	margin:0 10px;
 }
 
