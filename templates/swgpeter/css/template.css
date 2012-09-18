@@ -298,12 +298,13 @@ div.slideshow {
     border-width:0 0 1px;
 }
 
-.boxes .box ul {
+.boxes .box ul, .boxes .box ol {
 	margin:0;
 	padding:0 0 0 20px;
 }
 
-.homepage .boxes .box ul, .intro .box ul {
+.homepage .boxes .box ul, .intro .box ul,
+.homepage .boxes .box ol, .intro .box ol {
 	list-style-type:none;
 	margin:0;
 	padding:0 0 0 10px;
@@ -329,7 +330,7 @@ div.slideshow {
 	background:url(/templates/swgpeter/images/contenthead-green.png);
 }
 
-.moduletable ul {
+.moduletable ul, .moduletable ol {
     margin:10px 0;
     padding-left:25px;
 }
@@ -545,23 +546,20 @@ div.slideshow {
  */
 
 /* Walk symbols key */
-.walkkey ul {
+.walkkey ul, .walkkey ol {
     margin:10px 0 0;
 }
 
-.walkkey ul li {
+.walkkey li {
     clear:both;
     height:35px;
 }
-.walkkey ul li span {
+.walkkey li span {
     float:left;
     width:50px;
     display:inline-block;
     text-align:center;
     margin-left:0;
-}
-
-.walkkey ul li img {
 }
 
 /* Events list */
