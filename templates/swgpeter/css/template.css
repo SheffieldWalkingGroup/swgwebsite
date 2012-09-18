@@ -251,6 +251,15 @@ div.slideshow {
 	float:right;
 }
 
+/* Blog */
+.moduletable .feed h4 {
+	margin:0;
+}
+
+.moduletable .feed p {
+	margin:0 0 5px;
+}
+
 /* Upcoming event boxes */
 
 .boxes {
@@ -263,6 +272,10 @@ div.slideshow {
     margin-right:10px;
     width:250px;
     height:180px;
+}
+
+.boxes .box p {
+	margin:0;
 }
 
 .boxes h3 {
@@ -337,7 +350,7 @@ div.slideshow {
 }
 
 .moduletable p {
-    margin:0;
+    margin:10px;
 }
 
 .moduletable a {
