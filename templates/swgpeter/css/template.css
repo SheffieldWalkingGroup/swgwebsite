@@ -152,7 +152,7 @@ nav .menu  ul ul a {
     width:134px;
 }
 
-nav .moduletable h3, .boxes .moduletable h3 {
+nav .moduletable h3, .boxes .box h3 {
     background:url(/templates/swgpeter/images/lboxhead-ltgreen.png);
 }
 
@@ -260,7 +260,7 @@ div.slideshow {
 	margin:0 0 5px;
 }
 
-/* Upcoming event boxes */
+/* Set of 3 small boxes spanning page width (e.g. upcoming events) */
 
 .boxes {
     margin-top:5px;
@@ -286,14 +286,19 @@ div.slideshow {
 	background-image:url(/templates/swgpeter/images/rboxhead-ltgreen.png) !important;
 }
 
-.boxes .moduletable, .intro .moduletable {
+.boxes>.box, .intro .moduletable {
     position:relative;
     border-style:solid;
     border-color:#555;
     border-width:0 0 1px;
 }
 
-.boxes .box ul, .intro .box ul {
+.boxes .box ul {
+	margin:0;
+	padding:0 0 0 20px;
+}
+
+.homepage .boxes .box ul, .intro .box ul {
 	list-style-type:none;
 	margin:0;
 	padding:0 0 0 10px;
@@ -304,7 +309,7 @@ div.slideshow {
 /*  margin-left:1px; */
 }
 
-.moduletable h3 {
+.moduletable h3, .box h3 {
 	border-top:1px solid #555;
     border-bottom:1px solid #555;
     margin:0 0 5px;
@@ -315,7 +320,7 @@ div.slideshow {
     font-size:18px;
 }
 
-.main .moduletable h3 {
+.main .moduletable h3, .main .box h3 {
 	background:url(/templates/swgpeter/images/contenthead-green.png);
 }
 
