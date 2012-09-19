@@ -4,12 +4,13 @@ defined('_JEXEC') or die('Restricted Access');
 ?>
 <tr>
 	<th width="5">
-		<?php echo JText::_('COM_SWG_EVENTS_SWG_EVENTS_HEADING_ID'); ?>
-	</th>
-	<th width="20">
-		<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count($this->items); ?>);" />
+		Reminder ID
 	</th>			
 	<th>
-		<?php echo JText::_('COM_SWG_EVENTS_SWG_EVENTS_HEADING_GREETING'); ?>
+		Reminder text
 	</th>
+	<th>
+	    Display with
+	</th>
+	
 </tr>

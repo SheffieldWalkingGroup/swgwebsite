@@ -6,7 +6,7 @@ jimport('joomla.application.component.modellist');
 /**
  * HelloWorldList Model
  */
-class HelloWorldModelHelloWorlds extends JModelList
+class SWG_EventsModelSWG_Events extends JModelList
 {
   /**
    * Method to build an SQL query to load the list data.
@@ -19,9 +19,9 @@ class HelloWorldModelHelloWorlds extends JModelList
     $db = JFactory::getDBO();
     $query = $db->getQuery(true);
     // Select some fields
-    $query->select('id,greeting');
+    $query->select('id,text,eventtype,ordering');
     // From the hello table
-    $query->from('#__helloworld');
+    $query->from('#__swg_events_protocolreminders');
     return $query;
   }
 }

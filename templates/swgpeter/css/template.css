@@ -712,6 +712,13 @@ div.slideshow {
 	border:1px solid red;
 }
 
+.protocolreminder {
+	margin:10px 0;
+	font-size:0.9em;
+	font-style:italic;
+	text-align:center;
+}
+
 /* Page footer */
 
 footer {

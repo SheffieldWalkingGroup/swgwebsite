@@ -1,4 +1,5 @@
 <?php
+require_once JPATH_BASE."/../swg/swg.php";
 // No direct access to this file
 defined('_JEXEC') or die('Restricted Access');
 ?>
@@ -8,10 +9,13 @@ defined('_JEXEC') or die('Restricted Access');
 			<?php echo $item->id; ?>
 		</td>
 		<td>
-			<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+			<?php echo $item->text; ?>
 		</td>
 		<td>
-			<?php echo $item->greeting; ?>
+			<?php echo ucfirst(SWG::printableEventType($item->eventtype))."s"; ?>
+		</td>
+		<td>
+		
 		</td>
 	</tr>
 <?php endforeach; ?>

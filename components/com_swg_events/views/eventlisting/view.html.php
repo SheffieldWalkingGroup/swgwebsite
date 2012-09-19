@@ -15,7 +15,8 @@ class SWG_EventsViewEventListing extends JView
 	{
 		// Assign data to the view
 		$this->events = $this->get('Events');
- 
+		$this->protocolReminders = $this->get('ProtocolReminders');
+		 
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) 
 		{

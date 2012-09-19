@@ -33,6 +33,38 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  
 	  parent::__construct();
 	}
+	
+	public function getProtocolReminders()
+	{
+	  $pr = array();
+	  
+	  $db = JFactory::getDBO();
+	  $query = $db->getQuery(true);
+	  $query->select("*");
+	  $query->from("#__swg_events_protocolreminders");
+	  
+	  // Filter reminders to those for events on this page, e.g. only show walk reminders if there are walks on the page
+	  $types = array();
+	  if (JRequest::getBool("includeWalks"))
+	    $types[] = "eventtype = ".SWG::EventType_Walk;
+	  if (JRequest::getBool("includeSocials"))
+	    $types[] = "eventtype = ".SWG::EventType_Social;
+	  if (JRequest::getBool("includeWeekends"))
+	    $types[] = "eventtype = ".SWG::EventType_Weekend;
+	  $query->where($types, "OR");
+	  
+	  $query->order(array("Ordering ASC", "RAND()"));
+	  $db->setQuery($query);
+	  $protocolData = $db->loadAssocList();
+	  
+	  // Build an array of reminders
+	  while (count($protocolData)) {
+	    $thisProtocol = array_shift($protocolData);
+	    $pr[] = $thisProtocol;
+	  }
+	  
+	  return $pr;
+	}
  
 	/**
 	 * Gets all the events we want to display:

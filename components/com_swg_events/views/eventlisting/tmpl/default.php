@@ -2,7 +2,9 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-foreach ($this->events as $event) {?>
+$nextProtocolReminder = 0;
+
+foreach ($this->events as $event):?>
   <div class="event published">
   <?php if ($event->alterations->cancelled): ?><p class="cancelled-message">Cancelled</p><?php endif; ?>
     <div class="content <?php echo $event->getEventType(); if ($event instanceof WalkInstance) echo " walk".strtolower($event->getWalkDay()); if ($event->alterations->cancelled) echo " cancelled"?>">
@@ -105,4 +107,13 @@ foreach ($this->events as $event) {?>
       <div style="clear:right;">&nbsp;</div>
     </div>
   </div>
-<?php }
+<?php
+  // Display any relevant protocol reminders after each event
+  if (!empty($this->protocolReminders) && is_array($this->protocolReminders))
+  {
+    if (count($this->protocolReminders) < $nextProtocolReminder+1)
+      $nextProtocolReminder = 0;
+    ?><p class="protocolreminder"><?php echo $this->protocolReminders[$nextProtocolReminder++]['text']; ?></p><?php 
+  }
+  
+  endforeach;
