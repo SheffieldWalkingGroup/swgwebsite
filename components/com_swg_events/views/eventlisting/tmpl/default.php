@@ -9,7 +9,7 @@ foreach ($this->events as $event):?>
   <?php if ($event->alterations->cancelled): ?><p class="cancelled-message">Cancelled</p><?php endif; ?>
     <div class="content <?php echo $event->getEventType(); if ($event instanceof WalkInstance) echo " walk".strtolower($event->getWalkDay()); if ($event->alterations->cancelled) echo " cancelled"?>">
       <div class="eventheader">
-        <span class="date<?php if ($event->alterations->date) echo " altered"; ?>" id="<?php echo $event->getEventType();?>No<?php echo $event->id?>">
+        <span class="date<?php if ($event->alterations->date) echo " altered\" title=\"Date altered"; ?>" id="<?php echo $event->getEventType();?>No<?php echo $event->id?>">
           <?php 
             if ($event instanceof Weekend)
               // Display start and end dates for weekends. Only display month for start if the weekend straddles a month boundary
@@ -25,7 +25,7 @@ foreach ($this->events as $event):?>
         <?php endif;?>
         <h3><?php echo $event->name; ?></h3>
       </div>
-      <div class="description<?php if ($event->alterations->details) echo " altered"; ?>">
+      <div class="description<?php if ($event->alterations->details) echo " altered\" title=\"Details altered"; ?>">
         <p><?php echo $event->description; ?></p>
         <?php if ($event instanceof WalkInstance):?>
           <p class="icons">
@@ -56,7 +56,7 @@ foreach ($this->events as $event):?>
           <?php if ($event->isLinear):?>
             <p class="end"><span>End:</span> <?php echo $event->endGridRef.", ".$event->endPlaceName;?></p>
           <?php endif; ?>
-          <p class="transport<?php if ($event->alterations->placeTime) echo " altered"; ?>">
+          <p class="transport<?php if ($event->alterations->placeTime) echo " altered\" title=\"Place & time altered"; ?>">
             <span>Transport:</span>
             <?php if (!$event->meetPoint->isOther()) {
               echo "Meet at ".strftime("%H:%M", $event->meetPoint->meetTime)." at ".$event->meetPoint->longDesc.". ";
@@ -66,7 +66,7 @@ foreach ($this->events as $event):?>
             }
             ?>
           </p>
-          <p class="leader<?php if ($event->alterations->organiser) echo " altered"; ?>">
+          <p class="leader<?php if ($event->alterations->organiser) echo " altered\" title=\"Leader changed"; ?>">
             <span>Walk Leader:</span>
             <?php
               echo $event->leader->displayName.(!empty($event->leader->telephone)?" (".$event->leader->telephone.")":""); 
