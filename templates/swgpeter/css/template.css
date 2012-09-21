@@ -373,7 +373,7 @@ div.slideshow {
     margin:10px;
 }
 
-.moduletable a {
+.moduletable a, .box span.rating {
     font-size:13px;
     margin-left:0;
 }
