@@ -47,6 +47,15 @@ h2 {
     clear:both;
 }
 
+a {
+	color:#0042ab;
+	text-decoration:none;
+}
+
+a:hover, a:active {
+	text-decoration:underline;
+}
+
 a img {
     border:none;
 }
@@ -130,16 +139,16 @@ nav .menu, nav .menu ul {
 }
 
 nav .menu li a {
+	color:#005bab;
     display:inline-block;
     width:174px;
-    padding:2px 5px;
-    color:#64707d;
-    text-decoration:none;
+    padding:2px 5px 2px 15px;
 }
 
-nav  .menu li a:hover, .left .menu li a#active_menumainnav {
-    text-decoration:underline;
+nav .menu li.current>a {
+	background:url("/templates/swgpeter/images/bullet_arrow_right.png") no-repeat 0px 2px;
 }
+
 nav .menu ul {
     margin-left:20px;
     width:164px;
@@ -724,6 +733,12 @@ div.slideshow {
 footer {
 	display:block;
 	margin:0 10px;
+	min-height:60px;
+}
+
+footer div.wrap {
+	position:absolute;
+	bottom:10px;
 }
 
 footer>.social-icons {
