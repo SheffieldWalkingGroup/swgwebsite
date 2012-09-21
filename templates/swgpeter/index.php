@@ -10,13 +10,13 @@
         <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/system/css/system.css" type="text/css" />
         <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/system/css/general.css" type="text/css" />
         <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/<?php echo $this->template; ?>/css/template.css" type="text/css" />
-        <!-- [if lt IE 9]>
+        <!--[if lt IE 9]>
             <script>
                 document.createElement('header');
                 document.createElement('nav');
                 document.createElement('footer');
             </script>
-        <![endif] -->
+        <![endif]-->
     </head>
     <body>
        <!-- TODO: Try to move the h1 tag to the top of the HTML. May require some absolute positioning, esp. of the right panel -->
