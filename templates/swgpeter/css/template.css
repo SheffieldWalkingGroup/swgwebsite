@@ -741,17 +741,18 @@ footer div.wrap {
 	bottom:10px;
 }
 
-footer>.social-icons {
+.social-icons {
 	border:none !important;
 	float:left;
 }
 
 .social-icons p {
 	margin-left:25px;
+	margin-right:0;
 }
 
 .social-icons a{
-	margin-right:20px;
+	margin-right:25px;
 }
 
 p.footer {
