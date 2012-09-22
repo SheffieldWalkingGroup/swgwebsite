@@ -744,6 +744,7 @@ footer div.wrap {
 .social-icons {
 	border:none !important;
 	float:left;
+	width:200px;
 }
 
 .social-icons p {
