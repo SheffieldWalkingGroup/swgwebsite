@@ -49,13 +49,14 @@
                     <jdoc:include type="modules" name="boxes" style="xhtml" />
                     <div class="clear" style="clear:right;">&nbsp;</div>
                 </div>
-                
-                <div class="clear"></div>
               </div>
             <footer>
-              <jdoc:include type="modules" name="footer" style="xhtml" />
-                <p class="footer">The&nbsp;Ramblers&nbsp;Association is a company limited by guarantee, registered in England&nbsp;and&nbsp;Wales. Company&nbsp;registration&nbsp;number:&nbsp;4458492.</p>
-                <p class="footer">Registered&nbsp;Charity in England&nbsp;and&nbsp;Wales number:&nbsp;1093577. Registered&nbsp;office: 2nd&nbsp;floor, Camelford&nbsp;House, 87-90&nbsp;Albert&nbsp;Embankment, London&nbsp;SE1&nbsp;7TW</p>
+                <div class="wrap">
+                  <jdoc:include type="modules" name="footer" style="xhtml" />
+                  <p class="footer">The&nbsp;Ramblers&nbsp;Association is a company limited by guarantee, registered in England&nbsp;and&nbsp;Wales. Company&nbsp;registration&nbsp;number:&nbsp;4458492.</p>
+                  <p class="footer">Registered&nbsp;Charity in England&nbsp;and&nbsp;Wales number:&nbsp;1093577. Registered&nbsp;office: 2nd&nbsp;floor, Camelford&nbsp;House, 87-90&nbsp;Albert&nbsp;Embankment, London&nbsp;SE1&nbsp;7TW</p>
+                </div>
+                <div class="clear"></div>
             </footer>
             </div>
         </div>

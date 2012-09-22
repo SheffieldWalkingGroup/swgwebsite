@@ -296,7 +296,7 @@ function displayPopup(event, eventType, newMembers) {
 			
 			if (newMembers && event.newMemberStart != undefined)
 				startTime = timestampToTime(event.newMemberStart);
-			else if (event.start != undefined)
+			else if (event.start != undefined && timestampToTime(event.start) != "00:00")
 				startTime = timestampToTime(event.start);
 			
 			if (newMembers && event.newMemberEnd != undefined)
@@ -365,6 +365,8 @@ function timestampToTime(timestamp) {
 	var date = new Date(timestamp*1000);
 	var hours = date.getHours();
 	var minutes = date.getMinutes();
+	if (hours < 10)
+		hours = "0"+hours;
 	if (minutes < 10)
 		minutes = "0"+minutes;
 	return hours+":"+minutes;
