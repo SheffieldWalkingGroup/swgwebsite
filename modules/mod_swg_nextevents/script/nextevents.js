@@ -16,7 +16,7 @@ var currentlyLoading = null;
 var cachedEvents = {
   "walk":new Array(),
   "social":new Array(),
-  "weekend":new Array(),
+  "weekend":new Array()
 };
 
 function registerPopupLinks() {
@@ -77,7 +77,7 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 	});
 	
 	infoPopup.adopt(popupContents);
-	document.body.adopt(infoPopup);
+	infoPopup.inject(document.body);
 	
 	// Set the popup's position. It should be 20px above the link,
 	// and at least 50px from the edge of the window.
