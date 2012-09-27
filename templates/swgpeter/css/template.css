@@ -213,7 +213,7 @@ div.slideshow {
 }
 
 /* On the homepage, the tagline should be right-aligned and smaller than normal */
-.homepage .slideshow h2 {
+.home .slideshow h2 {
 	font-size:20px;
     text-shadow:0px 0px 1px #999;
 	left:100px;
@@ -228,7 +228,7 @@ div.slideshow {
 
 /* Who are we, info for new members */
 
-.homepage div.intro {
+.home div.intro {
     float:right;
     width:200px;
     border:none;
@@ -312,8 +312,8 @@ div.slideshow {
 	padding:0 0 0 20px;
 }
 
-.homepage .boxes .box ul, .intro .box ul,
-.homepage .boxes .box ol, .intro .box ol {
+.home .boxes .box ul, .intro .box ul,
+.home .boxes .box ol, .intro .box ol {
 	list-style-type:none;
 	margin:0;
 	padding:0 0 0 10px;

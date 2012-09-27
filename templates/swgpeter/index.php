@@ -29,7 +29,7 @@
                 
                 <jdoc:include type="modules" name="top" style="xhtml" />
                 
-                <?php if (isset($currentPage->alias) && $currentPage->alias == "homepage"): ?>
+                <?php if (isset($currentPage->alias) && $currentPage->alias == "home"): ?>
                 <div class="intro">
                     <jdoc:include type="modules" name="right" style="xhtml" />
                 </div>
