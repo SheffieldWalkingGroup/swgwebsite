@@ -53,8 +53,8 @@ class JConfig {
 	public $sef_suffix = '0';
 	public $unicodeslugs = '0';
 	public $feed_limit = '10';
-	public $log_path = '/mnt/photos/refugee/home/peter/swg/website/public_html/logs';
-	public $tmp_path = '/mnt/photos/refugee/home/peter/swg/website/public_html/tmp';
+	public $log_path = '/home/peter/swg/website/public_html/logs';
+	public $tmp_path = '/home/peter/swg/website/public_html/tmp';
 	public $lifetime = '15';
 	public $session_handler = 'database';
 	public $MetaRights = '';
