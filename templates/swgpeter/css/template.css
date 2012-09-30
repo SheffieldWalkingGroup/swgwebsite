@@ -60,6 +60,20 @@ a img {
     border:none;
 }
 
+dl {
+	margin:12px 20px;
+	padding:0;
+}
+
+dl dt {
+	font-weight:bold;
+}
+
+dl dd {
+	margin:2px 0 10px 40px;
+	padding:0; 
+}
+
 /* Overall page styles */
 
 html {
