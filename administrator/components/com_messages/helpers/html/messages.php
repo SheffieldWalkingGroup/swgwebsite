@@ -4,23 +4,20 @@
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access.
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.controller');
 
 /**
  * @package		Joomla.Administrator
  * @subpackage	com_messages
  * @since		1.6
  */
-class JHtmlMessages extends JController
+class JHtmlMessages
 {
 	/**
 	 * @param	int $value	The state value
 	 * @param	int $i
 	 */
-	function state($value = 0, $i, $canChange)
+	public static function state($value = 0, $i, $canChange)
 	{
 		// Array of image, task, title, action.
 		$states	= array(

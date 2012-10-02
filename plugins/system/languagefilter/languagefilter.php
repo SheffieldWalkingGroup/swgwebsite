@@ -98,7 +98,8 @@ class plgSystemLanguageFilter extends JPlugin
 	public function onAfterInitialise()
 	{
 		$app = JFactory::getApplication();
-		$app->set('menu_associations', $this->params->get('menu_associations', 0));
+		$app->menu_associations = $this->params->get('menu_associations', 0);
+
 		if ($app->isSite()) {
 			self::$tag = JFactory::getLanguage()->getTag();
 
@@ -188,6 +189,8 @@ class plgSystemLanguageFilter extends JPlugin
 
 	public function parseRule(&$router, &$uri)
 	{
+		$app = JFactory::getApplication();
+
 		$array = array();
 		$lang_code = JRequest::getString(JApplication::getHash('language'), null , 'cookie');
 		// No cookie - let's try to detect browser language or use site default
@@ -204,11 +207,9 @@ class plgSystemLanguageFilter extends JPlugin
 
 			$sef = $parts[0];
 
-			$app = JFactory::getApplication();
-
 			// Redirect only if not in post
 			$post = JRequest::get('POST');
-			if (JRequest::getMethod() != "POST" || count($post) == 0)
+			if (!empty($lang_code) && $app->input->getMethod() != "POST" || count($post) == 0)
 			{
 				if ($this->params->get('remove_default_prefix', 0) == 0)
 				{
@@ -233,7 +234,7 @@ class plgSystemLanguageFilter extends JPlugin
 					// redirect if sef does not exists and language is not the default one
 					if (!isset(self::$sefs[$sef]) && $lang_code != self::$default_lang)
 					{
-						$sef = self::$default_sef;
+						$sef = isset(self::$lang_codes[$lang_code]) ? self::$lang_codes[$lang_code]->sef : self::$default_sef;
 						$uri->setPath($sef . '/' . $path);
 
 						if ($app->getCfg('sef_rewrite')) {
@@ -276,7 +277,7 @@ class plgSystemLanguageFilter extends JPlugin
 				$sef = isset(self::$lang_codes[$lang_code]) ? self::$lang_codes[$lang_code]->sef : self::$default_sef;
 				$uri->setVar('lang', $sef);
 				$post = JRequest::get('POST');
-				if (JRequest::getMethod() != "POST" || count($post) == 0)
+				if ($app->input->getMethod() != "POST" || count($post) == 0)
 				{
 					$app = JFactory::getApplication();
 					$app->redirect(JURI::base(true).'/index.php?'.$uri->getQuery());
@@ -371,14 +372,18 @@ class plgSystemLanguageFilter extends JPlugin
 	 */
 	public function onUserLogin($user, $options = array())
 	{
- 		$app = JFactory::getApplication();
- 		$menu 	= $app->getMenu();
+ 		$app  = JFactory::getApplication();
+ 		$menu = $app->getMenu();
 		if ($app->isSite() && $this->params->get('automatic_change', 1))
 		{
 			// Load associations
-			if ($app->get('menu_associations', 0)) {
+			$assoc = isset($app->menu_associations) ? $app->menu_associations : 0;
+
+			if ($assoc)
+			{
 				$active = $menu->getActive();
-				if ($active) {
+				if ($active)
+				{
 					$associations = MenusHelper::getAssociations($active->id);
 				}
 			}
@@ -472,9 +477,9 @@ class plgSystemLanguageFilter extends JPlugin
 							$item = $menu->getItem($associations[$language->lang_code]);
 							if ($item && JLanguage::exists($language->lang_code)) {
 								if ($app->getCfg('sef')) {
-									$link = JRoute::_('index.php?Itemid='.$associations[$language->lang_code].'&lang='.$language->sef, false);
+									$link = JRoute::_('index.php?Itemid='.$associations[$language->lang_code].'&lang='.$language->sef);
 								} else {
-									$link = JRoute::_($item->link.'&Itemid='.$associations[$language->lang_code].'&lang='.$language->sef, false);
+									$link = JRoute::_($item->link.'&Itemid='.$associations[$language->lang_code].'&lang='.$language->sef);
 								}
 								$doc->addHeadLink($server . $link, 'alternate', 'rel', array('hreflang' => $language->lang_code));
 							}
@@ -491,9 +496,9 @@ class plgSystemLanguageFilter extends JPlugin
 						$item = $menu->getDefault($language->lang_code);
 						if ($item && $item->language != $active->language && $item->language != '*' && JLanguage::exists($language->lang_code)) {
 							if ($app->getCfg('sef')) {
-								$link = JRoute::_('index.php?Itemid='.$item->id.'&lang='.$language->sef, false);
+								$link = JRoute::_('index.php?Itemid='.$item->id.'&lang='.$language->sef);
 							} else {
-								$link = JRoute::_($item->link.'&Itemid='.$item->id.'&lang='.$language->sef, false);
+								$link = JRoute::_($item->link.'&Itemid='.$item->id.'&lang='.$language->sef);
 							}
 							$doc->addHeadLink($server . JRoute::_($item->link.'&Itemid='.$item->id.'&lang='.$language->sef), 'alternate', 'rel', array('hreflang' => $language->lang_code));
 						}

@@ -56,6 +56,14 @@
 			<option value="1">JSHOW</option>
 			<option value="0">JHIDE</option>
 		</field>
+		<field name="show_advanced_tips"
+			type="radio"
+			default="1"
+			label="COM_FINDER_CONFIG_SHOW_ADVANCED_TIPS_LABEL"
+			description="COM_FINDER_CONFIG_SHOW_ADVANCED_TIPS_DESCRIPTION">
+			<option value="1">JSHOW</option>
+			<option value="0">JHIDE</option>
+		</field>
 		<field
 			name="expand_advanced"
 			type="radio"
@@ -198,6 +206,15 @@
 			description="COM_FINDER_CONFIG_STEMMER_DESCRIPTION" >
 			<option value="porter_en">COM_FINDER_CONFIG_STEMMER_PORTER_EN</option>
 			<option value="snowball">COM_FINDER_CONFIG_STEMMER_SNOWBALL</option>
+		</field>
+		<field
+			name="enable_logging"
+			type="radio"
+			default="0"
+			label="COM_FINDER_CONFIG_ENABLE_LOGGING_LABEL"
+			description="COM_FINDER_CONFIG_ENABLE_LOGGING_DESCRIPTION">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 	</fieldset>
 	<fieldset

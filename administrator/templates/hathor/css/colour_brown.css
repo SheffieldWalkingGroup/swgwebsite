@@ -639,6 +639,10 @@ button:hover, button:focus {
 	color: #cccccc;
 }
 
+.icon-32-extension {
+    background-image: url(../images/toolbar/icon-32-extension.png);
+}
+
 /**
  * Tooltips
  */
@@ -843,6 +847,10 @@ a img.calendar {
 }
 
 .icon-16-install {
+	background-image: url(../images/menu/icon-16-install.png);
+}
+
+.icon-16-joomlaupdate {
 	background-image: url(../images/menu/icon-16-install.png);
 }
 

@@ -145,6 +145,13 @@ class ContactModelCategory extends JModelList
 			$query->where('c.access IN ('.$groups.')');
 		}
 
+		// Join over the users for the author and modified_by names.
+		$query->select("CASE WHEN a.created_by_alias > ' ' THEN a.created_by_alias ELSE ua.name END AS author");
+		$query->select("ua.email AS author_email");
+
+		$query->join('LEFT', '#__users AS ua ON ua.id = a.created_by');
+		$query->join('LEFT', '#__users AS uam ON uam.id = a.modified_by');
+
 		// Filter by state
 		$state = $this->getState('filter.published');
 		if (is_numeric($state)) {
@@ -195,11 +202,11 @@ class ContactModelCategory extends JModelList
 			$limit = $app->getCfg('feed_limit');
 		}
 		else {
-			$limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'));
+			$limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'uint');
 		}
 		$this->setState('list.limit', $limit);
 
-		$limitstart = JRequest::getVar('limitstart', 0, '', 'int');
+		$limitstart = JRequest::getUInt('limitstart', 0);
 		$this->setState('list.start', $limitstart);
 
 		// Get list ordering default from the parameters
