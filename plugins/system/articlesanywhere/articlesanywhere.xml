@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install type="plugin" group="system" version="1.6">
+	<name>PLG_SYSTEM_ARTICLESANYWHERE</name>
+	<description>PLG_SYSTEM_ARTICLESANYWHERE_DESC</description>
+	<version>2.4.2FREE</version>
+	<creationDate>September 2012</creationDate>
+	<author>NoNumber (Peter van Westen)</author>
+	<authorEmail>peter@nonumber.nl</authorEmail>
+	<authorUrl>http://www.nonumber.nl</authorUrl>
+	<copyright>Copyright © 2012 NoNumber All Rights Reserved</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+
+	<!-- Files -->
+	<files>
+		<filename plugin="articlesanywhere">articlesanywhere.php</filename>
+		<filename>helper.php</filename>
+		<filename>index.html</filename>
+		<folder>images</folder>
+	</files>
+
+	<!-- Parameters -->
+	<config>
+		<fields name="params" addfieldpath="/plugins/system/nnframework/fields">
+			<fieldset name="basic">
+				<field name="@loadlanguage" type="nn_loadlanguage" extension="plg_system_articlesanywhere" />
+				<field name="@loadlanguage" type="nn_loadlanguage" extension="mod_articles_category" admin="0" />
+				<field name="@license" type="nn_license" extension="ARTICLES_ANYWHERE" />
+				<field name="@version" type="nn_version" extension="ARTICLES_ANYWHERE" xml="/plugins/system/articlesanywhere/articlesanywhere.xml" />
+				<field name="@header" type="nn_header"
+					label="ARTICLES_ANYWHERE"
+					description="ARTICLES_ANYWHERE_DESC"
+					xml="/plugins/system/articlesanywhere/articlesanywhere.xml"
+					language_file="plg_system_articlesanywhere"
+					image="/plugins/system/articlesanywhere/images/logo.png"
+					image_w="120" image_h="160"
+					url="http://www.nonumber.nl/articlesanywhere"
+					help_url="http://www.nonumber.nl/articlesanywhere" />
+
+				<field name="@block_tag_a" type="nn_block" start="1" label="NN_TAG_SYNTAX" />
+				<field name="article_tag" type="text" default="article" label="AA_TAG" description="AA_TAG_DESC" />
+				<field name="@notice_articles_tag" type="nn_plaintext" label="AA_TAG2" description="AA_TAG2_DESC" default="NN_ONLY_AVAILABLE_IN_PRO" />
+				<field name="@block_tag_b" type="nn_block" end="1" />
+
+				<field name="@block_behavior_a" type="nn_block" start="1" label="NN_BEHAVIOR" />
+				<field name="@notice_limit" type="nn_plaintext" label="AA_LIMIT" description="AA_LIMIT_DESC" default="NN_ONLY_AVAILABLE_IN_PRO" />
+				<field name="@notice_ordering" type="nn_plaintext" label="MOD_ARTICLES_CATEGORY_FIELD_ARTICLEORDERING_LABEL" description="AA_ORDERING_DESC" default="NN_ONLY_AVAILABLE_IN_PRO" />
+				<field name="@notice_ordering_direction" type="nn_plaintext" label="MOD_ARTICLES_CATEGORY_FIELD_ARTICLEORDERINGDIR_LABEL" description="MOD_ARTICLES_CATEGORY_FIELD_ARTICLEORDERINGDIR_DESC" default="NN_ONLY_AVAILABLE_IN_PRO" />
+				<field name="ignore_access" type="radio" default="0" label="AA_IGNORE_ARTICLE_ACCESS" description="AA_IGNORE_ARTICLE_ACCESS_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="ignore_state" type="radio" default="0" label="AA_IGNORE_ARTICLE_STATE" description="AA_IGNORE_ARTICLE_STATE_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="use_ellipsis" type="radio" default="1" label="AA_USE_ELLIPSIS" description="AA_USE_ELLIPSIS_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="run_content_plugins" type="radio" default="1" label="AA_RUN_CONTENT_PLUGINS" description="AA_RUN_CONTENT_PLUGINS_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="place_comments" type="radio" default="1" label="NN_PLACE_HTML_COMMENTS" description="NN_PLACE_HTML_COMMENTS_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="@block_behavior_b" type="nn_block" end="1" />
+			</fieldset>
+
+			<fieldset name="NN_SETTINGS_SECURITY">
+				<field name="@block_articles_a" type="nn_block" start="1" label="NN_ARTICLES" description="AA_ARTICLES_DESC" />
+				<field name="@notice_articles" type="nn_plaintext" label="AA_SECURITY_LEVEL" description="AA_SECURITY_LEVEL_DESC" default="NN_ONLY_AVAILABLE_IN_PRO" />
+				<field name="@block_articles_b" type="nn_block" end="1" />
+
+				<field name="@block_components_a" type="nn_block" start="1" label="NN_COMPONENTS" description="AA_COMPONENTS_DESC" />
+				<field name="@notice_components" type="nn_plaintext" label="NN_DISABLE_ON_COMPONENTS" description="NN_DISABLE_ON_COMPONENTS_DESC" default="NN_ONLY_AVAILABLE_IN_PRO" />
+				<field name="@block_components_b" type="nn_block" end="1" />
+
+				<field name="@block_otherareas_a" type="nn_block" start="1" label="NN_OTHER_AREAS" description="AA_OTHER_AREAS_DESC" />
+				<field name="@notice_otherareas" type="nn_plaintext" label="NN_ENABLE_OTHER_AREAS" description="NN_ENABLE_OTHER_AREAS_DESC" default="NN_ONLY_AVAILABLE_IN_PRO" />
+				<field name="@block_otherareas_b" type="nn_block" end="1" />
+			</fieldset>
+
+			<fieldset name="NN_SETTINGS_EDITOR_BUTTON">
+				<field name="button_text" type="text" default="Insert Article" label="NN_BUTTON_TEXT" description="NN_BUTTON_TEXT_DESC" />
+				<field name="button_icon" type="radio" default="1" label="NN_SHOW_ICON" description="NN_SHOW_ICON_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="enable_frontend" type="radio" default="1" label="NN_ENABLE_IN_FRONTEND" description="NN_ENABLE_IN_FRONTEND_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field name="@block_tag_a" type="nn_block" start="1" label="AA_DEFAULT_DATA_TAG_SETTINGS" description="AA_DEFAULT_DATA_TAG_SETTINGS_DESC" />
+				<field name="data_title_enable" type="radio" default="1" label="AA_ENABLE_TITLE_TAG" description="AA_ENABLE_TITLE_TAG_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field name="@hr_data_text" type="nn_hr" />
+
+				<field name="data_text_enable" type="radio" default="1" label="AA_ENABLE_TEXT_TAG" description="AA_ENABLE_TEXT_TAG_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="@toggler_data_text_a" type="nn_toggler" param="data_text_enable" value="1" />
+				<field name="data_text_type" type="radio" default="text" label="AA_TEXT_TYPE" description="AA_TEXT_TYPE_DESC">
+					<option value="text">AA_ALL_TEXT</option>
+					<option value="introtext">AA_INTRO_TEXT</option>
+					<option value="fulltext">AA_FULL_TEXT</option>
+				</field>
+				<field name="data_text_length" type="text" default="0" size="5" label="AA_MAXIMUM_TEXT_LENGTH" description="AA_MAXIMUM_TEXT_LENGTH_DESC" />
+				<field name="data_text_strip" type="radio" default="0" label="AA_STRIP_HTML_TAGS" description="AA_STRIP_HTML_TAGS_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="@toggler_data_text_b" type="nn_toggler" />
+
+				<field name="@hr_data_readmore" type="nn_hr" />
+
+				<field name="data_readmore_enable" type="radio" default="1" label="AA_ENABLE_READMORE_TAG" description="AA_ENABLE_READMORE_TAG_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="@toggler_data_readmore_a" type="nn_toggler" param="data_readmore_enable" value="1" />
+				<field name="data_readmore_text" type="text" default="" label="AA_READMORE_TEXT" description="AA_READMORE_TEXT_DESC" />
+				<field name="data_readmore_class" type="text" default="" label="AA_CLASSNAME" description="AA_CLASSNAME_DESC" />
+				<field name="@toggler_data_readmore_b" type="nn_toggler" />
+
+				<field name="@hr_data_id" type="nn_hr" />
+
+				<field name="data_id_enable" type="radio" default="0" label="AA_ENABLE_ID_TAG" description="AA_ENABLE_ID_TAG_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field name="@hr_div" type="nn_hr" />
+
+				<field name="@notice_div_enable" type="nn_plaintext" label="AA_EMBED_IN_A_DIV" description="AA_EMBED_IN_A_DIV_DESC" default="NN_ONLY_AVAILABLE_IN_PRO" />
+
+				<field name="@hr_content_type" type="nn_hr" />
+
+				<field name="@notice_content_type" type="nn_plaintext" label="AA_CONTENT_TYPE" description="AA_CONTENT_TYPE_DESC" default="NN_ONLY_AVAILABLE_IN_PRO" />
+
+				<field name="@block_tag_b" type="nn_block" end="1" />
+			</fieldset>
+		</fields>
+	</config>
+</install>
