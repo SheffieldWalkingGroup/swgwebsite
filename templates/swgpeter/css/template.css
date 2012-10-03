@@ -193,7 +193,7 @@ nav .feed ul {
 /* Main content area */
 
 div.main {
-    margin:0 0 0 210px;
+    margin:0 14px 0 210px;
     border:none;
     padding-top:5px;
 }
@@ -289,6 +289,11 @@ div.slideshow {
 }
 
 /* Set of 3 small boxes spanning page width (e.g. upcoming events) */
+
+/* Make the homepage wider to fit them */
+.home {
+	margin-right:0 !important;
+}
 
 .boxes {
     margin-top:5px;
@@ -550,7 +555,7 @@ div.slideshow {
 
 /* Pre/post content text blocks */
 .precontent .moduletable, .postcontent .moduletable {
-	margin:10px 14px 10px 0;
+	margin:10px 0 10px 0;
 	border-style:solid;
 	border-width:1px 0;
 	border-color:#555;
