@@ -251,6 +251,58 @@ function displayPopup(event, eventType, newMembers) {
 			});
 			eventInfo.adopt(backmarker);
 			
+			// Walk icons
+			var iconContainer = new Element("p", {
+				"class":"icons",
+			});
+			if (event.isLinear == true)
+			{
+				var linearIcon = new Element("img", {
+					"src":"/images/stories/linearwalk.png",
+					"border":0,
+					"alt":"Linear walks start at one place and finish at another; usually this means we have to use public transport",
+					"title":"Linear walks start at one place and finish at another; usually this means we have to use public transport"
+				});
+				iconContainer.adopt(linearIcon);
+			}
+			if (event.dogFriendly == true)
+			{
+				var dogIcon = new Element("img", {
+					"src":"/images/stories/dogs.png",
+					"border":0,
+					"alt":"Dog-friendly: the route is suitable for bringing dogs along",
+					"title":"Dog-friendly: the route is suitable for bringing dogs along"
+				});
+				iconContainer.adopt(dogIcon);
+			}
+			if (event.childFriendly == true)
+			{
+				var pramIcon = new Element("img", {
+					"src":"/images/stories/pushchair.png",
+					"border":0,
+					"alt":"Kiddy-friendly: route (and pace) of walk are suitable for bringing infants. Check with the walk leader what kind of prams/buggies can be used.",
+					"title":"Kiddy-friendly: route (and pace) of walk are suitable for bringing infants. Check with the walk leader what kind of prams/buggies can be used."
+				});
+				iconContainer.adopt(pramIcon);
+			}
+			if (event.speedy == true)
+			{
+				var speedIcon = new Element("img", {
+					"src":"/images/stories/speedy.png",
+					"border":0,
+					"alt":"Fast-paced walk. This kind of walk will be done faster than usual, aiming for an early finish.",
+					"title":"Fast-paced walk. This kind of walk will be done faster than usual, aiming for an early finish."
+				});
+				iconContainer.adopt(speedIcon);
+			}
+			eventInfo.adopt(iconContainer);
+			
+			var newMemberInfo = new Element("p",{
+				"class":"newMemberInfo",
+				"html":"Coming on your first walk? Welcome! Please read this <a href='/walks/general-information'>information about walking with us</a>."
+			})
+			popupContents.adopt(newMemberInfo);
+			
 			break;
 		case "weekend":
 			var area = new Element("span", {
@@ -380,11 +432,11 @@ function timestampToTime(timestamp) {
  * Fade the popup out and destroy it
  */
 function hidePopup() {
-	if (infoPopup != undefined && infoPopup != null)
+	/*if (infoPopup != undefined && infoPopup != null)
 	{
 		infoPopup.fade("out");
 		infoPopup.dispose.delay(500); // After the fade
-	}
+	}*/
 	
 }
 

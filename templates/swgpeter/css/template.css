@@ -487,8 +487,7 @@ div.slideshow {
 
 .popup .description {
     width:300px;
-    margin-left:0;
-    margin-right:0;
+    margin:0 0 5px;
     height:170px;
     overflow:hidden;
 }
@@ -514,6 +513,7 @@ div.slideshow {
 .popup .eventinfo {
     margin-right:0;
     width:260px;
+    margin-bottom:5px;
 }
 
 .popup .info {
@@ -562,6 +562,25 @@ div.slideshow {
 	/* Centre it in the empty popup */
 	left:282px;
 	top:117px;
+}
+
+.popup .newMemberInfo {
+	clear:both;
+	width:570px;
+	border-top:1px solid #555;
+	margin:0;
+	font-size:0.9em;
+	padding:5px;
+	text-align:center;
+}
+
+.popup p.icons {
+	text-indent:0;
+	text-align:right;'
+}
+
+.popup p.icons img {
+	margin-right:10px;
 }
 
 .ratingTip .tip-text {
@@ -747,13 +766,13 @@ div.slideshow {
 
 .event .description, .popup .description {
 	float:right;
-	margin-bottom:25px; /* Make sure there's room for the icons*/
 }
 
 .event .description {
 	width:470px;
 	margin-left:10px;
 	margin-right:10px;
+	margin-bottom:25px; /* Make sure there's room for the icons*/
 }
 
 .event .icons {
