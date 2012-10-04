@@ -392,7 +392,7 @@ div.slideshow {
     margin:10px;
 }
 
-.moduletable a, .box span.rating {
+.moduletable a, .box .rating {
     font-size:13px;
     margin-left:0;
 }
@@ -417,14 +417,23 @@ div.slideshow {
     border:1px solid red;
 }
 
-/* Event detail popups */
+/* Popups - used for event details, walk grades info */
 
 .popup {
     z-index:100;
     width:582px;
 }
 
-.popup .content {
+.ratingTip {
+	z-index:200;
+	width:320px !important;
+}
+
+.ratingTip h4 {
+	margin-left:40px;
+}
+
+.popup .content, .ratingTip, .ratingTip {
     background-color:rgba(255,255,255,0.92) !important;
     background-color:rgb(255,255,255) !important; /* For old browsers */
     min-height:250px;
@@ -444,7 +453,7 @@ div.slideshow {
 	width:582px;
 }
 
-.popup .header, .popup .eventheader {
+.popup .header, .popup .eventheader, .ratingTip .tip-title {
     background-color:#A8D3A9;
     border-top-left-radius:15px;
     border-top-right-radius:15px;
@@ -466,8 +475,14 @@ div.slideshow {
     font-size:14px;
 }
 
-.popup .header h3 {
+.popup .header h3, .ratingTip .tip-title {
     text-align:center;
+}
+
+.ratingTip .tip-title {
+	font-size:20px;
+	font-weight:bold;
+	padding:5px 0;
 }
 
 .popup .description {
@@ -549,6 +564,13 @@ div.slideshow {
 	top:117px;
 }
 
+.ratingTip .tip-text {
+	margin:0;
+	padding:10px;
+    border-bottom-left-radius:15px;
+    border-bottom-right-radius:15px;
+}
+
 /*
  * Generic internal page styles
  */
@@ -571,7 +593,7 @@ div.slideshow {
 }
 
 /*
- * Events listing pages
+ * Event listing pages
  */
 
 /* Walk symbols key */
@@ -610,11 +632,11 @@ div.slideshow {
     background:url(/templates/swgpeter/images/contenthead-green.png);
 }
 
-.walksunday {
+.walksunday, .ratingTip .tip-text {
     background:url(/templates/swgpeter/images/contentbody-blue.png);
 }
 
-.walksunday .eventheader {
+.walksunday .eventheader, .ratingTip .tip-title {
     background:url(/templates/swgpeter/images/contenthead-blue.png);
 }
 
@@ -750,6 +772,15 @@ div.slideshow {
 	font-size:0.9em;
 	font-style:italic;
 	text-align:center;
+}
+
+/* Mark that you can get info about ratings */
+.rating {
+	cursor:help;
+}
+
+.eventlisting .rating, .popup .rating {
+	border-bottom:1px dotted #555;
 }
 
 /* Page footer */

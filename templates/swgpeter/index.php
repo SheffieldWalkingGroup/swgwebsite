@@ -1,6 +1,10 @@
 <?php 
   defined( '_JEXEC' ) or die( 'Restricted access' );
   $currentPage = JFactory::getApplication()->getMenu()->getActive();
+  
+  JHTML::_('behavior.mootools');
+  $document = &JFactory::getDocument();
+  $document->addScript('/templates/swgpeter/script/template.js');
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" class="<?php echo $currentPage->alias; ?>"

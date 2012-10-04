@@ -339,6 +339,10 @@ function displayPopup(event, eventType, newMembers) {
 		
 		makeScrollbar(description,scrollbar,scrollHandle,false,false);
 	}
+	
+	// Register this popup for rating tooltips
+	if (eventType == "walk")
+		ratingTips.attach(rating);
 }
 
 function timestampToDate(timestamp) {
