@@ -74,9 +74,9 @@ class WalkSearcher
       $grades = array();
       foreach ($this->grade as $grade)
       {
-        $grades[] = "difficultygrade = '".$grade['difficulty']."' AND distancegrade = '".$grade['distance']."'";
+        $grades[] = "(difficultygrade = '".$grade['difficulty']."' AND distancegrade = '".$grade['distance']."')";
       }
-      $query->where(implode("OR", $grades));
+      $query->where("(".implode(" OR ", $grades).")");
     }
     else
     {
@@ -91,7 +91,9 @@ class WalkSearcher
     }
     
     // TODO: Length (miles)
-    // TODO: Location (general area)
+    // Location (general area)
+    if (isset($this->location))
+      $query->where("location IN (".implode(",",$this->location).")");
     
     if (isset($this->isLinear))
     {
@@ -113,16 +115,24 @@ class WalkSearcher
       $query->where("childfriendly = ".$this->childFriendly);
     
     // TODO: Transport by car/public
+    if (isset($this->transportByCar))
+      $query->where("transportbycar = ".$this->transportByCar);
+    if (isset($this->transportPublic))
+      $query->where("transportpublic = ".$this->transportPublic);
     
     if (isset($this->textPublic))
     { 
-      $query->where("walkname LIKE '%".$db->escape($this->textPublic)."%' OR routedescription LIKE '%".$db->escape($this->textPublic)."%'");
+      $query->where("(walkname LIKE '%".$db->escape($this->textPublic)."%' OR routedescription LIKE '%".$db->escape($this->textPublic)."%')");
     }
     
     if (isset($this->textAll))
     {
-      $query->where("walkname LIKE '%".$db->escape($this->textAll)."%' OR routedescription LIKE '%".$db->escape($this->textAll)."%' OR information LIKE '%".$db->escape($this->textAll)."%'");
+      $query->where("(walkname LIKE '%".$db->escape($this->textAll)."%' OR routedescription LIKE '%".$db->escape($this->textAll)."%' OR information LIKE '%".$db->escape($this->textAll)."%')");
     }
+    
+    // Suggested by
+    if (isset($this->suggestedBy))
+      $query->where("suggestedby = ".$this->suggestedBy->id);
     
     // TODO: Sorting
     $db->setQuery($query);
@@ -218,6 +228,9 @@ class WalkSearcher
           $valid[] = $grade;
       }
     }
+    
+    if (!empty($valid))
+      $this->grade = $valid;
   }
   
   /**
@@ -234,13 +247,18 @@ class WalkSearcher
   
   /**
    * Limits to walks in certain general areas
-   * TODO: Not implemented yet
+   *
    * @param array $l
-   * @throws BadMethodCallException
    */
   public function setLocation(array $l)
   {
-    throw new BadMethodCallException("WalkSearcher::setLocation - not implemented yet");
+    $valid = array();
+    foreach ($l as $loc)
+    {
+      if (is_int($loc))
+        $valid[] = $loc;
+    }
+    $this->location = $valid;
   }
 
   /**
