@@ -40,8 +40,8 @@
 <h3>Accessibility</h3>
 <?php echo $form->getLabel("transportPublic").$form->getInput("transportPublic");?><br />
 <?php echo $form->getLabel("transportCar").$form->getInput("transportCar");?><br />
-<br />
+
 <h3>History in the SWG programme</h3>
-<?php echo $form->getLabel("leader").$form->getInput("leader");?>
-<br /><br />
+<?php echo $form->getLabel("leader").$form->getInput("leader");?><br />
+
 <input type="submit" class="submit" value="Search" />

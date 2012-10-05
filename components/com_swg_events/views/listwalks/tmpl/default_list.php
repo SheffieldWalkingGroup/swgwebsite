@@ -11,7 +11,7 @@
   <?php foreach ($this->walks as $walk):?>
     <tr>
       <td>
-        <a href="<?php echo $this->urlToView($walk); ?>">View</a> <a href="<?php echo $this->urlToEdit($walk); ?>">Edit</a>
+        <a href="<?php echo $this->urlToView($walk); ?>">View</a> <?php /*<a href="<?php echo $this->urlToEdit($walk); ?>">Edit</a>*/?>
       </td>
       <td><?php echo $walk->id;?></td>
       <td><?php echo $walk->name; ?></td>
