@@ -432,11 +432,11 @@ function timestampToTime(timestamp) {
  * Fade the popup out and destroy it
  */
 function hidePopup() {
-	/*if (infoPopup != undefined && infoPopup != null)
+	if (infoPopup != undefined && infoPopup != null)
 	{
 		infoPopup.fade("out");
 		infoPopup.dispose.delay(500); // After the fade
-	}*/
+	}
 	
 }
 
