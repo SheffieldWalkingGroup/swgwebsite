@@ -85,14 +85,6 @@ html {
     background-size: cover;
 }
 
-html.thinking-of-joining {
-	background-image:url(/images/backdrops/joinus-10thanniversary.jpg);
-}
-
-html.thinking-of-joining div.wrapper {
-	background-color:rgba(255,255,255,0.92); /* This background has more contrast, so need to fade it more */
-}
-
 body {
     font-family:sans-serif;
     font-size:12px;
@@ -820,6 +812,18 @@ div.slideshow {
 
 .library form .submit {
 	margin:10px 0;
+}
+
+/* Gallery on new members page */
+ul.sig-container {
+	clear:both;
+	padding-top:18px !important;
+	width:660px;
+	margin:auto;
+}
+
+.main li.sig-block {
+	background:none !important;
 }
 
 /* Page footer */
