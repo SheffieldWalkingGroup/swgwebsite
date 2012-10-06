@@ -78,7 +78,7 @@ dl dd {
 
 html {
     /* TODO: This only works on IE 9 - what happens on IE 8? */
-    background: url(/images/backdrops/summer-daledyke.jpg) no-repeat center center fixed;
+    background: url(/images/backdrops/summer-daledyke.jpg) no-repeat center center fixed #6b8eac;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
