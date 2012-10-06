@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.6" type="plugin" group="content" method="upgrade">
+  <name>Simple Image Gallery (by JoomlaWorks)</name>
+  <author>JoomlaWorks</author>
+  <authorEmail>contact@joomlaworks.gr</authorEmail>
+  <authorUrl>www.joomlaworks.gr</authorUrl>
+  <copyright>Copyright (c) 2006 - 2011 JoomlaWorks, a business unit of Nuevvo Webware Ltd. All rights reserved.</copyright>
+  <creationDate>April 11th, 2011</creationDate>
+  <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+  <version>2.2</version>
+  <description>JW_SIG_DESC</description>
+	<config>
+		<fields name="params">
+		  <fieldset name="basic">
+		    <field name="galleries_rootfolder" type="text" default="images" label="JW_SIG_ROOTFOLDER" description="JW_SIG_ROOTFOLDER_DESC_16" />
+		    <field name="thb_width" type="text" default="200" size="3" label="JW_SIG_TW" description="JW_SIG_TW_DESC" />
+		    <field name="thb_height" type="text" default="160" size="3" label="JW_SIG_TH" description="JW_SIG_TH_DESC" />
+		    <field name="jpg_quality" type="text" default="80" size="3" label="JW_SIG_TQ" description="JW_SIG_TQ_DESC" />
+		    <field name="smartResize" type="radio" default="1" label="JW_SIG_TR" description="JW_SIG_TR_DESC">
+		      <option value="0">Disabled</option>
+		      <option value="1">Enabled</option>
+		    </field>
+		    <field name="galleryMessages" type="radio" default="1" label="JW_SIG_NC" description="JW_SIG_NC_DESC">
+		    	<option value="0">Hide</option>
+		      <option value="1">Show</option>
+		    </field>
+		  </fieldset>
+		  <fieldset name="advanced">
+				<field name="cache_expire_time" type="text" default="120" size="3" label="JW_SIG_TCEXP" description="JW_SIG_TCEXP_DESC" />
+				<field name="memoryLimit" type="text" default="" size="3" label="JW_SIG_ML" description="JW_SIG_ML_DESC" />
+		  </fieldset>
+		</fields>
+	</config>
+  <files>
+    <filename plugin="jw_simpleImageGallery">jw_simpleImageGallery.php</filename>
+    <folder>jw_simpleImageGallery</folder>
+  </files>
+  <languages>
+    <language tag="en-GB">en-GB.plg_content_jw_simpleImageGallery.ini</language>
+    <language tag="en-GB">en-GB.plg_content_jw_simpleImageGallery.sys.ini</language>
+  </languages>
+	<updateservers>
+		<server type="extension" name="Simple Image Gallery (by JoomlaWorks)">http://www.joomlaworks.gr/extensions/updates/sig.xml</server>
+	</updateservers>
+</install>

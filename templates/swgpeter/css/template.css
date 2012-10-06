@@ -814,6 +814,18 @@ div.slideshow {
 	margin:10px 0;
 }
 
+/* Gallery on new members page */
+ul.sig-container {
+	clear:both;
+	padding-top:18px !important;
+	width:660px;
+	margin:auto;
+}
+
+.main li.sig-block {
+	background:none !important;
+}
+
 /* Page footer */
 
 footer {

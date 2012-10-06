@@ -1,0 +1,43 @@
+/**
+ * @version		2.2
+ * @package		Simple Image Gallery (plugin)
+ * @author    JoomlaWorks - http://www.joomlaworks.gr
+ * @copyright	Copyright (c) 2006 - 2011 JoomlaWorks, a business unit of Nuevvo Webware Ltd. All rights reserved.
+ * @license		GNU/GPL license: http://www.gnu.org/copyleft/gpl.html
+ */
+
+/* --- Generic Styling --- */
+a:active,a:focus { outline:0; }
+table.contentpaneopen { width:100%; }
+ul.sig-container { margin:8px auto !important; padding:8px 0 !important; list-style:none; clear:both; overflow:hidden; }
+
+/* --- Single Thumbnail Mode Styling --- */
+ul.sig-container-single { margin:0 !important; padding:8px 0 !important; list-style:none !important; float:left; }
+
+/* Thumbnail */
+li.sig-block { float:left; background:#fff !important; margin:5px; padding:0; list-style:none !important; }
+
+/* width:33%; to force columns */
+li.sig-block span.sig-link-wrapper { display:block; float:left; margin:0; padding:0 5px 5px 0; background:url(../images/shadowAlpha.png) no-repeat right bottom; }
+li.sig-block span.sig-link-innerwrapper { display:block; float:left; margin:-5px 0 0 -5px; padding:4px; border:1px solid #ccc; }
+li.sig-block a.sig-link,
+li.sig-block a.sig-link:hover { position:relative; float:left; display:block; padding:0; margin:0; border:none; }
+li.sig-block a.sig-link { color:#eee; }
+li.sig-block a.sig-link:hover { color:#222; text-decoration:none; }
+li.sig-block a.sig-link img.sig-image,
+li.sig-block a.sig-link:hover img.sig-image { display:block; width:100%; height:100%; padding:0; margin:0; border:none; background-repeat:no-repeat; background-position:50% 50%; }
+li.sig-clr { clear:both; float:none !important; height:0 !important; line-height:0 !important; border:none !important; background:none !important; width:auto; margin:0 !important; padding:0 !important; }
+
+/* Caption */
+span.sig-pseudo-caption,
+span.sig-caption { display:block; position:absolute; bottom:0; left:0; right:0; text-align:center; padding:2px 4px; font-family:Arial, Helvetica, sans-serif; font-size:11px; font-weight:bold; }
+li.sig-block a.sig-link span.sig-pseudo-caption { background:#000; }
+li.sig-block a.sig-link:hover span.sig-pseudo-caption { background:#fff; }
+span.sig-pseudo-caption { opacity:0.7; -moz-opacity:0.7; }
+span.sig-pseudo-caption b { visibility:hidden; }
+
+/* Popup */
+span.sig-popup-caption { font-weight:bold; color:#C63C13; font-size:13px; font-family:Georgia, "Times New Roman", Times, serif; }
+a.sig-download-link,
+a.sig-download-link:hover { background:url(../images/disk.png) no-repeat left center; padding:4px 0 4px 20px; }
+div.sig-mod-position { text-align:center; border-top:1px solid #ccc; border-bottom:1px solid #ccc; padding:4px; margin:8px 0; background:#ffffdd; }

@@ -1,0 +1,12 @@
+/**
+ * @version		2.2
+ * @package		Simple Image Gallery (plugin)
+ * @author    JoomlaWorks - http://www.joomlaworks.gr
+ * @copyright	Copyright (c) 2006 - 2011 JoomlaWorks, a business unit of Nuevvo Webware Ltd. All rights reserved.
+ * @license		GNU/GPL license: http://www.gnu.org/copyleft/gpl.html
+ */
+
+/* --- IE styling only --- */
+li.sig-block a.sig-link,
+li.sig-block a.sig-link:hover { float:left; }
+span.sig-pseudo-caption { filter:alpha(opacity=70); }
