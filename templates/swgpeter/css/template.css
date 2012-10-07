@@ -299,6 +299,14 @@ div.slideshow {
     height:180px;
 }
 
+.item-page .boxes .box {
+	margin-right:6px;
+}
+
+.boxes .last-box {
+	margin-right:0 !important;
+}
+
 .boxes .box p {
 	margin:0;
 }
