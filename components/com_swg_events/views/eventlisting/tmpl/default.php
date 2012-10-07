@@ -49,7 +49,7 @@ foreach ($this->events as $event):?>
         <?php if ($event instanceof WalkInstance):?>
           <p class="start">
             <span>Start:</span>
-            <a href="http://www.streetmap.com/loc/<?php echo $event->startGridRef?>" title="Streetmap view of approximate location">
+            <a href="http://www.streetmap.com/loc/<?php echo $event->startGridRef?>" title="Streetmap view of approximate location" target="_blank">
               <?php echo $event->startGridRef.", ".$event->startPlaceName?>
             </a>
           </p>
@@ -88,7 +88,7 @@ foreach ($this->events as $event):?>
         <?php elseif ($event instanceof Weekend):?>
           <?php if ($event->url != ""): // empty() doesn't work for some reason?>
             <p class="moreinfo">
-              <span>More info:</span> <a href="<?php echo $event->url?>">Here</a>
+              <span>More info:</span> <a href="<?php echo $event->url?>" target="_blank">Here</a>
             </p>
           <?php endif; ?>
           <p class="places">
