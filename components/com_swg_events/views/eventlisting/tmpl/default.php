@@ -49,7 +49,7 @@ foreach ($this->events as $event):?>
         <?php if ($event instanceof WalkInstance):?>
           <p class="start">
             <span>Start:</span>
-            <a href="http://www.streetmap.com/loc/<?php echo $event->startGridRef?>" title="Streetmap view of approximate location">
+            <a href="http://www.streetmap.com/loc/<?php echo $event->startGridRef?>" title="Streetmap view of approximate location" target="_blank">
               <?php echo $event->startGridRef.", ".$event->startPlaceName?>
             </a>
           </p>

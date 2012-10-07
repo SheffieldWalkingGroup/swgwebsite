@@ -201,7 +201,7 @@ function displayPopup(event, eventType, newMembers) {
 				"class":"start", 
 				"html":
 					"<span>Start:</span> " +
-					"<a title='Streetmap view of approximate location' href='http://www.streetmap.com/loc/"+event.startGridRef+"'>"+event.startGridRef+", "+event.startPlaceName+"</a>"
+					"<a title='Streetmap view of approximate location' href='http://www.streetmap.com/loc/"+event.startGridRef+"' target='_blank'>"+event.startGridRef+", "+event.startPlaceName+"</a>"
 				});
 			eventInfo.adopt(start);
 			if (event.isLinear == true) {
