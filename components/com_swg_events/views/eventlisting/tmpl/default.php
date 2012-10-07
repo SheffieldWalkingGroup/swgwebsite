@@ -88,7 +88,7 @@ foreach ($this->events as $event):?>
         <?php elseif ($event instanceof Weekend):?>
           <?php if ($event->url != ""): // empty() doesn't work for some reason?>
             <p class="moreinfo">
-              <span>More info:</span> <a href="<?php echo $event->url?>">Here</a>
+              <span>More info:</span> <a href="<?php echo $event->url?>" target="_blank">Here</a>
             </p>
           <?php endif; ?>
           <p class="places">
