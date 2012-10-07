@@ -603,7 +603,7 @@ div.slideshow {
 	background:url("/templates/swgpeter/images/contentbody-green.png") repeat scroll 0 0 transparent;
 }
 
-.precontent .moduletable h3, .postcontent .moduletable h3 {
+.precontent .moduletable h3:first-child, .postcontent .moduletable h3:first-child {
 	border-top:none;
 }
 
