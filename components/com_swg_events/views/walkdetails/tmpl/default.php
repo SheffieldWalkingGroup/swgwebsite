@@ -2,7 +2,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 ?>
-<h1><?php echo $this->walk->name; ?></h1>
+<h3><?php echo $this->walk->name; ?></h3>
 <p><?php echo $this->walk->description; ?>
 <dl>
   <dt>General area</dt>
@@ -56,7 +56,7 @@ defined('_JEXEC') or die('Restricted access');
       <dd><?php echo $this->walk->suggestedBy;?></dd>
 </dl>
 
-<h2>History</h2>
+<h4>History</h4>
 <?php if (count($this->walkInstances)): ?>
   <table>
     <thead>
