@@ -742,8 +742,8 @@ div.slideshow {
 }
 
 .eventinfo p {
-	padding-left:10px;
-	text-indent:57px;
+	padding-left:67px;
+	text-indent:0px;
 }
 
 .eventinfo p span {
@@ -756,8 +756,7 @@ div.slideshow {
 
 /* Slightly different layout for weekend away info to allow for "Bookings open:" */
 .weekend .eventinfo p {
-	margin-left:80px;
-	text-indent:0;
+	padding-left:80px;
 }
 
 .weekend .eventinfo p span {
