@@ -53,7 +53,7 @@ defined('_JEXEC') or die('Restricted access');
       <dd><?php echo $this->walk->information; ?></dd>
     <!-- TODO: File links? route image? -->
     <dt>Suggested by</dt>
-      <dd><?php echo $this->walk->suggestedBy;?></dd>
+      <dd><?php echo $this->walk->suggestedBy->displayName;?></dd>
 </dl>
 
 <h4>History</h4>
