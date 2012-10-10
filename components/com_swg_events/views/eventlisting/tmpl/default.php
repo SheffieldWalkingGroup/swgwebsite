@@ -69,7 +69,7 @@ foreach ($this->events as $event):?>
           <p class="leader<?php if ($event->alterations->organiser) echo " altered\" title=\"Leader changed"; ?>">
             <span>Walk Leader:</span>
             <?php
-              echo $event->leader->displayName.(!empty($event->leader->telephone)?" (".$event->leader->telephone.")":""); 
+              echo $event->leader->displayName.(($event->leader->telephone != "")?" (".$event->leader->telephone.")":""); 
               if ($event->leader->noContactOfficeHours)
                 echo " &ndash; don't call during office hours";
             ?>

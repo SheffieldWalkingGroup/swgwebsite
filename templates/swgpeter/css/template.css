@@ -136,13 +136,18 @@ nav .moduletable_menu h3{
     background:url(/templates/swgpeter/images/menuhead-ltblue.png);
 }
 
+/* Top-level menu only */
+nav .menu {
+	background:url(/templates/swgpeter/images/menubody-ltblue.png);
+    width:186px;
+}
+
+/* All levels of menu */
 nav .menu, nav .menu ul {
-    background:url(/templates/swgpeter/images/menubody-ltblue.png);
     list-style-type:none;
     font-size:14px;
     margin:0;
     padding:0;
-    width:184px;
 }
 
 nav .menu li a {
