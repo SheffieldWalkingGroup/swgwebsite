@@ -4,6 +4,7 @@ defined('_JEXEC') or die('Restricted access');
 
 require_once JPATH_BASE."/swg/swg.php";
 JLoader::register('Walk', JPATH_BASE."/swg/Models/Walk.php");
+JLoader::register('Route', JPATH_BASE."/swg/Models/Route.php");
 
 // Include dependancy of the main model form
 jimport('joomla.application.component.modelform');
@@ -22,23 +23,14 @@ class SWG_EventsModelAddEditWalk extends JModelForm
    * @var Walk
    */
   private $walk;
-  
-  /**
-   * Create a new, blank walk
-   * TODO: Need a method to load an existing one
-   */
-  public function __construct()
-  {
-    $this->walk = new Walk();
-    parent::__construct();
-  }
-  
+    
   /**
    * Update the current walk with passed in form data
    * This also handles GPX data
    */
   public function updateWalk(array $formData)
   {
+    $this->loadWalk($formData['id']);
     // Update all basic fields
     // Fields that can't be saved are just ignored
     // Invalid fields throw an exception - display this to the user and continue
@@ -50,7 +42,11 @@ class SWG_EventsModelAddEditWalk extends JModelForm
       }
       catch (UnexpectedValueException $e)
       {
+        echo "<p>";
+        var_dump($name);
+        var_dump($value);
         var_dump($e->getMessage());
+        echo "</p>";
       }
     }
         
@@ -66,7 +62,12 @@ class SWG_EventsModelAddEditWalk extends JModelForm
         if ($gpx->getElementsByTagName("gpx")->length == 1)
         {
           // TODO: Turn on or off overwriting of existing properties
-          $this->walk->loadRoute($gpx);
+          $route = new Route($this->walk);
+          $route->readGPX($gpx);
+          $this->walk->setRoute($route);
+          
+          // Store this route for later requests
+          JFactory::getApplication()->setUserState("uploadedroute", serialize($route));
         }
         else
         {
@@ -77,6 +78,36 @@ class SWG_EventsModelAddEditWalk extends JModelForm
       {
         echo "Not a GPX file";
       }
+      
+      // Return to the form
+      
+    }
+    else
+    {
+      // Restore previously uploaded file from state
+      $route = unserialize(JFactory::getApplication()->getUserState("uploadedroute"));
+      if (isset($route))
+      {
+        $route->setWalk($this->walk);
+        $this->walk->setRoute($route);
+      }
+      
+      $this->walk->save();
+    }
+  }
+  
+  /**
+   * Loads the walk specified, or a blank one if none specified
+   */
+  public function loadWalk($walkid)
+  {
+    if (empty($walkid))
+    {
+      $this->walk = new Walk();
+    }
+    else
+    {
+      $this->walk = Walk::getSingle($walkid);
     }
   }
   
@@ -85,7 +116,13 @@ class SWG_EventsModelAddEditWalk extends JModelForm
    */
   public function getWalk()
   {
+    // Load the walk if not already done
+    if (!isset($this->walk))
+    {
+      $this->loadWalk(JRequest::getInt("walkid",0,"get"));
+    }
     return array(
+      'id'=>$this->walk->id,
       'name'=>$this->walk->name,
       'distanceGrade'=>$this->walk->distanceGrade,
       'difficultyGrade'=>$this->walk->difficultyGrade,
@@ -96,7 +133,7 @@ class SWG_EventsModelAddEditWalk extends JModelForm
       'startPlaceName'=>$this->walk->startPlaceName,
       'endGridRef'=>$this->walk->endGridRef,
       'endPlaceName'=>$this->walk->endPlaceName,
-      'routeDescription'=>$this->walk->routeDescription,
+      'routeDescription'=>$this->walk->description,
       'fileLinks'=>$this->walk->fileLinks,
       'information'=>$this->walk->information,
       'routeImage'=>$this->walk->routeImage,
@@ -107,6 +144,8 @@ class SWG_EventsModelAddEditWalk extends JModelForm
       'transportByCar'=>$this->walk->transportByCar,
       'transportPublic'=>$this->walk->transportPublic,
       'childFriendly'=>$this->walk->childFriendly,
+        
+      'route' => $this->walk->route,
     );
   }
 
@@ -115,7 +154,6 @@ class SWG_EventsModelAddEditWalk extends JModelForm
    */
   public function getForm($data = array(), $loadData = true)
   {
-
     $app = JFactory::getApplication('site');
 
     // Get the form.
@@ -130,46 +168,8 @@ class SWG_EventsModelAddEditWalk extends JModelForm
 
   }
 
-  /**
-   * Get the message
-   * @return object The message to be displayed to the user
-   */
-  function &getItem()
-  {
-
-    if (!isset($this->_item))
-    {
-      $cache = JFactory::getCache('com_helloworld', '');
-      $id = $this->getState('helloworld.id');
-      $this->_item =  $cache->get($id);
-      if ($this->_item === false) {
-
-      }
-    }
-    return $this->_item;
-
-  }
-
   public function updItem($data)
   {
-    // set the variables from the passed data
-    $id = $data['id'];
-
-    // set the data into a query to update the record
-    $db		= $this->getDbo();
-    $query	= $db->getQuery(true);
-    $query->clear();
-    $query->update(' #__helloworld ');
-    $query->set(' greeting = '.$db->Quote($greeting) );
-    $query->where(' id = ' . (int) $id );
-
-    $db->setQuery((string)$query);
-
-    if (!$db->query()) {
-      JError::raiseError(500, $db->getErrorMsg());
-      return false;
-    } else {
-      return true;
-    }
+    $this->walk->save();
   }
 }

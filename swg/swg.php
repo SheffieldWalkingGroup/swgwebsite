@@ -25,3 +25,13 @@ class SWG {
     }
   }
 }
+
+/**
+ * Interface for anything walkable
+ * Walkable things can have routes etc.
+ * @author peter
+ *
+ */
+interface Walkable {
+
+}

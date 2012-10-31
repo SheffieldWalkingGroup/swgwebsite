@@ -56,6 +56,9 @@ defined('_JEXEC') or die('Restricted access');
       <dd><?php echo $this->walk->suggestedBy->displayName;?></dd>
 </dl>
 
+<h4>Map</h4>
+<div id="map" style="width:100%;height:400px;"></div>
+
 <h4>History</h4>
 <?php if (count($this->walkInstances)): ?>
   <table>
