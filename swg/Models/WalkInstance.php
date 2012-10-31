@@ -2,12 +2,13 @@
 require_once("Event.php");
 include_once("WalkMeetingPoint.php");
 include_once("Leader.php");
+require_once("Route.php");
 /**
  * An instance of a walk, i.e. a walk with a date and a leader etc.
  * @author peter
  *
  */
-class WalkInstance extends Event {
+class WalkInstance extends Event implements Walkable {
   protected $walk;
   protected $distanceGrade;
   protected $difficultyGrade;

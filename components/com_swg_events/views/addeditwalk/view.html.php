@@ -26,8 +26,8 @@ class SWG_EventsViewAddEditWalk extends JView
 
 	// Get some data from the models
 	$state		= $this->get('State');
-	$walk		= $this->get('Walk');
 	$this->form	= $this->get('Form');
+	$this->walk	= $this->get('Walk');
 
 	// Check for errors.
 	if (count($errors = $this->get('Errors'))) 
