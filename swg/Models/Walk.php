@@ -11,28 +11,28 @@ require_once("Route.php");
  *
  */
 class Walk extends SWGBaseModel implements Walkable {
-  private $id;
-  private $name;
-  private $distanceGrade;
-  private $difficultyGrade;
-  private $miles;
-  private $location;
-  private $isLinear;
-  private $startGridRef;
-  private $startPlaceName;
-  private $endGridRef;
-  private $endPlaceName;
-  private $description;
-  private $fileLinks;
-  private $information;
-  private $routeImage;
-  private $suggestedBy;
-  private $status;
-  private $specialTBC;
-  private $dogFriendly;
-  private $transportByCar;
-  private $transportPublic;
-  private $childFriendly;
+  protected $id;
+  protected $name;
+  protected $distanceGrade;
+  protected $difficultyGrade;
+  protected $miles;
+  protected $location;
+  protected $isLinear;
+  protected $startGridRef;
+  protected $startPlaceName;
+  protected $endGridRef;
+  protected $endPlaceName;
+  protected $description;
+  protected $fileLinks;
+  protected $information;
+  protected $routeImage;
+  protected $suggestedBy;
+  protected $status;
+  protected $specialTBC;
+  protected $dogFriendly;
+  protected $transportByCar;
+  protected $transportPublic;
+  protected $childFriendly;
   
   /**
    * Route for this walk
