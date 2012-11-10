@@ -7,7 +7,7 @@ $nextProtocolReminder = 0;
 foreach ($this->events as $event):?>
   <div class="event published">
   <?php if ($event->alterations->cancelled): ?><p class="cancelled-message">Cancelled</p><?php endif; ?>
-    <div class="content <?php echo $event->getEventType(); if ($event instanceof WalkInstance) echo " walk".strtolower($event->getWalkDay()); if ($event->alterations->cancelled) echo " cancelled"?>">
+    <div class="content <?php echo $event->getEventType(); if ($event instanceof WalkInstance) echo " walk".strtolower($event->getWalkDay()); if ($event->alterations->cancelled) echo " cancelled"; if (!$event->okToPublish) echo " unpublished";?>">
       <div class="eventheader">
         <span class="date<?php if ($event->alterations->date) echo " altered\" title=\"Date altered"; ?>" id="<?php echo $event->getEventType();?>No<?php echo $event->id?>">
           <?php 
