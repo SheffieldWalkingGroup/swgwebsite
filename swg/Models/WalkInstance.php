@@ -103,10 +103,13 @@ class WalkInstance extends Event {
 
   /**
    * Gets the next few scheduled walks
+   * @param int $startDate Get events on or after this date. Unix time, also accepts day constants (see Event.php)
+   * @param int $endDate Get events on or before this date. Unix time, also accepts day constants (see Event.php)
    * @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
+   * @param bool $showUnpublished Show unpublished events
    * @return array Array of WalkInstances
    */
-  public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1) {
+  public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $showUnpublished = false) {
     // Build a query to get future walks that haven't been deleted.
     // We do want cancelled walks - users should be notified about these.
     $db = JFactory::getDBO();
@@ -119,8 +122,11 @@ class WalkInstance extends Event {
         "WalkDate >= '".self::timeToDate($startDate)."'",
         "WalkDate <= '".self::timeToDate($endDate)."'",
         "NOT deleted",
-        "readytopublish",
     ));
+    if (!$showUnpublished)
+    {
+      $query->where("readytopublish");
+    }
     $query->order(array("WalkDate ASC", "meettime ASC"));
     $db->setQuery($query);
     $walkData = $db->loadAssocList();
