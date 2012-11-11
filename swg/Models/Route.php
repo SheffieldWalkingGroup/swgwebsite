@@ -2,6 +2,8 @@
 
 require_once("SWGBaseModel.php");
 require_once("Waypoint.php");
+require_once("Walk.php");
+require_once("WalkInstance.php");
 include_once(JPATH_BASE."/swg/lib/phpcoord/phpcoord-2.3.php");
 
 class Route extends SWGBaseModel implements Iterator {
@@ -35,6 +37,18 @@ class Route extends SWGBaseModel implements Iterator {
    * @var int
    */
   private $ascent;
+  
+  /**
+   * Person who uploaded the route
+   * @var Leader
+   */
+  private $uploadedBy;
+  
+  /**
+   * Date/time when the route was uploaded
+   * @var int
+   */
+  private $uploadedDateTime;
   
   // For iterator use
   private $pointer;
@@ -362,6 +376,7 @@ class Route extends SWGBaseModel implements Iterator {
    * @param Walkable $w Walk or WalkInstance to find routes for
    * @param boolean $allowRelated If true, routes for all instances and the walk itself will be found 
    * @param int $limit Limit the number of routes to find. Default is no limit (0)
+   * @return Array Array of routes for this Walk or WalkInstance
    */
   public static function loadForWalkable(Walkable $w, $allowRelated=false, $limit=0)
   {
@@ -429,5 +444,27 @@ class Route extends SWGBaseModel implements Iterator {
   
   function valid() {
     return $this->pointer < count($this->wayPoints);
+  } 
+  
+  /**
+   * When encoding a route, we want basic details at the top, then an array of waypoints
+   * @see SWGBaseModel::sharedProperties()
+   */
+  protected function sharedProperties()
+  {
+    $properties = array(
+        "uploadedby"       => $this->uploadedBy,
+        "uploadeddatetime" => $this->uploadedDateTime,
+        "distance"         => $this->distance,
+        "ascent"           => $this->ascent,
+        "waypoints"        => array(),
+    );
+    
+    // Iterate through waypoints
+    foreach ($this->wayPoints as $id=>$wp)
+    {
+      $properties['waypoints'][$id] = $wp->sharedProperties();
+    }
+    return $properties;
   }
 }
