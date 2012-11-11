@@ -131,6 +131,15 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 					// Destroy the load indicator
 					loadIndicator.dispose();
 					displayPopup(event, eventType, newMembers);
+					
+					// Reset the position in case the size has changed (e.g. loaded map)
+					infoPopup.position({
+						relativeTo:link,
+						position:'upperLeft',
+						edge:'bottomLeft',
+						maximum:{x:(window.getSize().x-infoPopup.getSize().x-50)},
+						offset:{y:-20}
+					});
 				}
 			}
 		});
@@ -297,6 +306,16 @@ function displayPopup(event, eventType, newMembers) {
 			}
 			eventInfo.adopt(iconContainer);
 			
+			// Show a map
+			var mapContainer = new Element("div",{
+				"class":"map",
+				"id":"map_"+event.id
+			});
+			popupContents.adopt(mapContainer);
+			var map = new SWGMap("map_"+event.id);
+			map.addWalk(event.walk);
+			
+			// Direct new members to general info page
 			var newMemberInfo = new Element("p",{
 				"class":"newMemberInfo",
 				"html":"Coming on your first walk? Welcome! Please read this <a href='/walks/general-information'>information about walking with us</a>."
