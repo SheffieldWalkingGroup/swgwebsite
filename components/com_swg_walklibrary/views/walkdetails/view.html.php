@@ -13,7 +13,7 @@ jimport('joomla.form.form');
  * Because most (all?) fields can be changed on a WalkInstance,
  * this can take either a Walk or a WalkInstance
  */
-class SWG_EventsViewWalkDetails extends JView
+class SWG_WalksViewWalkDetails extends JView
 {
   function display($tpl = null)
   {

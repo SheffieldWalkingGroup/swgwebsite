@@ -20,8 +20,10 @@ class Walk extends SWGBaseModel implements Walkable {
   protected $isLinear;
   protected $startGridRef;
   protected $startPlaceName;
+  protected $startLatLng;
   protected $endGridRef;
   protected $endPlaceName;
+  protected $endLatLng;
   protected $description;
   protected $fileLinks;
   protected $information;
@@ -86,7 +88,18 @@ class Walk extends SWGBaseModel implements Walkable {
     $this->id = $dbArr['ID'];
     $this->suggestedBy = Leader::getLeader($dbArr['suggestedby']);
     
-    // TODO: Load route
+    // Also set the lat/lng
+    $startOSRef = getOSRefFromSixFigureReference($this->startGridRef);
+    $startLatLng = $startOSRef->toLatLng();
+    $startLatLng->OSGB36ToWGS84();
+    $this->startLatLng = $startLatLng;
+    
+    $endOSRef = getOSRefFromSixFigureReference($this->endGridRef);
+    $endLatLng = $endOSRef->toLatLng();
+    $endLatLng->OSGB36ToWGS84();
+    $this->endLatLng = $endLatLng;
+        
+    // TODO: Load route?
   }
   
   public function __get($name)
@@ -157,7 +170,17 @@ class Walk extends SWGBaseModel implements Walkable {
         if (empty($value))
           break;
         if (preg_match("/[A-Z][A-Z]([0-9][0-9]){3,}/", $value))
+        {
           $this->$name = $value;
+          // Also set the lat/lng
+          $osRef = getOSRefFromSixFigureReference($value);
+          $latLng = $osRef->toLatLng();
+          $latLng->OSGB36ToWGS84();
+          if ($name == "startGridRef")
+            $this->startLatLng = $latLng;
+          else
+            $this->endLatLng = $latLng;
+        }
         else
           throw new UnexpectedValueException("Grid references must be at least 6-figures, with the grid square letters before (e.g. SK123456)");
         break;
