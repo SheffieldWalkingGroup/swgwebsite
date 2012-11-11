@@ -589,6 +589,12 @@ div.slideshow {
 	margin-right:10px;
 }
 
+.popup .map {
+	width:550px;
+	height:300px;
+	margin:10px 15px !important;
+}
+
 .ratingTip .tip-text {
 	margin:0;
 	padding:10px;
