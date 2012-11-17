@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-	<layout title="List unscheduled walks">
-		<message>Sheffield Walking Group</message>
+	<layout title="List walks">
+		<message>SWG Walk Library</message>
 	</layout>
 	<fields name="request">
 		<fieldset name="request">

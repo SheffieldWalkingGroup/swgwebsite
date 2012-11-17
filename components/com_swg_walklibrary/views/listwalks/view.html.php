@@ -8,7 +8,7 @@ jimport('joomla.application.component.view');
 /**
  * HTML Event listing class for the SWG Events component
  */
-class SWG_EventsViewListWalks extends JView
+class SWG_WalkLibraryViewListWalks extends JView
 {
   private $showList = false;
   private $showSearch = true;
