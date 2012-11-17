@@ -13,7 +13,7 @@ jimport('joomla.form.form');
  * Because most (all?) fields can be changed on a WalkInstance,
  * this can take either a Walk or a WalkInstance
  */
-class SWG_WalksViewWalkDetails extends JView
+class SWG_WalkLibraryViewWalkDetails extends JView
 {
   function display($tpl = null)
   {
@@ -37,8 +37,8 @@ class SWG_WalksViewWalkDetails extends JView
 	// Load the map JS
 	$document = JFactory::getDocument();
 	JHtml::_('behavior.framework', true);
-	$document->addScript('http://openlayers.org/api/OpenLayers.js');
-	$document->addScript('http://swgdev/swg/js/maps.js');
+	$document->addScript('/libraries/openlayers/OpenLayers.js');
+	$document->addScript('/swg/js/maps.js');
 	$start = new Waypoint();
 	$start->osRef = getOSRefFromSixFigureReference($this->walk->startGridRef);
 	$end = new Waypoint();
