@@ -5,7 +5,7 @@ defined('_JEXEC') or die;
 // Include dependancy of the main controllerform class
 jimport('joomla.application.component.controllerform');
 
-class SWG_EventsControllerAddEditWalk extends JControllerForm
+class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
 {
   
   // Store the model so it can be given to the view

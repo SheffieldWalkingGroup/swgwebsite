@@ -16,7 +16,7 @@ JLoader::register('Leader', JPATH_BASE."/swg/Models/Leader.php");
  * This is useful for showing walk leaders the walks they've submitted,
  * and showing walk planners the available walks
  */
-class SWG_EventsModelListWalks extends JModelForm
+class SWG_WalkLibraryModelListWalks extends JModelForm
 {
   // A walk list can be set, which overrides any other actions. For example, this may contain search results
   private $walkList = null;
@@ -45,7 +45,7 @@ class SWG_EventsModelListWalks extends JModelForm
   public function getForm($data = array(), $loadData = true)
   { 
     // Get the form.
-    $form = $this->loadForm('com_swg_events.searchwalk', 'searchwalk', array('control' => 'jform', 'load_data' => true));
+    $form = $this->loadForm('com_swg_walklibrary.searchwalk', 'searchwalk', array('control' => 'jform', 'load_data' => true));
     if (empty($form)) {
       return false;
     }

@@ -13,7 +13,7 @@ JLoader::register('Leader',JPATH_BASE."/swg/Models/Leader.php");
  * @author peter
  *
  */
-class SWG_EventsControllerListWalks extends JControllerForm
+class SWG_WalkLibraryControllerListWalks extends JControllerForm
 {
   
   // Store the model so it can be given to the view
