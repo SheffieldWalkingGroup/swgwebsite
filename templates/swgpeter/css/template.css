@@ -809,6 +809,16 @@ div.slideshow {
 	text-align:center;
 }
 
+/* Event listing map */
+.event .map-container {
+	overflow:hidden;
+	padding:0 20px 20px;
+}
+
+.event .map {
+	height:400px;
+}
+
 /* Mark that you can get info about ratings */
 .rating {
 	cursor:help;

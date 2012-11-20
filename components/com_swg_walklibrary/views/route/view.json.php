@@ -4,9 +4,10 @@ defined('_JEXEC') or die('Restricted access');
 
 // What type of event to we want?
 // TODO: Probably shouldn't return anything that isn't OK to publish - this is publicly accessible.
+$walkinstanceid = JRequest::getVar('walkinstanceid',null,"get","INTEGER");
 $walkid = JRequest::getVar('walkid',null,"get","INTEGER");
 $routeid = JRequest::getVar('routeid',null,"get","INTEGER");
-if (!isset($walkid) && !isset($routeid))
+if (!isset($walkid) && !isset($routeid) && !isset($walkinstanceid))
   jexit("Walk or route ID must be specified");
 
 include_once(JPATH_BASE."/swg/Models/Route.php");
@@ -22,6 +23,13 @@ if (isset($routeid))
 }
 // If we get here, we failed to load a route.
 
+// Get a route for a walkinstance (this means getting the walk)
+if (isset($walkinstanceid))
+{
+  include_once(JPATH_BASE."/swg/Models/WalkInstance.php");
+  $wi = WalkInstance::getSingle($walkinstanceid);
+  $walkid = $wi->walk;
+}
 // Get the route for a particular walk if walkid is set
 if (isset($walkid))
 {
