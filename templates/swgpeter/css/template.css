@@ -649,6 +649,11 @@ div.slideshow {
     margin-bottom:10px;
 }
 
+.event .unpublished {
+	border:3px dashed black;
+	opacity:0.9;
+}
+
 .walksaturday {
     background:url(/templates/swgpeter/images/contentbody-green.png);
 }
