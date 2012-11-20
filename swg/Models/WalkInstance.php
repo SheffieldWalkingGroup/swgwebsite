@@ -16,8 +16,10 @@ class WalkInstance extends Event implements Walkable {
   protected $location;
   protected $startGridRef;
   protected $startPlaceName;
+  protected $startLatLng;
   protected $endGridRef;
   protected $endPlaceName;
+  protected $endLatLng;
 
   protected $childFriendly;
   protected $dogFriendly;
@@ -86,6 +88,17 @@ class WalkInstance extends Event implements Walkable {
     $this->alterations->setPlaceTime($dbArr['meetplacetimedetailsaltered']);
     $this->alterations->setOrganiser($dbArr['walkleaderdetailsaltered']);
     $this->alterations->setDate($dbArr['datealtered']);
+    
+    // Also set the lat/lng
+    $startOSRef = getOSRefFromSixFigureReference($this->startGridRef);
+    $startLatLng = $startOSRef->toLatLng();
+    $startLatLng->OSGB36ToWGS84();
+    $this->startLatLng = $startLatLng;
+    
+    $endOSRef = getOSRefFromSixFigureReference($this->endGridRef);
+    $endLatLng = $endOSRef->toLatLng();
+    $endLatLng->OSGB36ToWGS84();
+    $this->endLatLng = $endLatLng;
   }
 
   public function __get($name)

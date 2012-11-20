@@ -4,7 +4,7 @@
       <li class="<?php if ($event->alterations->cancelled) echo "cancelled"; if ($event->alterations->anyAlterations()) echo " altered";?>">
         <span class="date<?php if ($event->alterations->date) echo " altered"?>"><?php echo date("l jS M", $event->start); ?></span>
         <h4>
-          <a href="<?php echo $listPage."#walkNo".$event->id?>" class="eventinfopopup" rel="walk_<?php echo $event->id; ?>"><?php echo $event->name; ?></a><span class="rating">&nbsp;(<?php echo $event->distanceGrade.$event->difficultyGrade;?>)</span>
+          <a href="<?php echo $listPage."#walk_".$event->id?>" class="eventinfopopup" rel="walk_<?php echo $event->id; ?>"><?php echo $event->name; ?></a><span class="rating">&nbsp;(<?php echo $event->distanceGrade.$event->difficultyGrade;?>)</span>
         </h4>
       </li>
     <?php } ?>

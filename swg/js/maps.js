@@ -47,6 +47,12 @@ var SWGMap = new Class({
 		walk.load(walkID,this);
 	},
 	
+	addWalkInstance: function(wiID)
+	{
+		var wi = new WalkInstance();
+		wi.load(wiID,this);
+	},
+	
 	/**
 	 * Called when a walk has loaded
 	 * @access private
@@ -99,10 +105,7 @@ var SWGMap = new Class({
 		    endMarker.events.register('click',endMarker,function(e) { endPopup.toggle(); OpenLayers.Event.stop(e);});
 		    this.markers.addMarker(endMarker);
 		}
-		this.map.setCenter(start,13);
-		
-		
-		
+		this.map.setCenter(start,14);
 	},
 	
 	/**
@@ -170,19 +173,47 @@ var SWGMap = new Class({
 			//Move the markers to the top layer
 			this.map.setLayerZIndex(this.markers, this.map.getNumLayers());
 		}
+	},
+	/**
+	 * Destroy the map
+	 */
+	destroy: function()
+	{
+		this.map.destroy();
 	}
 });
+
+var Walkable = new Class({
+	initialize: function()
+	{
+		this.route = null;
+	},
+	
+	/**
+	 * Loads the route for this walk, and return it to the requestor.
+	 * This is a wrapper, used for the purpose of adding the walk object to the notification to the requestor
+	 * Returns false if no route available.
+	 */
+	loadRoute: function(requestor)
+	{
+		this.loadedRoute = function(route)
+		{
+			requestor.loadedRoute(route, this);
+		};
+			
+		var route = new Route(this);
+		route.load(this.type.toLowerCase(),this.id,this);
+	}
+	
+})
 
 /**
  * A walk.
  * TODO: May be useful elsewhere, and need moving to another file
  */
 var Walk = new Class({
-	initialize: function()
-	{
-		this.route = null;
-	},
-
+	Extends: Walkable,
+	type: "Walk",
 	load: function(walkID,requestor)
 	{
 		var self=this;
@@ -203,22 +234,35 @@ var Walk = new Class({
 		});
 		loader.get();
 	},
-	
-	/**
-	 * Loads the route for this walk, and return it to the requestor.
-	 * This is a wrapper, used for the purpose of adding the walk object to the notification to the requestor
-	 * Returns false if no route available.
-	 */
-	loadRoute: function(requestor)
+});
+
+/**
+ * A walk instance.
+ * TODO: May be useful elsewhere, and need moving to another file
+ */
+var WalkInstance = new Class({
+	Extends: Walkable,
+	type:"WalkInstance",
+	load: function(instanceID,requestor)
 	{
-		this.loadedRoute = function(route)
-		{
-			requestor.loadedRoute(route, this);
-		};
-			
-		var route = new Route(this);
-		route.load("walk",this.id,this);
-	}
+		var self=this;
+		var loader = new Request.JSON({
+			url: "/api/eventlisting?eventtype=walk&id="+instanceID+"&format=json",
+			onSuccess: function(data)
+			{
+				for (i in data)
+				{
+					if (data.hasOwnProperty(i))
+					{
+						self[i] = data[i];
+					}
+				}
+				requestor.loadedWalk(self);
+			}
+			// TODO: onFailure
+		});
+		loader.get();
+	},
 });
 
 var Route = new Class({

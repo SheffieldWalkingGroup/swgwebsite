@@ -23,6 +23,21 @@ class SWG_EventsViewEventListing extends JView
 			JError::raiseError(500, implode('<br />', $errors));
 			return false;
 		}
+		
+		// Add map interface Javascript
+		$document = JFactory::getDocument();
+		JHtml::_('behavior.framework', true);
+		$document->addScript('/libraries/openlayers/OpenLayers.js');
+		$document->addScript('/swg/js/maps.js');
+		$document->addScript('/components/com_swg_events/views/eventlisting/script/eventlisting.js');
+		$document->addScriptDeclaration(<<<MAP
+window.addEvent('domready', function()
+{
+    registerMapLinks();
+});
+		    
+MAP
+);		
 		// Display the view
 		parent::display($tpl);
 	}
