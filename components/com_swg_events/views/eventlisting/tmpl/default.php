@@ -26,7 +26,7 @@ foreach ($this->events as $event):?>
         <h3><?php echo $event->name; ?></h3>
       </div>
       <div class="description<?php if ($event->alterations->details) echo " altered\" title=\"Details altered"; ?>">
-        <p><?php echo $event->description; ?></p>
+        <p><?php echo nl2br($event->description); ?></p>
         <?php if ($event instanceof WalkInstance):?>
           <p class="icons">
             <?php if ($event->isLinear):?>
