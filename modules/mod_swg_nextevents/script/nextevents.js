@@ -152,10 +152,7 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 		a.get();
 	
 		// Add a loading indicator to the popup
-		var loadIndicator = new Element("img",{
-			"src":"/templates/swgpeter/images/ajax-loader.gif",
-			"width":"32",
-			"height":"32",
+		var loadIndicator = new Element("div",{
 			"class":"loadindicator"
 		});
 		popupContents.adopt(loadIndicator);

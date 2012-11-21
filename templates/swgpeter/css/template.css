@@ -104,6 +104,9 @@ div.wrapper {
 }
 
 /* Generic map styles */
+.map {
+	position:relative;
+}
 .map .olControlAttribution {
 	position:absolute;
 	right:0px;
@@ -114,6 +117,15 @@ div.wrapper {
 	border-radius:5px 0 0 0;
 	border-top:1px solid #ccc;
 	border-left:1px solid #ccc;
+}
+
+.loadindicator {
+	position:absolute;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	background:url(/templates/swgpeter/images/ajax-loader.gif) 50% 50% no-repeat;
 }
 
 /* Main navigation menu */
@@ -572,13 +584,6 @@ div.slideshow {
 
 .popup .booking {
     clear:left;
-}
-
-.popup .loadindicator {
-	position:absolute;
-	/* Centre it in the empty popup */
-	left:282px;
-	top:117px;
 }
 
 .popup .newMemberInfo {

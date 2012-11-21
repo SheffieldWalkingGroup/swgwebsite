@@ -15,6 +15,12 @@ var SWGMap = new Class({
 		// Keep a reference to the container
 		this.container = container;
 		
+		// Add a loading indicator
+		var loadIndicator = new Element("div",{
+			"class":"loadindicator"
+		});
+		document.getElementById(container).adopt(loadIndicator);
+		
 		// Create a new map
 		this.map = new OpenLayers.Map(container);
 		var attribution = "Map data &copy; <a href='http://www.openstreetmap.org' target='_blank'>OpenStreetMap</a> contributors. Style &copy; <a href='http://www.opencyclemap.org' target='_blank'>OpenCycleMap</a>."
@@ -26,6 +32,9 @@ var SWGMap = new Class({
 				{sphericalMercator:true}
 		);
 		this.cycleMap.attribution = attribution;
+		this.cycleMap.events.register('loadend',this,function(){
+			loadIndicator.dispose();
+		});
 		this.map.addLayer(this.cycleMap);		
 		this.landscapeMap = new OpenLayers.Layer.OSM(
 				"Landscape",
