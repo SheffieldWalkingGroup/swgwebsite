@@ -1,4 +1,6 @@
 <?php
+
+require_once("swg/swg.php");
 /**
  * A base model providing global functionality
  */

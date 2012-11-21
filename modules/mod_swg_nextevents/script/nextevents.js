@@ -19,6 +19,21 @@ var cachedEvents = {
   "weekend":new Array()
 };
 
+var link = null;
+
+var popupPosition = function()
+{
+	return
+	({
+		relativeTo:link,
+		position:'upperLeft',
+		edge:'bottomLeft',
+		minimum:{x:0,y:5},
+		maximum:{x:(window.getSize().x-infoPopup.getSize().x-50)},
+		offset:{x:20,y:-20}
+	});
+};
+
 function registerPopupLinks() {
 	// Get all the event info popup links (for all event types)
 	var popuplinks = $$("div.events a.eventinfopopup");
@@ -81,13 +96,7 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 	
 	// Set the popup's position. It should be 20px above the link,
 	// and at least 50px from the edge of the window.
-	infoPopup.position({
-		relativeTo:link,
-		position:'upperLeft',
-		edge:'bottomLeft',
-		maximum:{x:(window.getSize().x-infoPopup.getSize().x-50)},
-		offset:{y:-20}
-	});
+	infoPopup.position(popupPosition());
 	
 	// Display the popup
 	infoPopup.set("opacity",0);
@@ -110,6 +119,9 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 	if (cachedEvents[eventType][eventID] != undefined)
 	{
 		displayPopup(cachedEvents[eventType][eventID], eventType, newMembers);
+
+		// Reset the position in case the size has changed (e.g. loaded map)
+		infoPopup.position(popupPosition());
 	}
 	else
 	{
@@ -131,16 +143,16 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 					// Destroy the load indicator
 					loadIndicator.dispose();
 					displayPopup(event, eventType, newMembers);
+					
+					// Reset the position in case the size has changed (e.g. loaded map)
+					infoPopup.position(popupPosition());
 				}
 			}
 		});
 		a.get();
 	
 		// Add a loading indicator to the popup
-		var loadIndicator = new Element("img",{
-			"src":"/templates/swgpeter/images/ajax-loader.gif",
-			"width":"32",
-			"height":"32",
+		var loadIndicator = new Element("div",{
 			"class":"loadindicator"
 		});
 		popupContents.adopt(loadIndicator);
@@ -297,6 +309,16 @@ function displayPopup(event, eventType, newMembers) {
 			}
 			eventInfo.adopt(iconContainer);
 			
+			// Show a map
+			var mapContainer = new Element("div",{
+				"class":"map",
+				"id":"map_"+event.id
+			});
+			popupContents.adopt(mapContainer);
+			var map = new SWGMap("map_"+event.id);
+			map.addWalk(event.walk);
+			
+			// Direct new members to general info page
 			var newMemberInfo = new Element("p",{
 				"class":"newMemberInfo",
 				"html":"Coming on your first walk? Welcome! Please read this <a href='/walks/general-information'>information about walking with us</a>."
@@ -395,6 +417,7 @@ function displayPopup(event, eventType, newMembers) {
 	// Register this popup for rating tooltips
 	if (eventType == "walk")
 		ratingTips.attach(rating);
+	
 }
 
 function timestampToDate(timestamp) {

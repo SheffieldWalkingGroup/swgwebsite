@@ -101,8 +101,31 @@ div.wrapper {
     border:1px solid #999;
     border-radius:15px;
     box-shadow:4px 10px 10px #222;
-    
-    
+}
+
+/* Generic map styles */
+.map {
+	position:relative;
+}
+.map .olControlAttribution {
+	position:absolute;
+	right:0px;
+	bottom:0px;
+	padding:3px;
+	background-color:rgb(255,255,255);
+	background-color:rgba(255,255,255,0.85);
+	border-radius:5px 0 0 0;
+	border-top:1px solid #ccc;
+	border-left:1px solid #ccc;
+}
+
+.loadindicator {
+	position:absolute;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	background:url(/templates/swgpeter/images/ajax-loader.gif) 50% 50% no-repeat;
 }
 
 /* Main navigation menu */
@@ -563,13 +586,6 @@ div.slideshow {
     clear:left;
 }
 
-.popup .loadindicator {
-	position:absolute;
-	/* Centre it in the empty popup */
-	left:282px;
-	top:117px;
-}
-
 .popup .newMemberInfo {
 	clear:both;
 	width:570px;
@@ -587,6 +603,13 @@ div.slideshow {
 
 .popup p.icons img {
 	margin-right:10px;
+}
+
+.popup .map {
+	width:550px;
+	height:250px;
+	margin:10px 15px !important;
+	clear:both;
 }
 
 .ratingTip .tip-text {
@@ -801,6 +824,16 @@ div.slideshow {
 	font-size:0.9em;
 	font-style:italic;
 	text-align:center;
+}
+
+/* Event listing map */
+.event .map-container {
+	overflow:hidden;
+	padding:0 20px 20px;
+}
+
+.event .map {
+	height:400px;
 }
 
 /* Mark that you can get info about ratings */

@@ -2,12 +2,13 @@
 require_once("Event.php");
 include_once("WalkMeetingPoint.php");
 include_once("Leader.php");
+require_once("Route.php");
 /**
  * An instance of a walk, i.e. a walk with a date and a leader etc.
  * @author peter
  *
  */
-class WalkInstance extends Event {
+class WalkInstance extends Event implements Walkable {
   protected $walk;
   protected $distanceGrade;
   protected $difficultyGrade;
@@ -15,8 +16,10 @@ class WalkInstance extends Event {
   protected $location;
   protected $startGridRef;
   protected $startPlaceName;
+  protected $startLatLng;
   protected $endGridRef;
   protected $endPlaceName;
+  protected $endLatLng;
 
   protected $childFriendly;
   protected $dogFriendly;
@@ -85,6 +88,17 @@ class WalkInstance extends Event {
     $this->alterations->setPlaceTime($dbArr['meetplacetimedetailsaltered']);
     $this->alterations->setOrganiser($dbArr['walkleaderdetailsaltered']);
     $this->alterations->setDate($dbArr['datealtered']);
+    
+    // Also set the lat/lng
+    $startOSRef = getOSRefFromSixFigureReference($this->startGridRef);
+    $startLatLng = $startOSRef->toLatLng();
+    $startLatLng->OSGB36ToWGS84();
+    $this->startLatLng = $startLatLng;
+    
+    $endOSRef = getOSRefFromSixFigureReference($this->endGridRef);
+    $endLatLng = $endOSRef->toLatLng();
+    $endLatLng->OSGB36ToWGS84();
+    $this->endLatLng = $endLatLng;
   }
 
   public function __get($name)

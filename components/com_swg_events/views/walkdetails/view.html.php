@@ -34,6 +34,25 @@ class SWG_EventsViewWalkDetails extends JView
 		return false;
 	}
 	
+	// Load the map JS
+	$document = JFactory::getDocument();
+	JHtml::_('behavior.framework', true);
+	$document->addScript('http://openlayers.org/api/OpenLayers.js');
+	$document->addScript('http://swgdev/swg/js/maps.js');
+	$start = new Waypoint();
+	$start->osRef = getOSRefFromSixFigureReference($this->walk->startGridRef);
+	$end = new Waypoint();
+	$end->osRef = getOSRefFromSixFigureReference($this->walk->endGridRef);
+	
+	// Create the map	
+	$document->addScriptDeclaration(<<<MAP
+window.addEvent("domready", function() {
+    var map = new SWGMap('map');
+	map.addWalk({$this->walk->id});
+});
+MAP
+);
+	
 	// Display the view
 	parent::display($tpl);
   }
