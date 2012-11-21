@@ -101,8 +101,19 @@ div.wrapper {
     border:1px solid #999;
     border-radius:15px;
     box-shadow:4px 10px 10px #222;
-    
-    
+}
+
+/* Generic map styles */
+.map .olControlAttribution {
+	position:absolute;
+	right:0px;
+	bottom:0px;
+	padding:3px;
+	background-color:rgb(255,255,255);
+	background-color:rgba(255,255,255,0.85);
+	border-radius:5px 0 0 0;
+	border-top:1px solid #ccc;
+	border-left:1px solid #ccc;
 }
 
 /* Main navigation menu */

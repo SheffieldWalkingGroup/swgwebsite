@@ -17,14 +17,25 @@ var SWGMap = new Class({
 		
 		// Create a new map
 		this.map = new OpenLayers.Map(container);
-		this.mapData = new OpenLayers.Layer.OSM(
+		var attribution = "Map data &copy; <a href='http://www.openstreetmap.org' target='_blank'>OpenStreetMap</a> contributors. Style &copy; <a href='http://www.opencyclemap.org' target='_blank'>OpenCycleMap</a>."
+		this.cycleMap = new OpenLayers.Layer.OSM(
 				"OpenCycleMap",
 				["http://a.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png",
 			       "http://b.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png",
 			       "http://c.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png"],
 				{sphericalMercator:true}
 		);
-		this.map.addLayer(this.mapData);
+		this.cycleMap.attribution = attribution;
+		this.map.addLayer(this.cycleMap);		
+		this.landscapeMap = new OpenLayers.Layer.OSM(
+				"Landscape",
+				["http://a.tile3.opencyclemap.org/landscape/$\{z}/$\{x}/$\{y}.png",
+			       "http://b.tile3.opencyclemap.org/landscape/$\{z}/$\{x}/$\{y}.png",
+			       "http://c.tile3.opencyclemap.org/landscape/$\{z}/$\{x}/$\{y}.png"],
+				{sphericalMercator:true}
+		);
+		this.landscapeMap.attribution = attribution;
+		this.map.addLayer(this.landscapeMap);
 		this.map.addControl(new OpenLayers.Control.LayerSwitcher());
 		this.markers = new OpenLayers.Layer.Markers("Locations");
 		this.map.addLayer(this.markers); // TODO: Keep marker layer at the top
