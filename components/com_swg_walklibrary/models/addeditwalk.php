@@ -16,13 +16,21 @@ jimport('joomla.event.dispatcher');
 /**
  * AddEditWalk Model
  */
-class SWG_EventsModelAddEditWalk extends JModelForm
+class SWG_WalkLibraryModelAddEditWalk extends JModelForm
 {
   /**
    * The real walk object
    * @var Walk
    */
   private $walk;
+  
+  /**
+   * True if we're editing a walk, false if we're adding
+   */
+  public function editing()
+  {
+    return (JRequest::getInt("walkid",0,"get") != 0);
+  }
     
   /**
    * Update the current walk with passed in form data
