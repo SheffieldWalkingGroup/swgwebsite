@@ -82,3 +82,4 @@ defined('_JEXEC') or die('Restricted access');
 <?php else: ?>
   <p>This walk has never been led.</p>
 <?php endif;?>
+<?php if ($this->canEdit):?><a href="<?php echo $this->urlToEdit($this->walk); ?>">Edit</a><?php endif;?>

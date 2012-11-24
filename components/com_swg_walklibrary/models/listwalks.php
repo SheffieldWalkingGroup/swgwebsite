@@ -71,4 +71,16 @@ class SWG_WalkLibraryModelListWalks extends JModelForm
   {
     return (isset($this->walkList));
   }
+  
+  /* Permissions checks */
+  
+  function canAdd()
+  {
+    return JFactory::getUser()->authorise("walk.add","com_swg_walklibrary.walks");
+  }
+  
+  function canEdit($walkOrID)
+  {
+    return true;
+  }
 }
