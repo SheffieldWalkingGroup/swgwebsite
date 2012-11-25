@@ -50,17 +50,22 @@ foreach ($this->events as $event):?>
           <?php if ($event instanceof WalkInstance):?>
             <p class="start">
               <span>Start:</span>
-              <a href="http://www.streetmap.com/loc/<?php echo $event->startGridRef?>" title="Streetmap view of approximate location" target="_blank">
+              <a href="http://www.streetmap.com/loc/<?php echo $event->startGridRef?>" title="Map of approximate location" rel="map-start" target="_blank">
                 <?php echo $event->startGridRef.", ".$event->startPlaceName?>
               </a>
             </p>
             <?php if ($event->isLinear):?>
-              <p class="end"><span>End:</span> <?php echo $event->endGridRef.", ".$event->endPlaceName;?></p>
+              <p class="end">
+                <span>End:</span>
+                <a href="http://www.streetmap.com/loc/<?php echo $event->endGridRef?>" title="Map of approximate location" rel="map-end" target="_blank">
+                  <?php echo $event->endGridRef.", ".$event->endPlaceName;?>
+                </a>
+              </p>
             <?php endif; ?>
             <p class="transport<?php if ($event->alterations->placeTime) echo " altered\" title=\"Place & time altered"; ?>">
               <span>Transport:</span>
               <?php if (!$event->meetPoint->isOther()) {
-                echo "Meet at ".strftime("%H:%M", $event->meetPoint->meetTime)." at ".$event->meetPoint->longDesc.". ";
+                echo "Meet at ".strftime("%H:%M", $event->meetPoint->meetTime)." at <a href='#' rel='map-transport' target='_blank'>".$event->meetPoint->longDesc."</a>. ";
               }
               if ($event->meetPoint->hasExtraInfo()) {
                 echo $event->meetPoint->extra;

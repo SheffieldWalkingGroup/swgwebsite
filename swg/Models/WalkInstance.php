@@ -39,6 +39,8 @@ class WalkInstance extends Event implements Walkable {
   protected $reviewComments;
   protected $deleted;
   protected $cancelled;
+  
+  protected $hasRoute;
 
   /**
    * Constructs a walk object from an array of database fields
@@ -88,7 +90,7 @@ class WalkInstance extends Event implements Walkable {
     $this->alterations->setPlaceTime($dbArr['meetplacetimedetailsaltered']);
     $this->alterations->setOrganiser($dbArr['walkleaderdetailsaltered']);
     $this->alterations->setDate($dbArr['datealtered']);
-    
+        
     // Also set the lat/lng
     $startOSRef = getOSRefFromSixFigureReference($this->startGridRef);
     $startLatLng = $startOSRef->toLatLng();

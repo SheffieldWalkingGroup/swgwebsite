@@ -79,7 +79,13 @@ var SWGMap = new Class({
 	 */
 	loadedWalk: function(walk)
 	{
-		this.walks[walk.id] = walk;
+		this.walks[walk.id] = {
+				'id':walk.id,
+				'walk':walk,
+				'start':null,
+				'end':null,
+				'meet':null
+		};
 		
 		// Try to load a route
 		walk.loadRoute(this);
@@ -89,6 +95,7 @@ var SWGMap = new Class({
 		var start = new OpenLayers.LonLat(walk.startLatLng.lng,walk.startLatLng.lat).transform(
 		    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()
 		);
+		this.walks[walk.id].start = start;
 		var startIcon = new OpenLayers.Icon("/images/icons/green.png",{w:8,h:8},{x:-4,y:-4});
 		var startMarker = new OpenLayers.Marker(start, startIcon);
 		
@@ -115,6 +122,7 @@ var SWGMap = new Class({
 			var end = new OpenLayers.LonLat(walk.endLatLng.lng,walk.endLatLng.lat).transform(
 			    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()
 			);
+			this.walks[walk.id].end = end;
 			var endIcon = new OpenLayers.Icon("/images/icons/red.png",{w:8,h:8},{x:-4,y:-4});
 		    var endMarker = new OpenLayers.Marker(end, endIcon);
 		    var endPopup = new OpenLayers.Popup.FramedCloud("EndPopup",
@@ -132,6 +140,7 @@ var SWGMap = new Class({
 			var meet = new OpenLayers.LonLat(walk.meetPoint.meetPoint.lng,walk.meetPoint.meetPoint.lat).transform(
 				    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()
 		    );
+			this.walks[walk.id].meet = meet;
 			var meetIcon = new OpenLayers.Icon("/images/icons/yellow.png",{w:8,h:8},{x:-4,y:-4});
 			var meetMarker = new OpenLayers.Marker(meet, meetIcon);
 			var meetText = "Meet: "+walk.meetPoint.longDesc;
@@ -146,6 +155,12 @@ var SWGMap = new Class({
 			this.markers.addMarker(meetMarker);
 		}
 		this.map.setCenter(start,14);
+		
+		// Do we have a queued move?
+		if (this.queuedMove != undefined && this.queuedMove != null)
+		{
+			this.showPoint(this.queuedMove.walkID, this.queuedMove.pointType, this.queuedMove.zoom);
+		}
 	},
 	
 	/**
@@ -212,6 +227,40 @@ var SWGMap = new Class({
 			
 			//Move the markers to the top layer
 			this.map.setLayerZIndex(this.markers, this.map.getNumLayers());
+		}
+	},
+	
+	/**
+	 * Scroll to a particular point on a walk
+	 * @param int walkID Walk ID to show
+	 * @param pointType Type of point: 'start','end','meet'
+	 */
+	showPoint: function(walkID, pointType, zoom)
+	{
+		if (zoom == undefined)
+			zoom = 14;
+		
+		// If we haven't loaded the walk yet, queue the move.
+		// If the walk never loads, this will just be ignored/overwritten
+		if (this.walks[walkID] == undefined)
+		{
+			this.queuedMove = {'walkID':walkID, 'pointType':pointType, 'zoom':zoom};
+			return;
+		}
+		pointType = pointType.toLowerCase();
+		var walk = this.walks[walkID];
+		
+		if (pointType == "start" && walk.start != null)
+		{
+			this.map.setCenter(this.walks[walkID].start,zoom);
+		}
+		else if (pointType == "end" && walk.end != null)
+		{
+			this.map.setCenter(walk.end,zoom);
+		}
+		else if (pointType == "meet" && walk.meet != null)
+		{
+			this.map.setCenter(walk.meet,zoom)
 		}
 	},
 	/**
