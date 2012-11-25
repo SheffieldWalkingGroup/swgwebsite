@@ -94,12 +94,11 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
     {
       // Restore previously uploaded file from state
       $route = unserialize(JFactory::getApplication()->getUserState("uploadedroute"));
-      if (isset($route))
+      if ($route)
       {
         $route->setWalk($this->walk);
         $this->walk->setRoute($route);
       }
-      
       $this->walk->save();
     }
   }

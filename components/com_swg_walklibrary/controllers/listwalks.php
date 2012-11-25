@@ -82,5 +82,17 @@ class SWG_WalkLibraryControllerListWalks extends JControllerForm
     $this->display();
     return true;
   }
+  
+  /* Permissions checks */
+  function canAdd()
+  {
+    return JFactory::getUser()->authorise("walk.add","com_swg_walklibrary");
+  }
+  
+  function canEdit($walkOrID)
+  {
+    // TODO: Leaders can edit own walks
+    return JFactory::getUser()->authorise("walk.editall","com_swg_walklibrary");
+  }
 
 }

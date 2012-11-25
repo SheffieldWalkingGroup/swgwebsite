@@ -29,6 +29,9 @@ var EventWrapper = new Class({
 		
 		// Get the map link
 		this.mapLink = wrapper.getElements('a[rel="toggle-map"]')[0];
+		if (this.mapLink == undefined)
+			return;
+		
 		var self = this;
 		this.mapLink.addEvent('click',function(event)
 				{

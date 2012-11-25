@@ -125,6 +125,26 @@ var SWGMap = new Class({
 		    endMarker.events.register('click',endMarker,function(e) { endPopup.toggle(); OpenLayers.Event.stop(e);});
 		    this.markers.addMarker(endMarker);
 		}
+		
+		// Get the meeting point for WalkInstances
+		if (walk.meetPoint != undefined && walk.meetPoint.meetPoint != undefined)
+		{
+			var meet = new OpenLayers.LonLat(walk.meetPoint.meetPoint.lng,walk.meetPoint.meetPoint.lat).transform(
+				    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()
+		    );
+			var meetIcon = new OpenLayers.Icon("/images/icons/yellow.png",{w:8,h:8},{x:-4,y:-4});
+			var meetMarker = new OpenLayers.Marker(meet, meetIcon);
+			var meetText = "Meet: "+walk.meetPoint.longDesc;
+			if (walk.meetPoint.extra != "")
+				meetText += "<br>"+walk.meetPoint.extra;
+			var meetPopup = new OpenLayers.Popup.FramedCloud("MeetPopup",
+					meet, null,
+					meetText, meetIcon, true
+			);
+			this.map.addPopup(meetPopup);
+			meetMarker.events.register('click',meetMarker,function(e) {meetPopup.toggle(); OpenLayers.Event.stop(e);});
+			this.markers.addMarker(meetMarker);
+		}
 		this.map.setCenter(start,14);
 	},
 	

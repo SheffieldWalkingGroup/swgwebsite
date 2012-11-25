@@ -18,7 +18,8 @@ class SWG_WalkLibraryController extends JController
   function display($cachable = false)
   {
     // set default view if not set
-    JRequest::setVar('view', JRequest::getCmd('view', 'ListWalks'));
+    if (!JRequest::getCmd('view',false))
+      JRequest::setVar('view', JRequest::getCmd('view', 'ListWalks'));
 
     // call parent behavior
     parent::display($cachable);
