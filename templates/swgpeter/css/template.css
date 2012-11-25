@@ -104,7 +104,7 @@ div.wrapper {
 }
 
 /* Generic map styles */
-.map {
+.map, #map {
 	position:relative;
 }
 .map .olControlAttribution {
@@ -742,6 +742,10 @@ div.slideshow {
     font-size:16px;
     background-repeat:repeat-y;
     padding:5px 10px 3px;
+}
+
+.eventbody {
+	position:relative;
 }
 
 .popup .eventheader h3 {
