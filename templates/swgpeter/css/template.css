@@ -442,8 +442,22 @@ div.slideshow {
     color:red;
 }
 
-.moduletable li.altered {
+.box li.altered {
     border:1px solid red;
+    position:relative;
+}
+
+.altered:after {
+	font-size:0.75em;
+	font-style:italic;
+	color:red;
+}
+
+.box li.altered:after {
+	content:"altered";
+	position:absolute;
+	top:1px;
+	right:2px;
 }
 
 /* Popups - used for event details, walk grades info */
@@ -821,6 +835,37 @@ div.slideshow {
 
 .event .altered, .popup .altered {
 	border:1px solid red;
+}
+
+.event .date.altered:after, .popup .date.altered:after {
+	content:"(date altered)";
+}
+
+.popup .date.altered:after {
+	padding-left:10px;
+}
+
+.event .date.altered:after {
+	float:right;
+	font-size:0.55em;
+	padding-left:5px;
+	width:35px;
+}
+
+.eventinfo .altered:after {
+	font-size:0.85em;
+}
+
+.transport.altered:after {
+	content:"(meeting place/time altered)";
+}
+
+.leader.altered:after {
+	content:"(leader details altered)";
+}
+
+.description.altered:after {
+	content:"(details altered)";
 }
 
 .protocolreminder {
