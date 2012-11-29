@@ -21,11 +21,16 @@ class SWG_WalkLibraryViewWalkDetails extends JView
 	$params		= $app->getParams();
 	$dispatcher = JDispatcher::getInstance();
     $model	    = $this->getModel('walkdetails');
+    $controller = JController::getInstance('SWG_WalkLibrary');
 
 	// Get some data from the models
 	$state		= $this->get('State');
 	$this->walk	= $this->get('Walk');
 	$this->walkInstances = $this->walk->getInstances();
+	
+	// Get some permissions info
+	$this->canAdd = $controller->canAdd();
+	$this->canEdit = $controller->canEdit($this->walk);
 
 	// Check for errors.
 	if (count($errors = $this->get('Errors'))) 
@@ -55,5 +60,38 @@ MAP
 	
 	// Display the view
 	parent::display($tpl);
+  }
+  
+  public function urlToEdit(Walk $walk) {
+    return $this->walkURL($walk,"addeditwalk");
+  }
+  
+  private function walkURL(Walk $walk, $view)
+  {
+    // Get the current URL. We want to strip off anything in the parameters except a component
+    $url = $_SERVER['REQUEST_URI'];
+  
+    // Get the current URL parameters
+    if (strpos($url, "?") !== false)
+    {
+      $inParams = explode("&", substr($url,strpos($url,"?")+1));
+      $urlBase = substr($url,0,strpos($url,"?"));
+    }
+    else
+    {
+      $inParams = array();
+      $urlBase = $url;
+    }
+  
+    // Build the new URL parameters
+    $params = array(
+        "view=".$view,
+        "walkid=".$walk->id,
+    );
+  
+    if (isset($inParams['option']))
+      $params['option'] = $inParams['option'];
+  
+    return $urlBase."?".implode("&amp;", $params);
   }
 }

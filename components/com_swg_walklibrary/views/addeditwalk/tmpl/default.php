@@ -8,7 +8,8 @@ JHtml::_('behavior.tooltip');
 
 if ($this->showForm): ?>
   <form name="addeditwalk" action="<?php echo JRoute::_('index.php')?>" method="post" id="addeditwalk" name="addeditwalk" enctype="multipart/form-data">
-  <input type="hidden" name="option" value="com_swg_events">
+  <input type="hidden" name="view" value="addeditwalk">
+  <input type="hidden" name="option" value="com_swg_walklibrary">
   <input type="hidden" name="task" value="addeditwalk.submit">
   <?php echo JHtml::_('form.token'); echo $this->form->getInput('id'); ?>
     <fieldset>
@@ -22,7 +23,7 @@ if ($this->showForm): ?>
       ?>
     </fieldset>
     <fieldset>
-      <legend>GPX</legend>
+      <legend>Route</legend>
       <p>
         If you have a GPX route or track for this walk, upload it here. 
         You can get a GPX route by using various route planning software 
@@ -30,17 +31,17 @@ if ($this->showForm): ?>
         or you can get a GPX track by walking the route with a GPS logger
         and exporting the data to GPX format. 
         The GPX file is used to fill in some of the values in this form,
-        and will in future be available for other leaders to download.
+        and if you want you can display it on the route map.
       </p>
-      <?php 
+      <?php
         echo $this->form->getLabel('route');
         echo $this->form->getInput('route');
         if (isset($this->walk['route']))
           echo "<p>Uploaded route with ".$this->walk['route']->numWaypoints()." waypoints</p>";
         
         echo "<p>";
-        echo $this->form->getLabel('routeOverwrite');
-        echo $this->form->getInput('routeOverwrite');
+        echo $this->form->getLabel('routeVisibility');
+        echo $this->form->getInput('routeVisibility');
         echo "</p>"
       ?>
       <br>

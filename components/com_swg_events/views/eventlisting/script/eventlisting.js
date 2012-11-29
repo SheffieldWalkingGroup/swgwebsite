@@ -29,16 +29,47 @@ var EventWrapper = new Class({
 		
 		// Get the map link
 		this.mapLink = wrapper.getElements('a[rel="toggle-map"]')[0];
+		if (this.mapLink == undefined)
+			return;
+		
 		var self = this;
 		this.mapLink.addEvent('click',function(event)
-				{
-					self.openMap();
-					event.stop();
-				}
-		);
+		{
+			self.openMap();
+			event.stop();
+		});
 		
 	    this.eventType = wrapper.id.substring(0,wrapper.id.indexOf("_"));
 	    this.eventID   = wrapper.id.substring(wrapper.id.indexOf("_")+1);
+		
+		// Add events to other links
+		var startLink = wrapper.getElements('a[rel="map-start"]')[0];
+		startLink.addEvent('click',function(event)
+		{
+			event.stop();
+			self.openMap();
+			self.map.showPoint(self.eventID, 'start');
+		});
+		var endLink = wrapper.getElements('a[rel="map-end"]')[0];
+		if (endLink != undefined)
+		{
+			endLink.addEvent('click',function(event)
+			{
+				event.stop();
+				self.openMap();
+				self.map.showPoint(self.eventID, 'end');
+			});
+		}
+		var meetLink = wrapper.getElements('a[rel="map-transport"]')[0];
+		if (meetLink != undefined)
+		{
+			meetLink.addEvent('click',function(event)
+			{
+				event.stop();
+				self.openMap();
+				self.map.showPoint(self.eventID, 'meet', 15);
+			});
+		}
 	    
 	    // Set up the map container
 	    this.mapContainer = new Element("div",{

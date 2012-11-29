@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<access component="com_swg_walklibrary">
+	<section name="component">
+		<action name="walk.viewpublic" title="View walks" description="View walks in the library" />
+		<action name="walk.viewall" title="View all walks" description="View all walks, including unapproved" /> 
+		<action name="walk.add" title="Add walks" description="Suggest new walks" />
+		<action name="walk.editown" title="Edit own walks" description="Edit walks this user has suggested" />
+		<action name="walk.editall" title="Edit all walks" description="Edit all walks" />
+		<action name="walk.approve" title="Approve walks" description="Approve submitted walks" />
+		<action name="walk.delete" title="Delete walks" description="Delete walks" />
+	</section>
+</access>

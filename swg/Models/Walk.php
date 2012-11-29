@@ -355,6 +355,7 @@ class Walk extends SWGBaseModel implements Walkable {
       $query->where("ID = ".(int)$this->id);
       $query->update("walks");
     }
+    
     $db->setQuery($query);
     $db->query();
     
@@ -370,6 +371,7 @@ class Walk extends SWGBaseModel implements Walkable {
     $db->transactionCommit();
     
     // Now save the route
-    $this->route->save();
+    if (isset($this->route))
+      $this->route->save();
   }
 }

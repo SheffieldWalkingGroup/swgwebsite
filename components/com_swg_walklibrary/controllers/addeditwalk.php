@@ -29,13 +29,14 @@ class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
     $app	= JFactory::getApplication();
     $model	= $this->getModel('addeditwalk');
     $view = $this->getView('addeditwalk','html');
+    $view->setModel($model, true);
 
     // Get the data from the form POST
     $data = JRequest::getVar('jform', array(), 'post', 'array');
     
     // Send the data to the model
     $model->updateWalk($data);
-    $this->display();
+    $view->display();
 
     // check if ok and display appropriate message.  This can also have a redirect if desired.
     /*if ($upditem) {
@@ -52,6 +53,18 @@ class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
     $view = $this->getView('addeditwalk','html');
     $this->display();
     
+  }
+  
+  /* Permissions checks */
+  function canAdd()
+  {
+    return JFactory::getUser()->authorise("walk.add","com_swg_walklibrary");
+  }
+  
+  function canEdit($walkOrID)
+  {
+    // TODO: Leaders can edit own walks
+    return JFactory::getUser()->authorise("walk.editall","com_swg_walklibrary");
   }
 
 }

@@ -16,7 +16,7 @@ class WalkMeetingPoint extends SWGBaseModel {
   protected $id;
   protected $shortDesc;
   protected $longDesc;
-  protected $meetPoint;
+  protected $location;
   protected $extra;
   protected $meetTime;
   
@@ -46,7 +46,7 @@ class WalkMeetingPoint extends SWGBaseModel {
       
       if (isset($row['latitude']) && isset($row['longitude']))
       {
-        $this->meetPoint = new LatLng($row['latitude'], $row['longitude']);
+        $this->location = new LatLng($row['latitude'], $row['longitude']);
       }
       $this->meetTime = $meetTime;
       // Usually public transport info
@@ -56,8 +56,7 @@ class WalkMeetingPoint extends SWGBaseModel {
     {
       $this->shortDesc = "NONE";
       $this->longDesc = "unspecified meeting place";
-    }
-      
+    } 
   }
   
   /**

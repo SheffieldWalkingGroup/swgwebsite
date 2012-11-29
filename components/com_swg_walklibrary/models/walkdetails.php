@@ -37,4 +37,6 @@ class SWG_WalkLibraryModelWalkDetails extends JModelItem
     
     return $this->walk;
   }
+  
+  
 }
