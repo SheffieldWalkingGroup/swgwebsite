@@ -65,7 +65,17 @@ foreach ($this->events as $event):?>
             <p class="transport<?php if ($event->alterations->placeTime) echo " altered\" title=\"Place & time altered"; ?>">
               <span>Transport:</span>
               <?php if (!$event->meetPoint->isOther()) {
-                echo "Meet at ".strftime("%H:%M", $event->meetPoint->meetTime)." at <a href='#' rel='map-transport' target='_blank'>".$event->meetPoint->longDesc."</a>. ";
+                echo "Meet at ".strftime("%H:%M", $event->meetPoint->meetTime)." at ";
+                if ($event->meetPoint->location)
+                {
+                  echo "<a href='http://www.streetmap.com/loc/N{$event->meetPoint->location->lat},E{$event->meetPoint->location->lng}' rel='map-transport' target='_blank'>";
+                }
+                echo $event->meetPoint->longDesc;
+                if ($event->meetPoint->location)
+                {
+                  echo "</a>";
+                }
+                echo ". ";
               }
               if ($event->meetPoint->hasExtraInfo()) {
                 echo $event->meetPoint->extra;
