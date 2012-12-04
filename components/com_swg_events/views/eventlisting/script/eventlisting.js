@@ -1,10 +1,5 @@
 /*
- * TODO: Allow manual closing
- * TODO: Auto-close map when another opens
  * TODO: Support non-maps
- * TODO: Map controls (pan to start, end, meeting place)
- * 
- * TODO: Go full OOP, with each wrapper represented by its own JS object, containing a separate mapContainer, map, etc.
  */
 
 var mapContainer, mapElement, map, lastOpenedEventWrapper;
@@ -73,13 +68,13 @@ var EventWrapper = new Class({
 	    
 	    // Set up the map container
 	    this.mapContainer = new Element("div",{
-			class:"map-container",
-			style:"height:0px"
+			"class":"map-container",
+			"style":"height:0px"
 		});
 		
 		this.mapElement = new Element("div",{
-			id:"map_"+this.eventType+"_"+this.eventID,
-			class:"map"
+			"id":"map_"+this.eventType+"_"+this.eventID,
+			"class":"map"
 		});
 		this.mapContainer.adopt(this.mapElement);
 	},
@@ -261,8 +256,8 @@ var closeMap = function(wrapper, opening)
 	{
 		// Create a dummy element to hold the map open as it slides close
 		var dummyElement = new Element("div",{
-			class:"map-container",
-			style:"height:"+mapContainer.getSize().y+"px"
+			"class":"map-container",
+			"style":"height:"+mapContainer.getSize().y+"px"
 		});
 		mapContainer.getParent().adopt(dummyElement);
 		mapContainer.dispose();

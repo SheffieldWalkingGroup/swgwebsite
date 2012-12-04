@@ -265,7 +265,7 @@ function displayPopup(event, eventType, newMembers) {
 			
 			// Walk icons
 			var iconContainer = new Element("p", {
-				"class":"icons",
+				"class":"icons"
 			});
 			if (event.isLinear == true)
 			{

@@ -322,7 +322,7 @@ var Walk = new Class({
 			// TODO: onFailure
 		});
 		loader.get();
-	},
+	}
 });
 
 /**
@@ -351,7 +351,7 @@ var WalkInstance = new Class({
 			// TODO: onFailure
 		});
 		loader.get();
-	},
+	}
 });
 
 var Route = new Class({
