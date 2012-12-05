@@ -838,7 +838,7 @@ div.slideshow {
 }
 
 .event .date.altered:after, .popup .date.altered:after {
-	content:"(date altered)";
+	content:"(moved to this date)";
 }
 
 .popup .date.altered:after {
@@ -847,13 +847,13 @@ div.slideshow {
 
 .event .date.altered:after {
 	float:right;
-	font-size:0.55em;
+	font-size:0.6em;
 	padding-left:5px;
-	width:35px;
+	width:52px;
 }
 
 .eventinfo .altered:after {
-	font-size:0.85em;
+	font-size:0.95em;
 }
 
 .transport.altered:after {
