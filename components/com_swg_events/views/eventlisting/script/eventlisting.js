@@ -62,7 +62,7 @@ var EventWrapper = new Class({
 			{
 				event.stop();
 				self.openMap();
-				self.map.showPoint(self.eventID, 'meet', 15);
+				self.map.showPoint(self.eventID, 'meet');
 			});
 		}
 	    

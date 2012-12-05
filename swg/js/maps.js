@@ -135,9 +135,9 @@ var SWGMap = new Class({
 		}
 		
 		// Get the meeting point for WalkInstances
-		if (walk.meetPoint != undefined && walk.meetPoint.meetPoint != undefined)
+		if (walk.meetPoint != undefined && walk.meetPoint.location != undefined)
 		{
-			var meet = new OpenLayers.LonLat(walk.meetPoint.meetPoint.lng,walk.meetPoint.meetPoint.lat).transform(
+			var meet = new OpenLayers.LonLat(walk.meetPoint.location.lng,walk.meetPoint.location.lat).transform(
 				    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()
 		    );
 			this.walks[walk.id].meet = meet;
