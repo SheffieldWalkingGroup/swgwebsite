@@ -3,3 +3,4 @@ configuration.php
 .directory
 .project
 .settings/
+cache/
