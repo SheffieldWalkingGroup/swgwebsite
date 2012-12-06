@@ -13,11 +13,20 @@ var exitDelay = null;
  * If the incoming event has the wrong ID, it is saved in the cache but not displayed
  */
 var currentlyLoading = null;
+/**
+ * The event currently being displayed - full data
+ */
+var currentEvent = null;
 var cachedEvents = {
   "walk":new Array(),
   "social":new Array(),
   "weekend":new Array()
 };
+
+var footer;
+
+var map = null;
+var mapContainer = null;
 
 var link = null;
 
@@ -91,6 +100,14 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 		"class":"content "+eventType
 	});
 	
+	// Clean up the map references
+	if (map != null)
+	{
+		map.destroy();
+		map = null;
+		mapContainer = null;
+	}
+	
 	infoPopup.adopt(popupContents);
 	infoPopup.inject(document.body);
 	
@@ -144,8 +161,7 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 					loadIndicator.dispose();
 					displayPopup(event, eventType, newMembers);
 					
-					// Reset the position in case the size has changed (e.g. loaded map)
-					infoPopup.position(popupPosition());
+					
 				}
 			}
 		});
@@ -160,6 +176,7 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 }
 
 function displayPopup(event, eventType, newMembers) {
+	currentEvent = event;
 	// Add alterations to the whole popup
 	if (event.alterations.any) {
 		infoPopup.addClass("popup-altered");
@@ -212,9 +229,23 @@ function displayPopup(event, eventType, newMembers) {
 			var start = new Element("p", {
 				"class":"start", 
 				"html":
-					"<span>Start:</span> " +
-					"<a title='Streetmap view of approximate location' href='http://www.streetmap.com/loc/"+event.startGridRef+"' target='_blank'>"+event.startGridRef+", "+event.startPlaceName+"</a>"
+					"<span>Start:</span> "
 				});
+			var startLink = new Element("a", {
+				"title":"Map of approximate location",
+				"href":"http://www.streetmap.com/loc/"+event.startGridRef,
+				"target":"_blank",
+				"html":event.startGridRef+", "+event.startPlaceName
+			});
+			startLink.addEvent("click",function(event){
+				event.stop();
+				if (map == null)
+				{
+					showMap();
+				}
+				map.showPoint(currentEvent.id, 'start');
+			});
+			start.adopt(startLink);
 			eventInfo.adopt(start);
 			if (event.isLinear == true) {
 				var end = new Element("p", {
@@ -231,15 +262,39 @@ function displayPopup(event, eventType, newMembers) {
 			{
 				// Parse the meeting time
 				var meetTime = new Date(event.meetPoint.meetTime*1000);
-				transportText += "Meet at "+meetTime.format("%H:%M")+" at "+event.meetPoint.longDesc+". ";
+				transportText += "Meet at "+meetTime.format("%H:%M")+" at ";
 			}
-			if (event.meetPoint.extra != null) // TODO: Use function? Note: doesn't matter if it's empty
-				transportText += event.meetPoint.extra;
 									
 			var transport = new Element("p", {
 				"class":"transport",
 				"html":"<span>Transport:</span> " + transportText
 			});
+			if (event.meetPoint.location != null)
+			{	
+				var transportLink = new Element("a", {
+					"title":"Map of meeting point",
+					"href":"http://www.streetmap.com/loc/N"+event.meetPoint.location.lat+",E"+event.meetPoint.location.lng,
+					"target":"_blank",
+					"html":event.meetPoint.longDesc
+				});
+				transportLink.addEvent("click",function(event){
+					event.stop();
+					showMap();
+					map.showPoint(currentEvent.id, 'meet');
+				});
+				transport.adopt(transportLink);
+
+				transport.adopt(document.createTextNode(". "));
+			}
+			else
+			{
+				transport.adopt(document.createTextNode(event.meetPoint.longDesc+". "));
+			}
+			
+			if (event.meetPoint.extra != null)
+			{
+				transport.adopt(document.createTextNode(event.meetPoint.extra));
+			}
 			eventInfo.adopt(transport);
 			if (event.alterations.placeTime)
 				transport.addClass("altered");
@@ -309,21 +364,12 @@ function displayPopup(event, eventType, newMembers) {
 			}
 			eventInfo.adopt(iconContainer);
 			
-			// Show a map
-			var mapContainer = new Element("div",{
-				"class":"map",
-				"id":"map_"+event.id
-			});
-			popupContents.adopt(mapContainer);
-			var map = new SWGMap("map_"+event.id);
-			map.addWalk(event.walk);
-			
 			// Direct new members to general info page
-			var newMemberInfo = new Element("p",{
+			footer = new Element("p",{
 				"class":"newMemberInfo",
 				"html":"Coming on your first walk? Welcome! Please read this <a href='/walks/general-information'>information about walking with us</a>."
 			})
-			popupContents.adopt(newMemberInfo);
+			popupContents.adopt(footer);
 			
 			break;
 		case "weekend":
@@ -417,7 +463,23 @@ function displayPopup(event, eventType, newMembers) {
 	// Register this popup for rating tooltips
 	if (eventType == "walk")
 		ratingTips.attach(rating);
-	
+}
+
+function showMap() {
+	if (map == null)
+	{
+		// Show a map
+		mapContainer = new Element("div",{
+			"class":"map",
+			"id":"map_"+currentEvent.id
+		});
+		mapContainer.inject(footer,'before');
+		map = new SWGMap("map_"+currentEvent.id);
+		map.addWalkInstance(currentEvent.id);
+		
+		// Reset the position to fit the map
+		infoPopup.position(popupPosition());
+	}
 }
 
 function timestampToDate(timestamp) {
