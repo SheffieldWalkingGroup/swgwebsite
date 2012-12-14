@@ -371,6 +371,8 @@ function displayPopup(event, eventType, newMembers) {
 			})
 			popupContents.adopt(footer);
 			
+			showMap();
+			
 			break;
 		case "weekend":
 			var area = new Element("span", {
@@ -476,6 +478,7 @@ function showMap() {
 		mapContainer.inject(footer,'before');
 		map = new SWGMap("map_"+currentEvent.id);
 		map.addWalkInstance(currentEvent.id);
+		map.showPoint(currentEvent.id, "start", 13);
 		
 		// Reset the position to fit the map
 		infoPopup.position(popupPosition());
