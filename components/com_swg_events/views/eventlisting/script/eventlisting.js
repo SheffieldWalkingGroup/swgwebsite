@@ -2,7 +2,7 @@
  * TODO: Support non-maps
  */
 
-var mapContainer, mapElement, map, lastOpenedEventWrapper;
+var mapContainer, mapElement, map, lastOpenedEventWrapper, highlightedEvents;
 
 var EventWrapper = new Class({
 	wrapper : null,
@@ -77,6 +77,29 @@ var EventWrapper = new Class({
 			"class":"map"
 		});
 		this.mapContainer.adopt(this.mapElement);
+		
+		// Set up the highlighting controls
+		if (localStorage)
+		{
+			this.highlightLink = new Element("a",{
+				"href":"#",
+				"html":"Highlight"
+			});
+			wrapper.getElements('p[class="controls"]')[0].adopt(this.highlightLink);
+			this.highlightLink.addEvent('click',function(event)
+			{
+				event.stop();
+				self.highlightEvent();
+			});
+			
+			// Should this event already be highlighted?
+			if (
+					highlightedEvents[this.eventType] != undefined &&
+					highlightedEvents[this.eventType][this.eventID] != undefined &&
+					highlightedEvents[this.eventType][this.eventID]
+				)
+				this.highlightEvent();
+		}
 	},
 		
 	openMap : function()
@@ -138,6 +161,48 @@ var EventWrapper = new Class({
 			}
 		});
 		closeFx.start("height",0);
+	},
+	
+	highlightEvent : function()
+	{
+		this.wrapper.addClass("highlighted");
+		
+		// Store the highlighting
+		if (highlightedEvents[this.eventType] == undefined)
+		{
+			highlightedEvents[this.eventType] = new Object();
+		}
+		highlightedEvents[this.eventType][this.eventID] = true;
+		localStorage.highlightedEvents = JSON.stringify(highlightedEvents);
+		
+		// Swap the event type
+		this.highlightLink.removeEvents();
+		var self = this;
+		this.highlightLink.set('html','Remove highlight');
+		this.highlightLink.addEvent('click',function(e){
+			e.stop();
+			self.unhighlightEvent();
+			
+		});
+	},
+	
+	unhighlightEvent : function()
+	{
+		this.wrapper.removeClass("highlighted");
+		
+		// Clear the highlighting from storage
+		delete highlightedEvents[this.eventType][this.eventID];
+		localStorage.highlightedEvents = JSON.stringify(highlightedEvents);
+		
+		// Swap the event type
+		this.highlightLink.removeEvents();
+		var self = this;
+		this.highlightLink.set('html','Highlight');
+		this.highlightLink.addEvent('click',function(e){
+			e.stop();
+			self.highlightEvent();
+			
+		});
 	}
 });
 
@@ -145,6 +210,15 @@ var events = new Array();
 
 function registerMapLinks()
 {
+	// Load which events have been highlighted
+	if (localStorage)
+	{
+		if (localStorage.highlightedEvents)
+			highlightedEvents = JSON.parse(localStorage.highlightedEvents);
+		else
+			highlightedEvents = new Object();
+	}
+	
 	events = new Array();
 	
 	var eventElements = $(document.body).getElements("div.event");

@@ -396,6 +396,24 @@ div.slideshow {
     margin-bottom:5px;
 }
 
+.boxes .box h3 {
+	margin-bottom:0;
+}
+
+.boxes .box .events ul {
+	margin:0;
+	padding:0;
+}
+
+.box .events li {
+	margin:0;
+	padding:3px 2px 3px 5px;
+}
+
+.box .events .highlighted {
+	background:url(/templates/swgpeter/images/boxhead-yellow.png) repeat-y;
+}
+
 .box .date {
     font-style:italic;
     margin-left:0;
@@ -684,6 +702,10 @@ div.slideshow {
     clear:right;
     position:relative;
     margin-bottom:10px;
+}
+
+.event.highlighted {
+	outline:3px solid red;
 }
 
 .event .unpublished {

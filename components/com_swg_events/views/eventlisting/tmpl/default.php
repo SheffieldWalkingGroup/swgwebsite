@@ -93,7 +93,7 @@ foreach ($this->events as $event):?>
             <p class="backmarker">
               <span>Backmarker:</span> <?php echo $event->backmarker->displayName; ?>
             </p>
-            <p class="toggle-map">
+            <p class="controls">
               <a href="#" rel="toggle-map">Show map</a>
             </p>
           <?php elseif ($event instanceof Social):?>

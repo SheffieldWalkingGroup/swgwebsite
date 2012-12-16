@@ -23,6 +23,8 @@ var cachedEvents = {
   "weekend":new Array()
 };
 
+var highlightedEvents;
+
 var footer;
 
 var map = null;
@@ -562,7 +564,35 @@ function makeScrollbar(content,scrollbar,handle,horizontal,ignoreMouse){
 	$(document.body).addEvent('mouseleave',function(){slider.drag.stop()});
 }
 
+function setupHighlighting()
+{
+	if (localStorage.highlightedEvents)
+		highlightedEvents = JSON.parse(localStorage.highlightedEvents);
+	else
+		highlightedEvents = new Object();
+	
+	var events = $$("div.events li");
+	events.each(
+		function (evt)
+		{
+			var eventType = evt.id.substr(0,evt.id.indexOf("_"));
+			var eventID = evt.id.substr(evt.id.indexOf("_")+1);
+			
+			if (
+					highlightedEvents[eventType] != undefined &&
+					highlightedEvents[eventType][eventID] != undefined &&
+					highlightedEvents[eventType][eventID]
+				)
+			evt.addClass("highlighted");
+		}
+	);
+}
+
 // TODO: Dynamically generate the popup - only create it for JS peeps
 window.addEvent('domready', registerPopupLinks);
+if (localStorage)
+{
+	window.addEvent('domready', setupHighlighting);
+}
 var popup = document.id("walk-popup");
 //popup.set("opacity",0);

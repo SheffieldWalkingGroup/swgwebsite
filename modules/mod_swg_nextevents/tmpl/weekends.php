@@ -1,7 +1,7 @@
 <div class="events box weekends">
   <ul>
     <?php foreach ($events as $event) {?>
-      <li class="<?php if ($event->alterations->cancelled) echo "cancelled"; if ($event->alterations->anyAlterations()) echo " altered";?>">
+      <li id="weekend_<?php echo $event->id; ?>" class="<?php if ($event->alterations->cancelled) echo "cancelled"; if ($event->alterations->anyAlterations()) echo " altered";?>">
         <span class="date<?php if ($event->alterations->date) echo " altered"?>">
           <?php 
             // If the start and end are in the same month, just output the date of the start
