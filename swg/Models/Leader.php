@@ -17,6 +17,8 @@ class Leader extends SWGBaseModel {
   protected $dogFriendly;
   protected $publishInOtherSites;
   
+  private $hasDisplayName = false;
+  
   function __construct($dbArr = null) {
     if (isset($dbArr))
     {
@@ -34,6 +36,7 @@ class Leader extends SWGBaseModel {
       // Set a default display name
       // TODO: Could scan for multiple surnames and include all of them
       $this->displayName = ucwords($this->forename)." ".strtoupper(substr($this->surname,0,1));
+      $this->hasDisplayName = false;
     }
   }
   
@@ -44,6 +47,7 @@ class Leader extends SWGBaseModel {
    */
   function setDisplayName($displayName) {
     $this->displayName = $displayName;
+    $this->hasDisplayName = true;
   }
   
   public static function getLeader($id) {

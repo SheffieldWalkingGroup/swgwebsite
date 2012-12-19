@@ -14,7 +14,7 @@ abstract class Event extends SWGBaseModel {
   protected $start;
   protected $description;
   protected $okToPublish;
-  protected $alterations;
+  protected $alterations; 
   
   const DateToday = -1;
   const DateYesterday = -2;
@@ -81,6 +81,95 @@ abstract class Event extends SWGBaseModel {
   public function isCancelled() {
     return false;
   }
+  
+  /**
+   * Whether this event can display a map
+   * @return boolean
+   */
+  public abstract function hasMap();
+  
+  /**
+   * Adds fields on this event to a query being prepared to go into the database
+   * @param JDatabaseQuery &$query Query being prepared. Modified in place.
+   */
+  public function toDatabase(JDatabaseQuery &$query)
+  {
+    foreach ($this->dbmappings as $var => $dbField)
+    {
+      $query->set($dbField." = '".$db->escape($this->$var)."'");
+    }
+  }
+  
+  public function fromDatabase(array $dbArr)
+  {
+    foreach ($this->dbmappings as $var => $dbField)
+    {
+      $this->$var = $dbArr[$dbField];
+    }
+  }
+  
+  /**
+   * Save this event to the database
+   * Also handles versioning automatically
+   */
+  public function save($incrementVersion = true) {
+    $db = JFactory::getDbo();
+    
+    // Handle versioning & last modified
+    if ($incrementVersion)
+      $this->alterations->incrementVersion();
+    $this->alterations->setLastModified(time());
+    
+    // Commit everything as one transaction
+    $db->transactionStart();
+    $query = $db->getQuery(true);
+    
+    $this->toDatabase($query);
+    
+    // What table?
+    if ($this instanceof WalkInstance)
+    {
+      $table = "walkprogrammewalks";
+      $idField = "SequenceID";
+    }
+    else if ($this instanceof Social)
+    {
+      $table = "socialsdetails";
+      $idField = "SequenceID";
+    }
+    else if ($this instanceof Weekend)
+    {
+      $table = "weekendsaway";
+      $idField = "ID";
+    }
+    else
+      throw new Exception("Don't know how to save this");
+    
+    // Update or insert?
+    if (!isset($this->id))
+    {
+      $query->insert($table);
+    }
+    else 
+    {
+      $query->where($idField." = ".(int)$this->id);
+      $query->update($table);
+    }
+    
+    $db->setQuery($query);
+    $db->query();
+    
+    if (!isset($this->id))
+    {
+      // Get the ID from the database
+      $this->id = $db->insertid();
+    }
+    
+    // TODO: Handle failure
+    
+    // Commit the transaction - the route is not a critical part of the walk
+    $db->transactionCommit();
+  }
 }
 
 /**
@@ -90,11 +179,32 @@ abstract class Event extends SWGBaseModel {
  */
 class EventAlterations extends SWGBaseModel {
   
+  protected $version = 0;
+  protected $lastModified = null;
+  
   protected $details = false;
   protected $cancelled = false;
   protected $placeTime = false;
   protected $organiser = false;
   protected $date = false;
+  
+  public function setVersion($v) {
+    $this->version = (int)$v;
+  }
+  
+  public function setLastModified($d) {
+    if (is_int($d))
+      $this->lastModified = $d;
+    else {
+        $this->lastModified = strtotime($d);
+    }
+  }
+  
+  public function incrementVersion()
+  {
+    $this->version++;
+  }
+    
 
   public function setDetails($d) {
     $this->details = (bool)$d; 

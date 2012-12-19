@@ -16,27 +16,48 @@ class Weekend extends Event {
   protected $challenge;
   protected $swg;
   
-  public function __construct($dbArr)
+  public $dbmappings = array(
+    'name'	=> 'name',
+    'placeName'	=> 'placename',
+    'area'	=> 'area',
+    'description'	=> 'description',
+    'url'		=> 'url',
+    'places'		=> 'places',
+    'cost'		=> 'cost',
+    'contact'		=> 'contact',
+    'bookingsOpen'	=> 'bookingsopen',
+    'okToPublish'	=> 'oktopublish',
+  );
+  
+  public function fromDatabase(array $dbArr)
   {
-    parent::__construct();
     $this->id = $dbArr['ID'];
-    $this->name = $dbArr['name'];
+    
+    parent::fromDatabase($dbArr);
+    
     $this->start = strtotime($dbArr['startdate']);
     $this->endDate = strtotime($dbArr['enddate']);
-    $this->placeName = $dbArr['placename'];
-    $this->area = $dbArr['area'];
-    
-    $this->description = $dbArr['description'];
-    $this->url = $dbArr['url'];
-    $this->places = $dbArr['places'];
-    $this->cost = $dbArr['cost'];
-    
-    $this->contact = $dbArr['contact'];
     $this->noContactOfficeHours = (bool)$dbArr['nocontactofficehours'];
-    $this->bookingsOpen = $dbArr['bookingsopen'];
-    $this->okToPublish = $dbArr['oktopublish'];
     $this->challenge = (bool)$dbArr['challenge'];
     $this->swg = (bool)$dbArr['swg'];
+    
+    $this->alterations->setVersion($dbArr['version']);
+    $this->alterations->setLastModified(strtotime($dbArr['lastmodified']));
+  }
+  
+  public function toDatabase(JDatabaseQuery &$query)
+  {
+    parent::toDatabase($query);
+    
+    $query->set("startdate", strftime("%Y-%m-%d",$this->start));
+    $query->set("enddate", strftime("%Y-%m-%d",$this->endDate));
+    
+    $query->set("nocontactofficehours", $this->noContactOfficeHours);
+    $query->set("challenge", $this->challenge);
+    $query->set("swg", $this->swg);
+    
+    $query->set('version', $this->alterations->version);
+    $query->set('lastmodified', $this->alterations->lastModified);
   }
   
   public function __get($name)
@@ -78,7 +99,8 @@ class Weekend extends Event {
     // TODO: Set actual SQL limit
     $weekends = array();
     while (count($weekendData) > 0 && count($weekends) != $numToGet) {
-      $weekend = new Weekend(array_shift($weekendData));
+      $weekend = new Weekend();
+      $weekend->fromDatabase(array_shift($weekendData));
       $weekends[] = $weekend;
     }
   
@@ -95,9 +117,18 @@ class Weekend extends Event {
     $db->setQuery($query);
     $res = $db->query();
     if ($db->getNumRows($res) == 1)
-      return new Weekend($db->loadAssoc());
+    {
+      $we = new Weekend();
+      $we->fromDatabase($db->loadAssoc());
+      return $we;
+    }
     else
       return null;
     
+  }
+  
+  public function hasMap()
+  {
+    return false;
   }
 }

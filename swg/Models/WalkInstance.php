@@ -41,37 +41,44 @@ class WalkInstance extends Event implements Walkable {
   protected $cancelled;
   
   protected $hasRoute;
-
+  
   /**
-   * Constructs a walk object from an array of database fields
-   * @param array $dbArr Associative array from the walkprogramewalks table
+   * Array of variable => dbfieldname
+   * Only includes variables that can be represented directly in the database
+   * (i.e. no arrays or objects)
+   * Does not include ID as this may interfere with database updates
+   * @var array
    */
-  public function __construct($dbArr)
+  public  $dbmappings = array(
+      'name'		=> 'name',
+      'walk'		=> 'walklibraryid',
+      'distanceGrade'	=> 'distancegrade',
+      'difficultyGrade'	=> 'difficultygrade',
+      'miles'          => 'miles',
+      'location'       => 'location',
+      'isLinear'       => 'islinear',
+      'startGridRef'   => 'startgridref',
+      'startPlaceName' => 'startplacename',
+      'endGridRef'     => 'endgridref',
+      'endPlaceName'   => 'endplacename',
+      'description'    => 'routedescription',
+      'childFriendly'  => 'childfriendly',
+      'dogFriendly'    => 'dogfriendly',
+      'speedy'		=> 'speedy',
+      'challenge'	=> 'challenge',
+      
+      'okToPublish'	=> 'readytopublish',
+      
+      // TODO: Headcount, mileometer...
+  );
+
+  public function fromDatabase(array $dbArr)
   {
-    parent::__construct();
     $this->id = $dbArr['SequenceID'];
-    $this->name = $dbArr['name'];
+    
+    parent::fromDatabase($dbArr);
+    
     $this->start = strtotime($dbArr['WalkDate']." ".$dbArr['meettime']);
-    $this->description = $dbArr['routedescription'];
-    $this->okToPublish = $dbArr['readytopublish'];
-
-    $this->walk = $dbArr['walklibraryid']; // TODO: Load it?
-    $this->distanceGrade = $dbArr['distancegrade'];
-    $this->difficultyGrade = $dbArr['difficultygrade'];
-    $this->miles = $dbArr['miles'];
-    $this->location = $dbArr['location'];
-    $this->startGridRef = $dbArr['startgridref'];
-    $this->startPlaceName = $dbArr['startplacename'];
-    $this->endGridRef = $dbArr['endgridref'];
-    $this->endPlaceName = $dbArr['endplacename'];
-
-    $this->childFriendly = $dbArr['childfriendly'];
-    $this->dogFriendly = $dbArr['dogfriendly'];
-    $this->speedy = $dbArr['speedy'];
-    $this->isLinear = $dbArr['islinear'];
-    //     $this->transportByCar = $dbArr['transport'];
-    //     $this->transportPublic = $dbArr[''];
-
     $this->meetPoint = new WalkMeetingPoint($dbArr['meetplace'], $this->start, $dbArr['meetplacetime']);
     $this->leader = Leader::getLeader($dbArr['leaderid']);
     $this->backmarker = Leader::getLeader($dbArr['backmarkerid']);
@@ -79,18 +86,17 @@ class WalkInstance extends Event implements Walkable {
       $this->leader->setDisplayName($dbArr['leadername']);
     if (!empty($dbArr['backmarkername']))
       $this->backmarker->setDisplayName($dbArr['backmarkername']);
-    //     $this->dateAltered = $dbArr[''];
-
-    //     $this->headCount = $dbArr[''];
-    //     $this->mileometer = $dbArr[''];
-    //     $this->reviewComments = $dbArr[''];
-    //     $this->deleted = $dbArr[''];
+      
+    // Set up the alterations
+    $this->alterations->setVersion($dbArr['version']);
+    $this->alterations->setLastModified(strtotime($dbArr['lastmodified']));
+    
     $this->alterations->setDetails($dbArr['detailsaltered']);
     $this->alterations->setCancelled($dbArr['cancelled']);
     $this->alterations->setPlaceTime($dbArr['meetplacetimedetailsaltered']);
     $this->alterations->setOrganiser($dbArr['walkleaderdetailsaltered']);
     $this->alterations->setDate($dbArr['datealtered']);
-        
+    
     // Also set the lat/lng
     $startOSRef = getOSRefFromSixFigureReference($this->startGridRef);
     $startLatLng = $startOSRef->toLatLng();
@@ -101,6 +107,32 @@ class WalkInstance extends Event implements Walkable {
     $endLatLng = $endOSRef->toLatLng();
     $endLatLng->OSGB36ToWGS84();
     $this->endLatLng = $endLatLng;
+  }
+  
+  public function toDatabase(JDatabaseQuery &$query)
+  {
+    parent::toDatabase($query);
+    
+    $query->set("WalkDate", strftime("%Y-%m-%d",$this->start));
+    $query->set("meettime", strftime("%H:%M",$this->start));
+    $query->set("meetplace", $this->meetPoint->id);
+    $query->set("meetplacetime", $this->meetPoint->extra);
+    
+    $query->set("leaderid", $this->leader->id);
+    if ($this->leader->hasDisplayName)
+      $query->set("leadername", $this->leader->displayName);
+    $query->set("backmarkerid", $this->backmarker->id);
+    if ($this->backmarker->hasDisplayName)
+      $query->set("backmarkername", $this->backmarker->displayName);
+    
+    $query->set('version', $this->alterations->version);
+    $query->set('lastmodified', $this->alterations->lastModified);
+    
+    $query->set('detailsaltered', $this->alterations->details);
+    $query->set('cancelled', $this->alterations->cancelled);
+    $query->set('meetplacetimedetailsaltered', $this->alterations->placeTime);
+    $query->set('walkleaderdetailsaltered', $this->alterations->organiser);
+    $query->set('datealtered', $this->alterations->date);
   }
 
   public function __get($name)
@@ -151,7 +183,8 @@ class WalkInstance extends Event implements Walkable {
     // TODO: Set actual SQL limit
     $walks = array();
     while (count($walkData) > 0 && count($walks) != $numToGet) {
-      $walk = new WalkInstance(array_shift($walkData));
+      $walk = new WalkInstance();
+      $walk->fromDatabase(array_shift($walkData));
       $walks[] = $walk;
     }
 
@@ -197,9 +230,17 @@ class WalkInstance extends Event implements Walkable {
     $db->setQuery($query);
     $res = $db->query();
     if ($db->getNumRows($res) == 1)
-      return new WalkInstance($db->loadAssoc());
+    {
+      $wi = new WalkInstance();
+      $wi->fromDatabase($db->loadAssoc());
+      return $wi;
+    }
     else
       return null;
 
+  }
+  
+  public function hasMap() {
+    return true;
   }
 }

@@ -12,32 +12,72 @@ class Social extends Event {
   protected $end;
   
   // Start and end times for the new members' part (if applicable)
+  protected $showNormal;
+  protected $showNewMember;
   protected $newMemberStart;
   protected $newMemberEnd;
   
-  public function __construct($dbArr)
+  protected $location;
+  protected $postcode;
+  protected $latLng;
+  
+  protected $cost;
+  
+  public $dbmappings = array(
+    'name'		=> 'title',
+    'description'	=> 'fulldescription',
+    'okToPublish'	=> 'readytopublish',
+    'bookingsInfo'	=> 'bookingsinfo',
+    'clipartFilename'	=> 'clipartfilename',
+    
+    'location'		=> 'location',
+    'postcode'		=> 'postcode',
+    'cost'		=> 'cost',
+    
+    'showNormal'	=> 'shownormal',
+    'showNewMember'	=> 'shownewmember',
+    'newMemberStart'	=> 'newmemberstart',
+  );
+  
+  public function fromDatabase(array $dbArr)
   {
-    parent::__construct();
     $this->id = $dbArr['SequenceID'];
-    $this->name = $dbArr['title'];
+    
+    parent::fromDatabase($dbArr);
+    
     $this->start = strtotime($dbArr['on_date']." ".$dbArr['starttime']);
-    $this->description = $dbArr['fulldescription'];
-    $this->okToPublish = $dbArr['readytopublish'];
     
-    $this->bookingsInfo = $dbArr['bookingsinfo'];
-    $this->clipartFilename = $dbArr['clipartfilename'];
-    
+    // TODO: Shouldn't make up an end time here - do that in the UI if/where needed
     if (!empty($dbArr['endtime']))
       $this->end = strtotime($dbArr['on_date']." ".$dbArr['endtime']);
     else
       $this->end = $this->start + 120*60;
     
-    if (!empty($dbArr['newmemberstart']))
+    // If end is the next day...
+    if ($this->end < $this->start)
     {
-      $this->newMemberStart = strtotime($dbArr['on_date']." ".$dbArr['newmemberstart']);
-      if (!empty($dbArr['newmemberend']))
-        $this->newMemberEnd = strtotime($dbArr['on_date']." ".$dbArr['newmemberend']);
+      $this->end += 86400;
     }
+      
+    if (!empty($dbArr['latitude']) && !empty($dbArr['longitude']))
+      $this->latLng = new LatLng($dbArr['latitude'], $dbArr['longitude']);
+    
+    $this->alterations->setVersion($dbArr['version']);
+    $this->alterations->setLastModified(strtotime($dbArr['lastmodified']));
+  }
+  
+  public function toDatabase(JDatabaseQuery &$query)
+  {
+    parent::toDatabase($query);
+    
+    $query->set('on_date', strftime("%Y-%m-%d",$this->start));
+    $query->set('starttime', strftime("%H-%M",$this->start));
+    
+    if (!empty($this->end))
+      $query->set('endtime', strftime("%H-%M", $this->end));
+    
+    $query->set('version', $this->alterations->version);
+    $query->set('lastmodified', $this->alterations->lastModified);
   }
   
   public function __get($name)
@@ -82,7 +122,8 @@ class Social extends Event {
     // TODO: Set actual SQL limit
     $socials = array();
     while (count($socialData) > 0 && count($socials) != $numToGet) {
-      $social = new Social(array_shift($socialData));
+      $social = new Social();
+      $social->fromDatabase(array_shift($socialData));
       $socials[] = $social;
     }
   
@@ -108,10 +149,18 @@ class Social extends Event {
     $db->setQuery($query);
     $res = $db->query();
     if ($db->getNumRows($res) == 1)
-      return new Social($db->loadAssoc());
+    {
+      $soc = new Social();
+      $soc->fromDatabase($db->loadAssoc());
+      return $soc;
+    }
     else
       return null;
     
+  }
+  
+  public function hasMap() {
+    return (!empty($this->latLng) || !empty($this->postcode));
   }
   
 }
