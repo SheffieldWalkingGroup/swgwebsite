@@ -320,7 +320,8 @@ class Walk extends SWGBaseModel implements Walkable {
     
     $instances = array();
     while (count($instanceData) > 0) {
-      $instance = new WalkInstance(array_shift($instanceData));
+      $instance = new WalkInstance();
+      $instance->fromDatabase(array_shift($instanceData));
       $instances[] = $instance;
     }
 

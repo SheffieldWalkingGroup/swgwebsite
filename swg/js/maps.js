@@ -52,6 +52,8 @@ var SWGMap = new Class({
 		// Initialise other data
 		this.walks = new Array();
 		this.routes = new Array();
+		this.socials = new Array();
+		this.weekends = new Array();
 	},
 
 	/**
@@ -71,6 +73,12 @@ var SWGMap = new Class({
 	{
 		var wi = new WalkInstance();
 		wi.load(wiID,this);
+	},
+	
+	addSocial: function (socialID)
+	{
+		var social = new Social();
+		social.load(socialID, this);
 	},
 	
 	/**
@@ -161,6 +169,52 @@ var SWGMap = new Class({
 		{
 			this.showPoint(this.queuedMove.walkID, this.queuedMove.pointType, this.queuedMove.zoom);
 		}
+	},
+	
+	loadedSocial: function(social)
+	{
+		this.socials[social.id] = {
+				'id':social.id,
+				'walk':social,
+				'location':null
+		};
+		
+		// Create a marker for the location
+		// We should have latLng by now
+		// Note: need to transform from WGS1984 to (usually) Spherical Mercator projection
+		var location = new OpenLayers.LonLat(social.latLng.lng,social.latLng.lat).transform(
+		    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()
+		);
+		this.socials[social.id].location = location;
+		var icon = new OpenLayers.Icon("/images/icons/green.png",{w:8,h:8},{x:-4,y:-4});
+		var marker = new OpenLayers.Marker(location, icon);
+		
+		var popup = new OpenLayers.Popup.FramedCloud("Popup",
+		    location, null,
+		    social.location.replace(/\n/g,"<br>"), icon, true
+		);
+		
+		// Need to centre the map before adding popups
+		// TODO: Temporary - should zoom to bounding box around start & end (or route if available)
+		// If a circular walk, don't zoom in too close either
+		// Note: zoom 13 shows lots of details, incl. paths. Should probably stick to that:
+		// route line shows where the finish is
+		this.map.setCenter(location,13);
+		
+		this.map.addPopup(popup);
+		  
+		marker.events.register('mousedown',marker,function(e) { 
+			popup.toggle(); OpenLayers.Event.stop(e);
+		});
+		this.markers.addMarker(marker);
+		
+		this.map.setCenter(location,14);
+		
+		// Do we have a queued move?
+		//if (this.queuedMove != undefined && this.queuedMove != null)
+		//{
+//			this.showPoint(this.queuedMove.walkID, this.queuedMove.pointType, this.queuedMove.zoom);
+		//}
 	},
 	
 	/**
@@ -272,7 +326,21 @@ var SWGMap = new Class({
 	}
 });
 
+var Event = new Class({
+	parseData: function(data)
+	{
+		for (var i in data)
+		{
+			if (data.hasOwnProperty(i))
+			{
+				this[i] = data[i];
+			}
+		}
+	}
+})
+
 var Walkable = new Class({
+	Extends: Event,
 	initialize: function()
 	{
 		this.route = null;
@@ -310,13 +378,7 @@ var Walk = new Class({
 			url: "/api/walkdetails?id="+walkID+"&format=json",
 			onSuccess: function(data)
 			{
-				for (i in data)
-				{
-					if (data.hasOwnProperty(i))
-					{
-						self[i] = data[i];
-					}
-				}
+				self.parseData(data);
 				requestor.loadedWalk(self);
 			}
 			// TODO: onFailure
@@ -339,13 +401,7 @@ var WalkInstance = new Class({
 			url: "/api/eventlisting?eventtype=walk&id="+instanceID+"&format=json",
 			onSuccess: function(data)
 			{
-				for (i in data)
-				{
-					if (data.hasOwnProperty(i))
-					{
-						self[i] = data[i];
-					}
-				}
+				self.parseData(data);
 				requestor.loadedWalk(self);
 			}
 			// TODO: onFailure
@@ -353,6 +409,29 @@ var WalkInstance = new Class({
 		loader.get();
 	}
 });
+
+var Social = new Class({
+	Extends: Event,
+	load: function(instanceID,requestor)
+	{
+		var self=this;
+		var loader = new Request.JSON({
+			url: "/api/eventlisting?eventtype=social&id="+instanceID+"&format=json",
+			onSuccess: function(data)
+			{
+				self.parseData(data);
+				
+				// We need location data to exist. Use the social title if blank.
+				if (self.location == undefined || self.location == null || self.location == "")
+					self.location = self.name;
+				
+				requestor.loadedSocial(self);
+			}
+			// TODO: onFailure
+		});
+		loader.get();
+	}
+})
 
 var Route = new Class({
 	

@@ -93,17 +93,37 @@ foreach ($this->events as $event):?>
             <p class="backmarker">
               <span>Backmarker:</span> <?php echo $event->backmarker->displayName; ?>
             </p>
-            <p class="controls">
-              <a href="#" rel="toggle-map">Show map</a>
-            </p>
           <?php elseif ($event instanceof Social):?>
             <?php if ($this->isTimeSet($event->start)):?>
               <p class="start"><span>Start: </span><?php echo date("H:i", $event->start); ?></p>
+              <?php if ($this->isTimeSet($event->end)):?>
               <p class="end"><span>End: </span><?php echo date("H:i", $event->end); ?> (approx)</p>
+              <?php endif;
+            endif; ?>
+            
+            <?php if ($event->location != "" || $event->hasMap()): ?>
+              <p class="location">
+                <span>Location: </span><?php if ($event->hasMap()):?><a href="#" rel="map"><?php endif;
+                  if ($event->location != "")
+                    echo nl2br($event->location);
+                  else 
+                    echo "Show map";
+                  ?>
+                <?php if ($event->hasMap()) echo "</a>";?>
+              </p>
             <?php endif; ?>
-            <p class="socialbooking">
-              <span>Contact:</span> <?php echo $event->bookingsInfo; ?>
-            </p>
+            
+            <?php if ($event->cost != ""):?>
+              <p class="cost">
+                <span>Cost: </span><?php echo nl2br($event->cost);?>
+              </p>
+            <?php endif;?>
+            
+            <?php if ($event->bookingsInfo != ""): ?>
+				<p class="socialbooking">
+					<span>Contact:</span> <?php echo $event->bookingsInfo; ?>
+				</p>
+			<?php endif; ?>
           <?php elseif ($event instanceof Weekend):?>
             <?php if ($event->url != ""): // empty() doesn't work for some reason?>
               <p class="moreinfo">
@@ -122,6 +142,11 @@ foreach ($this->events as $event):?>
               <span>Bookings open:</span> <?php echo $event->bookingsOpen; ?>
             </p>
           <?php endif; ?>
+          <p class="controls">
+	    <?php if ($event->hasMap()): ?>
+              <a href="#" rel="toggle-map">Show map</a>
+            <?php endif; ?>  
+	  </p>
           
         </div>
         <div style="clear:right;">&nbsp;</div>

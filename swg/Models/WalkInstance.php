@@ -49,7 +49,7 @@ class WalkInstance extends Event implements Walkable {
    * Does not include ID as this may interfere with database updates
    * @var array
    */
-  public  $dbmappings = array(
+  public $dbmappings = array(
       'name'		=> 'name',
       'walk'		=> 'walklibraryid',
       'distanceGrade'	=> 'distancegrade',
@@ -134,6 +134,72 @@ class WalkInstance extends Event implements Walkable {
     $query->set('walkleaderdetailsaltered', $this->alterations->organiser);
     $query->set('datealtered', $this->alterations->date);
   }
+  
+	public function valuesToForm()
+	{
+		$values = array(
+			'id'			=> $this->id,
+			'name'			=> $this->name,
+			'description'	=> $this->description,
+			'okToPublish'	=> $this->okToPublish,
+			'date'			=> strftime("%Y-%m-%d", $this->start),
+			
+			'walkid'		=> $this->walk->id,
+			'distancegrade'	=> $this->distanceGrade,
+			'difficultygrade'=>$this->difficultyGrade,
+			'miles'			=> $this->miles,
+			'location'		=> $this->location,
+			'startGridRef'	=> $this->startGridRef,
+			'startPlaceName'=> $this->startPlaceName,
+			'endGridRef'	=> $this->endGridRef,
+			'endPlaceName'	=> $this->endPlaceName,
+			
+			'childfriendly'	=> $this->childFriendly,
+			'dogfriendly'	=> $this->dogFriendly,
+			'speedy'		=> $this->speedy,
+			'linear'		=> $this->isLinear,
+			'transportbycar'=> $this->transportByCar,
+			'transportpublic'=>$this->transportPublic,
+			
+			'leaderid'		=> $this->leader->id,
+			'leadername'	=> $this->leader->displayName,
+			'backmarkerid'	=> $this->backmarker->id,
+			'backmarkername'=> $this->backmarker->displayName,
+			'meetpointid'	=> $this->meetpoint->id,
+			'meetdetails'	=> $this->meetpoint->extra,
+			
+			'altereddetails'=> $this->alterations->details,
+			'alteredmeetpoint'=>$this->alterations->placeTime,
+			'alteredleader'	=> $this->alterations->organiser,
+			'altereddate'	=> $this->alterations->date,
+			'cancelled'		=> $this->alterations->cancelled,
+			
+		);
+		
+		if ($this->leader->hasDisplayName)
+			$values['leadername'] = $this->leader->displayName;
+		if ($this->backmarker->hasDisplayName)
+			$values['backmarkername'] = $this->backmarker->displayName;
+		$routes = Route::loadForWalkable($this, false, 1);
+		if (!empty($routes))
+			$values['routeid'] = $routes[0]->id;
+			
+		return $values;
+			
+	}
+	
+	/**
+	 * A walk must have a name, a description and a start date/time.
+	 */
+	public function isValid()
+	{
+		if(!empty($this->name) && !empty($this->description) && !empty($this->start))
+		{
+			return true;
+		}
+		
+		return false;
+	}
 
   public function __get($name)
   {

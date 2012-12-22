@@ -21,50 +21,70 @@ var EventWrapper = new Class({
 	{
 		this.wrapper = wrapper;
 		this.content = wrapper.getElements('div.content')[0];
-		
-		// Get the map link
-		this.mapLink = wrapper.getElements('a[rel="toggle-map"]')[0];
-		if (this.mapLink == undefined)
-			return;
-		
 		var self = this;
-		this.mapLink.addEvent('click',function(event)
-		{
-			self.openMap();
-			event.stop();
-		});
 		
 	    this.eventType = wrapper.id.substring(0,wrapper.id.indexOf("_"));
 	    this.eventID   = wrapper.id.substring(wrapper.id.indexOf("_")+1);
-		
-		// Add events to other links
-		var startLink = wrapper.getElements('a[rel="map-start"]')[0];
-		startLink.addEvent('click',function(event)
+	    
+	    // Standard map link
+		// Get the map link
+		this.mapLink = wrapper.getElements('a[rel="toggle-map"]')[0];
+		if (this.mapLink != undefined)
 		{
-			event.stop();
-			self.openMap();
-			self.map.showPoint(self.eventID, 'start');
-		});
-		var endLink = wrapper.getElements('a[rel="map-end"]')[0];
-		if (endLink != undefined)
-		{
-			endLink.addEvent('click',function(event)
+			this.mapLink.addEvent('click',function(event)
+			{
+				self.openMap();
+				event.stop();
+			});
+		}
+	    
+	    if (this.eventType == "walk")
+    	{
+			
+			
+			// Add events to other links
+			var startLink = wrapper.getElements('a[rel="map-start"]')[0];
+			startLink.addEvent('click',function(event)
 			{
 				event.stop();
 				self.openMap();
-				self.map.showPoint(self.eventID, 'end');
+				self.map.showPoint(self.eventID, 'start');
 			});
-		}
-		var meetLink = wrapper.getElements('a[rel="map-transport"]')[0];
-		if (meetLink != undefined)
-		{
-			meetLink.addEvent('click',function(event)
+			var endLink = wrapper.getElements('a[rel="map-end"]')[0];
+			if (endLink != undefined)
 			{
-				event.stop();
-				self.openMap();
-				self.map.showPoint(self.eventID, 'meet');
-			});
-		}
+				endLink.addEvent('click',function(event)
+				{
+					event.stop();
+					self.openMap();
+					self.map.showPoint(self.eventID, 'end');
+				});
+			}
+			var meetLink = wrapper.getElements('a[rel="map-transport"]')[0];
+			if (meetLink != undefined)
+			{
+				meetLink.addEvent('click',function(event)
+				{
+					event.stop();
+					self.openMap();
+					self.map.showPoint(self.eventID, 'meet');
+				});
+			}
+    	}
+	    else
+    	{
+			
+			// Socials & weekends only have one location
+			var generalLink = wrapper.getElements('a[rel="map"]')[0];
+			if (generalLink != undefined)
+			{
+				generalLink.addEvent('click',function(event)
+				{
+					event.stop();
+					self.openMap();
+				});
+			}
+    	}
 	    
 	    // Set up the map container
 	    this.mapContainer = new Element("div",{
@@ -120,6 +140,8 @@ var EventWrapper = new Class({
 		this.map = new SWGMap("map_"+this.eventType+"_"+this.eventID);
 		if (this.eventType == "walk")
 			this.map.addWalkInstance(this.eventID);
+		else if (this.eventType == "social")
+			this.map.addSocial(this.eventID);
 		
 		// Open the map
 		var self = this;

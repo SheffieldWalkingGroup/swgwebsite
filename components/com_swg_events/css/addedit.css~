@@ -1,0 +1,15 @@
+/* CSS for admin parts of this module - public parts are governed by the template */
+form fieldset div {
+	clear:both;
+	margin-bottom:2px;
+}
+
+form label {
+	float:left;
+	clear:both;
+	width:200px;
+}
+
+form .invalid {
+	border:1px solid red;
+}

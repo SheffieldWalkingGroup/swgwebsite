@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<form name="addeditwalk">
+		<field name="id" type="hidden" />
+		<fieldset name="basic">
+			<field name="name" type="text" label="Title" maxlength="100" required="required" size="57" />
+			<field name="date" type="calendar" label="Date" required="required" />
+			<field name="postcode" type="text" label="Postcode (used for map)" maxlength="8" />
+			<field name="shownormal" type="checkbox" label="Social is for current members" default="1" />
+			<field name="shownewmember" type="checkbox" label="This is a new members' social (e.g. pub meets)" default="0" />
+		</fieldset>
+		
+		<fieldset name="timenormal">
+			<field name="starttime" type="text" label="Start time (hh:mm)" />
+			<field name="endtime" type="text" label="End time (if known)" />
+		</fieldset>
+		
+		<fieldset name="timenewmembers">
+			<field name="newMemberStart" type="text" label="Start time - new members" />
+			<field name="newMemberEnd" type="text" label="End time - new members" />
+		</fieldset>
+		
+		
+		<fieldset name="details">
+			<field name="location" type="textarea" label="Location (displayed to visitors)" rows="4" cols="40"/>
+			<field name="description" type="textarea" label="Description" required="required" rows="6" cols="60" />
+			<field name="booking" type="text" label="Booking info"  maxlength="200" size="57"/>
+			<field name="cost" type="textarea" label="Cost" rows="4" cols="40"/>
+		</fieldset>
+		
+		
+	</form>

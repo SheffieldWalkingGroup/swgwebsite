@@ -1,6 +1,7 @@
 <?php
 jimport('joomla.application.component.modelitem');
 require_once("SWGBaseModel.php");
+include_once(JPATH_BASE."/swg/lib/phpcoord/phpcoord-2.3.php");
 /**
  * Any event organised by the group
  * @author peter
@@ -96,7 +97,8 @@ abstract class Event extends SWGBaseModel {
   {
     foreach ($this->dbmappings as $var => $dbField)
     {
-      $query->set($dbField." = '".$db->escape($this->$var)."'");
+		if (isset($this->$var))
+			$query->set($dbField." = '".$query->escape($this->$var)."'");
     }
   }
   
@@ -107,6 +109,18 @@ abstract class Event extends SWGBaseModel {
       $this->$var = $dbArr[$dbField];
     }
   }
+  
+  /**
+   * Converts the values of this event to an array suitable for outputting to a form
+   * @return array
+   */
+  public abstract function valuesToForm();
+  
+  /**
+   * Determine if this event is valid and suitable for use
+   * @return boolean
+   */
+  public abstract function isValid();
   
   /**
    * Save this event to the database
@@ -155,7 +169,7 @@ abstract class Event extends SWGBaseModel {
       $query->where($idField." = ".(int)$this->id);
       $query->update($table);
     }
-    
+// echo $query;
     $db->setQuery($query);
     $db->query();
     
@@ -187,6 +201,10 @@ class EventAlterations extends SWGBaseModel {
   protected $placeTime = false;
   protected $organiser = false;
   protected $date = false;
+  
+  public function __construct() {
+	$this->version = 1;
+  }
   
   public function setVersion($v) {
     $this->version = (int)$v;

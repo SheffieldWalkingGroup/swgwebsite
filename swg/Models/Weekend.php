@@ -60,6 +60,41 @@ class Weekend extends Event {
     $query->set('lastmodified', $this->alterations->lastModified);
   }
   
+	public function valuesToForm()
+	{
+		$values = array(
+			'id'			=> $this->id,
+			'name'			=> $this->name,
+			'description'	=> $this->description,
+			'okToPublish'	=> $this->okToPublish,
+			
+			'startdate'		=> strftime("%Y-%m-%d"),
+			'enddate'		=> $this->endDate,
+			
+			'placename'		=> $this->placeName,
+			'area'			=> $this->area,
+			'url'			=> $this->url,
+			'places'		=> $this->places,
+			'cost'			=> $this->cost,
+			'contact'		=> $this->contact,
+			'nocontactofficehours' => $this->noContactOfficeHours,
+			'bookingsopen'	=> $this->bookingsOpen,
+			'challenge'		=> $this->challenge,
+			'swg'			=> $this->swg,
+			
+		);
+		
+		return $values;
+	}
+	
+	/**
+	 * A weekend must have a name, a description, a start & end date, a place name and an area.
+	 */
+	public function isValid()
+	{
+		return (!empty($this->name) && !empty($this->description) && !empty($this->start) && !empty($this->endDate) && !empty($this->placeName) && !empty($this->area));
+	}
+  
   public function __get($name)
   {
     return $this->$name; // TODO: What params should be exposed?
