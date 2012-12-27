@@ -49,15 +49,15 @@ class Weekend extends Event {
   {
     parent::toDatabase($query);
     
-    $query->set("startdate", strftime("%Y-%m-%d",$this->start));
-    $query->set("enddate", strftime("%Y-%m-%d",$this->endDate));
+    $query->set("startdate = '".$query->escape(strftime("%Y-%m-%d",$this->start))."'");
+    $query->set("enddate = '".$query->escape(strftime("%Y-%m-%d",$this->endDate))."'");
     
-    $query->set("nocontactofficehours", $this->noContactOfficeHours);
-    $query->set("challenge", $this->challenge);
-    $query->set("swg", $this->swg);
+    $query->set("nocontactofficehours = ".(int)$this->noContactOfficeHours);
+    $query->set("challenge = ".(int)$this->challenge);
+    $query->set("swg = ".(int)$this->swg);
     
-    $query->set('version', $this->alterations->version);
-    $query->set('lastmodified', $this->alterations->lastModified);
+    $query->set("version = ".$this->alterations->version);
+    $query->set("lastmodified = '".$query->escape($this->alterations->lastModified)."'");
   }
   
 	public function valuesToForm()
@@ -65,13 +65,13 @@ class Weekend extends Event {
 		$values = array(
 			'id'			=> $this->id,
 			'name'			=> $this->name,
+			'placeName'		=> $this->placeName,
 			'description'	=> $this->description,
 			'okToPublish'	=> $this->okToPublish,
 			
-			'startdate'		=> strftime("%Y-%m-%d"),
-			'enddate'		=> $this->endDate,
+			'startdate'		=> strftime("%Y-%m-%d", $this->start),
+			'enddate'		=> strftime("%Y-%m-%d", $this->endDate),
 			
-			'placename'		=> $this->placeName,
 			'area'			=> $this->area,
 			'url'			=> $this->url,
 			'places'		=> $this->places,
@@ -99,6 +99,41 @@ class Weekend extends Event {
   {
     return $this->$name; // TODO: What params should be exposed?
   }
+
+	public function __set($name, $value)
+	{
+		switch ($name)
+		{
+			case "name":
+			case "placeName":
+			case "area":
+			case "description":
+			case "url":
+			case "contact":
+			case "bookingsOpen":
+			case "cost":
+				$this->$name = $value;
+				break;
+			case "places":
+				$this->$name = (int)$value;
+				break;
+			case "okToPublish":
+			case "challenge":
+			case "swg":
+				$this->$name = (bool)$value;
+				break;
+			case "start":
+			case "endDate":
+				if (!empty($value))
+					$this->$name = $value;
+				break;
+			/*case "latLng":
+				if ($value instanceof LatLng)
+					$this->$name = $value;
+				break;*/
+			
+		}
+	}
   
   /**
    * Gets a limited number of events, starting today and going forwards

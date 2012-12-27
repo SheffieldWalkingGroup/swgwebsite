@@ -5,7 +5,7 @@ defined('_JEXEC') or die;
 // Include dependancy of the main controllerform class
 jimport('joomla.application.component.controllerform');
 
-class SWG_EventsControllerAddEditSocial extends JControllerForm
+class SWG_EventsControllerAddEditWeekend extends JControllerForm
 {
   
   // Store the model so it can be given to the view
@@ -28,15 +28,15 @@ class SWG_EventsControllerAddEditSocial extends JControllerForm
 
     // Initialise variables.
     $app	= JFactory::getApplication();
-    $model	= $this->getModel('addeditsocial');
-    $view = $this->getView('addeditsocial','html');
+    $model	= $this->getModel('addeditweekend');
+    $view = $this->getView('addeditweekend','html');
     $view->setModel($model, true);
 
     // Get the data from the form POST
     $data = JRequest::getVar('jform', array(), 'post', 'array');
     
     // Send the data to the model
-    $model->updateSocial($data);
+    $model->updateWeekend($data);
     $view->display();
 
     // check if ok and display appropriate message.  This can also have a redirect if desired.
@@ -52,12 +52,12 @@ class SWG_EventsControllerAddEditSocial extends JControllerForm
   /* Permissions checks */
   function canAdd()
   {
-    return JFactory::getUser()->authorise("social.add","com_swg_events");
+    return JFactory::getUser()->authorise("weekend.add","com_swg_events");
   }
   
-  function canEdit($socialorID)
+  function canEdit($weekendOrID)
   {
-    // TODO: Some can edit own socials, e.g. publicity officers
+    // TODO: Some can edit own weekends
     return JFactory::getUser()->authorise("social.editall","com_swg_events");
   }
 
