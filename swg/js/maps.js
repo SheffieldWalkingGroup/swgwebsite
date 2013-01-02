@@ -24,6 +24,8 @@ var SWGMap = new Class({
 		// Create a new map
 		this.map = new OpenLayers.Map(container);
 		var attribution = "Map data &copy; <a href='http://www.openstreetmap.org' target='_blank'>OpenStreetMap</a> contributors. Style &copy; <a href='http://www.opencyclemap.org' target='_blank'>OpenCycleMap</a>."
+		
+		// Set up OpenCycleMap layer
 		this.cycleMap = new OpenLayers.Layer.OSM(
 				"OpenCycleMap",
 				["http://a.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png",
@@ -35,7 +37,9 @@ var SWGMap = new Class({
 		this.cycleMap.events.register('loadend',this,function(){
 			loadIndicator.dispose();
 		});
-		this.map.addLayer(this.cycleMap);		
+		this.map.addLayer(this.cycleMap);
+		
+		// Set up Landscape layer
 		this.landscapeMap = new OpenLayers.Layer.OSM(
 				"Landscape",
 				["http://a.tile3.opencyclemap.org/landscape/$\{z}/$\{x}/$\{y}.png",
@@ -44,7 +48,18 @@ var SWGMap = new Class({
 				{sphericalMercator:true}
 		);
 		this.landscapeMap.attribution = attribution;
+		this.landscapeMap.events.register('loadend',this,function(){
+			loadIndicator.dispose();
+		});
 		this.map.addLayer(this.landscapeMap);
+		
+		// Set up street map layer
+		this.streetMap = new OpenLayers.Layer.OSM("Street map");
+		this.streetMap.events.register('loadend',this,function(){
+			loadIndicator.dispose();
+		});
+		this.map.addLayer(this.streetMap);
+
 		this.map.addControl(new OpenLayers.Control.LayerSwitcher());
 		this.markers = new OpenLayers.Layer.Markers("Locations");
 		this.map.addLayer(this.markers); // TODO: Keep marker layer at the top
@@ -54,8 +69,70 @@ var SWGMap = new Class({
 		this.routes = new Array();
 		this.socials = new Array();
 		this.weekends = new Array();
-	},
+		
 
+	},
+	
+	setDefaultMap: function(style)
+	{
+		switch(style.toLowerCase())
+		{
+			case "cycle":
+				this.map.setBaseLayer(this.cycleMap);
+				break;
+			case "landscape":
+				this.map.setBaseLayer(this.landscapeMap);
+				break;
+			case "street":
+				this.map.setBaseLayer(this.streetMap);
+				break;
+		}
+	},
+	
+	/**
+	 * Adds a click handler to the map
+	 * @param func Function to call when the user clicks on the map. Must take two parameters: the event, and a LonLat object.
+	 */
+	addClickHandler: function(func)
+	{
+		// TODO: Handle multiple handlers
+		OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {                
+			defaultHandlerOptions: {
+				'single': true,
+				'double': false,
+				'pixelTolerance': 0,
+				'stopSingle': false,
+				'stopDouble': false
+			},
+
+			initialize: function(options) {
+				this.handlerOptions = OpenLayers.Util.extend(
+					{}, this.defaultHandlerOptions
+				);
+				OpenLayers.Control.prototype.initialize.apply(
+					this, arguments
+				); 
+				this.handler = new OpenLayers.Handler.Click(
+					this, {
+						'click': this.trigger
+					}, this.handlerOptions
+				);
+			}, 
+
+			trigger: function(e) {
+				var lonlat = this.map.getLonLatFromViewPortPx(e.xy);
+				lonlat = lonlat.transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
+				
+				// Pass the converted coordinates to the specified function
+				func(e, lonlat);
+			}
+		});
+		
+		var click = new OpenLayers.Control.Click();
+		this.map.addControl(click);
+		click.activate();
+	},
+	
 	/**
 	 * Adds a new walk to the map.
 	 * All that gets shown is the start and end markers.
