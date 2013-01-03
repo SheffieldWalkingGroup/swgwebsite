@@ -107,8 +107,8 @@
 			'booking'		=> $this->bookingsInfo,
 			'shownormal'	=> $this->showNormal,
 			'shownewmember'	=> $this->showNewMember,
-			'newMemberStart'=> $this->newMemberStart,
-			'newMemberEnd'	=> $this->newMemberEnd,
+			'newMemberStart'=> strftime("%H:%M", $this->newMemberStart),
+			'newMemberEnd'	=> strftime("%H:%M", $this->newMemberEnd),
 			
 			'postcode'		=> $this->postcode,
 			'location'		=> $this->location,
