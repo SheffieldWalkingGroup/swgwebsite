@@ -14,7 +14,17 @@ class JFormFieldLocation extends JFormField
 	public function getInput()
 	{
 		// What is the starting location?
+		$jsGotLocation = "false";
 		if (
+			isset($this->value) && 
+			isset($this->value['lat']) && is_numeric($this->value['lat']) &&
+			isset($this->value['lng']) && is_numeric($this->value['lng'])
+		)
+		{
+			$start = new LatLng($this->value['lat'], $this->value['lng']);
+			$jsGotLocation = "true";
+		}
+		else if (
 			isset($this->element['lat']) && is_numeric($this->element['lat']) &&
 			isset($this->element['lng']) && is_numeric($this->element['lng'])
 		)
@@ -30,7 +40,7 @@ class JFormFieldLocation extends JFormField
 		// Load the maps JS
 		$document = JFactory::getDocument();
 		JHtml::_('behavior.framework', true);
-		$document->addScript('/libraries/openlayers/OpenLayers.debug.js');
+		$document->addScript('/libraries/openlayers/OpenLayers.js');
 		$document->addScript('/swg/js/maps.js');
 		$document->addScriptDeclaration(<<<MAP
 window.addEvent('domready', function()
@@ -58,6 +68,15 @@ window.addEvent('domready', function()
 		markerLayer.clearMarkers();
 		markerLayer.addMarker(marker);
 	});
+	
+	// Maybe add an intial marker
+	if ({$jsGotLocation})
+	{
+		loc = new OpenLayers.LonLat({$start->lng},{$start->lat}).transform(new OpenLayers.Projection("EPSG:4326"), map.map.getProjectionObject());
+		marker = new OpenLayers.Marker(loc);
+		markerLayer.clearMarkers();
+		markerLayer.addMarker(marker);
+	}
 });
 MAP
 );
@@ -65,8 +84,8 @@ MAP
 		
 		// TODO: Allow enabling/disabling of visible fields
 		$html .= "<div id='{$this->id}_map' style='width:600px;height:400px;'></div>";
-		$html .= "<input type='hidden' name='{$this->name}[lat]' id='{$this->id}_lat' />";
-		$html .= "<input type='hidden' name='{$this->name}[lng]' id='{$this->id}_lng' />";
+		$html .= "<input type='hidden' name='{$this->name}[lat]' id='{$this->id}_lat' value='{$start->lat}' />";
+		$html .= "<input type='hidden' name='{$this->name}[lng]' id='{$this->id}_lng' value='{$start->lng}' />";
 		
 		return $html;
 	}

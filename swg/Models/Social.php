@@ -105,14 +105,15 @@
 			'okToPublish'	=> $this->okToPublish,
 			
 			'booking'		=> $this->bookingsInfo,
-			'shownormal'	=> $this->showNormal,
-			'shownewmember'	=> $this->showNewMember,
+			'shownormal'	=> (int)$this->showNormal,
+			'shownewmember'	=> (int)$this->showNewMember,
 			'newMemberStart'=> strftime("%H:%M", $this->newMemberStart),
 			'newMemberEnd'	=> strftime("%H:%M", $this->newMemberEnd),
 			
 			'postcode'		=> $this->postcode,
 			'location'		=> $this->location,
 			'cost'			=> $this->cost,
+			
 		);
 		
 		if (!empty($this->start))
@@ -122,6 +123,9 @@
 		}
 		if (!empty($this->end))
 			$values['endtime']	= strftime("%H:%M", $this->end);
+			
+		if (!empty($this->latLng))
+			$values['latLng'] = array('lat'=>$this->latLng->lat, 'lng'=>$this->latLng->lng);
 			
 		return $values;
 			
@@ -170,12 +174,20 @@
 			case "newMemberStart":
 			case "end":
 			case "newMemberEnd":
-				if (!empty($value))
+				if (!empty($value) && is_numeric($value))
 					$this->$name = $value;
 				break;
 			case "latLng":
 				if ($value instanceof LatLng)
 					$this->$name = $value;
+				else if (is_array($value))
+				{
+					// Convert to LatLng
+					if (isset($value['lat']) && is_numeric($value['lat']) && isset($value['lng']) && is_numeric($value['lng']))
+					{
+						$this->$name = new LatLng($value['lat'], $value['lng']);
+					}
+				}
 				break;
 			case "postcode":
 				// Geolocate this postcode

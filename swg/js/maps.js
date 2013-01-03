@@ -25,20 +25,6 @@ var SWGMap = new Class({
 		this.map = new OpenLayers.Map(container);
 		var attribution = "Map data &copy; <a href='http://www.openstreetmap.org' target='_blank'>OpenStreetMap</a> contributors. Style &copy; <a href='http://www.opencyclemap.org' target='_blank'>OpenCycleMap</a>."
 		
-		// Set up OpenCycleMap layer
-		this.cycleMap = new OpenLayers.Layer.OSM(
-				"OpenCycleMap",
-				["http://a.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png",
-			       "http://b.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png",
-			       "http://c.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png"],
-				{sphericalMercator:true}
-		);
-		this.cycleMap.attribution = attribution;
-		this.cycleMap.events.register('loadend',this,function(){
-			loadIndicator.dispose();
-		});
-		this.map.addLayer(this.cycleMap);
-		
 		// Set up Landscape layer
 		this.landscapeMap = new OpenLayers.Layer.OSM(
 				"Landscape",
@@ -52,6 +38,20 @@ var SWGMap = new Class({
 			loadIndicator.dispose();
 		});
 		this.map.addLayer(this.landscapeMap);
+		
+		// Set up OpenCycleMap layer
+		this.cycleMap = new OpenLayers.Layer.OSM(
+				"OpenCycleMap",
+				["http://a.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png",
+			       "http://b.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png",
+			       "http://c.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png"],
+				{sphericalMercator:true}
+		);
+		this.cycleMap.attribution = attribution;
+		this.cycleMap.events.register('loadend',this,function(){
+			loadIndicator.dispose();
+		});
+		this.map.addLayer(this.cycleMap);
 		
 		// Set up street map layer
 		this.streetMap = new OpenLayers.Layer.OSM("Street map");

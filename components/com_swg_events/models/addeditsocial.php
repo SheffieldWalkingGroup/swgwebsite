@@ -65,6 +65,11 @@ class SWG_EventsModelAddEditSocial extends JModelForm
 		if (!empty($formData['endtime']))
 			$this->social->end = strtotime($formData['date']." ".$formData['endtime']);
 	}
+	
+	if (!empty($formData['newMemberStart']))
+		$this->social->newMemberStart = strtotime($formData['date']." ".$formData['newMemberStart']);
+	if (!empty($formData['newMemberEnd']))
+		$this->social->newMemberEnd = strtotime($formData['date']." ".$formData['newMemberEnd']);
     
     if ($this->social->isValid())
     {
