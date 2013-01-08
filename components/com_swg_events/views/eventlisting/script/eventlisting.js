@@ -142,6 +142,11 @@ var EventWrapper = new Class({
 			this.map.addWalkInstance(this.eventID);
 		else if (this.eventType == "social")
 			this.map.addSocial(this.eventID);
+		else if (this.eventType == "weekend")
+		{
+			this.map.addWeekend(this.eventID);
+			this.map.setDefaultMap("street"); // Landscape map doesn't work well at small scales
+		}
 		
 		// Open the map
 		var self = this;
@@ -249,123 +254,4 @@ function registerMapLinks()
 		var event = new EventWrapper(eventElements[i]);
 		events.push(event);
 	}
-}
-
-var getWrapperFromLink = function(link)
-{
-	var wrapper = link;
-	while (!wrapper.getParent().hasClass("event"))
-    {
-      wrapper = wrapper.getParent();
-    }
-	return wrapper;
-}
-
-var clickOpenLink = function(event)
-{
-	// Find the event wrapper
-    var wrapper = getWrapperFromLink(event.target);
-    
-    // Close any existing maps (unless it's the one we're opening)
-    if (
-    		map != undefined && map != null && 
-    		lastOpenedEventWrapper != wrapper && 
-    		lastOpenedEventWrapper.contains(mapContainer)
-	)
-	{
-    	closeMap(lastOpenedEventWrapper, true);
-	}
-    
-    
-    // Change this link to a close map link
-    var link = event.target;
-    link.set('html', "Hide map");
-    link.removeEvent('click',clickOpenLink);
-    link.addEvent('click',clickCloseLink);
-    
-    lastOpenedEventWrapper = wrapper;
-
-    // TODO: Potential race condition
-    openMap(wrapper);
-    event.stop();
-}
-
-var clickCloseLink = function(event)
-{
-	closeMap(getWrapperFromLink(event.target),false);
-	var link = event.target;
-    link.set('html', "Show map");
-    link.removeEvent('click',clickCloseLink);
-    link.addEvent('click',clickOpenLink);
-	event.stop();
-}
-
-var openMap = function(wrapper)
-{
-	// Remove any existing container
-	mapContainer.dispose();
-	
-	// Get the event type & ID
-    var wrapperID = wrapper.getParent().id;
-    var eventType = wrapperID.substring(0,wrapperID.indexOf("_"));
-    var eventID   = wrapperID.substring(wrapperID.indexOf("_")+1);
-    
-    wrapper.adopt(mapContainer);
-    
-    // Create the map
-    if (map != undefined && map != null)
-	{
-    	// map.destroy();
-	}
-    map = new SWGMap('map');
-
-    // TODO: Handle non-walks
-    map.addWalkInstance(eventID);
-    
-    // TODO: Add the map & controls
-    
-    // Animate the map opening
-    var openFx = new Fx.Tween(mapContainer, {
-    	transition:Fx.Transitions.Quad.easeOut
-    });
-    openFx.start("height",400);
-    
-}
-
-var closeMap = function(wrapper, opening)
-{
-	var closeFxOptions = {
-			transition:Fx.Transitions.Quad.easeIn,
-			onComplete: function() {
-				if (!opening)
-					mapContainer.dispose();
-				
-				// Restore the show map link
-				var link = wrapper.getElements('a[rel="toggle-map"]')[0];
-				link.set('html', "Show map");
-			    link.removeEvent('click',clickCloseLink);
-			    link.addEvent('click',clickOpenLink);
-			}
-	};
-	var closeFx;
-	if (opening)
-	{
-		// Create a dummy element to hold the map open as it slides close
-		var dummyElement = new Element("div",{
-			"class":"map-container",
-			"style":"height:"+mapContainer.getSize().y+"px"
-		});
-		mapContainer.getParent().adopt(dummyElement);
-		mapContainer.dispose();
-		map.destroy();
-		
-		// Close the old map and open the new one
-		closeFx = new Fx.Tween(dummyElement, closeFxOptions);
-	}
-	else
-	{
-		closeFx = new Fx.Tween(mapContainer,closeFxOptions);
-	}
-	closeFx.start("height", 0);
-	
 }
