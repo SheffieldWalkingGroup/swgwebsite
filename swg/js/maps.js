@@ -89,6 +89,11 @@ var SWGMap = new Class({
 		}
 	},
 	
+	setZoom: function(zoom)
+	{
+		this.map.zoomTo(8);
+	},
+	
 	/**
 	 * Adds a click handler to the map
 	 * @param func Function to call when the user clicks on the map. Must take two parameters: the event, and a LonLat object.
@@ -156,6 +161,12 @@ var SWGMap = new Class({
 	{
 		var social = new Social();
 		social.load(socialID, this);
+	},
+	
+	addWeekend: function (weekendID)
+	{
+		var weekend = new Weekend();
+		weekend.load(weekendID, this);
 	},
 	
 	/**
@@ -272,10 +283,6 @@ var SWGMap = new Class({
 		);
 		
 		// Need to centre the map before adding popups
-		// TODO: Temporary - should zoom to bounding box around start & end (or route if available)
-		// If a circular walk, don't zoom in too close either
-		// Note: zoom 13 shows lots of details, incl. paths. Should probably stick to that:
-		// route line shows where the finish is
 		this.map.setCenter(location,13);
 		
 		this.map.addPopup(popup);
@@ -293,6 +300,48 @@ var SWGMap = new Class({
 //			this.showPoint(this.queuedMove.walkID, this.queuedMove.pointType, this.queuedMove.zoom);
 		//}
 	},
+	
+	loadedWeekend: function(weekend)
+	{
+		this.weekends[weekend.id] = {
+				'id':weekend.id,
+				'walk':weekend,
+				'location':null
+		};
+		
+		// Create a marker for the location
+		// Note: need to transform from WGS1984 to (usually) Spherical Mercator projection
+		var location = new OpenLayers.LonLat(weekend.latLng.lng,weekend.latLng.lat).transform(
+		    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()
+		);
+		this.weekends[weekend.id].location = location;
+		var icon = new OpenLayers.Icon("/images/icons/green.png",{w:8,h:8},{x:-4,y:-4});
+		var marker = new OpenLayers.Marker(location, icon);
+		
+		var popup = new OpenLayers.Popup.FramedCloud("Popup",
+		    location, null,
+		    weekend.placeName.replace(/\n/g,"<br>"), icon, true
+		);
+		
+		// Need to centre the map before adding popups
+		this.map.setCenter(location,8);
+		
+		this.map.addPopup(popup);
+		  
+		marker.events.register('mousedown',marker,function(e) { 
+			popup.toggle(); OpenLayers.Event.stop(e);
+		});
+		this.markers.addMarker(marker);
+		
+		this.map.setCenter(location,8);
+		
+		// Do we have a queued move?
+		//if (this.queuedMove != undefined && this.queuedMove != null)
+		//{
+//			this.showPoint(this.queuedMove.walkID, this.queuedMove.pointType, this.queuedMove.zoom);
+		//}
+	},
+	
 	
 	/**
 	 * Called when a route has loaded
@@ -508,7 +557,30 @@ var Social = new Class({
 		});
 		loader.get();
 	}
-})
+});
+
+var Weekend = new Class({
+	Extends: Event,
+	load: function(instanceID,requestor)
+	{
+		var self=this;
+		var loader = new Request.JSON({
+			url: "/api/eventlisting?eventtype=weekend&id="+instanceID+"&format=json",
+			onSuccess: function(data)
+			{
+				self.parseData(data);
+				
+				// We need location data to exist. Use the social title if blank.
+				if (self.location == undefined || self.location == null || self.location == "")
+					self.location = self.name;
+				
+				requestor.loadedWeekend(self);
+			}
+			// TODO: onFailure
+		});
+		loader.get();
+	}
+});
 
 var Route = new Class({
 	
@@ -546,4 +618,4 @@ var Route = new Class({
 		});
 		loader.get();
 	}
-})
+});
