@@ -11,7 +11,7 @@ JLoader::register('Weekend', JPATH_BASE."/swg/Models/Weekend.php");
 JLoader::register('Event', JPATH_BASE."/swg/Models/Event.php");
  
 /**
- * HelloWorld Model
+ * Event listing model
  */
 class SWG_EventsModelEventlisting extends JModelItem
 {
@@ -120,65 +120,62 @@ class SWG_EventsModelEventlisting extends JModelItem
 	    $events[] = $nextEvent;
 	     
 	  } while (
+	    count($events) < 100 && (
           (count($this->walks) > $walkPointer) || 
           (count($this->socials) > $socialPointer) || 
           (count($this->weekends) > $weekendPointer)
-      );
-	  
-	  // Order 0 = ascending, 1 = descending
-	  if (JRequest::getInt("order") == 1) {
-	    $events = array_reverse($events);
-	  }
+      ));
 	  
 	  return $events;
 	}
 	
 	/**
 	 * Returns the next event after the one given
-	 * @param Event $event Event to search from. Set to null if starting at the beginning
+	 * @param Event $prevEvent Event to search from. Set to null if starting at the beginning
 	 * @param int $minWalk Earliest possible walk to consider (pointer to class-level array). Not required, but makes this function much faster
 	 * @param int $minSocial Earliest possible social to consider (pointer to class-level array). Not required, but makes this function much faster
 	 * @param int $minWeekend Earliest possible weekend to consider (pointer to class-level array). Not required, but makes this function much faster
 	 */
-	private function nextEvent(Event $event=null, $minWalk=0, $minSocial=0, $minWeekend=0)
+	private function nextEvent(Event $prevEvent=null, $minWalk=0, $minSocial=0, $minWeekend=0, $reverse=false)
 	{
-	  // Get the first possible event of each type. Start at $minXX, ignoring any events that are the same as the one passed in, or with an earlier start time
-	  if (isset($this->walks[$minWalk]))
-	  {
-    	  do {
-    	    $nextWalk = $this->walks[$minWalk];
-    	    $minWalk++;
-    	  } while (isset($event) && (($event instanceof Walk && $nextWalk->id == $event->id) || $nextWalk->start < $event->start));
-	  }
-	  
-	  if (isset($this->socials[$minSocial]))
-	  {
-	    do {
-    	    $nextSocial = $this->socials[$minSocial];
-    	    $minSocial++;
-    	  } while (isset($event) && (($event instanceof Social && $nextSocial->id == $event->id) || $nextSocial->start < $event->start));
-	  }
-	  if (isset($this->weekends[$minWeekend]))
-	  {
-    	  do {
-    	    $nextWeekend = $this->weekends[$minWeekend];
-    	    $minWeekend++;
-    	  } while (isset($event) && (($event instanceof Weekend && $nextWeekend->id == $event->id) || $nextWeekend->start < $event->start));
-	  }
-	  
+		// Get the first possible event of each type. Start at $minXX, ignoring any events that are the same as the one passed in, or with an earlier start time
+		$nextWalk = $this->nextEventByType($prevEvent, $this->walks, $minWalk,$reverse);
+		$nextSocial = $this->nextEventByType($prevEvent, $this->socials, $minSocial,$reverse);
+		$nextWeekend = $this->nextEventByType($prevEvent, $this->weekends, $minWeekend,$reverse);
+		
 	  // Now find whether a walk, a social or a weekend is the next event
 	  // If two are equal, put walks first, then socials, then weekends.
 	  // Two events of the same type will go in the order they are in the database
 	  // First, try to match all three
 	  if (isset($nextWalk,$nextSocial,$nextWeekend))
-	    $start = min($nextWalk->start, $nextSocial->start, $nextWeekend->start);
+	  {
+		if ($reverse)
+			$start = max($nextWalk->start, $nextSocial->start, $nextWeekend->start);
+		else
+			$start = min($nextWalk->start, $nextSocial->start, $nextWeekend->start);
+	  }
 	  // Now, match any two
 	  elseif (isset($nextWalk, $nextSocial))
-	    $start = min($nextWalk->start, $nextSocial->start);
+	  {
+		if ($reverse)
+			$start = max($nextWalk->start, $nextSocial->start);
+		else
+			$start = min($nextWalk->start, $nextSocial->start);
+	  }
 	  else if (isset($nextWalk, $nextWeekend))
-	    $start = min($nextWalk->start, $nextWeekend->start);
+	  {
+		if ($reverse)
+			$start = max($nextWalk->start, $nextWeekend->start);
+		else
+			$start = min($nextWalk->start, $nextWeekend->start);
+	  }
 	  else if (isset($nextSocial, $nextWeekend))
-	    $start = min($nextSocial->start, $nextWeekend->start);
+	  {
+		if ($reverse)
+			$start = max($nextSocial->start, $nextWeekend->start);
+		else
+			$start = min($nextSocial->start, $nextWeekend->start);
+	  }
 	  // We only have one - return that straight away without bothering to go to the next step
 	  else if (isset($nextWalk))
 	    return $nextWalk;
@@ -202,7 +199,44 @@ class SWG_EventsModelEventlisting extends JModelItem
 	}
 	
 	/**
+	 * Finds the next event of a particular type
+	 * 
+	 * If there are any more events of this type, take the first event.
+	 * Continue taking events until we reach the end, or we find the first event that isn't the previous one, or we find the first event that starts simultaneously or after the previous event.
+	 *
+	 * @param Event $prevEvent Previous event found - get the next event after this
+	 * @param array $events Events to search through. Expected to be sorted.
+	 * @param int $startIndex Start the search from this index in $events
+	 * @param bool $reverse If true, get events BEFORE the last one
+	 */
+	private function nextEventByType($prevEvent, $events, $startIndex, $reverse=false)
+	{
+		$nextEvent = null;
+		
+		if (isset($events[$startIndex]))
+		{
+			// Take walks until we find one that isn't the previous event, and starts after or at the same time as the previous event
+			do
+			{
+				$nextEvent = $events[$startIndex];
+				$startIndex++;
+				$class = get_class($nextEvent);
+			} while (
+				isset($events[$startIndex]) && 
+				isset($prevEvent) && (
+					($prevEvent instanceof $class && $nextEvent->id == $prevEvent->id) ||
+					(!$reverse && $nextEvent->start < $prevEvent->start) ||
+					($reverse && $nextEvent->start > $prevEvent->start)
+				)
+			);
+		}
+		
+		return $nextEvent;
+	}
+	
+	/**
 	 * Loads and caches events of a specified type
+	 * Can only load 100 events at a time to avoid slowdowns - more will be loaded as a 'bottomless page' type thing
 	 * @param int $eventType Event type - see SWG constants
 	 */
 	private function loadEvents($eventType)
@@ -213,15 +247,16 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  	  
 	  switch ($eventType) {
 	    case SWG::EventType_Walk:
-	      $this->walks = WalkInstance::get($startDate, $endDate, -1, JRequest::getBool("unpublished",false));
+	      $this->walks = WalkInstance::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0), JRequest::getBool("unpublished",false));
 	      break;
 	    case SWG::EventType_Social:
-	      $this->socials = Social::get($startDate, $endDate, -1);
+	      $this->socials = Social::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0));
 	      break;
 	    case SWG::EventType_Weekend:
-	      $this->weekends = Weekend::get($startDate, $endDate, -1);
+	      $this->weekends = Weekend::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0));
 	      break;
 	  }
+	  
 	}
 	
 	/**

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 	<form name="addeditwalk">
 		<field name="id" type="hidden" />
-		<fieldset name="basic">
+		<fieldset name="basic" addfieldpath="/administrator/components/com_swg_events/models/fields">
 			<field name="name" type="text" label="Title" maxlength="30" required="required" size="20" />
 			<field name="placeName" type="text" label="Place name" maxlength="30" required="required" size="20" />
 			<field name="area" type="text" label="Area" maxlength="20" required="required" size="20" />
+			<field name="latLng" type="Location" label="Location" description="Click on the map to set the location" zoom="7" />
 			<field name="startdate" type="calendar" label="Start date" required="required" />
 			<field name="enddate" type="calendar" label="End date" required="required" />
 		</fieldset>

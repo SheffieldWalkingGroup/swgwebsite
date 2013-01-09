@@ -15,6 +15,7 @@ class Weekend extends Event {
   protected $bookingsOpen;
   protected $challenge;
   protected $swg;
+  protected $latLng;
   
   public $dbmappings = array(
     'name'	=> 'name',
@@ -43,6 +44,8 @@ class Weekend extends Event {
     
     $this->alterations->setVersion($dbArr['version']);
     $this->alterations->setLastModified(strtotime($dbArr['lastmodified']));
+    
+    $this->latLng = new LatLng($dbArr['latitude'], $dbArr['longitude']);
   }
   
   public function toDatabase(JDatabaseQuery &$query)
@@ -58,6 +61,12 @@ class Weekend extends Event {
     
     $query->set("version = ".$this->alterations->version);
     $query->set("lastmodified = '".$query->escape($this->alterations->lastModified)."'");
+    
+    if (!empty($this->latLng))
+	{
+		$query->set("latitude = ".$this->latLng->lat);
+		$query->set("longitude = ".$this->latLng->lng);
+	}
   }
   
 	public function valuesToForm()
@@ -83,6 +92,9 @@ class Weekend extends Event {
 			'swg'			=> $this->swg,
 			
 		);
+		
+		if (!empty($this->latLng))
+			$values['latLng'] = array('lat'=>$this->latLng->lat, 'lng'=>$this->latLng->lng);
 		
 		return $values;
 	}
@@ -127,10 +139,18 @@ class Weekend extends Event {
 				if (!empty($value))
 					$this->$name = $value;
 				break;
-			/*case "latLng":
+			case "latLng":
 				if ($value instanceof LatLng)
 					$this->$name = $value;
-				break;*/
+				else if (is_array($value))
+				{
+					// Convert to LatLng
+					if (isset($value['lat']) && is_numeric($value['lat']) && isset($value['lng']) && is_numeric($value['lng']))
+					{
+						$this->$name = new LatLng($value['lat'], $value['lng']);
+					}
+				}
+				break;
 			
 		}
 	}
@@ -144,12 +164,30 @@ class Weekend extends Event {
     return self::get(self::DateToday, self::DateEnd, $numEvents);
   }
   
+	public static function numEvents($startDate=self::DateToday, $endDate=self::DateEnd, $getNormal=true, $getNewMember=true)
+	{
+		// Build a query to get future socials
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select("count(1) as count");
+		$query->from("weekendsaway");
+		// TODO: This is a stored proc currently - can we use this?
+		$where = array(
+			"enddate >= '".self::timeToDate($startDate)."'",
+			"startdate <= '".self::timeToDate($endDate)."'",
+			"readytopublish",
+		);
+		$query->where($where);
+		$db->setQuery($query);
+		return $db->loadResult();
+	}
+  
   /**
    * Gets the next few scheduled weekends
    * @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
    * @return array Array of Weekends
    */
-  public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1) {
+  public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $offset=0, $reverse=false) {
     // Build a query to get future weekends
     $db = JFactory::getDBO();
     $query = $db->getQuery(true);
@@ -161,8 +199,11 @@ class Weekend extends Event {
         "startdate <= '".self::timeToDate($endDate)."'",
         "oktopublish",
     ));
-    $query->order(array("startdate ASC"));
-    $db->setQuery($query);
+    if ($reverse)
+		$query->order(array("startdate DESC"));
+	else
+		$query->order(array("startdate ASC"));
+    $db->setQuery($query, $offset, $numToGet);
     $weekendData = $db->loadAssocList();
   
     // Build an array of Weekends
@@ -197,8 +238,7 @@ class Weekend extends Event {
     
   }
   
-  public function hasMap()
-  {
-    return false;
-  }
+	public function hasMap() {
+		return (!empty($this->latLng));
+	}	
 }

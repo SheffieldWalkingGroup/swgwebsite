@@ -214,6 +214,28 @@ class WalkInstance extends Event implements Walkable {
   public static function getNext($numEvents) {
     return self::get(self::DateToday, self::DateEnd, $numEvents);
   }
+  
+	public static function numEvents($startDate=self::DateToday, $endDate=self::DateEnd, $showUnpublished=false)
+	{
+		// Build a query to get future socials
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select("count(1) as count");
+		$query->from("walkprogrammewalks");
+		// TODO: This is a stored proc currently - can we use this?
+		$where = array(
+			"WalkDate >= '".self::timeToDate($startDate)."'",
+			"WalkDate <= '".self::timeToDate($endDate)."'",
+			"NOT deleted",
+		);
+		$query->where($where);
+		if (!$showUnpublished)
+		{
+			$query->where("readytopublish");
+		}
+		$db->setQuery($query);
+		return (int)$db->loadResult();
+	}
 
   /**
    * Gets the next few scheduled walks
@@ -223,7 +245,7 @@ class WalkInstance extends Event implements Walkable {
    * @param bool $showUnpublished Show unpublished events
    * @return array Array of WalkInstances
    */
-  public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $showUnpublished = false) {
+  public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $offset=null, $reverse=false, $showUnpublished = false) {
     // Build a query to get future walks that haven't been deleted.
     // We do want cancelled walks - users should be notified about these.
     $db = JFactory::getDBO();
@@ -241,12 +263,14 @@ class WalkInstance extends Event implements Walkable {
     {
       $query->where("readytopublish");
     }
-    $query->order(array("WalkDate ASC", "meettime ASC"));
-    $db->setQuery($query);
+    if ($reverse)
+		$query->order(array("WalkDate DESC", "meettime DESC"));
+	else
+		$query->order(array("WalkDate ASC", "meettime ASC"));
+    $db->setQuery($query, $offset, $numToGet);
     $walkData = $db->loadAssocList();
 
     // Build an array of WalkInstances
-    // TODO: Set actual SQL limit
     $walks = array();
     while (count($walkData) > 0 && count($walks) != $numToGet) {
       $walk = new WalkInstance();

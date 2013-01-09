@@ -27,15 +27,21 @@ abstract class Event extends SWGBaseModel {
     $this->alterations = new EventAlterations();
   }
   
+  /**
+   * Returns the number of events in a date range
+   */
+  public abstract static function numEvents($startDate=self::DateToday, $endDate=self::DateEnd);
   
   /**
    * Gets the next few events of this type as an array
    * @param int $startTime Get events ON OR AFTER this date. Default is today. Accepts Unix time.
    * @param int $endTime Get events ON OR BEFORE this date. Default is the end of time. Accepts Unix time.
    * @param int $numToGet Maximum number of events to fetch. Default is no limit.
+   * @param int $offset Number of events to skip before first displayed
+   * @param bool $reverse True to return events newest first
    * @return array Array of Events
    */
-  public abstract static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1);
+  public abstract static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $offset=null, $reverse=false);
   
   /**
    * Gets a limited number of events, starting today and going forwards

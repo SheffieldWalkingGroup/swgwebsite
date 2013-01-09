@@ -208,13 +208,41 @@
 				break;
 		}
 	}
+	
+	public static function numEvents($startDate=self::DateToday, $endDate=self::DateEnd, $getNormal=true, $getNewMember=true)
+	{
+		// Build a query to get future socials
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select("count(1)");
+		$query->from("socialsdetails");
+		// TODO: This is a stored proc currently - can we use this?
+		$where = array(
+			"on_date >= '".self::timeToDate($startDate)."'",
+			"on_date <= '".self::timeToDate($endDate)."'",
+			"readytopublish",
+		);
+		// Hide normal/new member events if we're not interested
+		if (!$getNormal || !$getNewMember)
+		{
+		if ($getNormal)
+			$where[] = "shownormal";
+		else if ($getNewMember)
+			$where[] = "shownewmember";
+		else
+			$where[] = "false";
+		}
+		$query->where($where);
+		$db->setQuery($query);
+		return $db->loadResult();
+	}
   
 	/**
 	* Gets the next few scheduled socials
 	* @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
 	* @return array Array of Socials
 	*/
-	public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $getNormal = true, $getNewMember = true) {
+	public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $offset=0, $reverse=false, $getNormal = true, $getNewMember = true) {
 		
 		// Build a query to get future socials
 		$db = JFactory::getDBO();
@@ -238,17 +266,19 @@
 			$where[] = "false";
 		}
 		$query->where($where);
-		$query->order(array("on_date ASC", "title ASC"));
-		$db->setQuery($query);
+		if ($reverse)
+			$query->order(array("on_date DESC", "title ASC"));
+		else
+			$query->order(array("on_date ASC", "title ASC"));
+		$db->setQuery($query, $offset, $numToGet);
 		$socialData = $db->loadAssocList();
 		
 		// Build an array of Socials
-		// TODO: Set actual SQL limit
 		$socials = array();
 		while (count($socialData) > 0 && count($socials) != $numToGet) {
-		$social = new Social();
-		$social->fromDatabase(array_shift($socialData));
-		$socials[] = $social;
+			$social = new Social();
+			$social->fromDatabase(array_shift($socialData));
+			$socials[] = $social;
 		}
 
 		return $socials;
@@ -260,7 +290,7 @@
 	* @param int $numEvents Maximum number of events to get
 	*/
 	public static function getNext($numEvents, $getNormal = true, $getNewMember = true) {
-		return self::get(self::DateToday, self::DateEnd, $numEvents, $getNormal, $getNewMember);
+		return self::get(self::DateToday, self::DateEnd, $numEvents, 0, $getNormal, $getNewMember);
 	}
 
 	public static function getSingle($id) {
