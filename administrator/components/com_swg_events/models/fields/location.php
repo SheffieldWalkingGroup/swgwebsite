@@ -31,9 +31,8 @@ class JFormFieldLocation extends JFormField
 			$start = new LatLng($this->element['lat'], $this->element['lng']);
 		else
 		    $start = new LatLng(53.38155556,-1.469722222);
-		
-		if (isset($this->element['zoom']) && is_numeric($this->element['zoom']) && (int)$this->element['zoom'] > 0)
-			$zoom = (int)$this->element['zoom'];
+		if (isset($this->element['zoom']) && is_numeric($this->element['zoom']->data()) && (int)$this->element['zoom']->data() > 0)
+			$zoom = (int)$this->element['zoom']->data();
 		else
 		    $zoom = 14;
 		
