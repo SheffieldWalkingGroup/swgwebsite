@@ -122,7 +122,7 @@ class Route extends SWGBaseModel implements Iterator {
    * @return int
    */
   public function getDistance()
-  {
+{
     return $this->distance;
   }
   
@@ -483,7 +483,7 @@ class Route extends SWGBaseModel implements Iterator {
    * When encoding a route, we want basic details at the top, then an array of waypoints
    * @see SWGBaseModel::sharedProperties()
    */
-  protected function sharedProperties()
+  public function sharedProperties()
   {
     $properties = array(
         "uploadedby"       => $this->uploadedBy,

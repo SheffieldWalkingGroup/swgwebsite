@@ -37,6 +37,8 @@
 		'showNormal'	=> 'shownormal',
 		'showNewMember'	=> 'shownewmember',
 	);
+	
+	public $type = "Social";
 
 	public function fromDatabase(array $dbArr)
 	{
@@ -132,9 +134,9 @@
 	}
 	
 	/**
-	 * A social must have a name, a description and a start date/time.
-	 * It must be for current members and/or new members.
-	 */
+	* A social must have a name, a description and a start date/time.
+	* It must be for current members and/or new members.
+	*/
 	public function isValid()
 	{
 		if(!empty($this->name) && !empty($this->description) && !empty($this->start))
@@ -236,7 +238,7 @@
 		$db->setQuery($query);
 		return $db->loadResult();
 	}
-  
+
 	/**
 	* Gets the next few scheduled socials
 	* @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
