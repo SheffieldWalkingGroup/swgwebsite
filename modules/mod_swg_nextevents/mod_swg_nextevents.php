@@ -20,6 +20,7 @@ JHtml::_('behavior.framework', true);
 
 JHTML::script('http://openlayers.org/api/OpenLayers.js');
 JHTML::script("swg/js/maps.js",true);
+JHTML::script("swg/js/events.js",true);
 JHTML::script("modules/mod_swg_nextevents/script/nextevents.js",true);
 
 // Load the menu item for the list page
