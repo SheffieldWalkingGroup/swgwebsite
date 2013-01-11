@@ -536,6 +536,10 @@ div.slideshow {
     font-size:14px;
 }
 
+.popup h3 {
+	clear:both;
+}
+
 .popup .header h3, .ratingTip .tip-title {
     text-align:center;
 }
@@ -914,6 +918,18 @@ div.slideshow {
 
 .eventlisting .rating, .popup .rating {
 	border-bottom:1px dotted #555;
+}
+
+/* Bar to go on events list during loading */
+.loadbar {
+	border-color: #555555;
+    border-style: solid;
+    border-width: 1px 0;
+    clear: right;
+    margin-bottom: 10px;
+    position: relative;
+    width: 766px;
+	height:80px;
 }
 
 /* Walks library */

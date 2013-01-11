@@ -177,7 +177,7 @@ public static function getNext($numEvents) {
 		$where = array(
 			"enddate >= '".self::timeToDate($startDate)."'",
 			"startdate <= '".self::timeToDate($endDate)."'",
-			"readytopublish",
+			"oktopublish",
 		);
 		$query->where($where);
 		$db->setQuery($query);

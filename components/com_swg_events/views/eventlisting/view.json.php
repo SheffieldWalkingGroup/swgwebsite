@@ -35,18 +35,18 @@ class SWG_EventsViewEventListing extends JView
 				break;
 			default:
 			}
+			print $result->jsonEncode();
 		}
 		else
 		{
 			// Go through the model
-			$this->events = $this->get('Events');
-			echo "<pre>";
-			print_r($this->events);
-			die();
+			$events = $this->get('Events');
+			$result = array();
+			foreach ($events as $event)
+			{
+				$result[] = $event->sharedProperties();
+			}
+			print json_encode($result);
 		}
-
-
-		echo $result->jsonEncode();
-		die();
 	}
 }

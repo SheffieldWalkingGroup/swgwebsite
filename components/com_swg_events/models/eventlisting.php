@@ -22,8 +22,11 @@ class SWG_EventsModelEventlisting extends JModelItem
 	
 	private $loadedEvents = false;
 	private $walks;
+	private $numWalks;
 	private $socials;
+	private $numSocials;
 	private $weekends;
+	private $numWeekends;
 	
 	function __construct()
 	{
@@ -64,6 +67,38 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  }
 	  
 	  return $pr;
+	}
+	
+	public function getApiParams()
+	{
+		return array(
+			"includeWalks=" . JRequest::getBool("includeWalks"),
+			"includeSocials=" . JRequest::getBool("includeSocials"),
+			"includeWeekends=" . JRequest::getBool("includeWeekends"),
+			"startDateType=" . JRequest::getInt("startDateType"),
+			"startDateSpecify=" . JRequest::getString("startDateSpecify"),
+			"endDateType=" . JRequest::getInt("endDateType"),
+			"endDateSpecify=" . JRequest::getString("endDateSpecify"),
+			"order=" . JRequest::getBool("order"),
+			"unpublished=" . JRequest::getBool("unpublished",false),
+			
+		);
+	}
+	
+	public function getNumEvents()
+	{
+		// If we haven't already loaded the events, do so
+		if (!$this->loadedEvents) {
+			if (JRequest::getBool("includeWalks"))
+				$this->loadEvents(SWG::EventType_Walk);
+			if (JRequest::getBool("includeSocials"))
+				$this->loadEvents(SWG::EventType_Social);
+			if (JRequest::getBool("includeWeekends"))
+				$this->loadEvents(SWG::EventType_Weekend);
+			$this->loadedEvents = true;
+		}
+		
+		return ($this->numWalks + $this->numSocials + $this->numWeekends);
 	}
  
 	/**
@@ -247,13 +282,16 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  	  
 	  switch ($eventType) {
 	    case SWG::EventType_Walk:
-	      $this->walks = WalkInstance::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0), JRequest::getBool("unpublished",false));
+	      $this->walks = WalkInstance::get($startDate, $endDate, 100, JRequest::getInt("offset",0), JRequest::getBool("order"), JRequest::getBool("unpublished",false));
+	      $this->numWalks = WalkInstance::numEvents($startDate, $endDate, JRequest::getBool("unpublished",false));
 	      break;
 	    case SWG::EventType_Social:
 	      $this->socials = Social::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0));
+	      $this->numSocials = Social::numEvents($startDate, $endDate, true, false);
 	      break;
 	    case SWG::EventType_Weekend:
 	      $this->weekends = Weekend::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0));
+	      $this->numWeekends = Weekend::numEvents($startDate, $endDate);
 	      break;
 	  }
 	  

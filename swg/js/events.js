@@ -1,23 +1,16 @@
 function displayEvent(event, container, newMembers) {
 	currentEvent = event;
-	// Add alterations to the whole popup
-	if (event.alterations.any) {
-		infoPopup.addClass("popup-altered");
-	}
+	// Add alterations to the whole event
 	
 	if (event.alterations.cancelled) {
 		container.addClass("cancelled");
-		var cancelledText = new Element("p", {
-			"class":"cancelled-message",
-			"html":"Cancelled"
-		});
-		infoPopup.adopt(cancelledText);
+		
 	}
 		
 	
 	// Build up the basic components that apply to all event types
 	var infoHeader = new Element("div", {"class":"eventheader"});
-	var eventName = new Element("h3", {"text":event.name,"style":"clear:both;"});
+	var eventName = new Element("h3", {"text":event.name});
 	var eventDate = new Element("span",{"class":"date","text":timestampToDate(event.start)});
 	if (event.alterations.date)
 		eventDate.addClass("altered");
@@ -25,13 +18,17 @@ function displayEvent(event, container, newMembers) {
 	infoHeader.adopt(eventDate, eventName);
 	container.adopt(infoHeader);
 	
+	var eventBody = new Element("div", {"class":"eventbody"});
+	container.adopt(eventBody);
+	
 	var description = new Element("div", {"class":"description","html":"<p>"+event.description+"</p>"});
-	container.adopt(description);
+	eventBody.adopt(description);
 	if (event.alterations.details)
 		description.addClass("altered");
 	
 	var eventInfo = new Element("div", {"class":"eventinfo"});
-	container.adopt(eventInfo);
+	eventBody.adopt(eventInfo);
+	eventBody.adopt(new Element("div", {"style":"clear:both;"}));
 	
 	// Now do specific components
 	switch(event.type.toLowerCase()) {
@@ -58,19 +55,21 @@ function displayEvent(event, container, newMembers) {
 				"title":"Map of approximate location",
 				"href":"http://www.streetmap.com/loc/"+event.startGridRef,
 				"target":"_blank",
+				"rel":"map-start",
 				"html":event.startGridRef+", "+event.startPlaceName
 			});
 			startLink.addEvent("click",function(event){
 				event.stop();
-				if (map == null)
-				{
-					showMap();
-				}
-				map.showPoint(currentEvent.id, 'start');
+// 				if (map == null)
+// 				{
+// 					showMap();
+// 				}
+// 				map.showPoint(currentEvent.id, 'start');
 			});
 			start.adopt(startLink);
 			eventInfo.adopt(start);
 			if (event.isLinear == true) {
+				// TODO: Map of end
 				var end = new Element("p", {
 					"class":"end", 
 					"html":
@@ -98,13 +97,14 @@ function displayEvent(event, container, newMembers) {
 					"title":"Map of meeting point",
 					"href":"http://www.streetmap.com/loc/N"+event.meetPoint.location.lat+",E"+event.meetPoint.location.lng,
 					"target":"_blank",
+					"rel":"map-transport",
 					"html":event.meetPoint.longDesc
 				});
-				transportLink.addEvent("click",function(event){
-					event.stop();
-					showMap();
-					map.showPoint(currentEvent.id, 'meet');
-				});
+// 				transportLink.addEvent("click",function(event){
+// 					event.stop();
+// 					showMap();
+// 					map.showPoint(currentEvent.id, 'meet');
+// 				});
 				transport.adopt(transportLink);
 
 				transport.adopt(document.createTextNode(". "));
@@ -187,14 +187,7 @@ function displayEvent(event, container, newMembers) {
 			}
 			eventInfo.adopt(iconContainer);
 			
-			// Direct new members to general info page
-			footer = new Element("p",{
-				"class":"newMemberInfo",
-				"html":"Coming on your first walk? Welcome! Please read this <a href='/walks/general-information'>information about walking with us</a>."
-			})
-			container.adopt(footer);
-			
-			showMap();
+			//showMap();
 			
 			break;
 		case "weekend":
@@ -290,24 +283,6 @@ function displayEvent(event, container, newMembers) {
 		ratingTips.attach(rating);
 }
 
-function showMap() {
-	if (map == null)
-	{
-		// Show a map
-		mapContainer = new Element("div",{
-			"class":"map",
-			"id":"map_"+currentEvent.id
-		});
-		mapContainer.inject(footer,'before');
-		map = new SWGMap("map_"+currentEvent.id);
-		map.addWalkInstance(currentEvent.id);
-		map.showPoint(currentEvent.id, "start", 13);
-		
-		// Reset the position to fit the map
-		infoPopup.position(popupPosition());
-	}
-}
-
 function timestampToDate(timestamp) {
 	var dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 	var monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -325,7 +300,7 @@ function timestampToDate(timestamp) {
 		suffix = "nd";
 	else if (dayDate == 3 || dayDate == 23)
 		suffix = "rd";
-	return dayName+" "+dayDate+suffix+" "+month;
+	return dayName+" "+dayDate+suffix+" "+month+(year != new Date().getFullYear() ? " "+year:"");
 }
 
 function timestampToTime(timestamp) {

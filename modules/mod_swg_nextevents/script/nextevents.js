@@ -138,21 +138,8 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 	if (cachedEvents[eventType][eventID] != undefined)
 	{
 		displayEvent(cachedEvents[eventType][eventID], popupContents, newMembers);
+		postDisplay(popupContents, cachedEvents[eventType][eventID]);
 		
-		// Add alterations to the whole popup
-		if (event.alterations.any) 
-		{
-			infoPopup.addClass("popup-altered");
-		
-			if (event.alterations.cancelled) {
-				var cancelledText = new Element("p", {
-					"class":"cancelled-message",
-					"html":"Cancelled"
-				});
-				infoPopup.adopt(cancelledText);
-			}
-		}
-
 		// Reset the position in case the size has changed (e.g. loaded map)
 		infoPopup.position(popupPosition());
 	}
@@ -176,19 +163,8 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 					// Destroy the load indicator
 					loadIndicator.dispose();
 					displayEvent(event, popupContents, newMembers);
+					postDisplay(popupContents, event);
 					
-					if (event.alterations.any) 
-					{
-						infoPopup.addClass("popup-altered");
-					
-						if (event.alterations.cancelled) {
-							var cancelledText = new Element("p", {
-								"class":"cancelled-message",
-								"html":"Cancelled"
-							});
-							infoPopup.adopt(cancelledText);
-						}
-					}
 				}
 			}
 		});
@@ -199,6 +175,52 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 			"class":"loadindicator"
 		});
 		popupContents.adopt(loadIndicator);
+	}
+}
+
+function postDisplay(container, event)
+{
+	//showMap(container);
+	
+	// Add cancellation/altered classes
+	if (event.alterations.any) 
+	{
+		infoPopup.addClass("popup-altered");
+	
+		if (event.alterations.cancelled) {
+			var cancelledText = new Element("p", {
+				"class":"cancelled-message",
+				"html":"Cancelled"
+			});
+			infoPopup.adopt(cancelledText);
+		}
+	}
+	
+	// Direct new members to general info page
+	footer = new Element("p",{
+		"class":"newMemberInfo",
+		"html":"Coming on your first walk? Welcome! Please read this <a href='/walks/general-information'>information about walking with us</a>."
+	})
+	container.adopt(footer);
+}
+
+function showMap(popup) {
+	
+	// TODO: Reference everthing from popup
+	if (map == null)
+	{
+		// Show a map
+		mapContainer = new Element("div",{
+			"class":"map",
+			"id":"map_"+currentEvent.id
+		});
+		mapContainer.inject(footer,'before');
+		map = new SWGMap("map_"+currentEvent.id);
+		map.addWalkInstance(currentEvent.id);
+		map.showPoint(currentEvent.id, "start", 13);
+		
+		// Reset the position to fit the map
+		infoPopup.position(popupPosition());
 	}
 }
 

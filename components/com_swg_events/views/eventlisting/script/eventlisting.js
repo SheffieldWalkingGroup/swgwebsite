@@ -2,7 +2,7 @@
  * TODO: Support non-maps
  */
 
-var mapContainer, mapElement, map, lastOpenedEventWrapper, highlightedEvents;
+var mapContainer, mapElement, map, lastOpenedEventWrapper, highlightedEvents, totalEvents, loadingEvents=false, apiParams, loadedEvents=100, canLoadMore;
 
 var EventWrapper = new Class({
 	wrapper : null,
@@ -254,4 +254,65 @@ function registerMapLinks()
 		var event = new EventWrapper(eventElements[i]);
 		events.push(event);
 	}
+}
+
+function scrolled(evt)
+{
+	if (!loadingEvents && loadedEvents < totalEvents && window.getScroll().y == (window.getScrollSize().y - window.getSize().y)) {
+		hitBottom(evt);
+	}
+}
+
+function hitBottom()
+{
+	loadingEvents = true;
+	
+	// TODO: More robust
+	var container = $$(".main")[0];
+	var before = $$(".postcontent")[0];
+	
+	// Show a loading bar
+	var loadBar = new Element("div", {"class":"loadbar"});
+	var loadIndicator = new Element("div",{
+		"class":"loadindicator"
+	});
+	loadBar.adopt(loadIndicator);
+	loadBar.inject(before, "before");
+	
+	var request = new Request.JSON({
+		url:"/api/eventlisting.js?format=json&"+apiParams+"&offset="+loadedEvents,
+		onSuccess: function(data)
+		{
+			for (var i=0; i<data.length; i++)
+			{
+				// TODO: Could link in with walk, social, weekend objects in maps.js in future
+				var event = data[i];
+				
+				var evtWrap = new Element("div",{
+					"id":event.type.toLowerCase()+"_"+event.id,
+					"class":"event published"
+				});
+				var evtContent = new Element("div",{"class":"content "+event.type.toLowerCase()});
+				
+				evtWrap.adopt(evtContent);
+				evtWrap.inject(before,"before");
+				
+				displayEvent(event, evtContent, false);
+				
+				// Move extra stuff
+				evtContent.getElements(".description").adopt(evtContent.getElements(".icons"));
+				evtContent.getElements(".eventinfo").adopt(new Element("p",{"class":"controls"}));
+				
+				// Run this through normal event setup
+				var event = new EventWrapper(evtWrap);
+				events.push(event);
+			}
+			loadedEvents += data.length;
+			loadingEvents = false;
+			loadBar.dispose();
+		}
+	});
+	request.get();
+	
+	
 }
