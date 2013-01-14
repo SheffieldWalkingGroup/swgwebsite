@@ -485,7 +485,7 @@ var Walkable = new Class({
 		};
 			
 		var route = new Route(this);
-		route.load(this.type.toLowerCase(),this.id,this);
+		route.load(this.class.toLowerCase(),this.id,this);
 	}
 	
 })
@@ -496,7 +496,7 @@ var Walkable = new Class({
  */
 var Walk = new Class({
 	Extends: Walkable,
-	type: "Walk",
+	"class": "Walk",
 	load: function(walkID,requestor)
 	{
 		var self=this;
@@ -519,7 +519,7 @@ var Walk = new Class({
  */
 var WalkInstance = new Class({
 	Extends: Walkable,
-	type:"WalkInstance",
+	"class":"WalkInstance",
 	load: function(instanceID,requestor)
 	{
 		var self=this;
