@@ -83,7 +83,7 @@ public function __construct($dbArr = null)
 	
 	foreach ($this->dbmappings as $var => $dbField)
 	{
-	$this->$var = $dbArr[$dbField];
+		$this->$var = $dbArr[$dbField];
 	}
 	$this->id = $dbArr['ID'];
 	$this->suggestedBy = Leader::getLeader($dbArr['suggestedby']);
@@ -100,6 +100,67 @@ public function __construct($dbArr = null)
 	$this->endLatLng = $endLatLng;
 		
 	// TODO: Load route?
+}
+
+public function fromDatabase(array $dbArr)
+{
+	$this->id = $dbArr['ID'];
+	
+	parent::fromDatabase($dbArr);
+	
+	$this->suggestedBy = Leader::getLeader($dbArr['suggestedby']);
+	
+	// Also set the lat/lng
+	$startOSRef = getOSRefFromSixFigureReference($this->startGridRef);
+	$startLatLng = $startOSRef->toLatLng();
+	$startLatLng->OSGB36ToWGS84();
+	$this->startLatLng = $startLatLng;
+	
+	$endOSRef = getOSRefFromSixFigureReference($this->endGridRef);
+	$endLatLng = $endOSRef->toLatLng();
+	$endLatLng->OSGB36ToWGS84();
+	$this->endLatLng = $endLatLng;
+		
+	// TODO: Load route?
+
+}
+
+public function toDatabase(JDatabaseQuery &$query)
+{
+	parent::toDatabase($query);
+	
+	$query->set("suggestedby", $this->suggestedBy->id);
+	
+}
+
+public function valuesToForm()
+{
+	return array(
+      'id'=>$this->id,
+      'name'=>$this->name,
+      'distanceGrade'=>$this->distanceGrade,
+      'difficultyGrade'=>$this->difficultyGrade,
+      'miles'=>$this->miles,
+      'location'=>$this->location,
+      'isLinear'=>(int)$this->isLinear, // Joomla seems to ignore false?
+      'startGridRef'=>$this->startGridRef,
+      'startPlaceName'=>$this->startPlaceName,
+      'endGridRef'=>$this->endGridRef,
+      'endPlaceName'=>$this->endPlaceName,
+      'routeDescription'=>$this->description,
+      'fileLinks'=>$this->fileLinks,
+      'information'=>$this->information,
+      'routeImage'=>$this->routeImage,
+      'suggestedBy'=>$this->suggestedBy,
+      'status'=>$this->status,
+      'specialTBC'=>$this->specialTBC,
+      'dogFriendly'=>$this->dogFriendly,
+      'transportByCar'=>$this->transportByCar,
+      'transportPublic'=>$this->transportPublic,
+      'childFriendly'=>$this->childFriendly,
+        
+      'route' => $this->route,
+    );
 }
 
 public function __get($name)
@@ -281,7 +342,8 @@ public static function getWalksBySuggester(Leader $suggester)
 	// TODO: Set actual SQL limit
 	$walks = array();
 	while (count($walkData) > 0) {
-	$walk = new Walk(array_shift($walkData));
+	$walk = new Walk();
+	$walk->fromDatabase(array_shift($walkData));
 	$walks[] = $walk;
 	}
 	
@@ -298,9 +360,13 @@ public static function getSingle($id) {
 	$db->setQuery($query);
 	$res = $db->query();
 	if ($db->getNumRows($res) == 1)
-	return new Walk($db->loadAssoc());
+	{
+		$walk = new Walk();
+		$walk->fromDatabase($db->loadAssoc());
+		return $walk;
+	}
 	else
-	return null;
+		return null;
 }
 
 /**
@@ -320,9 +386,9 @@ public function getInstances() {
 	
 	$instances = array();
 	while (count($instanceData) > 0) {
-	$instance = new WalkInstance();
-	$instance->fromDatabase(array_shift($instanceData));
-	$instances[] = $instance;
+		$instance = new WalkInstance();
+		$instance->fromDatabase(array_shift($instanceData));
+		$instances[] = $instance;
 	}
 
 	return $instances;

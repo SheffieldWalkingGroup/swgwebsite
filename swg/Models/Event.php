@@ -96,27 +96,6 @@ public function isCancelled() {
 public abstract function hasMap();
 
 /**
-* Adds fields on this event to a query being prepared to go into the database
-* @param JDatabaseQuery &$query Query being prepared. Modified in place.
-*/
-public function toDatabase(JDatabaseQuery &$query)
-{
-	foreach ($this->dbmappings as $var => $dbField)
-	{
-		if (isset($this->$var))
-			$query->set($dbField." = '".$query->escape($this->$var)."'");
-	}
-}
-
-public function fromDatabase(array $dbArr)
-{
-	foreach ($this->dbmappings as $var => $dbField)
-	{
-	$this->$var = $dbArr[$dbField];
-	}
-}
-
-/**
 * Converts the values of this event to an array suitable for outputting to a form
 * @return array
 */

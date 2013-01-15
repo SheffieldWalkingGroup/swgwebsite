@@ -145,7 +145,9 @@ class WalkSearcher
     $walkData = $db->loadAssocList();
     foreach ($walkData as $row)
     {
-      $results[] = new Walk($row);
+      $walk = new Walk();
+      $walk->fromDatabase($row);
+      $results[] = $walk;
     }
     return $results;
     

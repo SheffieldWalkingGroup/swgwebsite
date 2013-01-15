@@ -36,8 +36,8 @@ if ($this->showForm): ?>
       <?php
         echo $this->form->getLabel('route');
         echo $this->form->getInput('route');
-        if (isset($this->walk['route']))
-          echo "<p>Uploaded route with ".$this->walk['route']->numWaypoints()." waypoints</p>";
+        if (isset($this->walk->route))
+          echo "<p>Uploaded route with ".$this->walk->route->numWaypoints()." waypoints</p>";
         
         echo "<p>";
         echo $this->form->getLabel('routeVisibility');

@@ -128,32 +128,7 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
     {
       $this->loadWalk(JRequest::getInt("walkid",0,"get"));
     }
-    return array(
-      'id'=>$this->walk->id,
-      'name'=>$this->walk->name,
-      'distanceGrade'=>$this->walk->distanceGrade,
-      'difficultyGrade'=>$this->walk->difficultyGrade,
-      'miles'=>$this->walk->miles,
-      'location'=>$this->walk->location,
-      'isLinear'=>(int)$this->walk->isLinear, // Joomla seems to ignore false?
-      'startGridRef'=>$this->walk->startGridRef,
-      'startPlaceName'=>$this->walk->startPlaceName,
-      'endGridRef'=>$this->walk->endGridRef,
-      'endPlaceName'=>$this->walk->endPlaceName,
-      'routeDescription'=>$this->walk->description,
-      'fileLinks'=>$this->walk->fileLinks,
-      'information'=>$this->walk->information,
-      'routeImage'=>$this->walk->routeImage,
-      'suggestedBy'=>$this->walk->suggestedBy,
-      'status'=>$this->walk->status,
-      'specialTBC'=>$this->walk->specialTBC,
-      'dogFriendly'=>$this->walk->dogFriendly,
-      'transportByCar'=>$this->walk->transportByCar,
-      'transportPublic'=>$this->walk->transportPublic,
-      'childFriendly'=>$this->walk->childFriendly,
-        
-      'route' => $this->walk->route,
-    );
+    return $this->walk;
   }
 
   /**
@@ -170,7 +145,7 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
     }
     
     // Bind existing walk data
-    $form->bind($this->getWalk());
+    $form->bind($this->getWalk()->valuesToForm());
     return $form;
 
   }

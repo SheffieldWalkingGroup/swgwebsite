@@ -26,7 +26,7 @@ class SWG_WalkLibraryModelRoute extends JModelItem
    * Returns the route specified by the routeid parameter in the get string.
    * Loads it from the database if necessary.
    */
-  public function getWalk()
+  public function getRoute()
   {
     if (!$this->fetchedRoute)
     {
