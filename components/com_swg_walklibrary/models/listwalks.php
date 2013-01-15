@@ -81,6 +81,6 @@ class SWG_WalkLibraryModelListWalks extends JModelForm
   
   function canEdit($walkOrID)
   {
-    return true;
+    return JController::getInstance('SWG_WalkLibrary')->canEdit($walkOrID);
   }
 }

@@ -31,7 +31,7 @@ class SWG_WalkLibraryViewAddEditWalk extends JView
 	$this->walk	= $this->get('Walk');
 	// Check the current user can edit this walk (or add a new one)
 	if (
-	    ($model->editing() && !$controller->canEdit($this->walk)) ||
+	    ($model->editing() && !$controller->canEdit($this->walk['id'])) ||
 	    (!$model->editing() && !$controller->canAdd())
     )
 	{

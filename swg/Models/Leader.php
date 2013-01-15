@@ -50,6 +50,25 @@ function setDisplayName($displayName) {
 	$this->hasDisplayName = true;
 }
 
+/**
+ * Return the leader associated with a particular Joomla user account
+ * @param int $id Joomla user ID
+ */
+public static function getJoomlaUser($id) {
+	$db = JFactory::getDBO();
+	$query = $db->getQuery(true);
+	$query->select("*");
+	$query->from("walkleaders");
+
+	$query->where(array("joomlauser = ".intval($id)));
+	$db->setQuery($query);
+	$res = $db->query();
+	if ($db->getNumRows($res) == 1)
+		return new Leader($db->loadAssoc());
+	else
+		return new Leader();
+}
+
 public static function getLeader($id) {
 	$db = JFactory::getDBO();
 	$query = $db->getQuery(true);

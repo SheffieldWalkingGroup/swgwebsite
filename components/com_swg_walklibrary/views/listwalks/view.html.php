@@ -18,6 +18,7 @@ class SWG_WalkLibraryViewListWalks extends JView
   {
   	// Assign data to the view
   	$this->walks = $this->get('Walks');
+  	$this->controller = JController::getInstance('SWG_WalkLibrary');
   
   	// Check for errors.
   	if (count($errors = $this->get('Errors'))) 
@@ -37,7 +38,7 @@ class SWG_WalkLibraryViewListWalks extends JView
   	  case 1:
   	    // Get this leader's record
   	    // TODO: Integrate with Joomla users
-  	    $leader = Leader::getLeader(109);
+  	    $leader = Leader::getJoomlaUser(JFactory::getUser()->id);
   	    $this->pageTitle = "Walks suggested by ".$leader->displayName;
   	    $this->showList = true;
   	    $this->showSearch = false;
@@ -62,13 +63,17 @@ class SWG_WalkLibraryViewListWalks extends JView
   	    break;
   	}
   	
+  	// Set page heading.
+  	// TODO: Fix hack?
+  	JFactory::getApplication()->getMenu()->getActive()->params->set("page_heading", $this->pageTitle);
+  	
   	// Display the view
   	parent::display($tpl);
   }
   
   protected function pageTitle()
   {
-    
+    return $this->pageTitle;
   }
   
   public function showList() { return $this->showList; }
