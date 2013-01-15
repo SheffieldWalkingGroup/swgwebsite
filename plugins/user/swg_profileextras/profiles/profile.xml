@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fields name="swg_extras">
+		<fieldset name="swg_extras"
+			label="SWG Extras"
+		>
+			<field
+				name="leaderid"
+				type="sql"
+					query="SELECT ID, CONCAT_WS(' ',Forename,Surname) AS name FROM walkleaders WHERE ID != 46 ORDER BY Forename ASC, Surname ASC"
+				key_field="ID" value_field="name"
+				description="Leader"
+				label="Leader"
+				default=""
+			>
+				<option value="">-- Not a leader --</option>
+			</field>
+
+		</fieldset>
+	</fields>
+</form>
