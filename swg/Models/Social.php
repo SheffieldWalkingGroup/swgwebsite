@@ -109,8 +109,6 @@
 			'booking'		=> $this->bookingsInfo,
 			'shownormal'	=> (int)$this->showNormal,
 			'shownewmember'	=> (int)$this->showNewMember,
-			'newMemberStart'=> strftime("%H:%M", $this->newMemberStart),
-			'newMemberEnd'	=> strftime("%H:%M", $this->newMemberEnd),
 			
 			'postcode'		=> $this->postcode,
 			'location'		=> $this->location,
@@ -125,6 +123,11 @@
 		}
 		if (!empty($this->end))
 			$values['endtime']	= strftime("%H:%M", $this->end);
+		
+		if (!empty($this->newMemberStart))
+			$values['newMemberStart'] = strftime("%H:%M", $this->newMemberStart);
+		if (!empty($this->newMemberEnd))
+			$values['newMemberEnd'] = strftime("%H:%M", $this->newMemberEnd);
 			
 		if (!empty($this->latLng))
 			$values['latLng'] = array('lat'=>$this->latLng->lat, 'lng'=>$this->latLng->lng);

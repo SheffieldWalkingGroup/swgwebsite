@@ -90,12 +90,16 @@ class SWG_EventsModelAddEditSocial extends JModelForm
   
   /**
    * Loads the walk specified, or a blank one if none specified
+   * By default, a new social is visibile to current members.
+   * @param int $id Social ID, or blank for a new social
+   * @return Social
    */
-  public function loadSocial($id)
+  public function loadSocial($id = null)
   {
     if (empty($id))
     {
       $this->social = new Social();
+      $this->social->showNormal = true;
     }
     else
     {
@@ -104,15 +108,17 @@ class SWG_EventsModelAddEditSocial extends JModelForm
   }
   
   /**
-   * Dumps the walk data as an array
+   * Load the social we're adding/editing and returns its values as an array
+   * If this is a new social, set some defaults
    */
   public function getSocial()
   {
     // Load the walk if not already done
     if (!isset($this->social))
     {
-      $this->loadSocial(JRequest::getInt("socialid",0,"get"));
+		$this->loadSocial(JRequest::getInt("socialid",0,"get"));
     }
+    
     return $this->social->valuesToForm();
   }
 
@@ -126,7 +132,7 @@ class SWG_EventsModelAddEditSocial extends JModelForm
     // Get the form.
     $form = $this->loadForm('com_swg_events.addeditsocial', 'addeditsocial', array('control' => 'jform', 'load_data' => true));
     if (empty($form)) {
-      return false;
+		return false;
     }
     
     // Bind existing walk data

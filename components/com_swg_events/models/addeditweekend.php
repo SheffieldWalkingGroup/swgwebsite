@@ -82,6 +82,7 @@ class SWG_EventsModelAddEditWeekend extends JModelForm
     if (empty($id))
     {
       $this->weekend = new Weekend();
+      $this->weekend->swg = true;
     }
     else
     {

@@ -80,9 +80,6 @@ public function toDatabase(JDatabaseQuery &$query)
 			'description'	=> $this->description,
 			'okToPublish'	=> $this->okToPublish,
 			
-			'startdate'		=> strftime("%Y-%m-%d", $this->start),
-			'enddate'		=> strftime("%Y-%m-%d", $this->endDate),
-			
 			'area'			=> $this->area,
 			'url'			=> $this->url,
 			'places'		=> $this->places,
@@ -94,6 +91,11 @@ public function toDatabase(JDatabaseQuery &$query)
 			'swg'			=> $this->swg,
 			
 		);
+		
+		if (!empty($this->start))
+			$values['startdate'] = strftime("%Y-%m-%d", $this->start);
+		if (!empty($this->endDate))
+			$values['enddate'] = strftime("%Y-%m-%d", $this->endDate);
 		
 		if (!empty($this->latLng))
 			$values['latLng'] = array('lat'=>$this->latLng->lat, 'lng'=>$this->latLng->lng);

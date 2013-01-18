@@ -45,7 +45,7 @@ if ($this->showForm): ?>
         echo "</p>"
       ?>
       <br>
-      <input type="submit" class="submit gpx-upload" value="Upload" />
+      <input name="upload" type="submit" class="submit gpx-upload" value="Upload" />
     </fieldset>
     <fieldset>
       <legend>Location</legend>
@@ -79,6 +79,6 @@ if ($this->showForm): ?>
         }
       ?>
     </fieldset>
-    <input type="submit" class="gpx-upload" value="Save" />
+    <input name="save" type="submit" class="gpx-upload" value="Save" />
   </form>
 <?php endif; ?>

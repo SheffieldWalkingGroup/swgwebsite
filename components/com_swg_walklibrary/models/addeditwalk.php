@@ -99,7 +99,6 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
         $route->setWalk($this->walk);
         $this->walk->setRoute($route);
       }
-      $this->walk->save();
     }
   }
   

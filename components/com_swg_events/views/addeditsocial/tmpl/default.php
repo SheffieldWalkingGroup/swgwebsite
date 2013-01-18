@@ -23,22 +23,6 @@ if ($this->showForm): ?>
 			<?php endforeach; ?>
 		</fieldset>
 		<fieldset>
-			<legend>Time (normal)</legend>
-			<?php foreach ($this->form->getFieldset('timenormal') as $field): ?>
-				<div>
-					<?php echo $field->label; ?>
-					<?php echo $field->input; ?>
-				</div>
-			<?php endforeach; ?>
-		
-			<?php foreach ($this->form->getFieldset('timenewmembers') as $field): ?>
-				<div>
-					<?php echo $field->label; ?>
-					<?php echo $field->input; ?>
-				</div>
-			<?php endforeach; ?>
-		</fieldset>
-		<fieldset>
 			<legend>Details</legend>
 			<?php foreach ($this->form->getFieldset('details') as $field): ?>
 				<div>

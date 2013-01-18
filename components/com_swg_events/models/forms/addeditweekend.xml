@@ -23,7 +23,7 @@
 			<field name="url" type="text" label="URL for more information" maxlength="100" size="57" />
 			<field name="okToPublish" type="checkbox" label="OK to publish" value="1" default="0" />
 			<field name="challenge" type="checkbox" label="Challenge walk" value="1" default="0" />
-			<field name="swg" type="checkbox" label="SWG weekend" value="1" default="1" />
+			<field name="swg" type="checkbox" label="SWG weekend" value="1" default="0" />
 		</fieldset>
 		
 		

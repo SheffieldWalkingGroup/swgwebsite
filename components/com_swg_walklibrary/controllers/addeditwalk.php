@@ -36,16 +36,49 @@ class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
     
     // Send the data to the model
     $model->updateWalk($data);
-    $view->display();
+    
+    // If this is a new walk, set the suggester to the current user
+    if (!isset($model->getWalk()->id))
+    {
+		$model->getWalk()->suggestedBy = Leader::getJoomlaUser(JFactory::getUser()->id);
+    }
+    
+    // Did we save the walk, or just upload a GPX file?
+    if (JRequest::getVar('upload', false, 'post'))
+    {
+		$view->display();
+	}
+	else
+	{
+		$model->getWalk()->save();
+		// Redirect to the walk details page
+		$url = $_SERVER['REQUEST_URI'];
+		
+		// Get the current URL parameters
+		if (strpos($url, "?") !== false)
+		{
+		$inParams = explode("&", substr($url,strpos($url,"?")+1));
+		$urlBase = substr($url,0,strpos($url,"?"));
+		}
+		else
+		{
+		$inParams = array();
+		$urlBase = $url;
+		}
+		
+		// Build the new URL parameters
+		$params = array(
+			"view=walkdetails",
+			"walkid=".$model->getWalk()->id,
+		);
+		
+		if (isset($inParams['option']))
+		$params['option'] = $inParams['option'];
+		
+		JFactory::getApplication()->redirect($urlBase."?".implode("&amp;", $params));
 
-    // check if ok and display appropriate message.  This can also have a redirect if desired.
-    /*if ($upditem) {
-      echo "<h2>Updated Greeting has been saved</h2>";
-    } else {
-      echo "<h2>Updated Greeting failed to be saved</h2>";
-    }*/
-
-    return true;
+		return true;
+	}
   }
   
   public function listMine()

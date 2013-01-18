@@ -25,8 +25,8 @@
 			/>
 			<field name="startPlaceName" type="text" label="Start place name" />
 			<field name="startGridRef" type="text" label="Start grid reference" />
-			<field name="transportByCar" type="checkbox" label="Transport by car" value="0" />
-			<field name="transportPublic" type="checkbox" label="Transport by bus/train/tram" value="0" />
+			<field name="transportByCar" type="checkbox" label="Transport by car" value="1" default="0" />
+			<field name="transportPublic" type="checkbox" label="Transport by bus/train/tram" value="1" default="0" />
 			<field name="isLinear" type="radio" label="Shape">
 				<option value="0">Circular</option>
 				<option value="1">Linear</option>
@@ -45,8 +45,8 @@
 				name="information" type="textarea" rows="10" cols="56" 
 				label="Extra info for walk planners/leaders"
 			/>
-			<field name="dogFriendly" type="checkbox" label="Route doesn't forbid dogs" value="1" />
-			<field name="childFriendly" type="checkbox" label="Route can take infant pushchairs/buggies" />
+			<field name="dogFriendly" type="checkbox" label="Route doesn't forbid dogs" value="1" default="0" />
+			<field name="childFriendly" type="checkbox" label="Route can take infant pushchairs/buggies" value="1" default="0" />
 		</fieldset>
 		
 	</form>
