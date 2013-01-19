@@ -144,9 +144,9 @@ foreach ($this->events as $event):?>
           <?php endif; ?>
           <p class="controls">
 			<?php if ($event->hasMap()): ?>
-              <a href="#" rel="toggle-map">Show map</a>
+              <a href="#" rel="toggle-map" title="Show a map of this <?php echo strtolower($event->type);?>">Show map</a>
               <?php if ($event instanceof WalkInstance && $event->canDownloadRoute()): ?>
-				<a href="/api/route?walkinstanceid=<?php echo $event->id;?>&amp;format=gpx">Download route</a>
+				<a href="/api/route?walkinstanceid=<?php echo $event->id;?>&amp;format=gpx" title="Download this walk in GPX format for a computer or GPS device">Download route</a>
 			  <?php endif; ?>
             <?php endif; ?>  
 	  </p>

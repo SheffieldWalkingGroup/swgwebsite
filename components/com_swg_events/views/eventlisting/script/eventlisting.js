@@ -103,7 +103,8 @@ var EventWrapper = new Class({
 		{
 			this.highlightLink = new Element("a",{
 				"href":"#",
-				"html":"Highlight"
+				"html":"Highlight",
+				"title":"Highlight this "+this.eventType.toLowerCase()+" on your computer"
 			});
 			wrapper.getElements('p[class="controls"]')[0].adopt(this.highlightLink);
 			this.highlightLink.addEvent('click',function(event)
@@ -206,6 +207,7 @@ var EventWrapper = new Class({
 		this.highlightLink.removeEvents();
 		var self = this;
 		this.highlightLink.set('html','Remove highlight');
+		this.highlightLink.set('title','Remove the highlight from this '+this.eventType.toLowerCase());
 		this.highlightLink.addEvent('click',function(e){
 			e.stop();
 			self.unhighlightEvent();
@@ -225,6 +227,7 @@ var EventWrapper = new Class({
 		this.highlightLink.removeEvents();
 		var self = this;
 		this.highlightLink.set('html','Highlight');
+		this.highlightLink.set('title',"Highlight this "+this.eventType.toLowerCase()+" on your computer");
 		this.highlightLink.addEvent('click',function(e){
 			e.stop();
 			self.highlightEvent();

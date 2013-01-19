@@ -9,7 +9,7 @@ require_once("Route.php");
 *
 */
 class WalkInstance extends Event implements Walkable {
-protected $walk;
+protected $walkid;
 protected $distanceGrade;
 protected $difficultyGrade;
 protected $miles;
@@ -41,6 +41,7 @@ protected $deleted;
 protected $cancelled;
 
 protected $hasRoute;
+protected $routeVisibility;
 
 /**
 * Array of variable => dbfieldname
@@ -51,7 +52,7 @@ protected $hasRoute;
 */
 public $dbmappings = array(
 	'name'		=> 'name',
-	'walk'		=> 'walklibraryid',
+	'walkid'		=> 'walklibraryid',
 	'distanceGrade'	=> 'distancegrade',
 	'difficultyGrade'	=> 'difficultygrade',
 	'miles'          => 'miles',
@@ -68,6 +69,7 @@ public $dbmappings = array(
 	'challenge'	=> 'challenge',
 	
 	'okToPublish'	=> 'readytopublish',
+	'routeVisibility'=> 'routevisibility'
 	
 	// TODO: Headcount, mileometer...
 );
@@ -206,9 +208,12 @@ public function toDatabase(JDatabaseQuery &$query)
 	public function canDownloadRoute()
 	{
 		// TODO: Leaders can download more routes
+		// No point searching for a route if we can't download it
+		if ($this->routeVisibility < Route::Visibility_Members)
+			return false;
+			
 		$route = Route::loadForWalkable($this);
-		$walk = Walk::getSingle($this->walk);
-		return (isset($route) && isset($walk) && $walk->routeVisibility >= Route::Visibility_Members);
+		return (isset($route));
 	}
 
 public function __get($name)
