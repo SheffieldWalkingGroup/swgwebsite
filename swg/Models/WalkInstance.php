@@ -202,6 +202,14 @@ public function toDatabase(JDatabaseQuery &$query)
 		
 		return false;
 	}
+	
+	public function canDownloadRoute()
+	{
+		// TODO: Leaders can download more routes
+		$route = Route::loadForWalkable($this);
+		$walk = Walk::getSingle($this->walk);
+		return (isset($route) && isset($walk) && $walk->routeVisibility >= Route::Visibility_Members);
+	}
 
 public function __get($name)
 {

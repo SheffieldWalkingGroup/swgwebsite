@@ -35,6 +35,7 @@ protected $dogFriendly;
 protected $transportByCar;
 protected $transportPublic;
 protected $childFriendly;
+protected $routeVisibility;
 
 /**
 * Route for this walk
@@ -69,7 +70,8 @@ private $dbmappings = array(
 	'childFriendly'  => 'childfriendly',
 	'dogFriendly'    => 'dogfriendly',
 	'transportByCar' => 'transportbycar',
-	'transportPublic'=> 'transportpublic'
+	'transportPublic'=> 'transportpublic',
+	'routeVisibility'=> 'routevisibility',
 );
 
 /**
@@ -160,6 +162,7 @@ public function valuesToForm()
       'childFriendly'=>$this->childFriendly,
         
       'route' => $this->route,
+      'routeVisibility' => $this->routeVisibility,
     );
 }
 
@@ -256,6 +259,8 @@ public function __set($name, $value)
 	case "specialTBC":
 		$this->$name = $value;
 		break;
+	case "routeVisibility":
+		$this->$name = (int)$value;
 	}
 }
 

@@ -227,9 +227,57 @@ class Route extends SWGBaseModel implements Iterator {
 		}
 	}
 
+	/**
+	 * Output the route as a GPX XML document
+	 *
+	 * @return DOMDocument GPX data as a DOMDocument. Call saveXML() to get an XML string.
+	 */
 	public function writeGPX()
 	{
-
+		$doc = new DomDocument();
+		$gpx = $doc->createElement("gpx");
+		$gpx->appendChild(new DomAttr("xmlns","http://www.topografix.com/GPX/1/1"));
+		$gpx->appendChild(new DomAttr("creator","www.sheffieldwalkinggroup.org.uk"));
+		$gpx->appendChild(new DomAttr("version","1.1"));
+		$gpx->appendChild(new DomAttr("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance"));
+		$gpx->appendChild(new DomAttr("xsi:schemaLocation","http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"));
+		$doc->appendChild($gpx);
+		
+		$rte = $doc->createElement("rte");
+		$rteName = $doc->createElement("name");
+		$rteName->appendChild(new DOMText($this->walk->name));
+		$rte->appendChild($rteName);
+		$rteNum = $doc->createElement("number");
+		$rteNum->appendChild(new DOMText(1));
+		$rte->appendChild($rteNum);
+		
+		foreach ($this->wayPoints as $id=>$wp)
+		{
+			// We always have the lat & long for each waypoint
+			$rtept = $doc->createElement("rtept");
+			$rtept->appendChild(new DomAttr("lat",$wp->latLng->lat));
+			$rtept->appendChild(new DomAttr("lon",$wp->latLng->lng));
+			
+			// Now add extra things if we have them
+			if (!empty($wp->alt))
+			{
+				$alt = $doc->createElement("ele");
+				$alt->appendChild(new DOMText($wp->alt));
+				$rtept->appendChild($alt);
+			}
+			
+			if (!empty($wp->time))
+			{
+				$time = $doc->createElement("time");
+				$time->appendChild(new DOMText(strftime("%Y-%m-%dT%TZ", $wp->time)));
+				$rtept->appendChild($time);
+			}
+			
+			$rte->appendChild($rtept);
+		}
+		
+		$gpx->appendChild($rte);
+		return $doc;
 	}
 
 	/**

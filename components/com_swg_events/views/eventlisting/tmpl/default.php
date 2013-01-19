@@ -143,8 +143,11 @@ foreach ($this->events as $event):?>
             </p>
           <?php endif; ?>
           <p class="controls">
-	    <?php if ($event->hasMap()): ?>
+			<?php if ($event->hasMap()): ?>
               <a href="#" rel="toggle-map">Show map</a>
+              <?php if ($event instanceof WalkInstance && $event->canDownloadRoute()): ?>
+				<a href="/api/route?walkinstanceid=<?php echo $event->id;?>&amp;format=gpx">Download route</a>
+			  <?php endif; ?>
             <?php endif; ?>  
 	  </p>
           
