@@ -6,6 +6,8 @@ require_once("swg/swg.php");
  */
 abstract class SWGBaseModel {
 
+	protected $loadOnDemand = array();
+
 	/**
 	* Adds fields on this event to a query being prepared to go into the database
 	* @param JDatabaseQuery &$query Query being prepared. Modified in place.
@@ -42,10 +44,19 @@ abstract class SWGBaseModel {
 		$properties = array();
 		
 		foreach ($this as $key => $value) {
+			// Load any on-demand objects
+			if (in_array($key, $this->loadOnDemand))
+			{
+				$value = $this->__get($key);
+			}
+			
 			// If the current property is another SWG Model, ask it to JSON encode itself
-			if ($value instanceof SWGBaseModel) {
+			if ($value instanceof SWGBaseModel) 
+			{
 				$properties[$key] = $value->sharedProperties();
-			} else if ($key != "dbmappings") {
+			}
+			else if ($key != "dbmappings") 
+			{
 				$properties[$key] = $value;
 			}
 		}

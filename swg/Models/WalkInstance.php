@@ -28,8 +28,14 @@ protected $isLinear;
 protected $transportByCar;
 protected $transportPublic;
 
+private $leaderId;
+private $leaderName;
 protected $leader;
+private $backmarkerId;
+private $backmarkerName;
 protected $backmarker;
+private $meetPointId;
+private $meetPlaceTime;
 protected $meetPoint;
 
 protected $dateAltered;
@@ -68,10 +74,24 @@ public $dbmappings = array(
 	'speedy'		=> 'speedy',
 	'challenge'	=> 'challenge',
 	
+	'leaderId'	=> 'leaderid',
+	'leaderName'	=> 'leadername',
+	'backmarkerId'	=> 'backmarkerid',
+	'backmarkerName'=> 'backmarkername',
+	'meetPointId'	=> 'meetplace',
+	
 	'okToPublish'	=> 'readytopublish',
 	'routeVisibility'=> 'routevisibility'
 	
 	// TODO: Headcount, mileometer...
+);
+
+/**
+ * These variables are database objects, only loaded on demand.
+ * The loading must be triggered when returning them.
+ */
+public $loadOnDemand = array(
+	"leader", "backmarker", "meetPoint"
 );
 
 public $type = "Walk";
@@ -83,13 +103,6 @@ public function fromDatabase(array $dbArr)
 	parent::fromDatabase($dbArr);
 	
 	$this->start = strtotime($dbArr['WalkDate']." ".$dbArr['meettime']);
-	$this->meetPoint = new WalkMeetingPoint($dbArr['meetplace'], $this->start, $dbArr['meetplacetime']);
-	$this->leader = Leader::getLeader($dbArr['leaderid']);
-	$this->backmarker = Leader::getLeader($dbArr['backmarkerid']);
-	if (!empty($dbArr['leadername']))
-	$this->leader->setDisplayName($dbArr['leadername']);
-	if (!empty($dbArr['backmarkername']))
-	$this->backmarker->setDisplayName($dbArr['backmarkername']);
 	
 	// Set up the alterations
 	$this->alterations->setVersion($dbArr['version']);
@@ -122,12 +135,12 @@ public function toDatabase(JDatabaseQuery &$query)
 	$query->set("meetplace", $this->meetPoint->id);
 	$query->set("meetplacetime", $this->meetPoint->extra);
 	
-	$query->set("leaderid", $this->leader->id);
+	$query->set("leaderid", $this->leaderId);
 	if ($this->leader->hasDisplayName)
-	$query->set("leadername", $this->leader->displayName);
-	$query->set("backmarkerid", $this->backmarker->id);
+		$query->set("leadername", $this->leader->displayName);
+	$query->set("backmarkerid", $this->backmarkerId);
 	if ($this->backmarker->hasDisplayName)
-	$query->set("backmarkername", $this->backmarker->displayName);
+		$query->set("backmarkername", $this->backmarker->displayName);
 	
 	$query->set('version', $this->alterations->version);
 	$query->set('lastmodified', $this->alterations->lastModified);
@@ -165,12 +178,12 @@ public function toDatabase(JDatabaseQuery &$query)
 			'transportbycar'=> $this->transportByCar,
 			'transportpublic'=>$this->transportPublic,
 			
-			'leaderid'		=> $this->leader->id,
-			'leadername'	=> $this->leader->displayName,
-			'backmarkerid'	=> $this->backmarker->id,
-			'backmarkername'=> $this->backmarker->displayName,
-			'meetpointid'	=> $this->meetpoint->id,
-			'meetdetails'	=> $this->meetpoint->extra,
+			'leaderid'		=> $this->leaderId,
+			'leadername'	=> $this->leaderName,
+			'backmarkerid'	=> $this->backmarkerId,
+			'backmarkername'=> $this->backmarkerName,
+			'meetPointId'	=> $this->meetPointId,
+			'meetdetails'	=> $this->__get("meetpoint")->extra,
 			
 			'altereddetails'=> $this->alterations->details,
 			'alteredmeetpoint'=>$this->alterations->placeTime,
@@ -218,7 +231,156 @@ public function toDatabase(JDatabaseQuery &$query)
 
 public function __get($name)
 {
+	// Load connected objects from the database as needed
+	switch($name)
+	{
+		case "meetPoint":
+			$this->meetPoint = new WalkMeetingPoint($this->meetPointId, $this->start, $this->meetPlaceTime);
+			break;
+		case "leader":
+			$this->leader = Leader::getLeader($this->leaderId);
+			if (!empty($this->leaderName))
+				$this->leader->setDisplayName($this->leaderName);
+			break;
+		case "backmarker":
+			$this->backmarker = Leader::getLeader($this->backmarkerId);
+			if (!empty($this->backmarkerName))
+				$this->backmarker->setDisplayName($this->backmarkerName);
+			break;
+	}
 	return $this->$name; // TODO: What params should be exposed?
+}
+
+public function __set($name, $value)
+{
+	switch ($name)
+	{
+	// Strings - just save them (TODO: Safety checks?)
+	case "name":
+	case "startPlaceName":
+	case "endPlaceName":
+	case "description":
+		$this->$name = $value;
+		break;
+	// Booleans
+	case "isLinear":
+	case "dogFriendly":
+	case "transportByCar":
+	case "transportPublic":
+	case "childFriendly":
+		$this->$name = (bool)$value;
+		break;
+	// More specific processing
+	case "distanceGrade":
+		$value = strtoupper($value);
+		if ($value == "A" || $value == "B" || $value == "C")
+		$this->$name = $value;
+		else
+		throw new UnexpectedValueException("Distance grade must be A, B or C");
+		break;
+	case "difficultyGrade":
+		$value = (int)$value;
+		if ($value == 1 || $value == 2 || $value == 3)
+		$this->$name = $value;
+		else
+		throw new UnexpectedValueException("Difficulty grade must be 1, 2 or 3");
+		break;
+		
+	case "miles":
+		$value = (float)$value;
+		if ($value >= 0)
+		{
+		$this->$name = $value;
+		$this->distanceGrade = $this->getDistanceGrade($value);
+		}
+		else
+		throw new UnexpectedValueException("Distance must be positive"); // TODO: Validate >0 when saving
+		break;
+		
+	// Grid references - start with two letters, then an even number of digits - at least 6
+	case "startGridRef":
+	case "endGridRef":
+		$value = str_replace(" ","",$value);
+		if (empty($value))
+		break;
+		if (preg_match("/[A-Z][A-Z]([0-9][0-9]){3,}/", $value))
+		{
+		$this->$name = $value;
+		// Also set the lat/lng
+		$osRef = getOSRefFromSixFigureReference($value);
+		$latLng = $osRef->toLatLng();
+		$latLng->OSGB36ToWGS84();
+		if ($name == "startGridRef")
+			$this->startLatLng = $latLng;
+		else
+			$this->endLatLng = $latLng;
+		}
+		else
+		throw new UnexpectedValueException("Grid references must be at least 6-figures, with the grid square letters before (e.g. SK123456)");
+		break;
+		
+	// Connected objects
+	case "leader":
+	case "leaderId":
+		if ($value instanceof Leader)
+		{
+			$this->leader = $value;
+			$this->leaderId = $value->id;
+		}
+		else if (is_int($value) || ctype_digit($value))
+		{
+			$this->leaderId = (int)$value;
+			$this->leader = null; // Will be loaded when needed
+		}
+		else 
+		{
+		    throw new UnexpectedValueException("Leader or Leader ID must be a Leader or an integer");
+		}
+		break;
+	case "backmarker":
+	case "backmarkerId":
+		if ($value instanceof Leader)
+		{
+			$this->backmarker = $value;
+			$this->backmarkerId = $value->id;
+		}
+		else if (is_int($value) || ctype_digit($value))
+		{
+			$this->backmarkerId = (int)$value;
+			$this->backmarker = null; // Will be loaded when needed
+		}
+		else 
+		{
+		    throw new UnexpectedValueException("Backmarker or backmarker ID must be a Leader or an integer");
+		}
+		break;
+	case "meetPoint":
+	case "meetPointId":
+		if ($value instanceof WalkMeetingPoint)
+		{
+			$this->meetPoint = $value;
+			$this->meetPointId = $value->id;
+		}
+		else if (is_int($value) || ctype_digit($value))
+		{
+			$this->meetPointId = (int)$value;
+			$this->meetPoint = null;
+		}
+		else {
+		    throw new UnexpectedValueException("Meetpoint or MeetPointID must be a WalkMeetingPoint or an integer");
+		}
+		break;
+		
+	// Checks TODO 
+	case "location":
+	case "suggestedBy":
+	case "status":
+	case "specialTBC":
+		$this->$name = $value;
+		break;
+	case "routeVisibility":
+		$this->$name = (int)$value;
+	}
 }
 
 /**
@@ -336,12 +498,12 @@ public static function getSingle($id) {
 	$res = $db->query();
 	if ($db->getNumRows($res) == 1)
 	{
-	$wi = new WalkInstance();
-	$wi->fromDatabase($db->loadAssoc());
-	return $wi;
+		$wi = new WalkInstance();
+		$wi->fromDatabase($db->loadAssoc());
+		return $wi;
 	}
 	else
-	return null;
+		return null;
 
 }
 
