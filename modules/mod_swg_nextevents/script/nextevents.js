@@ -261,7 +261,7 @@ function makeScrollbar(content,scrollbar,handle,horizontal,ignoreMouse){
 		// Scroll the content element when the mousewheel is used within the 
 		// content or the scrollbar element.
 		$$(content, scrollbar).addEvent('mousewheel', function(e){	
-			e = new Event(e).stop();
+			e.stop();
 			var step = slider.step - e.wheel * 30;	
 			slider.set(step);					
 		});
