@@ -180,7 +180,6 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 
 function postDisplay(container, event)
 {
-	//showMap(container);
 	
 	// Add cancellation/altered classes
 	if (event.alterations.any) 
@@ -202,6 +201,8 @@ function postDisplay(container, event)
 		"html":"Coming on your first walk? Welcome! Please read this <a href='/walks/general-information'>information about walking with us</a>."
 	})
 	container.adopt(footer);
+	
+	showMap(container);
 }
 
 function showMap(popup) {
