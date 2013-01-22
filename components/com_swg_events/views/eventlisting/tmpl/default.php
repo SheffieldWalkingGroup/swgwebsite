@@ -134,13 +134,19 @@ foreach ($this->events as $event):?>
               <!-- TODO: Link to booking policy -->
               <span>Places:</span> <?php echo $event->places." at ".$event->cost?> (remember the booking and refunds policy)
             </p>
-            <p class="weekendbooking">
-              <!-- TODO: No contact office hours -->
-              <span>Contact:</span> <?php echo $event->contact; ?>
-            </p>
-            <p class="bookingopen">
-              <span>Bookings open:</span> <?php echo $event->bookingsOpen; ?>
-            </p>
+            <?php if ($event->contact != ""): ?>
+				<p class="weekendbooking">
+					<span>Contact:</span> <?php echo $event->contact; ?>
+					<?php if ($event->noContactOfficeHours):?>
+						&ndash; don't call during office hours
+					<?php endif; ?>
+				</p>
+			<?php endif; ?>
+			<?php if ($event->bookingsOpen): ?>
+				<p class="bookingopen">
+					<span>Bookings open:</span> <?php echo $event->bookingsOpen; ?>
+				</p>
+			<?php endif;?>
           <?php endif; ?>
           <p class="controls">
 			<?php if ($event->hasMap()): ?>
