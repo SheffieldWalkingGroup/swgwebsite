@@ -180,7 +180,6 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 
 function postDisplay(container, event)
 {
-	//showMap(container);
 	
 	// Add cancellation/altered classes
 	if (event.alterations.any) 
@@ -200,8 +199,11 @@ function postDisplay(container, event)
 	footer = new Element("p",{
 		"class":"newMemberInfo",
 		"html":"Coming on your first walk? Welcome! Please read this <a href='/walks/general-information'>information about walking with us</a>."
-	})
+	});
 	container.adopt(footer);
+	
+	if (event.hasMap)
+		showMap(container);
 }
 
 function showMap(popup) {
@@ -216,8 +218,20 @@ function showMap(popup) {
 		});
 		mapContainer.inject(footer,'before');
 		map = new SWGMap("map_"+currentEvent.id);
-		map.addWalkInstance(currentEvent.id);
-		map.showPoint(currentEvent.id, "start", 13);
+		switch (currentEvent.type)
+		{
+			case "Walk":
+				map.addWalkInstance(currentEvent.id);
+				map.showPoint(currentEvent.id, "start", 13);
+				break;
+			case "Social":
+				map.addSocial(currentEvent.id);
+				break;
+			case "Weekend":
+				map.addWeekend(currentEvent.id);
+				map.setDefaultMap("street"); // Landscape map doesn't work well at small scales
+				break;
+		}
 		
 		// Reset the position to fit the map
 		infoPopup.position(popupPosition());

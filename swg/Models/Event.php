@@ -169,6 +169,13 @@ public function save($incrementVersion = true) {
 	// Commit the transaction - the route is not a critical part of the walk
 	$db->transactionCommit();
 }
+
+public function sharedProperties()
+{
+	$prop = parent::sharedProperties();
+	$prop['hasMap'] = $this->hasMap();
+	return $prop;
+}
 }
 
 /**
