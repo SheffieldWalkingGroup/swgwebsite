@@ -28,6 +28,25 @@ public function __construct() {
 }
 
 /**
+ * Default mutator, for basic properties
+ */
+public function __set($name, $value) {
+	switch ($name)
+	{
+		case "name":
+		case "description":
+			$this->$name = $value;
+			break;
+		case "start":
+			$this->$name = (int)$value;
+			break;
+		case "okToPublish":
+			$this->$name = (bool)$value;
+			break;
+	}
+}
+
+/**
 * Returns the number of events in a date range
 */
 public abstract static function numEvents($startDate=self::DateToday, $endDate=self::DateEnd);

@@ -147,6 +147,9 @@ foreach ($this->events as $event):?>
 					<span>Bookings open:</span> <?php echo $event->bookingsOpen; ?>
 				</p>
 			<?php endif;?>
+			<p class="paymentdue">
+				<span>Payment due:</span> <?php echo date("l jS F".($this->notThisYear($event->paymentDue)?" Y":""),$event->paymentDue); ?>
+			</p>
           <?php endif; ?>
           <p class="controls">
 			<?php if ($event->hasMap()): ?>

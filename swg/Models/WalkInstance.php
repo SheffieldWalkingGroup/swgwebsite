@@ -255,132 +255,153 @@ public function __set($name, $value)
 {
 	switch ($name)
 	{
-	// Strings - just save them (TODO: Safety checks?)
-	case "name":
-	case "startPlaceName":
-	case "endPlaceName":
-	case "description":
-		$this->$name = $value;
-		break;
-	// Booleans
-	case "isLinear":
-	case "dogFriendly":
-	case "transportByCar":
-	case "transportPublic":
-	case "childFriendly":
-		$this->$name = (bool)$value;
-		break;
-	// More specific processing
-	case "distanceGrade":
-		$value = strtoupper($value);
-		if ($value == "A" || $value == "B" || $value == "C")
-		$this->$name = $value;
-		else
-		throw new UnexpectedValueException("Distance grade must be A, B or C");
-		break;
-	case "difficultyGrade":
-		$value = (int)$value;
-		if ($value == 1 || $value == 2 || $value == 3)
-		$this->$name = $value;
-		else
-		throw new UnexpectedValueException("Difficulty grade must be 1, 2 or 3");
-		break;
-		
-	case "miles":
-		$value = (float)$value;
-		if ($value >= 0)
-		{
-		$this->$name = $value;
-		$this->distanceGrade = $this->getDistanceGrade($value);
-		}
-		else
-		throw new UnexpectedValueException("Distance must be positive"); // TODO: Validate >0 when saving
-		break;
-		
-	// Grid references - start with two letters, then an even number of digits - at least 6
-	case "startGridRef":
-	case "endGridRef":
-		$value = str_replace(" ","",$value);
-		if (empty($value))
-		break;
-		if (preg_match("/[A-Z][A-Z]([0-9][0-9]){3,}/", $value))
-		{
-		$this->$name = $value;
-		// Also set the lat/lng
-		$osRef = getOSRefFromSixFigureReference($value);
-		$latLng = $osRef->toLatLng();
-		$latLng->OSGB36ToWGS84();
-		if ($name == "startGridRef")
-			$this->startLatLng = $latLng;
-		else
-			$this->endLatLng = $latLng;
-		}
-		else
-		throw new UnexpectedValueException("Grid references must be at least 6-figures, with the grid square letters before (e.g. SK123456)");
-		break;
-		
-	// Connected objects
-	case "leader":
-	case "leaderId":
-		if ($value instanceof Leader)
-		{
-			$this->leader = $value;
-			$this->leaderId = $value->id;
-		}
-		else if (is_int($value) || ctype_digit($value))
-		{
-			$this->leaderId = (int)$value;
-			$this->leader = null; // Will be loaded when needed
-		}
-		else 
-		{
-		    throw new UnexpectedValueException("Leader or Leader ID must be a Leader or an integer");
-		}
-		break;
-	case "backmarker":
-	case "backmarkerId":
-		if ($value instanceof Leader)
-		{
-			$this->backmarker = $value;
-			$this->backmarkerId = $value->id;
-		}
-		else if (is_int($value) || ctype_digit($value))
-		{
-			$this->backmarkerId = (int)$value;
-			$this->backmarker = null; // Will be loaded when needed
-		}
-		else 
-		{
-		    throw new UnexpectedValueException("Backmarker or backmarker ID must be a Leader or an integer");
-		}
-		break;
-	case "meetPoint":
-	case "meetPointId":
-		if ($value instanceof WalkMeetingPoint)
-		{
-			$this->meetPoint = $value;
-			$this->meetPointId = $value->id;
-		}
-		else if (is_int($value) || ctype_digit($value))
-		{
-			$this->meetPointId = (int)$value;
-			$this->meetPoint = null;
-		}
-		else {
-		    throw new UnexpectedValueException("Meetpoint or MeetPointID must be a WalkMeetingPoint or an integer");
-		}
-		break;
-		
-	// Checks TODO 
-	case "location":
-	case "suggestedBy":
-	case "status":
-	case "specialTBC":
-		$this->$name = $value;
-		break;
-	case "routeVisibility":
-		$this->$name = (int)$value;
+		// Strings - just save them (TODO: Safety checks?)
+		case "name":
+		case "startPlaceName":
+		case "endPlaceName":
+		case "description":
+			$this->$name = $value;
+			break;
+		// Booleans
+		case "isLinear":
+		case "dogFriendly":
+		case "transportByCar":
+		case "transportPublic":
+		case "childFriendly":
+			$this->$name = (bool)$value;
+			break;
+		// More specific processing
+		case "distanceGrade":
+			$value = strtoupper($value);
+			if ($value == "A" || $value == "B" || $value == "C")
+				$this->$name = $value;
+			else
+				throw new UnexpectedValueException("Distance grade must be A, B or C");
+			break;
+		case "difficultyGrade":
+			$value = (int)$value;
+			if ($value == 1 || $value == 2 || $value == 3)
+				$this->$name = $value;
+			else
+				throw new UnexpectedValueException("Difficulty grade must be 1, 2 or 3");
+			break;
+			
+		case "miles":
+			$value = (float)$value;
+			if ($value >= 0)
+			{
+				$this->$name = $value;
+				$this->distanceGrade = $this->getDistanceGrade($value);
+			}
+			else
+			throw new UnexpectedValueException("Distance must be positive"); // TODO: Validate >0 when saving
+			break;
+			
+		// Grid references - start with two letters, then an even number of digits - at least 6
+		case "startGridRef":
+		case "endGridRef":
+			$value = strtoupper(str_replace(" ","",$value));
+			if (empty($value))
+				break;
+			if (preg_match("/[A-Z][A-Z]([0-9][0-9]){3,}/", $value))
+			{
+				$this->$name = $value;
+				// Also set the lat/lng
+				$osRef = getOSRefFromSixFigureReference($value);
+				$latLng = $osRef->toLatLng();
+				$latLng->OSGB36ToWGS84();
+				if ($name == "startGridRef")
+					$this->startLatLng = $latLng;
+				else
+					$this->endLatLng = $latLng;
+			}
+			else
+			{
+				throw new UnexpectedValueException("Grid references must be at least 6-figures, with the grid square letters before (e.g. SK123456)");
+			}
+			break;
+			
+		// Connected objects
+		case "leader":
+		case "leaderId":
+			if ($value instanceof Leader)
+			{
+				$this->leader = $value;
+				$this->leaderId = $value->id;
+			}
+			else if (is_int($value) || ctype_digit($value))
+			{
+				$this->leaderId = (int)$value;
+				$this->leader = null; // Will be loaded when needed
+			}
+			else 
+			{
+				throw new UnexpectedValueException("Leader or Leader ID must be a Leader or an integer");
+			}
+			break;
+		case "backmarker":
+		case "backmarkerId":
+			if ($value instanceof Leader)
+			{
+				$this->backmarker = $value;
+				$this->backmarkerId = $value->id;
+			}
+			else if (is_int($value) || ctype_digit($value))
+			{
+				$this->backmarkerId = (int)$value;
+				$this->backmarker = null; // Will be loaded when needed
+			}
+			else 
+			{
+				throw new UnexpectedValueException("Backmarker or backmarker ID must be a Leader or an integer");
+			}
+			break;
+		case "meetPoint":
+		case "meetPointId":
+			if ($value instanceof WalkMeetingPoint)
+			{
+				$this->meetPoint = $value;
+				$this->meetPointId = $value->id;
+			}
+			else if (is_int($value) || ctype_digit($value))
+			{
+				$this->meetPointId = (int)$value;
+				$this->meetPoint = null;
+			}
+			else {
+				throw new UnexpectedValueException("Meetpoint or MeetPointID must be a WalkMeetingPoint or an integer");
+			}
+			break;
+			
+		// Checks TODO 
+		case "location":
+		case "suggestedBy":
+		case "status":
+		case "specialTBC":
+			$this->$name = $value;
+			break;
+		case "routeVisibility":
+			$this->$name = (int)$value;
+			break;
+			
+		default:
+			// All others - fall through to Event
+			parent::__set($name, $value);
 	}
+}
+
+/**
+* Calculate the distance grade of a walk
+* @param float $miles Number of miles
+*/
+private function getDistanceGrade($miles)
+{
+	if ($miles <= 8)
+		return "A";
+	else if ($miles <= 12)
+		return "B";
+	else
+		return "C";
 }
 
 /**

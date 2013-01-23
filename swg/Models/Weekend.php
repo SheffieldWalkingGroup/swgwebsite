@@ -16,6 +16,7 @@ protected $bookingsOpen;
 protected $challenge;
 protected $swg;
 protected $latLng;
+protected $paymentDue;
 
 public $dbmappings = array(
 	'name'	=> 'name',
@@ -38,7 +39,7 @@ public function fromDatabase(array $dbArr)
 	
 	parent::fromDatabase($dbArr);
 	
-	$this->start = strtotime($dbArr['startdate']);
+	$this->__set("start",strtotime($dbArr['startdate']));
 	$this->endDate = strtotime($dbArr['enddate']);
 	$this->noContactOfficeHours = (bool)$dbArr['nocontactofficehours'];
 	$this->challenge = (bool)$dbArr['challenge'];
@@ -139,6 +140,19 @@ public function __get($name)
 				$this->$name = (bool)$value;
 				break;
 			case "start":
+				if (!empty($value))
+				{
+					$this->$name = $value;
+					// Calculate the payment due date.
+					// Payment is due on the monday at least 8 days before the start date
+					// Start date is expected to be midnight on Friday for a normal weekend
+					$this->paymentDue = $value - 8*86400;
+					while (strftime("%u", $this->paymentDue) != 1)
+					{
+						$this->paymentDue -= 86400;
+					}
+				}
+				break;
 			case "endDate":
 				if (!empty($value))
 					$this->$name = $value;

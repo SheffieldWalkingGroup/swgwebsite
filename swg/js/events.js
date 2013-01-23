@@ -214,9 +214,13 @@ function displayEvent(event, container, newMembers) {
 				"class":event.type.toLowerCase()+"booking",
 				"html":"<span>Contact:</span> "+event.contact
 			});
+			var paymentDue = new Element("p",{
+				"class":"paymentdue",
+				"html":"<span>Payment due:</span> "+timestampToDate(event.paymentDue)
+			});
 			if (event.alterations.organiser)
 				contact.addClass("altered");
-			eventInfo.adopt(moreInfo,places,contact);
+			eventInfo.adopt(moreInfo,places,bookingsOpen,contact,paymentDue);
 			break;
 		case "social":
 			var contact = new Element("p",{

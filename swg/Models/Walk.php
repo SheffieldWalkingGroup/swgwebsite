@@ -204,24 +204,24 @@ public function __set($name, $value)
 	case "distanceGrade":
 		$value = strtoupper($value);
 		if ($value == "A" || $value == "B" || $value == "C")
-		$this->$name = $value;
+			$this->$name = $value;
 		else
-		throw new UnexpectedValueException("Distance grade must be A, B or C");
+			throw new UnexpectedValueException("Distance grade must be A, B or C");
 		break;
 	case "difficultyGrade":
 		$value = (int)$value;
 		if ($value == 1 || $value == 2 || $value == 3)
-		$this->$name = $value;
+			$this->$name = $value;
 		else
-		throw new UnexpectedValueException("Difficulty grade must be 1, 2 or 3");
+			throw new UnexpectedValueException("Difficulty grade must be 1, 2 or 3");
 		break;
 		
 	case "miles":
 		$value = (float)$value;
 		if ($value >= 0)
 		{
-		$this->$name = $value;
-		$this->distanceGrade = $this->getDistanceGrade($value);
+			$this->$name = $value;
+			$this->distanceGrade = $this->getDistanceGrade($value);
 		}
 		else
 		throw new UnexpectedValueException("Distance must be positive"); // TODO: Validate >0 when saving
@@ -232,21 +232,21 @@ public function __set($name, $value)
 	case "endGridRef":
 		$value = str_replace(" ","",$value);
 		if (empty($value))
-		break;
+			break;
 		if (preg_match("/[A-Z][A-Z]([0-9][0-9]){3,}/", $value))
 		{
-		$this->$name = $value;
-		// Also set the lat/lng
-		$osRef = getOSRefFromSixFigureReference($value);
-		$latLng = $osRef->toLatLng();
-		$latLng->OSGB36ToWGS84();
-		if ($name == "startGridRef")
-			$this->startLatLng = $latLng;
-		else
-			$this->endLatLng = $latLng;
+			$this->$name = $value;
+			// Also set the lat/lng
+			$osRef = getOSRefFromSixFigureReference($value);
+			$latLng = $osRef->toLatLng();
+			$latLng->OSGB36ToWGS84();
+			if ($name == "startGridRef")
+				$this->startLatLng = $latLng;
+			else
+				$this->endLatLng = $latLng;
 		}
 		else
-		throw new UnexpectedValueException("Grid references must be at least 6-figures, with the grid square letters before (e.g. SK123456)");
+			throw new UnexpectedValueException("Grid references must be at least 6-figures, with the grid square letters before (e.g. SK123456)");
 		break;
 		
 		
@@ -317,11 +317,11 @@ public function setRoute(Route &$r)
 private function getDistanceGrade($miles)
 {
 	if ($miles <= 8)
-	return "A";
+		return "A";
 	else if ($miles <= 12)
-	return "B";
+		return "B";
 	else
-	return "C";
+		return "C";
 }
 
 /**
