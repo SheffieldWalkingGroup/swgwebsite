@@ -247,7 +247,7 @@
 	* @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
 	* @return array Array of Socials
 	*/
-	public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $offset=0, $reverse=false, $getNormal = true, $getNewMember = true) {
+	public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $offset=0, $reverse=false, $getNormal = true, $getNewMember = true, $showUnpublished=false) {
 		
 		// Build a query to get future socials
 		$db = JFactory::getDBO();
@@ -258,8 +258,11 @@
 		$where = array(
 			"on_date >= '".self::timeToDate($startDate)."'",
 			"on_date <= '".self::timeToDate($endDate)."'",
-			"readytopublish",
 		);
+		if (!$showUnpublished)
+		{
+			$query->where("readytopublish");
+		}
 		// Hide normal/new member events if we're not interested
 		if (!$getNormal || !$getNewMember)
 		{
@@ -295,7 +298,7 @@
 	* @param int $numEvents Maximum number of events to get
 	*/
 	public static function getNext($numEvents, $getNormal = true, $getNewMember = true) {
-		return self::get(self::DateToday, self::DateEnd, $numEvents, 0, $getNormal, $getNewMember);
+		return self::get(self::DateToday, self::DateEnd, $numEvents, 0, false, $getNormal, $getNewMember);
 	}
 
 	public static function getSingle($id) {

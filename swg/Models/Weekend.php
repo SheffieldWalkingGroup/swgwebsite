@@ -205,7 +205,7 @@ public static function getNext($numEvents) {
 * @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
 * @return array Array of Weekends
 */
-public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $offset=0, $reverse=false) {
+public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $offset=0, $reverse=false, $showUnpublished=false) {
 	// Build a query to get future weekends
 	$db = JFactory::getDBO();
 	$query = $db->getQuery(true);
@@ -215,8 +215,11 @@ public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $
 	$query->where(array(
 		"enddate >= '".self::timeToDate($startDate)."'",
 		"startdate <= '".self::timeToDate($endDate)."'",
-		"oktopublish",
 	));
+	if (!$showUnpublished)
+	{
+		$query->where("oktopublish");
+	}
 	if ($reverse)
 		$query->order(array("startdate DESC"));
 	else

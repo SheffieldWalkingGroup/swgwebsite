@@ -40,7 +40,7 @@ public function __construct($meetPoint, $meetTime, $meetPlaceTime) {
 	$res = $db->query();
 	if ($db->getNumRows($res) == 1) {
 	$row = $db->loadAssoc();
-	$this->id = $row['SequenceID'];
+	$this->id = (int)$row['SequenceID'];
 	$this->shortDesc = $row['ShortDesc'];
 	$this->longDesc = $row['LongDesc'];
 	

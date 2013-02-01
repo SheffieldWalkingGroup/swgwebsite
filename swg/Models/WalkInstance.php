@@ -372,6 +372,9 @@ public function __set($name, $value)
 				throw new UnexpectedValueException("Meetpoint or MeetPointID must be a WalkMeetingPoint or an integer");
 			}
 			break;
+		case "walkid":
+			$this->walkid = (int)$value;
+			break;
 			
 		// Checks TODO 
 		case "location":
@@ -459,7 +462,7 @@ public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $
 	));
 	if (!$showUnpublished)
 	{
-	$query->where("readytopublish");
+		$query->where("readytopublish");
 	}
 	if ($reverse)
 		$query->order(array("WalkDate DESC", "meettime DESC"));
