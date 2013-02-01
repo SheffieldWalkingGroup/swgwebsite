@@ -7,3 +7,5 @@ cache/
 .kdev4/
 *.kdev4
 logs/
+.kateproject
+.kateproject.d/
