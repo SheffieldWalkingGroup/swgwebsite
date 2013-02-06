@@ -5,34 +5,10 @@
 	</layout>
 	<fields name="request">
 		<fieldset name="request">
-			<field
-				name="includeWalks"
-				type="checkbox"
-				label="Include walks"
-				description="Include walks"
-				value="1"
-			/>
-			<field
-				name="includeSocials"
-				type="checkbox"
-				label="Include socials"
-				description="Include socials"
-				value="1"
-			/>
-			<field
-				name="includeWeekends"
-				type="checkbox"
-				label="Include weekends"
-				description="Include weekends"
-				value="1"
-			/>
-			<field
-				name="startDateType"
-				type="list"
-				label="Earliest date"
-				default="1"
-				description="Display events on or after this day"
-				>
+			<field name="includeWalks" type="checkbox" label="Include walks" description="Include walks" value="1" default="0" />
+			<field name="includeSocials" type="checkbox" label="Include socials" description="Include socials" value="1" default="0" />
+			<field name="includeWeekends" type="checkbox" label="Include weekends" description="Include weekends" value="1" default="0" />
+			<field name="startDateType" type="list" label="Earliest date" default="1" description="Display events on or after this day">
 				<option value="0">The beginning</option>
 				<option value="1">Yesterday</option>
 				<option value="2">Today</option>
@@ -40,19 +16,8 @@
 				<option value="4">The end</option>
 				<option value="5">Specify</option>
 			</field>
-			<field
-				name="startDateSpecify"
-				type="calendar"
-				label="Specify earliest date"
-				description="Only needed if earliest date is 'Specify'"
-			/>
-			<field
-				name="endDateType"
-				type="list"
-				label="Latest date"
-				default="2"
-				description="Display events on or before this day"
-				>
+			<field name="startDateSpecify" type="calendar" label="Specify earliest date" description="Only needed if earliest date is 'Specify'" />
+			<field name="endDateType" type="list" label="Latest date" default="2" description="Display events on or before this day">
 				<option value="0">The beginning</option>
 				<option value="1">Yesterday</option>
 				<option value="2">Today</option>
@@ -60,31 +25,25 @@
 				<option value="4">The end</option>
 				<option value="5">Specify</option>
 			</field>
-			<field
-				name="endDateSpecify"
-				type="calendar"
-				label="Specify latest date"
-				description="Only needed if latest date is 'Specify'"
-			/>
-			<field
-				name="order"
-				type="radio"
-				label="Ordering"
-				default="0"
-			>
+			<field name="endDateSpecify" type="calendar" label="Specify latest date" description="Only needed if latest date is 'Specify'" />
+			<field name="order" type="radio" label="Ordering" default="0">
 				<option value="0">Oldest first</option>
 				<option value="1">Newest first</option>
 			</field>
-			<field
-				name="protocolReminders"
-				type="textarea"
-				label="Protocol reminders"
-				description="One reminder on each line. These will be displayed between events."
-				rows="10"
-				cols="60"
-				filter="raw"
-			/>
+			<field name="protocolReminders" type="textarea" label="Protocol reminders" description="One reminder on each line. These will be displayed between events." rows="10" cols="60" filter="raw" />
 			
+			<!-- I'd like to separate these -->
+			<field name="unpublished" type="checkbox" label="Show unpublished events" description="Display unpublished events to users who are allowed to see them" value="1" default="0" />
+			<field name="showEditOptions" type="checkbox" label="Show edit options" description="Allow users to add &amp; edit events if their permissions allow" value="1" default="0" />
+			<field name="addEditWalkPage" type="menuitem" label="Add/edit walk page" published="1" default="">
+				<option value="">-- None --</option>
+			</field>
+			<field name="addEditSocialPage" type="menuitem" label="Add/edit social page" published="1" default="">
+				<option value="">-- None --</option>
+			</field>
+			<field name="addEditWeekendPage" type="menuitem" label="Add/edit weekend page" published="1" default="">
+				<option value="">-- None --</option>
+			</field>
 		</fieldset>
 	</fields>
 </metadata>

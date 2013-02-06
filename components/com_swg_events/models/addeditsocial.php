@@ -37,6 +37,7 @@ class SWG_EventsModelAddEditSocial extends JModelForm
    */
   public function updateSocial(array $formData)
   {
+	
     $this->loadSocial($formData['id']);
     // Update all basic fields
     // Fields that can't be saved are just ignored
@@ -70,10 +71,23 @@ class SWG_EventsModelAddEditSocial extends JModelForm
 		$this->social->newMemberStart = strtotime($formData['date']." ".$formData['newMemberStart']);
 	if (!empty($formData['newMemberEnd']))
 		$this->social->newMemberEnd = strtotime($formData['date']." ".$formData['newMemberEnd']);
-    
+		    
     if ($this->social->isValid())
     {
 		$this->social->save();
+		
+		// Redirect to the list page
+		$itemid = JRequest::getInt('returnPage');
+		if (empty($itemid))
+			return false;
+		$item = JFactory::getApplication()->getMenu()->getItem($itemid);
+		$link = new JURI("/".$item->route);
+		
+		// Jump to the event?
+		if (JRequest::getBool('jumpToEvent'))
+			$link->setFragment("social_".$this->social->id);
+		
+		JFactory::getApplication()->redirect($link, "Social saved");
 	}
 	else
 	{

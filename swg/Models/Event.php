@@ -100,12 +100,24 @@ public static function timeToDate($time, $after=false) {
 */
 public abstract static function getSingle($id);
 
+// TODO: Merge into getSingle?
+public static function objectOrID($objectOrID) {
+	if ($objectOrID instanceof self)
+	{
+		return $objectOrID;
+	}
+	else
+	{
+		return self::getSingle($objectOrID);
+	}
+}
+
 public function getEventType() {
 	return strtolower(get_class($this));
 }
 
 public function isCancelled() {
-	return false;
+	return $this->alterations->cancelled;
 }
 
 /**

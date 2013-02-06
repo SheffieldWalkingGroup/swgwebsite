@@ -16,27 +16,29 @@ protected $noContactOfficeHours;
 protected $active;
 protected $dogFriendly;
 protected $publishInOtherSites;
+private $joomlaUserID;
 
 private $hasDisplayName = false;
 
 function __construct($dbArr = null) {
 	if (isset($dbArr))
 	{
-	$this->id = $dbArr['ID'];
-	$this->surname = $dbArr['Surname'];
-	$this->forename = $dbArr['Forename'];
-	$this->telephone = $dbArr['Telephone'];
-	$this->email = $dbArr['Email'];
-	$this->notes = $dbArr['Notes'];
-	$this->noContactOfficeHours = (bool)$dbArr['nocontactofficehours'];
-	$this->active = (bool)$dbArr['active'];
-	$this->dogFriendly = (bool)$dbArr['dogfriendly'];
-	$this->publishInOtherSites = (bool)$dbArr['publishinothersites'];
-	
-	// Set a default display name
-	// TODO: Could scan for multiple surnames and include all of them
-	$this->displayName = ucwords($this->forename)." ".strtoupper(substr($this->surname,0,1));
-	$this->hasDisplayName = false;
+		$this->id = $dbArr['ID'];
+		$this->surname = $dbArr['Surname'];
+		$this->forename = $dbArr['Forename'];
+		$this->telephone = $dbArr['Telephone'];
+		$this->email = $dbArr['Email'];
+		$this->notes = $dbArr['Notes'];
+		$this->noContactOfficeHours = (bool)$dbArr['nocontactofficehours'];
+		$this->active = (bool)$dbArr['active'];
+		$this->dogFriendly = (bool)$dbArr['dogfriendly'];
+		$this->publishInOtherSites = (bool)$dbArr['publishinothersites'];
+		$this->joomlaUserID = (int)$dbArr['joomlauser'];
+		
+		// Set a default display name
+		// TODO: Could scan for multiple surnames and include all of them
+		$this->displayName = ucwords($this->forename)." ".strtoupper(substr($this->surname,0,1));
+		$this->hasDisplayName = false;
 	}
 }
 

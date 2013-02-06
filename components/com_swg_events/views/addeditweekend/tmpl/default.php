@@ -11,6 +11,11 @@ if ($this->showForm): ?>
 		<input type="hidden" name="view" value="addeditweekend">
 		<input type="hidden" name="option" value="com_swg_events">
 		<input type="hidden" name="task" value="addeditweekend.submit">
+		
+		<input type="hidden" name="jform[okToPublish]" value="0">
+		<input type="hidden" name="jform[noContactOfficeHours]" value="0">
+		<input type="hidden" name="jform[challenge]" value="0">
+		<input type="hidden" name="jform[swg]" value="0">
 		<?php echo JHtml::_('form.token'); echo $this->form->getInput('id'); ?>
 
 		<fieldset>

@@ -283,7 +283,7 @@ var SWGMap = new Class({
 		);
 		
 		// Need to centre the map before adding popups
-		this.map.setCenter(location,13);
+		this.map.setCenter(location,15);
 		
 		this.map.addPopup(popup);
 		  
@@ -292,7 +292,7 @@ var SWGMap = new Class({
 		});
 		this.markers.addMarker(marker);
 		
-		this.map.setCenter(location,14);
+		this.map.setCenter(location,15);
 		
 		// Do we have a queued move?
 		//if (this.queuedMove != undefined && this.queuedMove != null)

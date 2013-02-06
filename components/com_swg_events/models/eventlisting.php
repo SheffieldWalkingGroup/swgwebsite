@@ -286,11 +286,11 @@ class SWG_EventsModelEventlisting extends JModelItem
 	      $this->numWalks = WalkInstance::numEvents($startDate, $endDate, JRequest::getBool("unpublished",false));
 	      break;
 	    case SWG::EventType_Social:
-	      $this->socials = Social::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0));
+	      $this->socials = Social::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0), true, true, JRequest::getBool("unpublished", false)); // TODO: Allow getNormal & getNewMember to be customised
 	      $this->numSocials = Social::numEvents($startDate, $endDate, true, false);
 	      break;
 	    case SWG::EventType_Weekend:
-	      $this->weekends = Weekend::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0));
+	      $this->weekends = Weekend::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0), JRequest::getBool("unpublished", false));
 	      $this->numWeekends = Weekend::numEvents($startDate, $endDate);
 	      break;
 	  }

@@ -7,15 +7,20 @@
 		<action name="core.delete" title="JACTION_DELETE" description="JACTION_DELETE_COMPONENT_DESC" />
 		<action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT_COMPONENT_DESC" />
 	
-		<action name="walk.viewpublic" title="View walks" description="View walks in the library" />
-		<action name="walk.viewall" title="View all walks" description="View all walks, including unapproved" /> 
-		<action name="walk.add" title="Add walks" description="Suggest new walks" />
-		<action name="walk.editown" title="Edit own walks" description="Edit walks this user has suggested" />
-		<action name="walk.editall" title="Edit all walks" description="Edit all walks" />
-		<action name="walk.delete" title="Delete walks" description="Delete walks" />
+		<action name="walk.viewpublic" title="View walks" description="View scheduled walks" />
+		<action name="walk.viewall" title="View all walks" description="View scheduled walks, including unpublished" /> 
+		<action name="walk.add" title="Schedule walks" description="Add walks to the schedule" />
+		<action name="walk.editall" title="Edit all walks" description="Edit all scheduled walks" />
+		<action name="walk.delete" title="Unschedule walks" description="Remove walks from the schedule" />
 	
 		<action name="social.add" title="Add socials" description="Add socials" />
-		<action name="social.edit" title="Edit socials" description="Edit socials" />
+		<action name="social.edit" title="Edit socials" description="Edit own socials" />
+		<action name="social.editall" title="Edit socials" description="Edit all socials" />
 		<action name="social.delete" title="Delete socials" description="Delete socials" />
+	
+		<action name="weekend.add" title="Add weekends" description="Add weekends" />
+		<action name="weekend.edit" title="Edit weekends" description="Edit own weekends" />
+		<action name="weekend.editall" title="Edit weekends" description="Edit all weekends" />
+		<action name="weekend.delete" title="Delete weekends" description="Delete weekends" />
 	</section>
 </access>

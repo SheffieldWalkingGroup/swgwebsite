@@ -24,9 +24,8 @@ protected $endLatLng;
 protected $childFriendly;
 protected $dogFriendly;
 protected $speedy;
+protected $challenge;
 protected $isLinear;
-protected $transportByCar;
-protected $transportPublic;
 
 private $leaderId;
 private $leaderName;
@@ -38,13 +37,10 @@ private $meetPointId;
 private $meetPlaceTime;
 protected $meetPoint;
 
-protected $dateAltered;
-
 protected $headCount;
 protected $mileometer;
 protected $reviewComments;
 protected $deleted;
-protected $cancelled;
 
 protected $hasRoute;
 protected $routeVisibility;
@@ -130,26 +126,36 @@ public function toDatabase(JDatabaseQuery &$query)
 {
 	parent::toDatabase($query);
 	
-	$query->set("WalkDate", strftime("%Y-%m-%d",$this->start));
-	$query->set("meettime", strftime("%H:%M",$this->start));
-	$query->set("meetplace", $this->meetPoint->id);
-	$query->set("meetplacetime", $this->meetPoint->extra);
+	if (!empty($this->start))
+	{
+		$query->set("WalkDate = '". $query->escape(strftime("%Y-%m-%d",$this->start))."'");
+		$query->set("meettime = '". $query->escape(strftime("%H:%M",$this->start))."'");
+	}
 	
-	$query->set("leaderid", $this->leaderId);
-	if ($this->leader->hasDisplayName)
-		$query->set("leadername", $this->leader->displayName);
-	$query->set("backmarkerid", $this->backmarkerId);
-	if ($this->backmarker->hasDisplayName)
-		$query->set("backmarkername", $this->backmarker->displayName);
+	if (!empty($this->meetPoint))
+	{
+		$query->set("meetplace = ". (int)$this->meetPoint->id);
+		$query->set("meetplacetime = '". $query->escape($this->meetPoint->extra)."'");
+	}
 	
-	$query->set('version', $this->alterations->version);
-	$query->set('lastmodified', $this->alterations->lastModified);
+	if (!empty($this->leaderId))
+		$query->set("leaderid = ". (int)$this->leaderId);
+	if (isset($this->leader) && $this->leader->hasDisplayName)
+		$query->set("leadername = '". $query->escape($this->leader->displayName)."'");
+		
+	if (!empty($this->backmarkerId))
+		$query->set("backmarkerid = ". (int)$this->backmarkerId);
+	if (isset($this->backmarker) && $this->backmarker->hasDisplayName)
+		$query->set("backmarkername = '". $query->escape($this->backmarker->displayName)."'");
 	
-	$query->set('detailsaltered', $this->alterations->details);
-	$query->set('cancelled', $this->alterations->cancelled);
-	$query->set('meetplacetimedetailsaltered', $this->alterations->placeTime);
-	$query->set('walkleaderdetailsaltered', $this->alterations->organiser);
-	$query->set('datealtered', $this->alterations->date);
+	$query->set('version = '. (int)$this->alterations->version);
+	$query->set('lastmodified = '. (int)$this->alterations->lastModified);
+	
+	$query->set('detailsaltered = '. (int)$this->alterations->details);
+	$query->set('cancelled = '. (int)$this->alterations->cancelled);
+	$query->set('meetplacetimedetailsaltered = '. (int)$this->alterations->placeTime);
+	$query->set('walkleaderdetailsaltered = '. (int)$this->alterations->organiser);
+	$query->set('datealtered = '. (int)$this->alterations->date);
 }
 
 	public function valuesToForm()
@@ -161,9 +167,8 @@ public function toDatabase(JDatabaseQuery &$query)
 			'okToPublish'	=> $this->okToPublish,
 			'date'			=> strftime("%Y-%m-%d", $this->start),
 			
-			'walkid'		=> $this->walk->id,
-			'distancegrade'	=> $this->distanceGrade,
-			'difficultygrade'=>$this->difficultyGrade,
+			'walkid'		=> $this->walkid,
+			'difficultyGrade'=>$this->difficultyGrade,
 			'miles'			=> $this->miles,
 			'location'		=> $this->location,
 			'startGridRef'	=> $this->startGridRef,
@@ -174,16 +179,15 @@ public function toDatabase(JDatabaseQuery &$query)
 			'childfriendly'	=> $this->childFriendly,
 			'dogfriendly'	=> $this->dogFriendly,
 			'speedy'		=> $this->speedy,
-			'linear'		=> $this->isLinear,
-			'transportbycar'=> $this->transportByCar,
-			'transportpublic'=>$this->transportPublic,
+			'isLinear'		=> $this->isLinear,
 			
 			'leaderid'		=> $this->leaderId,
 			'leadername'	=> $this->leaderName,
 			'backmarkerid'	=> $this->backmarkerId,
 			'backmarkername'=> $this->backmarkerName,
 			'meetPointId'	=> $this->meetPointId,
-			'meetdetails'	=> $this->__get("meetpoint")->extra,
+			'meetTime' 		=> strftime("%H:%M", $this->start),
+			'meetdetails'	=> $this->__get("meetPoint")->extra,
 			
 			'altereddetails'=> $this->alterations->details,
 			'alteredmeetpoint'=>$this->alterations->placeTime,
@@ -193,13 +197,18 @@ public function toDatabase(JDatabaseQuery &$query)
 			
 		);
 		
-		if ($this->leader->hasDisplayName)
+		if (isset($this->leader) && $this->leader->hasDisplayName)
 			$values['leadername'] = $this->leader->displayName;
-		if ($this->backmarker->hasDisplayName)
+		if (isset($this->backmarker) && $this->backmarker->hasDisplayName)
 			$values['backmarkername'] = $this->backmarker->displayName;
-		$routes = Route::loadForWalkable($this, false, 1);
-		if (!empty($routes))
-			$values['routeid'] = $routes[0]->id;
+			
+		// Try to load routes
+		if (isset($this->id))
+		{
+			$routes = Route::loadForWalkable($this, false, 1);
+			if (!empty($routes))
+				$values['routeid'] = $routes[0]->id;
+		}
 			
 		return $values;
 			
@@ -262,11 +271,13 @@ public function __set($name, $value)
 		case "description":
 			$this->$name = $value;
 			break;
+		// Integer
+		case "start":
+			$this->$name = (int)$value;
+			break;
 		// Booleans
 		case "isLinear":
 		case "dogFriendly":
-		case "transportByCar":
-		case "transportPublic":
 		case "childFriendly":
 			$this->$name = (bool)$value;
 			break;
@@ -324,7 +335,11 @@ public function __set($name, $value)
 		// Connected objects
 		case "leader":
 		case "leaderId":
-			if ($value instanceof Leader)
+			if (empty($value))
+			{
+				break;
+			}
+			else if ($value instanceof Leader)
 			{
 				$this->leader = $value;
 				$this->leaderId = $value->id;
@@ -358,7 +373,9 @@ public function __set($name, $value)
 			break;
 		case "meetPoint":
 		case "meetPointId":
-			if ($value instanceof WalkMeetingPoint)
+			if (empty($value))
+				break;
+			elseif ($value instanceof WalkMeetingPoint)
 			{
 				$this->meetPoint = $value;
 				$this->meetPointId = $value->id;
@@ -368,7 +385,8 @@ public function __set($name, $value)
 				$this->meetPointId = (int)$value;
 				$this->meetPoint = null;
 			}
-			else {
+			else
+			{
 				throw new UnexpectedValueException("Meetpoint or MeetPointID must be a WalkMeetingPoint or an integer");
 			}
 			break;
@@ -482,10 +500,6 @@ public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $
 	return $walks;
 }
 
-public function isCancelled() {
-	return $this->cancelled;
-}
-
 public function getEventType() {
 	return "walk";
 }
@@ -529,6 +543,41 @@ public static function getSingle($id) {
 	else
 		return null;
 
+}
+/**
+ * Creates a new walk instance from a walk, pre-filling fields as
+ * The following fields are used:
+ *   * walkid
+ *   * name
+ *   * description
+ *   * location
+ *   * (start|end)(PlaceName|GridRef)
+ *   * isLinear
+ *   * miles
+ *   * (difficulty|distance)Grade
+ *   * childFriendly
+ * Other values are left blank, 
+ * but dogFriendly will be true if the leader AND walk are dog friendly (false otherwise)
+ * @param Walk $walk The walk we're creating a WalkInstance for
+ * @return WalkInstance the generated walk instance
+ */
+public static function createFromWalk(Walk $walk) {
+	$wi = new WalkInstance();
+	$wi->walkid = $walk->id;
+	
+	// Most properties have the same names. Copy them over.
+	// Because we don't allow full read-write access to the walk's properties, 
+	// we get the list of usable properties from dbmappings.
+	foreach ($walk->dbmappings as $key => $v)
+	{
+		$value = $walk->$key;
+		if (property_exists($wi,$key))
+		{
+			$wi->$key = $value;
+		}
+	}
+	
+	return $wi;
 }
 
 public function hasMap() {

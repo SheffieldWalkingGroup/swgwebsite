@@ -140,9 +140,15 @@ var EventWrapper = new Class({
 		// Create the map
 		this.map = new SWGMap("map_"+this.eventType+"_"+this.eventID);
 		if (this.eventType == "walk")
+		{
 			this.map.addWalkInstance(this.eventID);
+			this.map.setDefaultMap("landscape");
+		}
 		else if (this.eventType == "social")
+		{
 			this.map.addSocial(this.eventID);
+			this.map.setDefaultMap("street");
+		}
 		else if (this.eventType == "weekend")
 		{
 			this.map.addWeekend(this.eventID);

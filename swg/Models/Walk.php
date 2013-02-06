@@ -74,36 +74,6 @@ private $dbmappings = array(
 	'routeVisibility'=> 'routevisibility',
 );
 
-/**
-* Constructs a walk object from an array of database fields
-* @param array $dbArr Associative array from the walks table
-*/
-public function __construct($dbArr = null)
-{
-	if (empty($dbArr))
-	return;
-	
-	foreach ($this->dbmappings as $var => $dbField)
-	{
-		$this->$var = $dbArr[$dbField];
-	}
-	$this->id = $dbArr['ID'];
-	$this->suggestedBy = Leader::getLeader($dbArr['suggestedby']);
-	
-	// Also set the lat/lng
-	$startOSRef = getOSRefFromSixFigureReference($this->startGridRef);
-	$startLatLng = $startOSRef->toLatLng();
-	$startLatLng->OSGB36ToWGS84();
-	$this->startLatLng = $startLatLng;
-	
-	$endOSRef = getOSRefFromSixFigureReference($this->endGridRef);
-	$endLatLng = $endOSRef->toLatLng();
-	$endLatLng->OSGB36ToWGS84();
-	$this->endLatLng = $endLatLng;
-		
-	// TODO: Load route?
-}
-
 public function fromDatabase(array $dbArr)
 {
 	$this->id = $dbArr['ID'];
@@ -188,7 +158,7 @@ public function __set($name, $value)
 	case "name":
 	case "startPlaceName":
 	case "endPlaceName":
-	case "routeDescription":
+	case "description":
 	case "information":
 		$this->$name = $value;
 		break;

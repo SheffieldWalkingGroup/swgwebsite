@@ -4,6 +4,13 @@ defined('_JEXEC') or die('Restricted access');
 
 $nextProtocolReminder = 0;
 
+if ($this->showAnyAddLinks()):?>
+	<p>
+		<?php if ($this->showAddWalk()):?><a href="<?php echo $this->addEditWalkURL();?>">Add walks</a><?php endif;?>
+		<?php if ($this->showAddSocial()):?><a href="<?php echo $this->addEditSocialURL();?>">Add social</a><?php endif;?>
+		<?php if ($this->showAddWeekend()):?><a href="<?php echo $this->addEditWeekendURL();?>">Add weekend</a><?php endif;?>
+	</p>
+<? endif;
 foreach ($this->events as $event):?>
   <div class="event published" id="<?php echo $event->getEventType();?>_<?php echo $event->id?>">
   <?php if ($event->alterations->cancelled): ?><p class="cancelled-message">Cancelled</p><?php endif; ?>
@@ -62,37 +69,46 @@ foreach ($this->events as $event):?>
                 </a>
               </p>
             <?php endif; ?>
-            <p class="transport<?php if ($event->alterations->placeTime) echo " altered\" title=\"Place & time altered"; ?>">
-              <span>Transport:</span>
-              <?php if (!$event->meetPoint->isOther()) {
-                echo "Meet at ".strftime("%H:%M", $event->meetPoint->meetTime)." at ";
-                if ($event->meetPoint->location)
-                {
-                  echo "<a href='http://www.streetmap.com/loc/N{$event->meetPoint->location->lat},E{$event->meetPoint->location->lng}' rel='map-transport' target='_blank'>";
-                }
-                echo $event->meetPoint->longDesc;
-                if ($event->meetPoint->location)
-                {
-                  echo "</a>";
-                }
-                echo ". ";
-              }
-              if ($event->meetPoint->hasExtraInfo()) {
-                echo $event->meetPoint->extra;
-              }
-              ?>
-            </p>
-            <p class="leader<?php if ($event->alterations->organiser) echo " altered\" title=\"Leader changed"; ?>">
-              <span>Walk Leader:</span>
-              <?php
-                echo $event->leader->displayName.(($event->leader->telephone != "")?" (".$event->leader->telephone.")":""); 
-                if ($event->leader->noContactOfficeHours)
-                  echo " &ndash; don't call during office hours";
-              ?>
-            </p>
-            <p class="backmarker">
-              <span>Backmarker:</span> <?php echo $event->backmarker->displayName; ?>
-            </p>
+            <?php if (isset($event->meetPoint)): ?>
+				<p class="transport<?php if ($event->alterations->placeTime) echo " altered\" title=\"Place & time altered"; ?>">
+				<span>Transport:</span>
+				<?php if (!$event->meetPoint->isOther()) {
+					echo "Meet at ".strftime("%H:%M", $event->meetPoint->meetTime)." at ";
+					if ($event->meetPoint->location)
+					{
+					echo "<a href='http://www.streetmap.com/loc/N{$event->meetPoint->location->lat},E{$event->meetPoint->location->lng}' rel='map-transport' target='_blank'>";
+					}
+					echo $event->meetPoint->longDesc;
+					if ($event->meetPoint->location)
+					{
+					echo "</a>";
+					}
+					echo ". ";
+				}
+				if ($event->meetPoint->hasExtraInfo()) {
+					echo $event->meetPoint->extra;
+				}
+				// Emergency - meet point is 'other' and we have no description
+				if ($event->meetPoint->isOther() && !$event->meetPoint->hasExtraInfo())
+					echo "No meeting place set.";
+				?>
+				</p>
+			<?php endif; ?>
+			<?php if (isset($event->leader)): ?>
+				<p class="leader<?php if ($event->alterations->organiser) echo " altered\" title=\"Leader changed"; ?>">
+				<span>Walk Leader:</span>
+				<?php
+					echo $event->leader->displayName.(($event->leader->telephone != "")?" (".$event->leader->telephone.")":""); 
+					if ($event->leader->noContactOfficeHours)
+					echo " &ndash; don't call during office hours";
+				?>
+				</p>
+			<?php endif; 
+			if (isset($event->backmarker)): ?>
+				<p class="backmarker">
+				<span>Backmarker:</span> <?php echo $event->backmarker->displayName; ?>
+				</p>
+			<?php endif;?>
           <?php elseif ($event instanceof Social):?>
             <?php if ($this->isTimeSet($event->start)):?>
               <p class="start"><span>Start: </span><?php echo date("H:i", $event->start); ?></p>
@@ -157,7 +173,10 @@ foreach ($this->events as $event):?>
               <?php if ($event instanceof WalkInstance && $event->canDownloadRoute()): ?>
 				<a href="/api/route?walkinstanceid=<?php echo $event->id;?>&amp;format=gpx" title="Download this walk in GPX format for a computer or GPS device">Download route</a>
 			  <?php endif; ?>
-            <?php endif; ?>  
+            <?php endif; ?>
+            <?php if ($this->showEditLinks($event)):?>
+				<a href="<?php echo $this->editURL($event);?>">Edit <?php echo strtolower($event->type);?></a>
+			<?php endif;?>
 	  </p>
           
         </div>

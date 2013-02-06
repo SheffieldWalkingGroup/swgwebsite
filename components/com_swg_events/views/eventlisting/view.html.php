@@ -78,4 +78,79 @@ MAP
 	{
 		return (date("His", $timestamp) != 0);
 	}
+	
+	function showAnyAddLinks()
+	{
+		return ($this->showAddWalk() || $this->showAddSocial() || $this->showAddWeekend());
+	}
+	
+	function showAddWalk()
+	{
+		return (JRequest::getBool("showEditOptions") && $this->addEditWalkURL() && SWG_EventsController::canAddWalk());
+	}
+	
+	function addEditWalkURL()
+	{
+		$itemid = JRequest::getInt('addEditWalkPage');
+		if (empty($itemid))
+			return false;
+		$item = JFactory::getApplication()->getMenu()->getItem($itemid);
+		$link = new JURI($item->route);
+		return $link;
+	}
+	
+	function showAddSocial()
+	{
+		return (JRequest::getBool("showEditOptions") && $this->addEditSocialURL() &&  SWG_EventsController::canAddSocial());
+	}
+	
+	function addEditSocialURL()
+	{
+		$itemid = JRequest::getInt('addEditSocialPage');
+		if (empty($itemid))
+			return false;
+		$item = JFactory::getApplication()->getMenu()->getItem($itemid);
+		$link = new JURI($item->route);
+		return $link;
+	}
+	
+	function showAddWeekend()
+	{
+		return (JRequest::getBool("showEditOptions") && $this->addEditWeekendURL() &&  SWG_EventsController::canAddWeekend());
+	}
+	
+	function addEditWeekendURL()
+	{
+		$itemid = JRequest::getInt('addEditWeekendPage');
+		if (empty($itemid))
+			return false;
+		$item = JFactory::getApplication()->getMenu()->getItem($itemid);
+		$link = new JURI($item->route);
+		return $link;
+	}
+	
+	function showEditLinks($event)
+	{
+		return (
+			JRequest::getBool("showEditOptions") && 
+			SWG_EventsController::canEdit($event) && 
+			(
+				($event instanceof WalkInstance && $this->addEditWalkURL()) ||
+				($event instanceof Social && $this->addEditSocialURL()) ||
+				($event instanceof Weekend && $this->addEditWeekendURL())
+			)
+		);
+	}
+	
+	function editURL($event)
+	{
+		if ($event instanceof WalkInstance)
+			return $this->addEditWalkURL()."?walkinstanceid=".$event->id;
+		else if ($event instanceof Social)
+			return $this->addEditSocialURL()."?socialid=".$event->id;
+		else if ($event instanceof Weekend)
+			return $this->addEditWeekendURL()."?weekendid=".$event->id;
+		else
+			return "";
+	}
 }

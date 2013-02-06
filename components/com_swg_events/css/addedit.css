@@ -13,3 +13,13 @@ form label {
 form input.invalid, form textarea.invalid {
 	border:1px solid red;
 }
+
+form .radio>* {
+	float:left;
+	clear:none;
+}
+
+form .radio>label {
+	width:100px;
+	padding-top:6px;
+}
