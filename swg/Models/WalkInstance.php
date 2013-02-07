@@ -260,6 +260,25 @@ public function __get($name)
 	return $this->$name; // TODO: What params should be exposed?
 }
 
+public function __isset($name)
+{
+	switch ($name)
+	{
+		case "meetPoint":
+		case "meetPointId":
+			return (isset($this->meetPoint) || isset($this->meetPointId));
+			break;
+		case "leader":
+		case "leaderId":
+			return (isset($this->leader) || isset($this->leaderId));
+			break;
+		case "backmarker":
+		case "backmarkerId":
+			return (isset($this->backmarker) || isset($this->backmarkerId));
+			break;
+	}
+}
+
 public function __set($name, $value)
 {
 	switch ($name)
