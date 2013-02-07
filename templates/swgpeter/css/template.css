@@ -411,7 +411,7 @@ div.slideshow {
 }
 
 .box .events .highlighted {
-	background:url(/templates/swgpeter/images/boxhead-yellow.png) repeat-y;
+	background:url(/templates/swgpeter/images/boxhighlight.png) repeat-y;
 }
 
 .box .date {
@@ -709,7 +709,10 @@ div.slideshow {
 }
 
 .event.highlighted {
-	outline:3px solid red;
+	box-shadow:2px 2px 15px #222;
+	border-width:1px;
+	width:764px;
+	border-radius:4px;
 }
 
 .event .unpublished {
