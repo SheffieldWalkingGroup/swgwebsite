@@ -98,9 +98,14 @@ foreach ($this->events as $event):?>
 				<p class="leader<?php if ($event->alterations->organiser) echo " altered\" title=\"Leader changed"; ?>">
 				<span>Walk Leader:</span>
 				<?php
-					echo $event->leader->displayName.(($event->leader->telephone != "")?" (".$event->leader->telephone.")":""); 
-					if ($event->leader->noContactOfficeHours)
-					echo " &ndash; don't call during office hours";
+					echo $event->leader->displayName;
+					// Hide leader contact details if event has already happened
+					if (unixtojd($event->start) >= unixtojd(time()) && $event->leader->telephone != "")
+					{
+						echo " (".$event->leader->telephone.")"; 
+						if ($event->leader->noContactOfficeHours)
+							echo " &ndash; don't call during office hours";
+					}
 				?>
 				</p>
 			<?php endif; 
@@ -117,13 +122,10 @@ foreach ($this->events as $event):?>
               <?php endif;
             endif; ?>
             
-            <?php if ($event->location != "" || $event->hasMap()): ?>
+            <?php if ($event->location != ""): ?>
               <p class="location">
                 <span>Location: </span><?php if ($event->hasMap()):?><a href="#" rel="map"><?php endif;
-                  if ($event->location != "")
                     echo nl2br($event->location);
-                  else 
-                    echo "Show map";
                   ?>
                 <?php if ($event->hasMap()) echo "</a>";?>
               </p>
@@ -166,18 +168,24 @@ foreach ($this->events as $event):?>
 			<p class="paymentdue">
 				<span>Payment due:</span> <?php echo date("l jS F".($this->notThisYear($event->paymentDue)?" Y":""),$event->paymentDue); ?>
 			</p>
-          <?php endif; ?>
-          <p class="controls">
+			<?php endif; ?>
+			<div class="controls">
 			<?php if ($event->hasMap()): ?>
-              <a href="#" rel="toggle-map" title="Show a map of this <?php echo strtolower($event->type);?>">Show map</a>
-              <?php if ($event instanceof WalkInstance && $event->canDownloadRoute()): ?>
-				<a href="/api/route?walkinstanceid=<?php echo $event->id;?>&amp;format=gpx" title="Download this walk in GPX format for a computer or GPS device">Download route</a>
-			  <?php endif; ?>
+				<p>
+					<a href="#" rel="toggle-map" title="Show a map of this <?php echo strtolower($event->type);?>">Show map</a>
+				</p>
+				<?php if ($event instanceof WalkInstance && $event->canDownloadRoute()): ?>
+					<p>
+						<a href="/api/route?walkinstanceid=<?php echo $event->id;?>&amp;format=gpx" title="Download this walk in GPX format for a computer or GPS device">Download route</a>
+					</p>
+				<?php endif; ?>
             <?php endif; ?>
             <?php if ($this->showEditLinks($event)):?>
-				<a href="<?php echo $this->editURL($event);?>">Edit <?php echo strtolower($event->type);?></a>
+				<p>
+					<a href="<?php echo $this->editURL($event);?>">Edit <?php echo strtolower($event->type);?></a>
+				</p>
 			<?php endif;?>
-	  </p>
+			</div>
           
         </div>
         <div style="clear:right;">&nbsp;</div>

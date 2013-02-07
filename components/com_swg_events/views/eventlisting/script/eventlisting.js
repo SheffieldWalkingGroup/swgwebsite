@@ -101,12 +101,14 @@ var EventWrapper = new Class({
 		// Set up the highlighting controls
 		if (localStorage)
 		{
+			var highlightWrapper = new Element("p");
 			this.highlightLink = new Element("a",{
 				"href":"#",
 				"html":"Highlight",
 				"title":"Highlight this "+this.eventType.toLowerCase()+" on your computer"
 			});
-			wrapper.getElements('p[class="controls"]')[0].adopt(this.highlightLink);
+			highlightWrapper.adopt(this.highlightLink);
+			wrapper.getElements('[class="controls"]')[0].adopt(highlightWrapper);
 			this.highlightLink.addEvent('click',function(event)
 			{
 				event.stop();
@@ -310,7 +312,7 @@ function hitBottom()
 				
 				// Move extra stuff
 				evtContent.getElements(".description").adopt(evtContent.getElements(".icons"));
-				evtContent.getElements(".eventinfo").adopt(new Element("p",{"class":"controls"}));
+				evtContent.getElements(".eventinfo").adopt(new Element("div",{"class":"controls"}));
 				
 				// Run this through normal event setup
 				var event = new EventWrapper(evtWrap);
