@@ -24,7 +24,7 @@ switch ($params->get('eventType')) {
 
 foreach ($events as $event) {?>
 echo "<pre>";print_r($event->alterations);echo "</pre>";
-  <li class="<?php if ($event->alterations->cancelled) echo "cancelled"; if ($event->alterations->anyAlterations()) echo " altered";?>">
+  <li class="<?php if ($event->alterations->cancelled) echo "cancelled"; else if ($event->alterations->anyAlterations()) echo " altered";?>">
     <span class="date<?php if ($event->alterations->date) echo " altered"?>"><?php echo date("l jS M", strtotime($event->start)); ?></span>
     <h4>
       <a href="#"><?php echo $event->name; ?>&nbsp;(<?php echo $event->distanceGrade.$event->difficultyGrade;?>)</a>

@@ -1,7 +1,7 @@
 <div class="events box walks">
   <ul>
     <?php foreach ($events as $event) {?>
-      <li id="walk_<?php echo $event->id; ?>" class="<?php if ($event->alterations->cancelled) echo "cancelled"; if ($event->alterations->anyAlterations()) echo " altered";?>">
+      <li id="walk_<?php echo $event->id; ?>" class="<?php if ($event->alterations->cancelled) echo "cancelled"; else if ($event->alterations->anyAlterations()) echo " altered";?>">
         <span class="date<?php if ($event->alterations->date) echo " altered"?>"><?php echo date("l jS M", $event->start); ?></span>
         <h4>
           <a href="<?php echo $listPage."#walk_".$event->id?>" class="eventinfopopup" rel="walk_<?php echo $event->id; ?>"><?php echo $event->name; ?></a><span class="rating">&nbsp;(<?php echo $event->distanceGrade.$event->difficultyGrade;?>)</span>

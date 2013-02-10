@@ -460,12 +460,12 @@ div.slideshow {
     color:red;
 }
 
-.box li.altered {
+.box li.altered, .box li.cancelled {
     border:1px solid red;
     position:relative;
 }
 
-.altered:after {
+.altered:after, .box .cancelled:after {
 	font-size:0.75em;
 	font-style:italic;
 	color:red;
@@ -473,6 +473,13 @@ div.slideshow {
 
 .box li.altered:after {
 	content:"altered";
+	position:absolute;
+	top:1px;
+	right:2px;
+}
+
+.box li.cancelled:after {
+	content:"cancelled";
 	position:absolute;
 	top:1px;
 	right:2px;
