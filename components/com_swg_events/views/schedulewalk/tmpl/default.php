@@ -17,11 +17,11 @@ if ($this->showForm): ?>
 		<input type="hidden" name="jform[childFriendly]" value="0">
 		<input type="hidden" name="jform[speedy]" value="0">
 		<input type="hidden" name="jform[challenge]" value="0">
-		<input type="hidden" name="jform[alterations[details]]" value="0">
-		<input type="hidden" name="jform[alterations[cancelled]]" value="0">
-		<input type="hidden" name="jform[alterations[placeTime]]" value="0">
-		<input type="hidden" name="jform[alterations[organiser]]" value="0">
-		<input type="hidden" name="jform[alterations[date]]" value="0">
+		<input type="hidden" name="jform[alterations_details]" value="0">
+		<input type="hidden" name="jform[alterations_cancelled]" value="0">
+		<input type="hidden" name="jform[alterations_placeTime]" value="0">
+		<input type="hidden" name="jform[alterations_organiser]" value="0">
+		<input type="hidden" name="jform[alterations_date]" value="0">
 		
 		<?php echo JHtml::_('form.token'); echo $this->form->getInput('id'); ?>
 		<?php foreach ($this->form->getFieldsets() as $fieldset): ?>

@@ -244,9 +244,9 @@ public function setLastModified($d) {
 public function incrementVersion()
 {
 	$this->version++;
+	$this->setLastModified(time());
 }
 	
-
 public function setDetails($d) {
 	$this->details = (bool)$d; 
 }

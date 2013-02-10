@@ -67,6 +67,14 @@ class SWG_EventsModelScheduleWalk extends JModelForm
 		// Date & time
 		$this->wi->start = strtotime($formData['date']." ".$formData['meetTime']);
 		
+		// Alterations
+		$this->wi->alterations->incrementVersion();
+		$this->wi->alterations->setDetails($formData['alterations_details']);
+		$this->wi->alterations->setCancelled($formData['alterations_cancelled']);
+		$this->wi->alterations->setPlaceTime($formData['alterations_placeTime']);
+		$this->wi->alterations->setOrganiser($formData['alterations_organiser']);
+		$this->wi->alterations->setDate($formData['alterations_date']);
+		
 		if ($this->wi->isValid())
 		{
 			$this->wi->save();

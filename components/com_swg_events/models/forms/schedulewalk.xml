@@ -56,11 +56,11 @@
 		</fieldset>
 		
 		<fieldset name="alterations" label="Alterations">
-			<field name="alterations[details]" type="checkbox" label="Details altered" value="1" default="0" />
-			<field name="alterations[cancelled]" type="checkbox" label="Cancelled" value="1" default="0" />
-			<field name="alterations[placeTime]" type="checkbox" label="Meeting place/time altered" value="1" default="0" />
-			<field name="alterations[organiser]" type="checkbox" label="Leader details altered" value="1" default="0" />
-			<field name="alterations[date]" type="checkbox" label="Date altered" value="1" default="0" />
+			<field name="alterations_details" type="checkbox" label="Details altered" value="1" default="0" />
+			<field name="alterations_cancelled" type="checkbox" label="Cancelled" value="1" default="0" />
+			<field name="alterations_placeTime" type="checkbox" label="Meeting place/time altered" value="1" default="0" />
+			<field name="alterations_organiser" type="checkbox" label="Leader details altered" value="1" default="0" />
+			<field name="alterations_date" type="checkbox" label="Date altered" value="1" default="0" />
 		</fieldset>
 		
 	</form>
