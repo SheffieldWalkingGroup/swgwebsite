@@ -485,7 +485,7 @@ var Walkable = new Class({
 		};
 			
 		var route = new Route(this);
-		route.load(this.class.toLowerCase(),this.id,this);
+		route.load(this['class'].toLowerCase(),this.id,this);
 	}
 	
 })
