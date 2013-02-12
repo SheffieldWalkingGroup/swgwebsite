@@ -189,11 +189,11 @@ public function toDatabase(JDatabaseQuery &$query)
 			'meetTime' 		=> strftime("%H:%M", $this->start),
 			'meetdetails'	=> $this->__get("meetPoint")->extra,
 			
-			'altereddetails'=> $this->alterations->details,
-			'alteredmeetpoint'=>$this->alterations->placeTime,
-			'alteredleader'	=> $this->alterations->organiser,
-			'altereddate'	=> $this->alterations->date,
-			'cancelled'		=> $this->alterations->cancelled,
+			'alterations_details'=> $this->alterations->details,
+			'alterations_date'=>$this->alterations->placeTime,
+			'alterations_organiser'	=> $this->alterations->organiser,
+			'alterations_placeTime'	=> $this->alterations->date,
+			'alterations_cancelled'		=> $this->alterations->cancelled,
 			
 		);
 		
