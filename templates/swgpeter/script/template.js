@@ -23,4 +23,12 @@ var setupRatingTips = function() {
     });
 }
 
+var hasLocalStorage = function() {
+	try {
+		return 'localStorage' in window && window['localStorage'] !== null;
+	} catch(e){
+		return false;
+	}
+}
+
 window.addEvent('domready', setupRatingTips);
