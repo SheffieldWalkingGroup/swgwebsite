@@ -13,7 +13,14 @@ if ($this->showAnyAddLinks()):?>
 <? endif;
 foreach ($this->events as $event):?>
   <div class="event published" id="<?php echo $event->getEventType();?>_<?php echo $event->id?>">
-  <?php if ($event->alterations->cancelled): ?><p class="cancelled-message">Cancelled</p><?php endif; ?>
+	<?php if ($event->alterations->cancelled): ?>
+		<p class="cancelled-message">Cancelled</p>
+		<?php if ($this->showEditLinks($event)): // Cancelled message blocks all normal links - this appears above it ?>
+			<p class="edit-cancelled">
+				<a href="<?php echo $this->editURL($event);?>">Edit <?php echo strtolower($event->type);?></a>
+			</p>
+		<?php endif;?>
+	<?php endif; ?>
     <div class="content <?php echo $event->getEventType(); if ($event instanceof WalkInstance) echo " walk".strtolower($event->getWalkDay()); if ($event->alterations->cancelled) echo " cancelled"; if (!$event->okToPublish) echo " unpublished";?>">
       <div class="eventheader">
         <span class="date<?php if ($event->alterations->date) echo " altered\" title=\"Date altered"; ?>">
@@ -169,23 +176,25 @@ foreach ($this->events as $event):?>
 				<span>Payment due:</span> <?php echo date("l jS F".($this->notThisYear($event->paymentDue)?" Y":""),$event->paymentDue); ?>
 			</p>
 			<?php endif; ?>
-			<div class="controls">
-			<?php if ($event->hasMap()): ?>
-				<p>
-					<a href="#" rel="toggle-map" title="Show a map of this <?php echo strtolower($event->type);?>">Show map</a>
-				</p>
-				<?php if ($event instanceof WalkInstance && $event->canDownloadRoute()): ?>
+			<?php if (!$event->alterations->cancelled): // Can't click links when cancelled ?>
+				<div class="controls">
+				<?php if ($event->hasMap()): ?>
 					<p>
-						<a href="/api/route?walkinstanceid=<?php echo $event->id;?>&amp;format=gpx" title="Download this walk in GPX format for a computer or GPS device">Download route</a>
+						<a href="#" rel="toggle-map" title="Show a map of this <?php echo strtolower($event->type);?>">Show map</a>
 					</p>
+					<?php if ($event instanceof WalkInstance && $event->canDownloadRoute()): ?>
+						<p>
+							<a href="/api/route?walkinstanceid=<?php echo $event->id;?>&amp;format=gpx" title="Download this walk in GPX format for a computer or GPS device">Download route</a>
+						</p>
+					<?php endif; ?>
 				<?php endif; ?>
-            <?php endif; ?>
-            <?php if ($this->showEditLinks($event)):?>
-				<p>
-					<a href="<?php echo $this->editURL($event);?>">Edit <?php echo strtolower($event->type);?></a>
-				</p>
-			<?php endif;?>
-			</div>
+				<?php if ($this->showEditLinks($event)):?>
+					<p>
+						<a href="<?php echo $this->editURL($event);?>">Edit <?php echo strtolower($event->type);?></a>
+					</p>
+				<?php endif;?>
+				</div>
+			<?php endif; ?>
           
         </div>
         <div style="clear:right;">&nbsp;</div>

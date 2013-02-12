@@ -787,6 +787,14 @@ div.slideshow {
     -o-transform: rotate(-10deg);
 }
 
+.edit-cancelled {
+	font-size:0.8em;
+	position:absolute;
+	left:77px;
+	bottom:20px;
+	z-index:7;
+}
+
 .eventheader {
     border-bottom:1px solid #555;
     font-size:16px;
