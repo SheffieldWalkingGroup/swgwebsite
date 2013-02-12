@@ -310,7 +310,7 @@ function setupHighlighting()
 
 // TODO: Dynamically generate the popup - only create it for JS peeps
 window.addEvent('domready', registerPopupLinks);
-if (localStorage)
+if (hasLocalStorage())
 {
 	window.addEvent('domready', setupHighlighting);
 }

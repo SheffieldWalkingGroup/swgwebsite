@@ -99,7 +99,7 @@ var EventWrapper = new Class({
 		this.mapContainer.adopt(this.mapElement);
 		
 		// Set up the highlighting controls
-		if (localStorage)
+		if (hasLocalStorage())
 		{
 			var highlightWrapper = new Element("p");
 			this.highlightLink = new Element("a",{
@@ -249,7 +249,7 @@ var events = new Array();
 function registerMapLinks()
 {
 	// Load which events have been highlighted
-	if (localStorage)
+	if (hasLocalStorage())
 	{
 		if (localStorage.highlightedEvents)
 			highlightedEvents = JSON.parse(localStorage.highlightedEvents);
