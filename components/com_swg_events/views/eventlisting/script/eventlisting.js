@@ -108,7 +108,9 @@ var EventWrapper = new Class({
 				"title":"Highlight this "+this.eventType.toLowerCase()+" on your computer"
 			});
 			highlightWrapper.adopt(this.highlightLink);
-			wrapper.getElements('[class="controls"]')[0].adopt(highlightWrapper);
+			var possibleControls = wrapper.getElements('[class="controls"]');
+			if (possibleControls.length > 0)
+				possibleControls[0].adopt(highlightWrapper);
 			this.highlightLink.addEvent('click',function(event)
 			{
 				event.stop();
