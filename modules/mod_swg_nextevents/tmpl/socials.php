@@ -1,3 +1,4 @@
+<?php if (!empty($module->title)) echo "<h3><a href='".$listPage."'>".$module->title."</a></h3>" ?>
 <div class="events box socials">
   <ul>
     <?php foreach ($events as $event) {?>

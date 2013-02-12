@@ -400,6 +400,11 @@ div.slideshow {
 	margin-bottom:0;
 }
 
+.boxes .box h3 a {
+	color:#000;
+	font-size:18px;
+}
+
 .boxes .box .events ul {
 	margin:0;
 	padding:0;
