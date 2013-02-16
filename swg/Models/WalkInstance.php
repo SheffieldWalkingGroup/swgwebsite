@@ -309,14 +309,18 @@ public function __set($name, $value)
 		// More specific processing
 		case "distanceGrade":
 			$value = strtoupper($value);
-			if ($value == "A" || $value == "B" || $value == "C")
+			if (empty($value))
+				return;
+			else if ($value == "A" || $value == "B" || $value == "C")
 				$this->$name = $value;
 			else
 				throw new UnexpectedValueException("Distance grade must be A, B or C");
 			break;
 		case "difficultyGrade":
 			$value = (int)$value;
-			if ($value == 1 || $value == 2 || $value == 3)
+			if (empty($value))
+				return;
+			else if ($value == 1 || $value == 2 || $value == 3)
 				$this->$name = $value;
 			else
 				throw new UnexpectedValueException("Difficulty grade must be 1, 2 or 3");
@@ -330,7 +334,7 @@ public function __set($name, $value)
 				$this->distanceGrade = $this->getDistanceGrade($value);
 			}
 			else
-			throw new UnexpectedValueException("Distance must be positive"); // TODO: Validate >0 when saving
+				throw new UnexpectedValueException("Distance must be positive"); // TODO: Validate >0 when saving
 			break;
 			
 		// Grid references - start with two letters, then an even number of digits - at least 6
