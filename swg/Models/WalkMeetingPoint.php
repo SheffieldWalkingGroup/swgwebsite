@@ -84,4 +84,9 @@ public function __get($name)
 {
 	return $this->$name; // TODO: What params should be exposed?
 }
+
+public function setExtra($value)
+{
+	$this->extra = $value;
+}
 }

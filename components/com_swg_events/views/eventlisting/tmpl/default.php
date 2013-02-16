@@ -83,12 +83,12 @@ foreach ($this->events as $event):?>
 					echo "Meet at ".strftime("%H:%M", $event->meetPoint->meetTime)." at ";
 					if ($event->meetPoint->location)
 					{
-					echo "<a href='http://www.streetmap.com/loc/N{$event->meetPoint->location->lat},E{$event->meetPoint->location->lng}' rel='map-transport' target='_blank'>";
+						echo "<a href='http://www.streetmap.com/loc/N{$event->meetPoint->location->lat},E{$event->meetPoint->location->lng}' rel='map-transport' target='_blank'>";
 					}
 					echo $event->meetPoint->longDesc;
 					if ($event->meetPoint->location)
 					{
-					echo "</a>";
+						echo "</a>";
 					}
 					echo ". ";
 				}

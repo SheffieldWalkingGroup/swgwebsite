@@ -185,7 +185,6 @@ public function save($incrementVersion = true) {
 	$query->where($idField." = ".(int)$this->id);
 	$query->update($table);
 	}
-// echo $query;
 	$db->setQuery($query);
 	$db->query();
 	

@@ -75,6 +75,7 @@ public $dbmappings = array(
 	'backmarkerId'	=> 'backmarkerid',
 	'backmarkerName'=> 'backmarkername',
 	'meetPointId'	=> 'meetplace',
+	'meetPlaceTime' => 'meetplacetime',
 	
 	'okToPublish'	=> 'readytopublish',
 	'routeVisibility'=> 'routevisibility'
@@ -137,6 +138,11 @@ public function toDatabase(JDatabaseQuery &$query)
 		$query->set("meetplace = ". (int)$this->meetPoint->id);
 		$query->set("meetplacetime = '". $query->escape($this->meetPoint->extra)."'");
 	}
+	else if (!empty($this->meetPointId))
+	{
+		$query->set("meetplace = ". (int)$this->meetPointId);
+		$query->set("meetplacetime = '". $query->escape($this->meetPlaceTime)."'");
+	}
 	
 	if (!empty($this->leaderId))
 		$query->set("leaderid = ". (int)$this->leaderId);
@@ -187,7 +193,7 @@ public function toDatabase(JDatabaseQuery &$query)
 			'backmarkername'=> $this->backmarkerName,
 			'meetPointId'	=> $this->meetPointId,
 			'meetTime' 		=> strftime("%H:%M", $this->start),
-			'meetdetails'	=> $this->__get("meetPoint")->extra,
+			'meetPlaceTime'	=> $this->__get("meetPoint")->extra,
 			
 			'alterations_details'=> $this->alterations->details,
 			'alterations_date'=>$this->alterations->placeTime,
@@ -411,6 +417,11 @@ public function __set($name, $value)
 			break;
 		case "walkid":
 			$this->walkid = (int)$value;
+			break;
+		case "meetPlaceTime":
+			$this->meetPlaceTime = $value;
+			if (isset($this->meetPoint))
+				$this->meetPoint->setExtra($value);
 			break;
 			
 		// Checks TODO 
