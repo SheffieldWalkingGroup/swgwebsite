@@ -70,6 +70,19 @@ class SWG_EventsModelAddEditWeekend extends JModelForm
 	if ($this->weekend->isValid())
 	{
 		$this->weekend->save();
+		
+		// Redirect to the list page
+		$itemid = JRequest::getInt('returnPage');
+		if (empty($itemid))
+			return false;
+		$item = JFactory::getApplication()->getMenu()->getItem($itemid);
+		$link = new JURI("/".$item->route);
+		
+		// Jump to the event?
+		if (JRequest::getBool('jumpToEvent'))
+			$link->setFragment("weekend_".$this->weekend->id);
+		
+		JFactory::getApplication()->redirect($link, "Weekend saved");
 	}
 	
   }
