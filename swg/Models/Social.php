@@ -106,7 +106,7 @@
 			'description'	=> $this->description,
 			'okToPublish'	=> $this->okToPublish,
 			
-			'booking'		=> $this->bookingsInfo,
+			'bookingsInfo'	=> $this->bookingsInfo,
 			'shownormal'	=> (int)$this->showNormal,
 			'shownewmember'	=> (int)$this->showNewMember,
 			
