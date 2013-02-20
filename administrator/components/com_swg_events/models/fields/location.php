@@ -54,16 +54,28 @@ window.addEvent('domready', function()
 	
 	var markerLayer = map.map.getLayersByName("Locations")[0];
 	
+	var fieldLatitude = document.getElementById("{$this->id}_lat");
+	var fieldLongitude = document.getElementById("{$this->id}_lng");
+	
 	// Set up the click handlers
 	map.addClickHandler(function(e, location) {
 		// Set the location text fields
-		document.getElementById("{$this->id}_lat").value = location.lat;
-		document.getElementById("{$this->id}_lng").value = location.lon;
+		fieldLatitude.value = location.lat;
+		fieldLongitude.value = location.lon;
 		
 		// Put the marker here
 		loc = new OpenLayers.LonLat(location.lon,location.lat).transform(new OpenLayers.Projection("EPSG:4326"), map.map.getProjectionObject());
 		
 		marker = new OpenLayers.Marker(loc);
+		
+		// Add event to the marker, allowing it to be removed
+		// TODO: Could implement dragging too
+		marker.events.register('click', marker, function(e) {
+			fieldLatitude.value = "";
+			fieldLongitude.value = "";
+			markerLayer.clearMarkers();
+			OpenLayers.Event.stop(e);
+		});
 		markerLayer.clearMarkers();
 		markerLayer.addMarker(marker);
 	});
