@@ -147,8 +147,10 @@ public function save($incrementVersion = true) {
 	
 	// Handle versioning & last modified
 	if ($incrementVersion)
-	$this->alterations->incrementVersion();
-	$this->alterations->setLastModified(time());
+	{
+		$this->alterations->incrementVersion();
+		$this->alterations->setLastModified(time());
+	}
 	
 	// Commit everything as one transaction
 	$db->transactionStart();
@@ -159,18 +161,18 @@ public function save($incrementVersion = true) {
 	// What table?
 	if ($this instanceof WalkInstance)
 	{
-	$table = "walkprogrammewalks";
-	$idField = "SequenceID";
+		$table = "walkprogrammewalks";
+		$idField = "SequenceID";
 	}
 	else if ($this instanceof Social)
 	{
-	$table = "socialsdetails";
-	$idField = "SequenceID";
+		$table = "socialsdetails";
+		$idField = "SequenceID";
 	}
 	else if ($this instanceof Weekend)
 	{
-	$table = "weekendsaway";
-	$idField = "ID";
+		$table = "weekendsaway";
+		$idField = "ID";
 	}
 	else
 	throw new Exception("Don't know how to save this");
@@ -178,20 +180,20 @@ public function save($incrementVersion = true) {
 	// Update or insert?
 	if (!isset($this->id))
 	{
-	$query->insert($table);
+		$query->insert($table);
 	}
 	else 
 	{
-	$query->where($idField." = ".(int)$this->id);
-	$query->update($table);
+		$query->where($idField." = ".(int)$this->id);
+		$query->update($table);
 	}
 	$db->setQuery($query);
 	$db->query();
 	
 	if (!isset($this->id))
 	{
-	// Get the ID from the database
-	$this->id = $db->insertid();
+		// Get the ID from the database
+		$this->id = $db->insertid();
 	}
 	
 	// TODO: Handle failure

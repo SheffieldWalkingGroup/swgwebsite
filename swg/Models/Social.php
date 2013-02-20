@@ -48,11 +48,8 @@
 		
 		$this->start = strtotime($dbArr['on_date']." ".$dbArr['starttime']);
 		
-		// TODO: Shouldn't make up an end time here - do that in the UI if/where needed
 		if (!empty($dbArr['endtime']))
 			$this->end = strtotime($dbArr['on_date']." ".$dbArr['endtime']);
-		else
-			$this->end = $this->start + 120*60;
 		
 		if (!empty($dbArr['newmemberstart']))
 			$this->newMemberStart = strtotime($dbArr['on_date']." ".$dbArr['newmemberstart']);
@@ -60,39 +57,55 @@
 			$this->newMemberEnd = strtotime($dbArr['on_date']." ".$dbArr['newmemberend']);
 		
 		// If end is the next day...
-		if ($this->end < $this->start)
+		if (!empty($this->end) && $this->end < $this->start)
 		{
-		$this->end += 86400;
+			$this->end += 86400;
 		}
 		
 		if (!empty($dbArr['latitude']) && !empty($dbArr['longitude']))
-		$this->latLng = new LatLng($dbArr['latitude'], $dbArr['longitude']);
+			$this->latLng = new LatLng($dbArr['latitude'], $dbArr['longitude']);
+		else if ($dbArr['latitude'] == "" && $dbArr['longitude'] == "")
+			$this->latLng = null;
 		
 		$this->alterations->setVersion($dbArr['version']);
 		$this->alterations->setLastModified(strtotime($dbArr['lastmodified']));
+		
 	}
 
 	public function toDatabase(JDatabaseQuery &$query)
 	{
 		$query->set("on_date = '".$query->escape(strftime("%Y-%m-%d",$this->start))."'");
-		$query->set("starttime = '".$query->escape(strftime("%H:%M",$this->start))."'");
+		if (date("Hi",$this->start) != 0)
+			$query->set("starttime = '".$query->escape(strftime("%H:%M",$this->start))."'");
+		else
+			$query->set("starttime = NULL");
 		
 		if (!empty($this->end))
 			$query->set("endtime = '".$query->escape(strftime("%H:%M", $this->end))."'");
+		else
+			$query->set("endtime = NULL");
 			
 		if (!empty($this->newMemberStart))
-		$query->set("newmemberstart = '".$query->escape(strftime("%H:%M",$this->newMemberStart))."'");
+			$query->set("newmemberstart = '".$query->escape(strftime("%H:%M",$this->newMemberStart))."'");
+		else
+			$query->set("newmemberstart = NULL");
 		
 		if (!empty($this->newMemberEnd))
 			$query->set("newmemberend = '".$query->escape(strftime("%H:%M", $this->newMemberEnd))."'");
+		else
+			$query->set("newmemberend = NULL");
 		
 		$query->set("version = ".$this->alterations->version);
 		$query->set("lastmodified = '".$query->escape($this->alterations->lastModified)."'");
-		
 		if (!empty($this->latLng))
 		{
 			$query->set("latitude = ".$this->latLng->lat);
 			$query->set("longitude = ".$this->latLng->lng);
+		}
+		else
+		{
+			$query->set("latitude = NULL");
+			$query->set("longitude = NULL");
 		}
 		
 		parent::toDatabase($query);
@@ -119,7 +132,8 @@
 		if (!empty($this->start))
 		{
 			$values['date']		= strftime("%Y-%m-%d", $this->start);
-			$values['starttime']= strftime("%H:%M", $this->start);
+			if (date("Hi",$this->start) != 0)
+				$values['starttime']= strftime("%H:%M", $this->start);
 		}
 		if (!empty($this->end))
 			$values['endtime']	= strftime("%H:%M", $this->end);
@@ -181,6 +195,13 @@
 			case "newMemberEnd":
 				if (!empty($value) && is_numeric($value))
 					$this->$name = $value;
+				else if ($value == "")
+					$this->$name = null;
+				else
+				{
+					var_dump($name);
+					var_dump($value);
+					}
 				break;
 			case "latLng":
 				if ($value instanceof LatLng)
@@ -188,10 +209,21 @@
 				else if (is_array($value))
 				{
 					// Convert to LatLng
-					if (isset($value['lat']) && is_numeric($value['lat']) && isset($value['lng']) && is_numeric($value['lng']))
+					if (isset($value['lat']) && isset($value['lng']))
 					{
-						$this->$name = new LatLng($value['lat'], $value['lng']);
+						if (is_numeric($value['lat']) && isset($value['lng']) && is_numeric($value['lng']))
+						{
+							$this->$name = new LatLng($value['lat'], $value['lng']);
+						}
+						else if ($value['lat'] == "" && $value['lng'] == "")
+						{
+							$this->$name = null;
+						}
 					}
+				}
+				else if ($value == null)
+				{
+					$this->$name = null;
 				}
 				break;
 			case "postcode":

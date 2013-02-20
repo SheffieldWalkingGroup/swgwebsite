@@ -37,7 +37,6 @@ class SWG_EventsModelAddEditSocial extends JModelForm
    */
   public function updateSocial(array $formData)
   {
-	
     $this->loadSocial($formData['id']);
     // Update all basic fields
     // Fields that can't be saved are just ignored
@@ -67,6 +66,8 @@ class SWG_EventsModelAddEditSocial extends JModelForm
 			$this->social->start = strtotime($formData['date']);
 		if (!empty($formData['endtime']))
 			$this->social->end = strtotime($formData['date']." ".$formData['endtime']);
+		else if ($formData['endtime'] == "")
+			$this->social->end = null;
 	}
 	
 	if (!empty($formData['newMemberStart']))
