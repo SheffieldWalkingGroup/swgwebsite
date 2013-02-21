@@ -42,7 +42,10 @@ function __construct($dbArr = null) {
 		
 		// Set a default display name
 		// TODO: Could scan for multiple surnames and include all of them
-		$this->displayName = ucwords($this->forename)." ".strtoupper(substr($this->surname,0,1));
+		if ($this->id == self::TBC)
+			$this->displayName = "TBC";
+		else
+			$this->displayName = ucwords($this->forename)." ".strtoupper(substr($this->surname,0,1));
 		$this->hasDisplayName = false;
 	}
 }
