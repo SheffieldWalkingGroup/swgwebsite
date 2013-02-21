@@ -210,10 +210,13 @@ function displayEvent(event, container, newMembers) {
 				"class":"bookingopen",
 				"html":"<span>Bookings open:</span> "+event.bookingsOpen
 			});
-			var contact = new Element("p",{
-				"class":event.type.toLowerCase()+"booking",
-				"html":"<span>Contact:</span> "+event.contact
-			});
+			if (event.contact)
+			{
+				var contact = new Element("p",{
+					"class":event.type.toLowerCase()+"booking",
+					"html":"<span>Contact:</span> "+event.contact
+				});
+			}
 			var paymentDue = new Element("p",{
 				"class":"paymentdue",
 				"html":"<span>Payment due:</span> "+timestampToDate(event.paymentDue)
@@ -223,13 +226,17 @@ function displayEvent(event, container, newMembers) {
 			eventInfo.adopt(moreInfo,places,bookingsOpen,contact,paymentDue);
 			break;
 		case "social":
-			var contact = new Element("p",{
-				"class":event.type.toLowerCase()+"booking",
-				"html":"<span>Contact:</span> "+event.bookingsInfo
-			});
+			if (event.bookingsInfo)
+			{
+				var contact = new Element("p",{
+					"class":event.type.toLowerCase()+"booking",
+					"html":"<span>Contact:</span> "+event.bookingsInfo
+				});
+			}
 			if (event.alterations.organiser)
 				contact.addClass("altered");
-			eventInfo.adopt(contact);
+			if (contact != undefined)
+				eventInfo.adopt(contact);
 			
 			// Get the start and end time
 			// For new members, take the new member times if they exist and the normal times if not.
