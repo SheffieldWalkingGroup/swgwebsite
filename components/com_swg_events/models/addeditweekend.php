@@ -59,13 +59,13 @@ class SWG_EventsModelAddEditWeekend extends JModelForm
     
     // Date fields need to be converted
 	if (!empty($formData['startdate']))
-	{
 		$this->weekend->start = strtotime($formData['startdate']);
-	}
+	else
+		$this->weekend->start = null;
 	if (!empty($formData['enddate']))
-	{
 		$this->weekend->endDate = strtotime($formData['enddate']);
-	}
+	else
+		$this->weekend->endDate = null;
 	
 	if ($this->weekend->isValid())
 	{

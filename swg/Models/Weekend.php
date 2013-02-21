@@ -70,6 +70,11 @@ public function toDatabase(JDatabaseQuery &$query)
 		$query->set("latitude = ".$this->latLng->lat);
 		$query->set("longitude = ".$this->latLng->lng);
 	}
+	else
+	{
+		$query->set("latitude = NULL");
+		$query->set("longitude = NULL");
+	}
 }
 
 	public function valuesToForm()
@@ -152,10 +157,17 @@ public function __get($name)
 						$this->paymentDue -= 86400;
 					}
 				}
+				else
+				{
+					$this->$name = null;
+					$this->paymentDue = null;
+				}
 				break;
 			case "endDate":
 				if (!empty($value))
 					$this->$name = $value;
+				else
+					$this->$name = null;
 				break;
 			case "latLng":
 				if ($value instanceof LatLng)
@@ -163,9 +175,16 @@ public function __get($name)
 				else if (is_array($value))
 				{
 					// Convert to LatLng
-					if (isset($value['lat']) && is_numeric($value['lat']) && isset($value['lng']) && is_numeric($value['lng']))
+					if (isset($value['lat']) && isset($value['lng']))
 					{
-						$this->$name = new LatLng($value['lat'], $value['lng']);
+						if (is_numeric($value['lat']) && is_numeric($value['lng']))
+						{
+							$this->$name = new LatLng($value['lat'], $value['lng']);
+						}
+						else
+						{
+							$this->$name = null;
+						}
 					}
 				}
 				break;

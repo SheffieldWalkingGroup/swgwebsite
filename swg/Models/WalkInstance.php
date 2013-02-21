@@ -143,16 +143,33 @@ public function toDatabase(JDatabaseQuery &$query)
 		$query->set("meetplace = ". (int)$this->meetPointId);
 		$query->set("meetplacetime = '". $query->escape($this->meetPlaceTime)."'");
 	}
+	else
+	{
+		$query->set("meetplace = 0");
+		$query->set("meetplacetime = '". $query->escape($this->meetPlaceTime)."'");
+	}
 	
 	if (!empty($this->leaderId))
 		$query->set("leaderid = ". (int)$this->leaderId);
+	else
+		$query->set("leaderid = ".Leader::TBC); // TBC
 	if (isset($this->leader) && $this->leader->hasDisplayName)
 		$query->set("leadername = '". $query->escape($this->leader->displayName)."'");
+	elseif (isset($this->leaderName))
+		$query->set("leadername = '".$query->escape($this->leaderName)."'");
+	else
+		$query->set("leadername = ''");
 		
 	if (!empty($this->backmarkerId))
 		$query->set("backmarkerid = ". (int)$this->backmarkerId);
+	else
+		$query->set("backmarkerid = ".Leader::TBC); // TBC
 	if (isset($this->backmarker) && $this->backmarker->hasDisplayName)
 		$query->set("backmarkername = '". $query->escape($this->backmarker->displayName)."'");
+	elseif (isset($this->backmarkerName))
+		$query->set("backmarkername = '".$query->escape($this->backmarkerName)."'");
+	else
+		$query->set("backmarkername = ''");
 	
 	$query->set('version = '. (int)$this->alterations->version);
 	$query->set('lastmodified = '. (int)$this->alterations->lastModified);
@@ -310,7 +327,7 @@ public function __set($name, $value)
 		case "distanceGrade":
 			$value = strtoupper($value);
 			if (empty($value))
-				return;
+				$this->$name = null;
 			else if ($value == "A" || $value == "B" || $value == "C")
 				$this->$name = $value;
 			else
@@ -319,7 +336,7 @@ public function __set($name, $value)
 		case "difficultyGrade":
 			$value = (int)$value;
 			if (empty($value))
-				return;
+				$this->$name = null;
 			else if ($value == 1 || $value == 2 || $value == 3)
 				$this->$name = $value;
 			else
@@ -342,8 +359,14 @@ public function __set($name, $value)
 		case "endGridRef":
 			$value = strtoupper(str_replace(" ","",$value));
 			if (empty($value))
-				break;
-			if (preg_match("/[A-Z][A-Z]([0-9][0-9]){3,}/", $value))
+			{
+				$this->$name = null;
+				if ($name == "startGridRef")
+					$this->startLatLng = null;
+				else
+					$this->endLatLng = null;
+			}
+			else if (preg_match("/[A-Z][A-Z]([0-9][0-9]){3,}/", $value))
 			{
 				$this->$name = $value;
 				// Also set the lat/lng
@@ -366,7 +389,8 @@ public function __set($name, $value)
 		case "leaderId":
 			if (empty($value))
 			{
-				break;
+				$this->leader = null;
+				$this->leaderId = null;
 			}
 			else if ($value instanceof Leader)
 			{
@@ -385,6 +409,11 @@ public function __set($name, $value)
 			break;
 		case "backmarker":
 		case "backmarkerId":
+			if (empty($value))
+			{
+				$this->backmarker = null;
+				$this->backmarkerId = null;
+			}
 			if ($value instanceof Leader)
 			{
 				$this->backmarker = $value;
@@ -403,7 +432,10 @@ public function __set($name, $value)
 		case "meetPoint":
 		case "meetPointId":
 			if (empty($value))
-				break;
+			{
+				$this->meetPoint = null;
+				$this->meetPointId = null;
+			}
 			elseif ($value instanceof WalkMeetingPoint)
 			{
 				$this->meetPoint = $value;
@@ -417,6 +449,10 @@ public function __set($name, $value)
 			else
 			{
 				throw new UnexpectedValueException("Meetpoint or MeetPointID must be a WalkMeetingPoint or an integer");
+			}
+			if (isset($this->meetPoint) && !empty($this->meetPlaceTime))
+			{
+				$this->meetPoint->setExtra($this->meetPlaceTime);
 			}
 			break;
 		case "walkid":

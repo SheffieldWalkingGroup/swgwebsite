@@ -19,6 +19,11 @@ protected $publishInOtherSites;
 private $joomlaUserID;
 
 private $hasDisplayName = false;
+	
+	/**
+	 * The ID of the placeholder 'TBC' leader
+	 */
+	const TBC = 46;
 
 function __construct($dbArr = null) {
 	if (isset($dbArr))
