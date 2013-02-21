@@ -226,6 +226,7 @@ function showMap(popup) {
 				break;
 			case "Social":
 				map.addSocial(currentEvent.id);
+				map.setDefaultMap("street");
 				break;
 			case "Weekend":
 				map.addWeekend(currentEvent.id);
