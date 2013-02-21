@@ -48,7 +48,8 @@ public function fromDatabase(array $dbArr)
 	$this->alterations->setVersion($dbArr['version']);
 	$this->alterations->setLastModified(strtotime($dbArr['lastmodified']));
 	
-	$this->latLng = new LatLng($dbArr['latitude'], $dbArr['longitude']);
+	if (!empty($dbArr['latitude']) && !empty($dbArr['longitude']))
+		$this->latLng = new LatLng($dbArr['latitude'], $dbArr['longitude']);
 }
 
 public function toDatabase(JDatabaseQuery &$query)

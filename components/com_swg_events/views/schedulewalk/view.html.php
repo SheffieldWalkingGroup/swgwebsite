@@ -22,6 +22,15 @@ class SWG_EventsViewScheduleWalk extends JView
 		$this->form	= $this->get('Form');
 		$this->wi	= $this->get('WalkInstance');
 		
+		if (!empty($this->wi['id']))
+		{
+			// Set the existing leader & backmarker
+			if (!empty($this->wi['leaderid']))
+				$this->form->setValue("leader", null, $this->wi['leaderid']);
+			if (!empty($this->wi['backmarkerId']))
+				$this->form->setValue("backmarker", "leadership", $this->wi['backmarkerid']);
+		}
+		
 		// Check the current user can edit this walk (or add a new one)
 		/*if (
 			($model->editing() && !$controller->canEdit($this->social)) ||
@@ -35,18 +44,6 @@ class SWG_EventsViewScheduleWalk extends JView
 		$document =& JFactory::getDocument();
 		$document->addStyleSheet('components/com_swg_events/css/addedit.css');
 		
-		// Add form validation
-		JHTML::_('behavior.formvalidation');
-		$document->addScriptDeclaration(<<<VAL
-window.addEvent('domready', function(){
-	document.formvalidator.setHandler('submit', function (value) {
-		alert("WOO");
-	});
-});
-VAL
-);
-		
-
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) 
 		{
