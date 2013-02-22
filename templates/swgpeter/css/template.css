@@ -245,6 +245,7 @@ div.slideshow {
 .slideshow h2 {
     top:60px;
     left:50px;
+	white-space:nowrap;
 }
 
 /* On the homepage, the tagline should be right-aligned and smaller than normal */
