@@ -307,9 +307,9 @@
 		}
 		$query->where($where);
 		if ($reverse)
-			$query->order(array("on_date DESC", "title ASC"));
+			$query->order(array("on_date DESC", "starttime DESC", "title ASC"));
 		else
-			$query->order(array("on_date ASC", "title ASC"));
+			$query->order(array("on_date ASC", "starttime ASC", "title ASC"));
 		$db->setQuery($query, $offset, $numToGet);
 		$socialData = $db->loadAssocList();
 		
