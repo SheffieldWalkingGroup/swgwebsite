@@ -589,7 +589,7 @@ public function getWalkDay() {
 */
 public function estimateFinishTime() {
 	$finish = $this->start;
-	if (!$this->meetPoint->isAtWalkStart())
+	if (!$this->__get("meetPoint")->isAtWalkStart())
 	$finish += 3600; // Add 1 hour travelling time
 	$hoursWalking = 0.5*$this->miles;
 	return ($finish + 3600*$hoursWalking);
