@@ -8,6 +8,7 @@ AuthType Basic
 RewriteRule ^api/eventlisting /index.php?option=com_swg_events&view=eventlisting&includeWalks=1&includeSocials=1&includeWeekends=1&startDateType=2&endDateType=4&order=0 [L,QSA]
 RewriteRule ^api/walkdetails /index.php?option=com_swg_walklibrary&view=walkdetails [L,QSA]
 RewriteRule ^api/route /index.php?option=com_swg_walklibrary&view=route [L,QSA]
+RewriteRule ^api/nominatim /index.php?option=com_swg_walklibrary&view=nominatimwrapper [L,QSA]
 
 ##
 # @package		Joomla

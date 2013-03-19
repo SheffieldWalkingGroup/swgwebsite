@@ -17,22 +17,23 @@
 				<option value="30">Allow any member to download the route</option>
 			</field>
 		</fieldset>
-		<fieldset name="location">
+		<fieldset name="location" addfieldpath="/administrator/components/com_swg_events/models/fields">
 			<field
 				name="location" type="sql" label="General area" 
 				query="SELECT SequenceID, Name from walkareas" 
 				key_field="SequenceID" value_field="Name"
 			/>
-			<field name="startPlaceName" type="text" label="Start place name" />
-			<field name="startGridRef" type="text" label="Start grid reference" />
+			<field name="startPlaceName" type="PlaceName" label="Place name" />
+			<field name="startGridRef" type="text" label="Grid ref" />
 			<field name="transportByCar" type="checkbox" label="Transport by car" value="1" default="0" />
 			<field name="transportPublic" type="checkbox" label="Transport by bus/train/tram" value="1" default="0" />
 			<field name="isLinear" type="radio" label="Shape">
 				<option value="0">Circular</option>
 				<option value="1">Linear</option>
 			</field>
-			<field name="endPlaceName" type="text" label="End place name (if linear)" />
-			<field name="endGridRef" type="text" label="End grid reference (if linear)" />
+			<field name="endPlaceName" type="placename" label="Place name" />
+			<field name="endGridRef" type="text" label="Grid ref" />
+			<field name="locMap" type="Location" label="Map" gridRefField="startGridRef" locationNameField="startPlaceName" />
 		</fieldset>
 		<fieldset name="route">
 			<field name="miles" type="text" label="Estimated distance (miles)" />

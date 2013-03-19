@@ -976,6 +976,39 @@ div.slideshow {
 	margin:10px 0;
 }
 
+/* Submit walks */
+fieldset.walklocationgroup {
+	float:left;
+}
+fieldset.walklocationgroup label {
+	width:90px;
+}
+
+div.placeNameResults {
+	border:1px solid #000;
+	box-shadow:2px 2px 2px #222;
+	position:absolute;
+	padding:0;
+	background-color:#fff;
+	font-size:0.9em;
+	width:400px;
+	cursor:pointer;
+	z-index:10000;
+}
+
+div.placeNameResults p {
+	margin:0;
+	padding:5px 10px;
+}
+
+div.placeNameResults p img {
+	float:left;
+}
+
+div.placeNameResults p:hover {
+	background-color:#6b8eac;
+}
+
 /* Gallery on new members page */
 ul.sig-container {
 	clear:both;
@@ -1024,4 +1057,16 @@ p.footer {
 /* Fix - calendars appear below maps */
 div.calendar {
 	z-index:10000;
+}
+
+/* For intercepting clicks */
+div.invisibleBacking {
+	z-index:5000;
+	position:fixed;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	background-color:transparent;
+	
 }

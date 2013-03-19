@@ -1,4 +1,8 @@
 <?php
+
+require_once("SWGBaseModel.php");
+include_once(JPATH_BASE."/swg/lib/phpcoord/phpcoord-2.3.php");
+
 class Waypoint extends SWGBaseModel
 {
 	/**
@@ -32,22 +36,21 @@ class Waypoint extends SWGBaseModel
 			case "latLng":
 				if ($value instanceof LatLng)
 				{
-				$this->latLng = clone $value;
-				;
-				// Also convert to osRef
-				$value->WGS84ToOSGB36();
-				$osRef = $value->toOSRef();
-				$this->osRef =& $osRef;
+					$this->latLng = clone $value;
+					// Also convert to osRef
+					$value->WGS84ToOSGB36();
+					$osRef = $value->toOSRef();
+					$this->osRef =& $osRef;
 				}
 				break;
 			case "osRef":
 				if ($value instanceof OSRef)
 				{
-				$this->osRef = clone $value;
-				// Also convert to osRef
-				$latLng = $value->toLatLng();
-				$latLng->OSGB36ToWGS84();
-				$this->latLng =& $latLng;
+					$this->osRef = clone $value;
+					// Also convert to osRef
+					$latLng = $value->toLatLng();
+					$latLng->OSGB36ToWGS84();
+					$this->latLng =& $latLng;
 				}
 				break;
 			case "altitude":
@@ -111,7 +114,7 @@ class Waypoint extends SWGBaseModel
 		);
 
 		$curl = curl_init("http://nominatim.openstreetmap.org/reverse?".implode("&", $options));
-		curl_setopt($curl,CURLOPT_USERAGENT, "Sheffield Walking Group Leaders' area - admin contact tech@sheffieldwalkinggroup.org.uk");
+		curl_setopt($curl,CURLOPT_USERAGENT, "Sheffield Walking Group - admin contact tech@sheffieldwalkinggroup.org.uk");
 		curl_setopt($curl,CURLOPT_RETURNTRANSFER, true);
 
 		$res = curl_exec($curl);
