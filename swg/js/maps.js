@@ -5,6 +5,7 @@
  * TODO: Is event support useful?
  */
 var SWGMap = new Class({
+	
 	/**
 	 * Creates a new map in the specified container
 	 * TODO: Allow different maps?
@@ -59,18 +60,52 @@ var SWGMap = new Class({
 			loadIndicator.dispose();
 		});
 		this.map.addLayer(this.streetMap);
-
+		
+		// Set up the locations marker layer
+		// We also set up a click handler on this layer
 		this.map.addControl(new OpenLayers.Control.LayerSwitcher());
-		this.markers = new OpenLayers.Layer.Markers("Locations");
-		this.map.addLayer(this.markers); // TODO: Keep marker layer at the top
+		this.locations = new OpenLayers.Layer.Vector("Locations");
+		this.map.addLayer(this.locations);
+		
+		var selectControl = new OpenLayers.Control.SelectFeature(
+			this.locations, {
+				clickFeature: this.clickLocation,
+				onSelect: this.selectLocation,
+				onUnselect: this.unselectLocation,
+				autoActivate: true
+			}
+		);
+		this.map.addControl(selectControl);
 		
 		// Initialise other data
 		this.walks = new Array();
 		this.routes = new Array();
 		this.socials = new Array();
 		this.weekends = new Array();
-		
-
+	},
+	
+	clickLocation: function(location)
+	{
+		if (location.click != undefined)
+		{
+			location.click();
+		}
+	},
+	
+	selectLocation: function(location)
+	{
+		if (location.select != undefined)
+		{
+			location.select();
+		}
+	},
+	
+	unselectLocation: function(location)
+	{
+		if (location.unselect != undefined)
+		{
+			location.unselect();
+		}
 	},
 	
 	setDefaultMap: function(style)
@@ -192,12 +227,15 @@ var SWGMap = new Class({
 		    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()
 		);
 		this.walks[walk.id].start = start;
-		var startIcon = new OpenLayers.Icon("/images/icons/green.png",{w:8,h:8},{x:-4,y:-4});
-		var startMarker = new OpenLayers.Marker(start, startIcon);
+		
+		var startMarker = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(start.lon, start.lat));
+		var startStyle = OpenLayers.Util.applyDefaults(startStyle, OpenLayers.Feature.Vector.style['default']);
+		startStyle.fillColor = "#00ff00";
+		startMarker.style=startStyle;
 		
 		var startPopup = new OpenLayers.Popup.FramedCloud("StartPopup",
 		    start, null,
-		    "Start: "+walk.startGridRef+"<br>"+walk.startPlaceName+"<br><a href='http://www.streetmap.co.uk/loc/"+walk.startGridRef+"' target='_blank'>View on Ordnance Survey map</a>", startIcon, true
+		    "Start: "+walk.startGridRef+"<br>"+walk.startPlaceName+"<br><a href='http://www.streetmap.co.uk/loc/"+walk.startGridRef+"' target='_blank'>View on Ordnance Survey map</a>", null, true
 		);
 		// Need to centre the map before adding popups
 		// TODO: Temporary - should zoom to bounding box around start & end (or route if available)
@@ -208,10 +246,11 @@ var SWGMap = new Class({
 		
 		this.map.addPopup(startPopup);
 		  
-		startMarker.events.register('mousedown',startMarker,function(e) { 
-		    startPopup.toggle(); OpenLayers.Event.stop(e);
-		});
-		this.markers.addMarker(startMarker);
+		startMarker.click = function(e) { 
+		    startPopup.toggle();
+		};
+		
+		this.locations.addFeatures([startMarker]);
 		
 		if (walk.isLinear == 1)
 		{
@@ -219,15 +258,23 @@ var SWGMap = new Class({
 			    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()
 			);
 			this.walks[walk.id].end = end;
-			var endIcon = new OpenLayers.Icon("/images/icons/red.png",{w:8,h:8},{x:-4,y:-4});
-		    var endMarker = new OpenLayers.Marker(end, endIcon);
+			
+		    var endMarker = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(end.lon, end.lat));
+			var endStyle = OpenLayers.Util.applyDefaults(endStyle, OpenLayers.Feature.Vector.style['default']);
+			endStyle.fillColor = "#ff0000";
+			endStyle.fillOpacity = 0.6;
+			endMarker.style=endStyle;
+			
 		    var endPopup = new OpenLayers.Popup.FramedCloud("EndPopup",
 		      end, null,
-		      "End: "+walk.endGridRef+"<br>"+walk.endPlaceName+"<br><a href='http://www.streetmap.co.uk/loc/"+walk.endGridRef+"' target='_blank'>View on Ordnance Survey map</a>", endIcon, true
+		      "End: "+walk.endGridRef+"<br>"+walk.endPlaceName+"<br><a href='http://www.streetmap.co.uk/loc/"+walk.endGridRef+"' target='_blank'>View on Ordnance Survey map</a>", null, true
 		    );
 		    this.map.addPopup(endPopup);
-		    endMarker.events.register('click',endMarker,function(e) { endPopup.toggle(); OpenLayers.Event.stop(e);});
-		    this.markers.addMarker(endMarker);
+			
+			endMarker.click = function() {
+				endPopup.toggle();
+			};
+		    this.locations.addFeatures([endMarker]);
 		}
 		
 		// Get the meeting point for WalkInstances
@@ -237,18 +284,21 @@ var SWGMap = new Class({
 				    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()
 		    );
 			this.walks[walk.id].meet = meet;
-			var meetIcon = new OpenLayers.Icon("/images/icons/yellow.png",{w:8,h:8},{x:-4,y:-4});
-			var meetMarker = new OpenLayers.Marker(meet, meetIcon);
+			
+			var meetMarker = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(meet.lon, meet.lat));
 			var meetText = "Meet: "+walk.meetPoint.longDesc;
 			if (walk.meetPoint.extra != "")
 				meetText += "<br>"+walk.meetPoint.extra;
 			var meetPopup = new OpenLayers.Popup.FramedCloud("MeetPopup",
 					meet, null,
-					meetText, meetIcon, true
+					meetText, null, true
 			);
 			this.map.addPopup(meetPopup);
-			meetMarker.events.register('click',meetMarker,function(e) {meetPopup.toggle(); OpenLayers.Event.stop(e);});
-			this.markers.addMarker(meetMarker);
+			meetMarker.click = function() {
+				meetPopup.toggle();
+				
+			};
+			this.locations.addFeatures([meetMarker]);
 		}
 		this.map.setCenter(start,14);
 		
@@ -274,12 +324,11 @@ var SWGMap = new Class({
 		    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()
 		);
 		this.socials[social.id].location = location;
-		var icon = new OpenLayers.Icon("/images/icons/green.png",{w:8,h:8},{x:-4,y:-4});
-		var marker = new OpenLayers.Marker(location, icon);
+		var marker = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(location.lon, location.lat));
 		
 		var popup = new OpenLayers.Popup.FramedCloud("Popup",
 		    location, null,
-		    social.location.replace(/\n/g,"<br>"), icon, true
+		    social.location.replace(/\n/g,"<br>"), null, true
 		);
 		
 		// Need to centre the map before adding popups
@@ -287,10 +336,10 @@ var SWGMap = new Class({
 		
 		this.map.addPopup(popup);
 		  
-		marker.events.register('mousedown',marker,function(e) { 
-			popup.toggle(); OpenLayers.Event.stop(e);
-		});
-		this.markers.addMarker(marker);
+		marker.click = function() { 
+			popup.toggle();
+		};
+		this.locations.addFeatures([marker]);
 		
 		this.map.setCenter(location,15);
 		
@@ -315,12 +364,11 @@ var SWGMap = new Class({
 		    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()
 		);
 		this.weekends[weekend.id].location = location;
-		var icon = new OpenLayers.Icon("/images/icons/green.png",{w:8,h:8},{x:-4,y:-4});
-		var marker = new OpenLayers.Marker(location, icon);
+		var marker = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(location.lon, location.lat));
 		
 		var popup = new OpenLayers.Popup.FramedCloud("Popup",
 		    location, null,
-		    weekend.placeName.replace(/\n/g,"<br>"), icon, true
+		    weekend.placeName.replace(/\n/g,"<br>"), null, true
 		);
 		
 		// Need to centre the map before adding popups
@@ -328,10 +376,10 @@ var SWGMap = new Class({
 		
 		this.map.addPopup(popup);
 		  
-		marker.events.register('mousedown',marker,function(e) { 
-			popup.toggle(); OpenLayers.Event.stop(e);
-		});
-		this.markers.addMarker(marker);
+		marker.click = function(e) { 
+			popup.toggle();
+		};
+		this.locations.addFeatures([marker]);
 		
 		this.map.setCenter(location,8);
 		
@@ -406,7 +454,7 @@ var SWGMap = new Class({
 			rtLayer.addFeatures([rtFeature]);
 			
 			//Move the markers to the top layer
-			this.map.setLayerZIndex(this.markers, this.map.getNumLayers());
+			this.map.setLayerZIndex(this.locations, this.map.getNumLayers());
 		}
 	},
 	
