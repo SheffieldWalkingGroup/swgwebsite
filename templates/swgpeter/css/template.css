@@ -977,11 +977,32 @@ div.slideshow {
 }
 
 /* Submit walks */
+.olMap {
+	position:relative;
+}
+
 fieldset.walklocationgroup {
 	float:left;
 }
 fieldset.walklocationgroup label {
-	width:90px;
+	width:149px;
+}
+
+.olMap .searchpanel {
+	background-color:rgb(255,255,255);
+	background-color:rgba(255,255,255,0.9);
+	border-top:1px solid #222;
+	border-right:1px solid #222;
+	position:absolute;
+	left:0;
+	bottom:0;
+	z-index:1000;
+	border-top-right-radius:5px;
+	padding:10px;
+}
+
+.olMap .searchpanel h4 {
+	margin:0;
 }
 
 div.placeNameResults {

@@ -109,7 +109,7 @@ else if (
 }
 else
 {
-	echo "Must give a location or a search string";
+	echo "[]";
 }
 
 $mainframe =& JFactory::getApplication();

@@ -76,7 +76,7 @@ var SWGMap = new Class({
 			}
 		);
 		this.map.addControl(selectControl);
-		
+				
 		// Initialise other data
 		this.walks = new Array();
 		this.routes = new Array();

@@ -23,16 +23,16 @@
 				query="SELECT SequenceID, Name from walkareas" 
 				key_field="SequenceID" value_field="Name"
 			/>
-			<field name="startPlaceName" type="PlaceName" label="Place name" />
-			<field name="startGridRef" type="text" label="Grid ref" />
+			<field name="startPlaceName" type="text" label="Place name" />
+			<field name="startGridRef" type="text" label="Grid reference" />
 			<field name="transportByCar" type="checkbox" label="Transport by car" value="1" default="0" />
 			<field name="transportPublic" type="checkbox" label="Transport by bus/train/tram" value="1" default="0" />
 			<field name="isLinear" type="radio" label="Shape">
 				<option value="0">Circular</option>
 				<option value="1">Linear</option>
 			</field>
-			<field name="endPlaceName" type="placename" label="Place name" />
-			<field name="endGridRef" type="text" label="Grid ref" />
+			<field name="endPlaceName" type="text" label="Place name" />
+			<field name="endGridRef" type="text" label="Grid reference" />
 			<field name="locMap" type="Location" label="Map" gridRefField="startGridRef" locationNameField="startPlaceName" />
 		</fieldset>
 		<fieldset name="route">
