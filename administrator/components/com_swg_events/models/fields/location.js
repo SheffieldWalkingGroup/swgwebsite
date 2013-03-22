@@ -130,7 +130,13 @@ var JFormFieldLocation = new Class({
 		
 		// Allow markers to be dragged
 		var dragFeature = new OpenLayers.Control.DragFeature(this.markerLayer);
+		dragFeature.geometryTypes = ["OpenLayers.Geometry.Point"];
+		dragFeature.onStart = function(marker, pixelLocation) {
+			if (marker.geometry.CLASS_NAME == "OpenLayers.Geometry.LineString")
+				return false;
+		}
 		dragFeature.onComplete = function(marker, pixelLocation) {
+			
 			// Find out which marker we just moved
 			// TODO: Can we store the index on the marker somehow?
 
@@ -150,6 +156,7 @@ var JFormFieldLocation = new Class({
 			}
 			self.outputLocations();
 		};
+		
 		this.map.map.addControl(dragFeature);
 		dragFeature.activate();
 	},
@@ -186,6 +193,43 @@ var JFormFieldLocation = new Class({
 		var loc = new OpenLayers.LonLat(location.lon,location.lat).transform(new OpenLayers.Projection("EPSG:4326"), this.map.map.getProjectionObject());
 		
 		this.markers[index] = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(loc.lon, loc.lat));
+		
+		// Apply marker styles
+		var style = OpenLayers.Util.applyDefaults(null, OpenLayers.Feature.Vector.style['default']);
+		
+		
+		
+		// The first marker is green. The last marker is red.
+		if (index == 0)
+		{
+			style.fillColor = "#00ff00";
+		}
+		else if (index == this.numLocations-1)
+		{
+			style.fillColor = "#ff0000";
+			
+			// Also draw a line from the previous location
+			// TODO: We might be showing an actual route
+			var rtLine = new OpenLayers.Geometry.LineString([this.markers[index-1].geometry, this.markers[index].geometry]);
+			var rtFeature = new OpenLayers.Feature.Vector(
+				rtLine, null, {
+					strokeColor:"#FF9555",
+					strokeOpacity:1,
+					strokeWidth:3,
+					pointRadius:3,
+					pointerEvents:"visiblePainted",
+					strokeDashstyle:"dash"
+				}
+			);
+			this.markerLayer.addFeatures([rtFeature]);
+		}
+		this.markers[index].style = style;
+		
+		// The previous location will be red because it was the last marker before. Reset that.
+		if (index > 1)
+		{
+			this.markers[index-1].style = OpenLayers.Util.applyDefaults(null,OpenLayers.Feature.Vector.style['default']);
+		}
 		
 		this.outputLocations();
 	},
