@@ -151,6 +151,7 @@ var JFormFieldLocation = new Class({
 					// i gives the index of the marker and location
 					var i = marker.index;
 					var point = new OpenLayers.LonLat(marker.geometry.x, marker.geometry.y);
+				
 					var location = point.transform(
 						self.map.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326")
 					);
@@ -183,7 +184,23 @@ var JFormFieldLocation = new Class({
 		location.markerGeometry = new OpenLayers.Geometry.Point(mapPoint.lon, mapPoint.lat);
 		location.marker = new OpenLayers.Feature.Vector(location.markerGeometry);
 		location.marker.index = this.locations.length;
-		// TODO: styles
+		
+		// Apply styles. The first marker is green, the last one is red.
+		// When adding a further last marker, return the second-last one to default colours
+		if (this.locations.length == 0)
+			location.marker.attributes.type = "start";
+		else
+		{
+			// For now, locations can only be added at the end. In future, this may change.
+			location.marker.attributes.type = "end";
+			
+			// If we already had an end location, it becomes a default location when a new end is added
+			if (this.locations[this.locations.length-1].marker.attributes.type == "end")
+			{
+				this.locations[this.locations.length-1].marker.attributes.type = "default";
+			}
+		}
+		
 		this.locations.push(location);
 		
 		var featuresToAdd = [location.marker]

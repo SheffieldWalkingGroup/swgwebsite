@@ -5,6 +5,22 @@
  * TODO: Is event support useful?
  */
 var SWGMap = new Class({
+	markerStyle: new OpenLayers.StyleMap({
+		"default": {
+			fillOpacity: 1,
+			pointRadius: 6,
+			strokeColor: "#FF9555",
+			strokeWidth: 1,
+			fillColor: "#000000"
+		}
+	}),
+	markerVariants: {
+		"default":{fillColor:"#FF9555"},
+		"start": {fillColor: "#00dd00"},
+		"end"  : {fillColor: "#ff0000"},
+		"meet" : {fillColor: "#ffff00"}
+	},
+	styleContext: function(feature) { return feature;},
 	
 	/**
 	 * Creates a new map in the specified container
@@ -61,10 +77,15 @@ var SWGMap = new Class({
 		});
 		this.map.addLayer(this.streetMap);
 		
+		// Set up the styles
+		this.markerStyle.addUniqueValueRules("default", "type", this.markerVariants);
+		
 		// Set up the locations marker layer
 		// We also set up a click handler on this layer
 		this.map.addControl(new OpenLayers.Control.LayerSwitcher());
-		this.locations = new OpenLayers.Layer.Vector("Locations");
+		this.locations = new OpenLayers.Layer.Vector("Locations", {
+			styleMap: this.markerStyle
+		});
 		this.map.addLayer(this.locations);
 		
 		var selectControl = new OpenLayers.Control.SelectFeature(
@@ -229,9 +250,7 @@ var SWGMap = new Class({
 		this.walks[walk.id].start = start;
 		
 		var startMarker = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(start.lon, start.lat));
-		var startStyle = OpenLayers.Util.applyDefaults(startStyle, OpenLayers.Feature.Vector.style['default']);
-		startStyle.fillColor = "#00ff00";
-		startMarker.style=startStyle;
+		startMarker.attributes.type = "start";
 		
 		var startPopup = new OpenLayers.Popup.FramedCloud("StartPopup",
 		    start, null,
@@ -260,10 +279,7 @@ var SWGMap = new Class({
 			this.walks[walk.id].end = end;
 			
 		    var endMarker = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(end.lon, end.lat));
-			var endStyle = OpenLayers.Util.applyDefaults(endStyle, OpenLayers.Feature.Vector.style['default']);
-			endStyle.fillColor = "#ff0000";
-			endStyle.fillOpacity = 0.6;
-			endMarker.style=endStyle;
+			endMarker.attributes.type = "end";
 			
 		    var endPopup = new OpenLayers.Popup.FramedCloud("EndPopup",
 		      end, null,
@@ -286,6 +302,8 @@ var SWGMap = new Class({
 			this.walks[walk.id].meet = meet;
 			
 			var meetMarker = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(meet.lon, meet.lat));
+			meetMarker.attributes.type = "meet";
+			
 			var meetText = "Meet: "+walk.meetPoint.longDesc;
 			if (walk.meetPoint.extra != "")
 				meetText += "<br>"+walk.meetPoint.extra;
