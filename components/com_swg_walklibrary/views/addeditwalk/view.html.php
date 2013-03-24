@@ -17,35 +17,35 @@ jimport('joomla.form.form');
  */
 class SWG_WalkLibraryViewAddEditWalk extends JView
 {
-  function display($tpl = null)
-  {
-    $app		= JFactory::getApplication();
-	$params		= $app->getParams();
-	$dispatcher = JDispatcher::getInstance();
-    $model	    = $this->getModel('addeditwalk');
-    $controller = JController::getInstance('SWG_WalkLibrary');
-
-	// Get some data from the models
-	$state		= $this->get('State');
-	$this->form	= $this->get('Form');
-	$this->walk	= $this->get('Walk');
-	// Check the current user can edit this walk (or add a new one)
-	if (
-	    ($model->editing() && !$controller->canEdit($this->walk)) ||
-	    (!$model->editing() && !$controller->canAdd())
-    )
+	function display($tpl = null)
 	{
-	  return JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
-	}
+		$app		= JFactory::getApplication();
+		$params		= $app->getParams();
+		$dispatcher = JDispatcher::getInstance();
+		$model	    = $this->getModel('addeditwalk');
+		$controller = JController::getInstance('SWG_WalkLibrary');
 
-	// Check for errors.
-	if (count($errors = $this->get('Errors'))) 
-	{
-		JError::raiseError(500, implode('<br />', $errors));
-		return false;
+		// Get some data from the models
+		$state		= $this->get('State');
+		$this->form	= $this->get('Form');
+		$this->walk	= $this->get('Walk');
+		// Check the current user can edit this walk (or add a new one)
+		if (
+			($model->editing() && !$controller->canEdit($this->walk)) ||
+			(!$model->editing() && !$controller->canAdd())
+		)
+		{
+			return JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
+		}
+
+		// Check for errors.
+		if (count($errors = $this->get('Errors'))) 
+		{
+			JError::raiseError(500, implode('<br />', $errors));
+			return false;
+		}
+		$this->showForm = true;
+		// Display the view
+		parent::display($tpl);
 	}
-$this->showForm = true;
-	// Display the view
-	parent::display($tpl);
-  }
 }
