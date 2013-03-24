@@ -85,6 +85,7 @@ class Waypoint extends SWGBaseModel
 	* * place_of_worship, suburb
 	* * bus_stop, suburb
 	* * pub, suburb
+	* * cafe, suburb
 	* (Note: Suburb is usually the village name, e.g. Tideswell CP)
 	* TODO: Remove "CP" and similar
 	* TODO: Maybe display location type, e.g. pub, car park...
@@ -92,14 +93,28 @@ class Waypoint extends SWGBaseModel
 	public function reverseGeocode()
 	{
 		$validLocationTypes = array(
-			"information","parking","building",
+			"information","building",
 			"townhall",
 		);
 
 		$backupLocations = array(
 			"place_of_worship",
 			"bus_stop",
+			"bus_station",
+			"parking",
 			"pub",
+			"cafe",
+			"library",
+			"school",
+			"university",
+			"fuel",
+			"fountain",
+			"clock",
+			"marketplace",
+			"police",
+			"post_office",
+			"shelter",
+			"toilets"
 		);
 		$return = false; // We return false if no suitable place found
 

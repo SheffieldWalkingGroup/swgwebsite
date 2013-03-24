@@ -101,6 +101,8 @@ $jsGridRefFieldIDs = json_encode(array("jform_startGridRef", "jform_endGridRef")
 		$jsStartPos = json_encode($this->start);
 		$jsZoom = $this->zoom;
 		$jsLocations = json_encode($this->locations);
+		$jsGridRefFieldIDs = json_encode(explode(",",$this->element['gridRefFields']));
+		$jsLocationNameFieldIDs = json_encode(explode(",",$this->element['locationNameFields']));
 		
 		// Load the maps JS
 		$document = JFactory::getDocument();
@@ -108,28 +110,12 @@ $jsGridRefFieldIDs = json_encode(array("jform_startGridRef", "jform_endGridRef")
 		$document->addScript('/libraries/openlayers/OpenLayers.js');
 		$document->addScript('/swg/js/maps.js');
 		
-		if (empty($this->element['gridRefField']))
-			$jsGotGridRefField = "false";
-		else
-		{
-			$jsGotGridRefField = "true";
-			$jsGridRefFieldID = "jform_".$this->element['gridRefField'];
-		}
-		
-		if (empty($this->element['locationNameField']))
-			$jsGotLocationNameField = "false";
-		else
-		{
-			$jsGotLocationNameField = "true";
-			$jsLocationNameFieldIDs = "jform_".$this->element['locationNameField'];
-		}
-		
 		$document->addScript(JURI::base()."administrator/components/com_swg_events/models/fields/location.js");			
 		$document->addScriptDeclaration(<<<MAP
 		
 window.addEvent('domready', function()
 {
-	var mapJS = new JFormFieldLocation("{$this->id}", {$jsStartPos}, {$jsZoom}, {$jsLocations}, {$jsGridRefFieldIDs}, "{$jsLocationNameFieldIDs}");
+	var mapJS = new JFormFieldLocation("{$this->id}", {$jsStartPos}, {$jsZoom}, {$jsLocations}, {$jsGridRefFieldIDs}, {$jsLocationNameFieldIDs});
 });
 MAP
 );

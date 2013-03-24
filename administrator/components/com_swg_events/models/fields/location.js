@@ -16,6 +16,10 @@ var Location = new Class({
 	 */
 	gridRefField: null,
 	/**
+	 * Form field storing this field's location name (if any). Used for output only.
+	 */
+	locationNameField: null,
+	/**
 	 * Line coming into this point (will be none for a start point)
 	 */
 	lineIn: null,
@@ -42,7 +46,7 @@ var JFormFieldLocation = new Class({
 	
 	outputField: null,
 	
-	initialize: function(id, startPos, startZoom, locations, gridRefFieldIds, locationNameFieldId)
+	initialize: function(id, startPos, startZoom, locations, gridRefFieldIds, locationNameFieldIds)
 	{
 		this.map = new SWGMap(id+"_map");
 		this.map.setDefaultMap("street");
@@ -83,34 +87,19 @@ var JFormFieldLocation = new Class({
 			}
 		});
 		
-		
-		if (document.id(locationNameFieldId))
-		{
-			this.locationNameField = document.id(locationNameFieldId);
-			this.locationNameField.addEvent("change", function(result)
-			{
-				// Scroll to this location
-				// We DON'T place a marker, because it's very unlikely to be the exact place.
-				// Just scroll the map & zoom so the user can click the exact place to mark.
-				var target = new OpenLayers.LonLat(result.lon,result.lat).transform(new OpenLayers.Projection("EPSG:4326"), self.map.map.getProjectionObject());
-				self.map.map.panTo(target);
-				self.map.map.zoomTo(16);
-			});
-		}
-		
 		// Place markers for all locations
 		for (var i=0; i<locations.length; i++)
 		{
 			this.addLocation(new OpenLayers.LonLat(locations[i].lng, locations[i].lat));
 		}
 		
-		// Connect to a grid reference fields if set
+		// Connect to a grid reference fields if set. Grid reference fields are added AFTER other locations to avoid conflicts.
 		if (gridRefFieldIds != undefined)
 		{
 			// Create a new location for each grid reference. Read the current reference and hook up an event listener to the field
 			for (i=0; i<gridRefFieldIds.length; i++)
 			{
-				var field = document.id(gridRefFieldIds[i])
+				var field = document.id("jform_"+gridRefFieldIds[i]);
 				if (field)
 				{
 					var loc = this.getLocationFromGridRefField(field);
@@ -128,10 +117,37 @@ var JFormFieldLocation = new Class({
 								var loc = new OpenLayers.LonLat(grLoc.lon(), grLoc.lat());
 								self.setLocation(j, loc);
 								
+								if (self.locations[i].locationNameField != null)
+									self.writeLocationToNameField(location, self.locations[i].locationNameField);
 								break;
 							}
 						}
 					});
+				}
+			}
+		}
+		
+		// Connect to location name fields.
+		// Unlike grid references, location name fields match up with existing fields.
+		// They are only used for output, never for reading. 
+		// Location names are only output if there isn't already a location name in the field, 
+		// or if that location name came from reverse geocoding.
+		if (locationNameFieldIds != undefined)
+		{
+			for (i=0; i<this.locations.length; i++)
+			{
+				if (locationNameFieldIds[i] != undefined)
+				{
+					field = document.id("jform_"+locationNameFieldIds[i]);
+					if (field)
+					{
+						this.locations[i].locationNameField = field;
+						
+						// If a value is entered manually, prevent it from being overwritten
+						field.addEvent("change", function() {
+							field.store("nameFromGeocoding", false);
+						});
+					}
 				}
 			}
 		}
@@ -159,9 +175,11 @@ var JFormFieldLocation = new Class({
 					
 					// Do we have a grid reference field
 					if (self.locations[i].gridRefField != null)
-					{
 						self.writeLocationToGridRefField(location, self.locations[i].gridRefField);
-					}
+					
+					if (self.locations[i].locationNameField != null)
+						self.writeLocationToNameField(location, self.locations[i].locationNameField);
+					
 					self.outputLocations();
 				}
 				
@@ -305,27 +323,24 @@ var JFormFieldLocation = new Class({
 		field.value = OSRef.toString(6);
 	},
 	
-	writeLocationToNameField: function(location)
+	writeLocationToNameField: function(location, field)
 	{
-		if (this.locationNameField)
+		if (field.value == "" || field.retrieve("nameFromGeocoding", false))
 		{
-			// Reverse geocode this location name, unless we already have a location name and we haven't moved some significant distance (see above)
-			if (this.locationNameField.value == "")
-			{
-				var self = this;
-				var lookup = new Request.JSON({
-					url: "/api/nominatim?lat="+location.lat+"&lon="+location.lon+"&format=json",
-					onSuccess: function(placeName)
+			var self = this;
+			var lookup = new Request.JSON({
+				url: "/api/nominatim?lat="+location.lat+"&lon="+location.lon+"&format=json",
+				onSuccess: function(placeName)
+				{
+					if (placeName)
 					{
-						if (placeName)
-							self.locationNameField.value = placeName;
-						else
-							self.locationNameField.value = "";
+						field.value = placeName;
+						field.store("nameFromGeocoding", true);
 					}
-					// TODO: onFailure
-				});
-				lookup.get();
-			}
+				}
+				// TODO: onFailure
+			});
+			lookup.get();
 		}
 	},
 	
