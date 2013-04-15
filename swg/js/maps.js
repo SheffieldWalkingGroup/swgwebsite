@@ -659,6 +659,22 @@ var Route = new Class({
 	},
 	
 	/**
+	 * Sets up a route from a JSON string.
+	 * All that really matters is the waypoint array, which must contain one object per waypoint.
+	 * Each waypoint object must have the fields 'lat' and 'lon'.
+	 */
+	read: function(data)
+	{
+		for (i in data)
+		{
+			if (data.hasOwnProperty(i))
+			{
+				this[i] = data[i];
+			}
+		}
+	},
+	
+	/**
 	 * Loads a route by route ID, walk ID, or any other supported search
 	 * @param searchType String What to search by, e.g. "route" or "walk". See parser class for details
 	 * @param id int ID of route/walk/other to search for
@@ -671,13 +687,7 @@ var Route = new Class({
 			url: "/api/route?"+searchType+"id="+id+"&format=json",
 			onSuccess: function(data)
 			{
-				for (i in data)
-				{
-					if (data.hasOwnProperty(i))
-					{
-						self[i] = data[i];
-					}
-				}
+				self.read(data);
 				requestor.loadedRoute(self);
 			}
 			// TODO: onFailure

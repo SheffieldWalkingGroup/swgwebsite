@@ -1,5 +1,9 @@
 var Location = new Class({
 	/**
+	 * Index of this location - first location is 0
+	 */
+	index: 0,
+	/**
 	 * OpenLayers.LonLat Lat/Long as WGS-84/EPSG:4326 coordinates
 	 */
 	lonLat: null,
@@ -46,18 +50,23 @@ var JFormFieldLocation = new Class({
 	
 	outputField: null,
 	
-	initialize: function(id, startPos, startZoom, locations, gridRefFieldIds, locationNameFieldIds)
+	bounds:null,
+	
+	initialize: function(id, startPos, startZoom, locations, gridRefFieldIds, locationNameFieldIds, routes, placeMarkerButtons)
 	{
 		this.map = new SWGMap(id+"_map");
 		this.map.setDefaultMap("street");
 		var start = new OpenLayers.LonLat(startPos.lng, startPos.lat).transform(new OpenLayers.Projection("EPSG:4326"), this.map.map.getProjectionObject());
 		this.map.map.setCenter(start,startZoom);
+		this.map.setDefaultMap("landscape");
 		
 		var markerIcon = new OpenLayers.Icon("/images/icons/green.png",{w:8,h:8},{x:-4,y:-4});
 		
 		this.markerLayer = this.map.map.getLayersByName("Locations")[0];
 		
 		this.outputField = document.getElementById(id);
+		
+		this.bounds = new OpenLayers.Bounds();
 		
 		var self = this;
 		
@@ -103,9 +112,17 @@ var JFormFieldLocation = new Class({
 				if (field)
 				{
 					var loc = this.getLocationFromGridRefField(field);
-					var location = this.addLocation(new OpenLayers.LonLat(loc.lon(), loc.lat()));
+					var lonLat;
+					
+					var location = this.addLocation();
 					location.gridRefField = field;
 					
+					if (loc != null && !isNaN(loc.lat()) && !isNaN(loc.lon()))
+					{
+						lonLat = new OpenLayers.LonLat(loc.lon(), loc.lat());
+						this.setLocation(location.index, lonLat);
+					}
+						
 					// Register an onchange event to pick up updates
 					field.addEvent("change", function() {
 						// Find out which field this is
@@ -117,8 +134,15 @@ var JFormFieldLocation = new Class({
 								var loc = new OpenLayers.LonLat(grLoc.lon(), grLoc.lat());
 								self.setLocation(j, loc);
 								
-								if (self.locations[i].locationNameField != null)
-									self.writeLocationToNameField(location, self.locations[i].locationNameField);
+								if (self.locations[j].locationNameField != null)
+									self.writeLocationToNameField(loc, self.locations[j].locationNameField);
+								
+								// Scroll to show this marker
+								var mapPoint = loc.transform(new OpenLayers.Projection("EPSG:4326"),self.map.map.getProjectionObject())
+								if (!self.map.map.getExtent().containsLonLat(mapPoint))
+								{
+									self.map.map.panTo(mapPoint);
+								}
 								break;
 							}
 						}
@@ -127,11 +151,12 @@ var JFormFieldLocation = new Class({
 			}
 		}
 		
-		// Connect to location name fields.
-		// Unlike grid references, location name fields match up with existing fields.
-		// They are only used for output, never for reading. 
-		// Location names are only output if there isn't already a location name in the field, 
-		// or if that location name came from reverse geocoding.
+		/* Connect to location name fields.
+		   Unlike grid references, location name fields match up with existing fields.
+		   They are only used for output, never for reading. 
+		   Location names are only output if there isn't already a location name in the field, 
+		   or if that location name came from reverse geocoding.
+		 */
 		if (locationNameFieldIds != undefined)
 		{
 			for (i=0; i<this.locations.length; i++)
@@ -162,7 +187,6 @@ var JFormFieldLocation = new Class({
 				},
 				onComplete: function(marker, pixelLocation) {
 					// Find out which marker we just moved
-					// TODO: Can we store the index on the marker somehow?
 
 					// i gives the index of the marker and location
 					var i = marker.index;
@@ -188,63 +212,115 @@ var JFormFieldLocation = new Class({
 		
 		this.map.map.addControl(dragFeature);
 		dragFeature.activate();
+		
+		// If we have a route, add it to the map
+		for (i=0; i<routes.length; i++)
+		{
+			var route = new Route();
+			route.read(routes[i]);
+			
+			if (route.waypoints.length != 0)
+			{
+				var srcProjection = new OpenLayers.Projection("EPSG:4326");
+				var destProjection = this.map.map.getProjectionObject();
+				
+				var points = new Array();
+				for (var j=0; j<route.waypoints.length; j++)
+				{
+					var pt = new OpenLayers.Geometry.Point(route.waypoints[j].lng, route.waypoints[j].lat).transform(srcProjection, destProjection)
+					points.push(pt);
+					this.bounds.extend(pt);
+				}
+				
+				var rt = new OpenLayers.Geometry.LineString(points);
+				var rtFeature = new OpenLayers.Feature.Vector(
+					rt, null, {
+						strokeColor:"#FF9555",
+						strokeOpacity:1,
+						strokeWidth:3,
+						pointRadius:3,
+						pointerEvents:"visiblePainted"
+					}
+				);
+				this.markerLayer.addFeatures([rtFeature]);
+			}
+			
+		}
+		
+		// Scale the map if we have points
+		if (this.bounds.getCenterLonLat().lat != 0) // More likely to walk at longitude 0 than on the equator
+		{
+			this.map.map.zoomToExtent(this.bounds, false);
+			if (this.map.map.zoom > 16)
+				this.map.map.zoomTo(16); // Don't zoom to closely on single points
+		}
+		
+		// Wire up the place marker buttons
+		if (placeMarkerButtons != undefined)
+		{
+			for (i=0; i<this.locations.length;i++)
+			{
+				if (placeMarkerButtons[i] != undefined)
+				{
+					field = document.id(placeMarkerButtons[i]);
+					if (field)
+					{
+						this.locations[i].placeMarkerButton = field;
+						
+						field.addEvent("click", function() {
+							// Find out which field this is
+							for (var j=0; j<self.locations.length; j++)
+							{
+								if (self.locations[j].placeMarkerButton != null && this == self.locations[j].placeMarkerButton)
+								{
+									var mapCentre = self.map.map.center
+									var loc = new OpenLayers.LonLat(mapCentre.lon, mapCentre.lat);
+									loc.transform(self.map.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
+									// Unset any existing location to force a redraw
+									if (self.locations[j].lonLat != null)
+									{
+										var oldLoc = self.locations[j];
+										self.markerLayer.removeFeatures([oldLoc.marker]);
+										oldLoc.markerGeometry.destroy();
+										oldLoc.marker.destroy();
+										oldLoc.lonLat = null;
+										
+									}
+									self.setLocation(j, loc);
+									
+									// Do we have a grid reference field
+									if (self.locations[j].gridRefField != null)
+										self.writeLocationToGridRefField(loc, self.locations[j].gridRefField);
+									
+									// Don't set the location name here - unlikely to be correct until the user drags the marker into place
+									break;
+								}
+							}
+							
+						});
+					}
+				}
+			}
+		}
 	},
 	
 	/**
 	 * Adds a new location at the end of the list
-	 * @param OpenLayers.LonLat lonLat Location to add (EPSG:4326)
+	 * @param OpenLayers.LonLat lonLat Location to add (EPSG:4326). If not set, create a holding location to be used later
 	 */
 	addLocation:function(lonLat)
 	{
 		var location = new Location();
-		location.lonLat = lonLat;
-		var mapPoint = Object.clone(lonLat).transform(new OpenLayers.Projection("EPSG:4326"), this.map.map.getProjectionObject());
-		location.markerGeometry = new OpenLayers.Geometry.Point(mapPoint.lon, mapPoint.lat);
-		location.marker = new OpenLayers.Feature.Vector(location.markerGeometry);
-		location.marker.index = this.locations.length;
 		
-		// Apply styles. The first marker is green, the last one is red.
-		// When adding a further last marker, return the second-last one to default colours
-		if (this.locations.length == 0)
-			location.marker.attributes.type = "start";
-		else
-		{
-			// For now, locations can only be added at the end. In future, this may change.
-			location.marker.attributes.type = "end";
-			
-			// If we already had an end location, it becomes a default location when a new end is added
-			if (this.locations[this.locations.length-1].marker.attributes.type == "end")
-			{
-				this.locations[this.locations.length-1].marker.attributes.type = "default";
-			}
-		}
+		location.index = this.locations.length;
 		
 		this.locations.push(location);
 		
-		var featuresToAdd = [location.marker]
-		
-		// If this location isn't the first one, add a line from the previous point to this one
-		if (this.locations.length >= 2)
+		if (lonLat != undefined && lonLat != null && !isNaN(lonLat.lon) && !isNaN(lonLat.lat))
 		{
-			var prevLocation = this.locations[this.locations.length-2];
-			var line = new OpenLayers.Geometry.LineString([prevLocation.markerGeometry, location.markerGeometry]);
-			var lineFeature = new OpenLayers.Feature.Vector(
-				line, null, {
-					strokeColor:"#FF9555",
-					strokeOpacity:1,
-					strokeWidth:3,
-					pointRadius:3,
-					pointerEvents:"visiblePainted",
-					strokeDashstyle:"dash"
-				}
-			);
-			featuresToAdd.push(lineFeature);
-			prevLocation.lineOut = lineFeature;
-			location.lineIn = lineFeature;
+			this.setLocation(location.index, lonLat);
 		}
 		
-		this.markerLayer.addFeatures(featuresToAdd);
-		this.outputLocations();
 		return location;
 	},
 	
@@ -253,21 +329,83 @@ var JFormFieldLocation = new Class({
 	 * @param int index Marker to move. If there is no marker there, nothing is done.
 	 * @param OpenLayers.LonLat location Location to move marker to (EPSG:4326)
 	 */
-	setLocation:function(index, location)
+	setLocation:function(index, lonLat, forceRedraw)
 	{
+		if (forceRedraw == undefined)
+			forceRedraw = false;
+								   
 		if (index >= this.locations.length)
 			return false;
 		
-		var loc = this.locations[index];
-		var mapPoint = Object.clone(location).transform(new OpenLayers.Projection("EPSG:4326"), this.map.map.getProjectionObject());
+		var location = this.locations[index];
+		var mapPoint = new OpenLayers.LonLat(lonLat.lon, lonLat.lat);
+		mapPoint.transform(new OpenLayers.Projection("EPSG:4326"), this.map.map.getProjectionObject());
 		
-		loc.lonLat = location;
-		loc.markerGeometry.x = mapPoint.lon;
-		loc.markerGeometry.y = mapPoint.lat;
+		if (location.lonLat == undefined)
+			newLocation = true;
+		else
+			newLocation = false;
 		
-		this.markerLayer.redraw();
+		location.lonLat = lonLat;
+		
+		// If this location has never been setup, do so now
+		if (newLocation || forceRedraw)
+		{
+			location.markerGeometry = new OpenLayers.Geometry.Point(mapPoint.lon, mapPoint.lat);
+			location.marker = new OpenLayers.Feature.Vector(location.markerGeometry);
+			location.marker.index = index; // Used in callback/event methods
+		
+			var featuresToAdd = [location.marker];
+			
+			// Apply styles. The first marker is green, the last one is red.
+			// When adding a further last marker, return the second-last one to default colours
+			if (index == 0)
+				location.marker.attributes.type = "start";
+			else
+			{
+				// For now, locations can only be added at the end. In future, this may change.
+				location.marker.attributes.type = "end";
+				
+				// If we already had an end location, it becomes a default location when a new end is added
+				if (this.locations[index-1].marker.attributes.type == "end")
+				{
+					this.locations[index-1].marker.attributes.type = "default";
+				}
+			}
+			
+			// If this location isn't the first one, add a line from the previous point to this one
+			if (index >= 1)
+			{
+				var prevLocation = this.locations[index-1];
+				var line = new OpenLayers.Geometry.LineString([prevLocation.markerGeometry, location.markerGeometry]);
+				var lineFeature = new OpenLayers.Feature.Vector(
+					line, null, {
+						strokeColor:"#FF9555",
+						strokeOpacity:1,
+						strokeWidth:3,
+						pointRadius:3,
+						pointerEvents:"visiblePainted",
+						strokeDashstyle:"dash"
+					}
+				);
+				featuresToAdd.push(lineFeature);
+				prevLocation.lineOut = lineFeature;
+				location.lineIn = lineFeature;
+			}
+			
+			this.markerLayer.addFeatures(featuresToAdd);
+		}
+		else
+		{
+			
+			location.markerGeometry.x = mapPoint.lon;
+			location.markerGeometry.y = mapPoint.lat;
+		}
+		
+		this.bounds.extend(mapPoint);
 		
 		this.outputLocations();
+		this.markerLayer.redraw();
 	},
 	
 	placeMarker: function(location)
@@ -296,7 +434,10 @@ var JFormFieldLocation = new Class({
 		var jsonOut = new Array();
 		for (var i=0; i<this.locations.length; i++)
 		{
-			jsonOut.push(this.locations[i].lonLat);
+			if (this.locations[i].lonLat != null && !isNaN(this.locations[i].lonLat.lon) && !isNaN(this.locations[i].lonLat.lat))
+			{
+				jsonOut.push(this.locations[i].lonLat);
+			}
 		}
 		this.outputField.value = JSON.encode(jsonOut);
 	},
@@ -309,7 +450,7 @@ var JFormFieldLocation = new Class({
 			
 		// Make sure this is valid
 		// TODO: Maybe put the validator on the gridref field?
-		if (OSRef.easting != NaN && OSRef.northing != NaN)
+		if (!isNaN(OSRef.easting) && !isNaN(OSRef.northing))
 			return OsGridRef.osGridToLatLong(OSRef);
 		else
 			return null;

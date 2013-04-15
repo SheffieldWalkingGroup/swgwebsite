@@ -143,8 +143,11 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
 			return false;
 		}
 		
+		$walk = $this->getWalk();
+		
 		// Bind existing walk data
-		$form->bind($this->getWalk()->valuesToForm());
+		$form->bind($walk->valuesToForm());
+		
 		return $form;
 
 	}

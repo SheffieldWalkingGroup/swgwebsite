@@ -23,17 +23,17 @@
 				query="SELECT SequenceID, Name from walkareas" 
 				key_field="SequenceID" value_field="Name"
 			/>
-			<field name="startPlaceName" type="text" label="Place name" />
 			<field name="startGridRef" type="text" label="Grid reference" />
+			<field name="startPlaceName" type="text" label="Place name" />
 			<field name="transportByCar" type="checkbox" label="Transport by car" value="1" default="0" />
 			<field name="transportPublic" type="checkbox" label="Transport by bus/train/tram" value="1" default="0" />
 			<field name="isLinear" type="radio" label="Shape">
 				<option value="0">Circular</option>
 				<option value="1">Linear</option>
 			</field>
-			<field name="endPlaceName" type="text" label="Place name" />
 			<field name="endGridRef" type="text" label="Grid reference" />
-			<field name="locMap" type="Location" label="Map" gridRefFields="startGridRef,endGridRef" locationNameFields=",startPlaceName,endPlaceName" />
+			<field name="endPlaceName" type="text" label="Place name" />
+			<field name="locMap" type="Location" label="Map" gridRefFields="startGridRef,endGridRef" locationNameFields="startPlaceName,endPlaceName" placeMarkerButtons="start_place,end_place" start="53.34, -1.69" zoom="10" />
 		</fieldset>
 		<fieldset name="route">
 			<field name="miles" type="text" label="Estimated distance (miles)" />

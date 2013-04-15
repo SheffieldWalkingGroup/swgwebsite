@@ -58,24 +58,27 @@ if ($this->showForm): ?>
 				<?php
 					$placeName = $this->form->getField("startPlaceName");
 					$gridRef = $this->form->getField("startGridRef");
-					echo $placeName->label.$placeName->input."<br />";
 					echo $gridRef->label.$gridRef->input."<br />";
+					echo $placeName->label.$placeName->input."<br />";
 				?>
-				<input type="button" value="Place on map" />
+				<input type="button" id="start_place" value="Place here" title="Place the start marker at the centre of the map. You can drag the marker into place." />
 			</fieldset>
 			<fieldset class="walklocationgroup">
 				<legend>End</legend>
 				<?php
 					$placeName = $this->form->getField("endPlaceName");
 					$gridRef = $this->form->getField("endGridRef");
-					echo $placeName->label.$placeName->input."<br />";
 					echo $gridRef->label.$gridRef->input."<br />";
+					echo $placeName->label.$placeName->input."<br />";
 				?>
-				<input type="button" value="Place on map" />
+				<input type="button" id="end_place" value="Place here" title="Place the end marker at the centre of the map. You can drag the marker into place." />
 			</fieldset>
 			<div class="clear"><!-- --></div>
 		<?php 
 			$map = $this->form->getField("locMap");
+			// Moronic Joomla design means I apparently can't attach this data in the model, because if I instantiate the field before displaying the form it's just destroyed and recreated. GENIUS.
+			if (!empty($this->walk->route))
+				$map->attachRoute($this->walk->route);
 			echo $map->input;
 		?>
 		</fieldset>

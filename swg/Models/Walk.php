@@ -131,7 +131,7 @@ public function valuesToForm()
       'transportPublic'=>$this->transportPublic,
       'childFriendly'=>$this->childFriendly,
         
-      'route' => $this->route,
+      'route' => ($this->route instanceof Route ? $this->route->jsonEncode() : false),
       'routeVisibility' => $this->routeVisibility,
     );
 }
@@ -175,14 +175,14 @@ public function __set($name, $value)
 		$value = strtoupper($value);
 		if ($value == "A" || $value == "B" || $value == "C")
 			$this->$name = $value;
-		else
+		else if (!empty($value))
 			throw new UnexpectedValueException("Distance grade must be A, B or C");
 		break;
 	case "difficultyGrade":
 		$value = (int)$value;
 		if ($value == 1 || $value == 2 || $value == 3)
 			$this->$name = $value;
-		else
+		else if (!empty($value))
 			throw new UnexpectedValueException("Difficulty grade must be 1, 2 or 3");
 		break;
 		
@@ -231,6 +231,16 @@ public function __set($name, $value)
 		break;
 	case "routeVisibility":
 		$this->$name = (int)$value;
+	}
+}
+public function __isset($name)
+{
+	switch ($name)
+	{
+		case "route":
+			return (isset($this->route));
+			break;
+		
 	}
 }
 

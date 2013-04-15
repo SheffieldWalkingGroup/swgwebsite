@@ -35,33 +35,17 @@ class JFormFieldLocation extends JFormField
 	 */
 	private $locations = array();
 	
-	public function __construct()
+	/**
+	 * Routes to display on the map.
+	 * @var Route[]
+	 */
+	private $routes = array();
+	
+	public function __construct($form = null)
 	{
-		parent::__construct();
+		parent::__construct($form);
 		
-		// Set up our initial location
-		if (isset($this->value['start']))
-			$this->start = self::parseLatLongTuple($this->value['start']);
-		
-		if (isset($this->element['zoom']) && is_numeric($this->element['zoom']->data()) && (int)$this->element['zoom']->data() > 0)
-			$this->zoom = (int)$this->element['zoom']->data();
-		
-		if (isset($this->value['location']))
-		{
-			$this->location[0] = self::parseLatLongTuple($this->value['location']);
-			
-			// If we have no explicit start, or the location overrides the default start, use this
-			if (empty($this->start) || $this->value['locationOverridesStart'])
-			{
-				$this->start = $this->location[0];
-			}
-		}
-		
-		// Final fallback for starting location
-		if (empty($this->start))
-		{
-			$this->start = new LatLng(53.38155556,-1.469722222);
-		}
+
 	}
 	
 	/**
@@ -77,6 +61,11 @@ class JFormFieldLocation extends JFormField
 			$index = $this->locations;
 		
 		$this->locations[(int)$index] = $latLng;
+	}
+	
+	public function attachRoute(Route $route)
+	{
+		$this->routes[] = $route;
 	}
 	
 	/**
@@ -95,19 +84,51 @@ class JFormFieldLocation extends JFormField
 	
 	public function getInput()
 	{
-$this->addLocation(new LatLng(53.379265, -1.47922));
-$jsGridRefFieldIDs = json_encode(array("jform_startGridRef", "jform_endGridRef"));
+		// Set up our initial location
+		if (isset($this->value['start']))
+			$this->start = self::parseLatLongTuple($this->value['start']);
+		else if (isset($this->element['start']))
+			$this->start = self::parseLatLongTuple($this->element['start']);
+		
+		if (isset($this->element['zoom']) && is_numeric($this->element['zoom']->data()) && (int)$this->element['zoom']->data() > 0)
+			$this->zoom = (int)$this->element['zoom']->data();
+		
+		if (isset($this->value['location']))
+		{
+			$this->location[0] = self::parseLatLongTuple($this->value['location']);
+			
+			// If we have no explicit start, or the location overrides the default start, use this
+			if (empty($this->start) || $this->value['locationOverridesStart'])
+			{
+				$this->start = $this->location[0];
+			}
+		}
+		
+		// Final fallback for starting location
+		if (empty($this->start))
+		{
+			$this->start = new LatLng(53.38155556,-1.469722222);// Middle of Sheffield
+		}
+		
 		// Prepare variables for JS
 		$jsStartPos = json_encode($this->start);
 		$jsZoom = $this->zoom;
 		$jsLocations = json_encode($this->locations);
 		$jsGridRefFieldIDs = json_encode(explode(",",$this->element['gridRefFields']));
 		$jsLocationNameFieldIDs = json_encode(explode(",",$this->element['locationNameFields']));
+		$jsPlaceMarker = json_encode(explode(",", $this->element['placeMarkerButtons']));
+		
+		$routes = array();
+		foreach ($this->routes as $rt)
+		{
+			$routes[] = $rt->sharedProperties();
+		}
+		$jsRoutes = json_encode($routes);
 		
 		// Load the maps JS
 		$document = JFactory::getDocument();
 		JHtml::_('behavior.framework', true);
-		$document->addScript('/libraries/openlayers/OpenLayers.js');
+		$document->addScript('/libraries/openlayers/OpenLayers.debug.js');
 		$document->addScript('/swg/js/maps.js');
 		
 		$document->addScript(JURI::base()."administrator/components/com_swg_events/models/fields/location.js");			
@@ -115,7 +136,7 @@ $jsGridRefFieldIDs = json_encode(array("jform_startGridRef", "jform_endGridRef")
 		
 window.addEvent('domready', function()
 {
-	var mapJS = new JFormFieldLocation("{$this->id}", {$jsStartPos}, {$jsZoom}, {$jsLocations}, {$jsGridRefFieldIDs}, {$jsLocationNameFieldIDs});
+	var mapJS = new JFormFieldLocation("{$this->id}", {$jsStartPos}, {$jsZoom}, {$jsLocations}, {$jsGridRefFieldIDs}, {$jsLocationNameFieldIDs}, {$jsRoutes}, {$jsPlaceMarker});
 });
 MAP
 );
@@ -127,7 +148,7 @@ MAP
 		<input type="button" class="submit" value="Search" />
 	</div>
 </div>
-<input type='text' size='80' name='{$this->name}' id='{$this->id}' value='{$jsLocations}' />"
+<input type='hidden' size='80' name='{$this->name}' id='{$this->id}' value='{$jsLocations}' />
 FLD
 ;
 		return $html;
