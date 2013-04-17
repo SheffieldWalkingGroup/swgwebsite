@@ -4,7 +4,7 @@
 		<fieldset name="publicity">
 			<field name="name" type="text" label="Name for walk" />
 			<field
-				name="routeDescription" type="textarea" rows="10" cols="50" 
+				name="description" type="textarea" rows="10" cols="50" 
 				label="Description of walk (suitable for publication in the walks programme)"
 			/>
 		</fieldset>

@@ -18,8 +18,8 @@ if ($this->showForm): ?>
 				echo $this->form->getLabel('name');
 				echo $this->form->getInput('name');
 				echo "<br>";
-				echo $this->form->getLabel('routeDescription');
-				echo $this->form->getInput('routeDescription');
+				echo $this->form->getLabel('description');
+				echo $this->form->getInput('description');
 			?>
 		</fieldset>
 		<fieldset>

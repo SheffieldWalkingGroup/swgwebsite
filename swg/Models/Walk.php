@@ -119,7 +119,7 @@ public function valuesToForm()
       'startPlaceName'=>$this->startPlaceName,
       'endGridRef'=>$this->endGridRef,
       'endPlaceName'=>$this->endPlaceName,
-      'routeDescription'=>$this->description,
+      'description'=>$this->description,
       'fileLinks'=>$this->fileLinks,
       'information'=>$this->information,
       'routeImage'=>$this->routeImage,
