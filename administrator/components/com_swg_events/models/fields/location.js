@@ -30,7 +30,7 @@ var Location = new Class({
 	/**
 	 * Line going out of this point (will be none for an end point)
 	 */
-	lineOut: null,
+	lineOut: null
 });
 
 var JFormFieldLocation = new Class({
@@ -525,7 +525,7 @@ var JFormFieldLocation = new Class({
 								}
 								var result = new Element("p", {
 									html: html,
-									id: "placeNameResults_"+i, // TODO: Make globally unique
+									id: "placeNameResults_"+i // TODO: Make globally unique
 								});
 								result.store("data", place);
 								result.addEvent("click", function(e)

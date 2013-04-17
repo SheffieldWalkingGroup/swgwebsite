@@ -36,7 +36,7 @@ var SWGMap = new Class({
 		var loadIndicator = new Element("div",{
 			"class":"loadindicator"
 		});
-		document.getElementById(container).adopt(loadIndicator);
+		document.id(container).adopt(loadIndicator);
 		
 		// Create a new map
 		this.map = new OpenLayers.Map(container);
