@@ -18,7 +18,7 @@ $getNewMember = $params->get("showNewMember",false);
 // Load the JS stuff to run the popup
 JHtml::_('behavior.framework', true);
 
-JHTML::script('http://openlayers.org/api/OpenLayers.js');
+JHTML::script('libraries/openlayers/OpenLayers.js');
 JHTML::script("swg/js/maps.js",true);
 JHTML::script("swg/js/events.js",true);
 JHTML::script("modules/mod_swg_nextevents/script/nextevents.js",true);

@@ -37,8 +37,8 @@ class SWG_EventsViewWalkDetails extends JView
 	// Load the map JS
 	$document = JFactory::getDocument();
 	JHtml::_('behavior.framework', true);
-	$document->addScript('http://openlayers.org/api/OpenLayers.js');
-	$document->addScript('http://swgdev/swg/js/maps.js');
+	$document->addScript('libraries/openlayers/OpenLayers.js');
+	$document->addScript('swg/js/maps.js');
 	$start = new Waypoint();
 	$start->osRef = getOSRefFromSixFigureReference($this->walk->startGridRef);
 	$end = new Waypoint();
