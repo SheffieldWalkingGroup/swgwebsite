@@ -52,7 +52,9 @@ var JFormFieldLocation = new Class({
 	
 	bounds:null,
 	
-	initialize: function(id, startPos, startZoom, locations, gridRefFieldIds, locationNameFieldIds, routes, placeMarkerButtons)
+	multipleLocations: false,
+	
+	initialize: function(id, startPos, startZoom, multipleLocations, locations, gridRefFieldIds, locationNameFieldIds, routes, placeMarkerButtons)
 	{
 		this.map = new SWGMap(id+"_map");
 		this.map.setDefaultMap("street");
@@ -67,6 +69,7 @@ var JFormFieldLocation = new Class({
 		this.outputField = document.getElementById(id);
 		
 		this.bounds = new OpenLayers.Bounds();
+		this.multipleLocations = multipleLocations;
 		
 		var self = this;
 		
@@ -212,6 +215,25 @@ var JFormFieldLocation = new Class({
 		
 		this.map.map.addControl(dragFeature);
 		dragFeature.activate();
+		
+		// Single location mode:
+		// Click to add a location, click again to move it to a new place.
+		if (!this.multipleLocations)
+		{
+			self.addLocation();
+			
+			this.map.addClickHandler(function(evt, lonLat) {
+				self.setLocation(0, lonLat);
+				
+				if (self.locations[0].gridRefField != null)
+					self.writeLocationToGridRefField(lonLat, self.locations[0].gridRefField);
+				
+				if (self.locations[0].locationNameField != null)
+					self.writeLocationToNameField(lonLat, self.locations[0].locationNameField);
+				
+				self.outputLocations();
+			});
+		}
 		
 		// If we have a route, add it to the map
 		for (i=0; i<routes.length; i++)

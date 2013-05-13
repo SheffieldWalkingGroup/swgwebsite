@@ -144,7 +144,7 @@
 			$values['newMemberEnd'] = strftime("%H:%M", $this->newMemberEnd);
 			
 		if (!empty($this->latLng))
-			$values['latLng'] = array('lat'=>$this->latLng->lat, 'lng'=>$this->latLng->lng);
+			$values['latLng'] = $this->latLng->lat.",".$this->latLng->lng;
 			
 		return $values;
 			
@@ -206,9 +206,23 @@
 			case "latLng":
 				if ($value instanceof LatLng)
 					$this->$name = $value;
+				else if (is_string($value))
+				{
+					// Is it in JSON?
+					if (substr($value, 0, 2) == "[{")
+					{
+						$value = json_decode($value);
+						$value = $value[0];
+						$this->$name = new LatLng($value->lat, $value->lon);
+					}
+					else
+					{
+						$this->$name = SWG::parseLatLongTuple($this->value);
+					}
+				}
 				else if (is_array($value))
 				{
-					// Convert to LatLng
+					// Convert to LatLng - deliberate fallthrough
 					if (isset($value['lat']) && isset($value['lng']))
 					{
 						if (is_numeric($value['lat']) && isset($value['lng']) && is_numeric($value['lng']))

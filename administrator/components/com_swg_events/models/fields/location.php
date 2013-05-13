@@ -60,7 +60,8 @@ class JFormFieldLocation extends JFormField
 		if (!is_numeric($index) || $index > count($this->locations))
 			$index = $this->locations;
 		
-		$this->locations[(int)$index] = $latLng;
+		if (!empty($latLng))
+			$this->locations[(int)$index] = $latLng;
 	}
 	
 	public function attachRoute(Route $route)
@@ -68,39 +69,33 @@ class JFormFieldLocation extends JFormField
 		$this->routes[] = $route;
 	}
 	
-	/**
-	 * Parses a latitude,longitude string into an array
-	 * @param string $string String with format latitude,longitude
-	 * @return LatLng
-	 */
-	private static function parseLatLongTuple($string)
-	{
-		$loc = explode(",", $string);
-		if (count($loc) != 2 || !is_numeric($loc[0]) || !is_numeric($loc[1]))
-			throw new InvalidArgumentException("Position must be given as <latitude,longitude>.");
-			
-		return New LatLng((float)$loc[0], (float)$loc[1]);
-	}
-	
 	public function getInput()
 	{
-		// Set up our initial location
-		if (isset($this->value['start']))
-			$this->start = self::parseLatLongTuple($this->value['start']);
-		else if (isset($this->element['start']))
-			$this->start = self::parseLatLongTuple($this->element['start']);
-		
-		if (isset($this->element['zoom']) && is_numeric($this->element['zoom']->data()) && (int)$this->element['zoom']->data() > 0)
-			$this->zoom = (int)$this->element['zoom']->data();
-		
-		if (isset($this->value['location']))
+		if (is_string($this->value))
 		{
-			$this->location[0] = self::parseLatLongTuple($this->value['location']);
+			// Value is a string - must be a single location
+			$this->addLocation(SWG::parseLatLongTuple($this->value));
+		}
+		else
+		{
+			// Set up our initial location
+			if (isset($this->value['start']))
+				$this->start = SWG::parseLatLongTuple($this->value['start']);
+			else if (isset($this->element['start']))
+				$this->start = SWG::parseLatLongTuple($this->element['start']);
 			
-			// If we have no explicit start, or the location overrides the default start, use this
-			if (empty($this->start) || $this->value['locationOverridesStart'])
+			if (isset($this->element['zoom']) && is_numeric($this->element['zoom']->data()) && (int)$this->element['zoom']->data() > 0)
+				$this->zoom = (int)$this->element['zoom']->data();
+			
+			if (isset($this->value['location']))
 			{
-				$this->start = $this->location[0];
+				$this->location[0] = SWG::parseLatLongTuple($this->value['location']);
+				
+				// If we have no explicit start, or the location overrides the default start, use this
+				if (empty($this->start) || $this->value['locationOverridesStart'])
+				{
+					$this->start = $this->location[0];
+				}
 			}
 		}
 		
@@ -117,6 +112,7 @@ class JFormFieldLocation extends JFormField
 		$jsGridRefFieldIDs = json_encode(explode(",",$this->element['gridRefFields']));
 		$jsLocationNameFieldIDs = json_encode(explode(",",$this->element['locationNameFields']));
 		$jsPlaceMarker = json_encode(explode(",", $this->element['placeMarkerButtons']));
+		$jsMultiLocations = (!empty($this->element['multipleLocations']) ? "true" : "false");
 		
 		$routes = array();
 		foreach ($this->routes as $rt)
@@ -136,7 +132,7 @@ class JFormFieldLocation extends JFormField
 		
 window.addEvent('domready', function()
 {
-	var mapJS = new JFormFieldLocation("{$this->id}", {$jsStartPos}, {$jsZoom}, {$jsLocations}, {$jsGridRefFieldIDs}, {$jsLocationNameFieldIDs}, {$jsRoutes}, {$jsPlaceMarker});
+	var mapJS = new JFormFieldLocation("{$this->id}", {$jsStartPos}, {$jsZoom},{$jsMultiLocations}, {$jsLocations}, {$jsGridRefFieldIDs}, {$jsLocationNameFieldIDs}, {$jsRoutes}, {$jsPlaceMarker});
 });
 MAP
 );

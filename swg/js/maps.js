@@ -343,6 +343,7 @@ var SWGMap = new Class({
 		);
 		this.socials[social.id].location = location;
 		var marker = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(location.lon, location.lat));
+		marker.attributes.type = "default";
 		
 		var popup = new OpenLayers.Popup.FramedCloud("Popup",
 		    location, null,
@@ -383,6 +384,7 @@ var SWGMap = new Class({
 		);
 		this.weekends[weekend.id].location = location;
 		var marker = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(location.lon, location.lat));
+		marker.attributes.type = "default";
 		
 		var popup = new OpenLayers.Popup.FramedCloud("Popup",
 		    location, null,
