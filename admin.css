@@ -1,0 +1,75 @@
+/* admin logon page: */
+div.logininformation {text-align: right;}
+#loginbox {margin: 0; border-width: 5px; border-color: #047B3C; border-style: solid; background-color: #A6CE38; padding: 20px; width: 300px; text-align: center; float: none; clear: none; position: fixed; left: 30%; top: 30%; right: 30%;}
+#loginbox span.caption {float: left; clear: left; margin: 5px;}
+#loginbox #login, #loginbox #password {float: right; clear: right; margin: 5px;}
+#submit {margin: 5px 50px;}
+
+/* the main content; full-width apart from the side-bar(s) */
+div.maincontent {/*width: 690px; */padding: 0 0 100px; margin: 15px 30px 100px; text-align: left; position: absolute; left: 210px; top: 110px; z-index: 1;}
+div.maincontentwide {width: 690px;} /* for when there's no right side-bar */
+
+/* left and right side-bars, for navigation and highlighted info */
+div.leftsidebar {width: 150px; padding: 0; margin: 15px 15px 30px 30px; position: absolute; left: 10px; top: 110px; z-index: 2; }
+div.rightsidebar {width: 150px; padding: 0; margin: 15px 15px 30px 30px; position: absolute; left: 760px; top: 110px; z-index: 2; }
+/*sub-menu, LHS */
+/* div.submenu {color: white; border: 1pt solid #047B3C; background-color: #554E69; background-image: url('images/bg_woodlanddark.jpg'); } */
+div.submenu h3 {border: 0; padding: 0; margin: 0; font-size: 1.3em;}
+ul.subnavlist {list-style-type: none; padding: 0; margin: 5px 1px;}
+li.subnavitem {margin: 0 2px 0; font-size: 1.2em; text-align: left; color: white; font-weight: bold; padding: 0; border: 0;}
+li.submenuheading {margin: 0 2px 0 0; text-align: left; font-weight: bold; }
+
+
+/* Various admin pages with forms: */
+div.formrow {float: left; clear: both; border: 0; margin: 0; padding: 3px 0; width: 685px; background-color: #F9FFF9; }
+div.formrow span.caption {float: left; text-align: right; width: 200px;}
+div.formrow span.formw {float: right; text-align: left; width: 475px;}
+div.formrow span.optional {}
+div.formrow span.mandatory {}
+div.formrow span.wasempty {text-decoration: underline;}
+span.mandatory input, span.mandatory textarea {background-color: #FFFFCC;}
+span.wasempty input, span.wasempty textarea {background-color: #FFFF99;}
+input, textarea {margin: 0; padding: 0;}
+input.radio {display: inline; }
+label {display: inline; }
+input.submit {margin: 10px 0 0 20px; padding: 5px 10px; }
+
+fieldset {width: 685px; margin: 10px; padding: 0; /*border-color: #EFE; border-width: 14px; border-style: solid; */}
+legend {font-weight: bold;}
+
+form {margin: 10px 0; width: 690px;}
+form.formonebutton {width: auto; margin: 5px; padding: 0;}
+form.formonebutton input.submit {margin: 0; padding: 0;}
+
+div.fieldboth {clear: both; width: 690px; margin: 0 0 10px; border: 0; padding: 0;}
+div.fielddesc {clear: none; float: left; width: 140px; margin: 0; border: 0; padding: 0; font-weight: bold; }
+div.fieldcontent {clear: none; float: right; width: 470px; margin: 0; border: 0; padding: 0;}
+
+fieldset table, fieldset tr, fieldset th, fieldset td {border-width: 1px; border-style: solid; table-layout: fixed; background-color: #F9FFF9;}
+
+/* admin: showandupdateavailability.php */
+table.datestable {border-width: 1px; border-style: solid; border-collapse: collapse;}
+.datestable th {}
+.datestable th, .datestable td {border-width: 1px; border-style: solid; margin: 5px; padding: 5px;}
+.datestable tr.Saturday {background-color: #DDFFDD;}
+.datestable tr.Sunday {background-color: #DDDDFF;}
+.datestable tr.Monday, .datestable tr.Tuesday, .datestable tr.Wednesday, .datestable tr.Thursday, .datestable tr.Friday {background-color: #FFEEFF;}
+.datestable tr.WeekendAway {background-color: #FFFFEE;}
+
+/* admin: walks library */
+table.walkstable {border-width: 1px; border-style: solid; border-collapse: collapse; background-color: #F9FFF9;}
+.walkstable th {}
+.walkstable th, .walkstable td {border-width: 1px; border-style: solid; margin: 5px; padding: 5px;}
+.walkstable tr.walkheadersaturday {background-color: #DDFFDD;}
+.walkstable tr.walkheadersunday {background-color: #DDDDFF;}
+.walkstable tr.walkheadermidweek {background-color: #FFEEFF;}
+
+/* admin: view walk */
+table.seealsotable {border-width: 1px; border-style: solid; border-collapse: collapse; margin: 1px 100px;}
+.seealsotable th {}
+.seealsotable th, .seealsotable td {border-width: 1px; border-style: solid; margin: 0; padding: 0;}
+
+/* admin: Table definitions (sql) */
+.sqltable {border-width: 1px; border-style: solid; border-collapse: collapse;}
+.sqltable th {}
+.sqltable th, .sqltable td {border-width: 1px; border-style: solid; margin: 5px; padding: 5px;}
