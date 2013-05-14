@@ -9,3 +9,5 @@ cache/
 logs/
 .kateproject
 .kateproject.d/
+gallery/
+php.ini
