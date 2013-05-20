@@ -157,7 +157,7 @@ foreach ($this->events as $event):?>
             <?php endif; ?>
             <p class="places">
               <!-- TODO: Link to booking policy -->
-              <span>Places:</span> <?php echo $event->places." at ".$event->cost?> (remember the booking and refunds policy)
+              <span>Places:</span> <?php echo $event->places." at ".$event->cost?> (remember the <a href="/weekends/bookings-payment-policy">booking and refunds policy</a>)
             </p>
             <?php if ($event->contact != ""): ?>
 				<p class="weekendbooking">
