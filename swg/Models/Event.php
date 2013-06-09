@@ -16,12 +16,16 @@ protected $start;
 protected $description;
 protected $okToPublish;
 protected $alterations; 
+protected $attended;
 
 const DateToday = -1;
 const DateYesterday = -2;
 const DateTomorrow = -3;
-const DateEnd = 2147483647; // This is the end of Unix time, 19th January 2038. I expect this system to be replaced by then
+const DateEnd = 2147483647;
 
+const TypeWalk = 1;
+const TypeSocial = 2;
+const TypeWeekend = 3;
 
 public function __construct() {
 	$this->alterations = new EventAlterations();
@@ -41,9 +45,16 @@ public function __set($name, $value) {
 			$this->$name = (int)$value;
 			break;
 		case "okToPublish":
+		case "attended":
 			$this->$name = (bool)$value;
 			break;
 	}
+}
+
+// TODO: Remove $type variable from each event, and anything calling it
+public function getType()
+{
+	
 }
 
 /**

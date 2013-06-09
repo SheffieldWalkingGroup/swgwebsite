@@ -39,6 +39,13 @@
 	);
 	
 	public $type = "Social";
+	
+	
+
+	public function getType()
+	{
+		return self::TypeSocial;
+	}
 
 	public function fromDatabase(array $dbArr)
 	{

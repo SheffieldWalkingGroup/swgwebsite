@@ -1,0 +1,6 @@
+<?php
+
+public class WalkFactory
+{
+	
+}

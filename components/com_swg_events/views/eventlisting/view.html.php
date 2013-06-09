@@ -79,6 +79,26 @@ MAP
 		return (date("His", $timestamp) != 0);
 	}
 	
+	/**
+	 * True if the event is in the past.
+	 * In practice, we check if the event's end date (if any) or start date is on a day before today.
+	 * @param Event $evt
+	 * @return bool
+	 */
+	function eventInPast(Event $event)
+	{
+		if (isset($evt->endDate))
+		{
+			$evtDate = $event->endDate;
+		}
+		else
+		{
+			$evtDate = $event->start;
+		}
+		
+		return (unixtojd($evtDate) < unixtojd(time()));
+	}
+	
 	function showAnyAddLinks()
 	{
 		return ($this->showAddWalk() || $this->showAddSocial() || $this->showAddWeekend());

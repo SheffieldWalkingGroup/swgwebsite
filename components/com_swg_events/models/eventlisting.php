@@ -5,10 +5,11 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla modelitem library
 jimport('joomla.application.component.modelitem');
 require_once JPATH_BASE."/swg/swg.php";
-JLoader::register('WalkInstance', JPATH_BASE."/swg/Models/WalkInstance.php");
+JLoader::register('WalkInstanceFactory', JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
 JLoader::register('Social', JPATH_BASE."/swg/Models/Social.php");
 JLoader::register('Weekend', JPATH_BASE."/swg/Models/Weekend.php");
 JLoader::register('Event', JPATH_BASE."/swg/Models/Event.php");
+JLoader::register('EventAttendance', JPATH_BASE."/swg/Controllers/EventAttendance.php");
  
 /**
  * Event listing model
@@ -119,6 +120,10 @@ class SWG_EventsModelEventlisting extends JModelItem
 	    $this->loadedEvents = true;
 	  }
 	  
+	  // Get events that the current user has attended
+	  // TODO: Only get this if showing events in the past?
+	  $attended = EventAttendance::eventsAttendedBy(JFactory::getUser()->get('id'));
+	  
 	  /* 
 	   * Go through all lists in date order (oldest first).
 	   * If there are multiple events on a given day,
@@ -142,15 +147,27 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  do {
 	    $nextEvent = $this->nextEvent($nextEvent, $walkPointer, $socialPointer, $weekendPointer, (JRequest::getInt("order") == 1));
 	    // Increment the pointer for this event type
+	    // TODO: Pointer could be an array with event type as keys
 	    if ($nextEvent instanceof WalkInstance)
-	      $walkPointer++;
+	    {
+			$walkPointer++;
+		}
 	    else if ($nextEvent instanceof Social)
-	      $socialPointer++;
+	    {
+			$socialPointer++;
+		}
 	    else if ($nextEvent instanceof Weekend)
-	      $weekendPointer++;
+	    {
+			$weekendPointer++;
+		}
 	    else 
-	      // Unknown event - probably run out: stop looping and don't add it to the list
-	      break;
+			// Unknown event - probably run out: stop looping and don't add it to the list
+			break;
+			
+		if (in_array(array("type"=>$nextEvent->getType(), "id"=>$nextEvent->id), $attended))
+		{
+			$nextEvent->attended = true;
+		}
 	    
 	    $events[] = $nextEvent;
 	     
@@ -276,24 +293,43 @@ class SWG_EventsModelEventlisting extends JModelItem
 	 */
 	private function loadEvents($eventType)
 	{
-	  // Get the parameters set
-	  $startDate = $this->paramDateToValue(JRequest::getInt("startDateType"), JRequest::getString("startDateSpecify"));
-	  $endDate = $this->paramDateToValue(JRequest::getInt("endDateType"), JRequest::getString("endDateSpecify"));
-	  	  
-	  switch ($eventType) {
-	    case SWG::EventType_Walk:
-	      $this->walks = WalkInstance::get($startDate, $endDate, 100, JRequest::getInt("offset",0), JRequest::getBool("order"), JRequest::getBool("unpublished",false));
-	      $this->numWalks = WalkInstance::numEvents($startDate, $endDate, JRequest::getBool("unpublished",false));
-	      break;
-	    case SWG::EventType_Social:
-	      $this->socials = Social::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0), true, true, JRequest::getBool("unpublished", false)); // TODO: Allow getNormal & getNewMember to be customised
-	      $this->numSocials = Social::numEvents($startDate, $endDate, true, false);
-	      break;
-	    case SWG::EventType_Weekend:
-	      $this->weekends = Weekend::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0), JRequest::getBool("unpublished", false));
-	      $this->numWeekends = Weekend::numEvents($startDate, $endDate);
-	      break;
-	  }
+		// Get the parameters set
+		$startDate = $this->paramDateToValue(JRequest::getInt("startDateType"), JRequest::getString("startDateSpecify"));
+		$endDate = $this->paramDateToValue(JRequest::getInt("endDateType"), JRequest::getString("endDateSpecify"));
+			
+		switch ($eventType) {
+			case SWG::EventType_Walk:
+				$factory = new WalkInstanceFactory();
+			break;
+			case SWG::EventType_Social:
+				$factory = new SocialFactory();
+			$this->socials = Social::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0), true, true, JRequest::getBool("unpublished", false)); // TODO: Allow getNormal & getNewMember to be customised
+			$this->numSocials = Social::numEvents($startDate, $endDate, true, false);
+			break;
+			case SWG::EventType_Weekend:
+			$this->weekends = Weekend::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0), JRequest::getBool("unpublished", false));
+			$this->numWeekends = Weekend::numEvents($startDate, $endDate);
+			break;
+		}
+		
+		$factory->startDate = $startDate;
+		$factory->endDate = $endDate;
+		$factory->limit = 100;
+		$factory->offset = JRequest::getInt("offset",0);
+		$factory->reverse = JRequest::getBool("order");
+		$factory->showUnpublished = JRequest::getBool("unpublished",false);
+		
+		switch ($eventType)
+		{
+			case SWG::EventType_Walk:
+				$this->numWalks = $factory->numEvents();
+				$this->walks = $factory->get();
+				break;
+			case SWG::EventType_Social:
+				break;
+			case SWG::EventType_Weekend:
+				break;
+		}
 	  
 	}
 	
