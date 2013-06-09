@@ -1143,3 +1143,16 @@ div.invisibleBacking {
 	background-color:transparent;
 	
 }
+
+.login-module {
+	clear:both;
+	border-top-width:1px !important;
+}
+
+.login-module-form .fields p {
+	margin:5px;
+	text-align:center;
+}
+.login-module-form .buttons {
+	margin:5px;
+}
