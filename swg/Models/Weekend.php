@@ -32,6 +32,10 @@ public $dbmappings = array(
 );
 
 public $type = "Weekend";
+	public function getType()
+	{
+		return self::TypeWeekend;
+	}
 
 public function fromDatabase(array $dbArr)
 {

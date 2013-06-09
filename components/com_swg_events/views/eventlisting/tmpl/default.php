@@ -76,7 +76,7 @@ foreach ($this->events as $event):?>
                 </a>
               </p>
             <?php endif; ?>
-            <?php if (isset($event->meetPoint)): ?>
+            <?php if (isset($event->meetPoint) && !$this->eventInPast($event)): ?>
 				<p class="transport<?php if ($event->alterations->placeTime) echo " altered\" title=\"Place & time altered"; ?>">
 				<span>Transport:</span>
 				<?php if (!$event->meetPoint->isOther()) {
@@ -107,7 +107,7 @@ foreach ($this->events as $event):?>
 				<?php
 					echo $event->leader->displayName;
 					// Hide leader contact details if event has already happened
-					if (unixtojd($event->start) >= unixtojd(time()) && $event->leader->telephone != "")
+					if (!$this->eventInPast($event) && $event->leader->telephone != "")
 					{
 						echo " (".$event->leader->telephone.")"; 
 						if ($event->leader->noContactOfficeHours)
@@ -138,16 +138,19 @@ foreach ($this->events as $event):?>
               </p>
             <?php endif; ?>
             
-            <?php if ($event->cost != ""):?>
-              <p class="cost">
-                <span>Cost: </span><?php echo nl2br($event->cost);?>
-              </p>
-            <?php endif;?>
+            <?php if (!$this->eventInPast($event)): ?>
             
-            <?php if ($event->bookingsInfo != ""): ?>
-				<p class="socialbooking">
-					<span>Contact:</span> <?php echo $event->bookingsInfo; ?>
+				<?php if ($event->cost != ""):?>
+				<p class="cost">
+					<span>Cost: </span><?php echo nl2br($event->cost);?>
 				</p>
+				<?php endif;?>
+				
+				<?php if ($event->bookingsInfo != ""): ?>
+					<p class="socialbooking">
+						<span>Contact:</span> <?php echo $event->bookingsInfo; ?>
+					</p>
+				<?php endif; ?>
 			<?php endif; ?>
           <?php elseif ($event instanceof Weekend):?>
             <?php if ($event->url != ""): // empty() doesn't work for some reason?>
@@ -155,27 +158,28 @@ foreach ($this->events as $event):?>
                 <span>More info:</span> <a href="<?php echo $event->url?>" target="_blank">Here</a>
               </p>
             <?php endif; ?>
-            <p class="places">
-              <!-- TODO: Link to booking policy -->
-              <span>Places:</span> <?php echo $event->places." at ".$event->cost?> (remember the <a href="/weekends/bookings-payment-policy">booking and refunds policy</a>)
-            </p>
-            <?php if ($event->contact != ""): ?>
-				<p class="weekendbooking">
-					<span>Contact:</span> <?php echo $event->contact; ?>
-					<?php if ($event->noContactOfficeHours):?>
-						&ndash; don't call during office hours
-					<?php endif; ?>
+            <?php if (!$this->eventInPast($event)): ?>
+				<p class="places">
+				<span>Places:</span> <?php echo $event->places." at ".$event->cost?> (remember the <a href="/weekends/bookings-payment-policy">booking and refunds policy</a>)
 				</p>
-			<?php endif; ?>
-			<?php if ($event->bookingsOpen): ?>
-				<p class="bookingopen">
-					<span>Bookings open:</span> <?php echo $event->bookingsOpen; ?>
+				<?php if ($event->contact != ""): ?>
+					<p class="weekendbooking">
+						<span>Contact:</span> <?php echo $event->contact; ?>
+						<?php if ($event->noContactOfficeHours):?>
+							&ndash; don't call during office hours
+						<?php endif; ?>
+
+					</p>
+				<?php endif; ?>
+				<?php if ($event->bookingsOpen): ?>
+					<p class="bookingopen">
+						<span>Bookings open:</span> <?php echo $event->bookingsOpen; ?>
+					</p>
+				<?php endif;?>
+				<p class="paymentdue">
+					<span>Payment due:</span> <?php echo date("l jS F".($this->notThisYear($event->paymentDue)?" Y":""),$event->paymentDue); ?>
 				</p>
-			<?php endif;?>
-			<p class="paymentdue">
-				<span>Payment due:</span> <?php echo date("l jS F".($this->notThisYear($event->paymentDue)?" Y":""),$event->paymentDue); ?>
-			</p>
-			<?php endif; ?>
+			<?php endif;endif; ?>
 			<?php if (!$event->alterations->cancelled): // Can't click links when cancelled ?>
 				<div class="controls">
 				<?php if ($event->hasMap()): ?>
@@ -187,6 +191,9 @@ foreach ($this->events as $event):?>
 							<a href="/api/route?walkinstanceid=<?php echo $event->id;?>&amp;format=gpx" title="Download this walk in GPX format for a computer or GPS device">Download route</a>
 						</p>
 					<?php endif; ?>
+				<?php endif; ?>
+				<?php if ($event->attended):?>
+					<p>You did this</p>
 				<?php endif; ?>
 				<?php if ($this->showEditLinks($event)):?>
 					<p>

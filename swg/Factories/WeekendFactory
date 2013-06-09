@@ -1,0 +1,31 @@
+<?php
+require_once(JPATH_BASE."/swg/Models/Weekend.php");
+require_once("EventFactory.php");
+class WeekendFactory extends EventFactory 
+{
+	/**
+	 * The main table to read for this event
+	 * @var string
+	 */
+	protected $table = "weekendsaway";
+	/**
+	 * Field containing the start date
+	 * @var string
+	 */
+	protected $startDateField = "startdate";
+	/**
+	 * Field containing the start time
+	 * @var string
+	 */
+	protected $startTimeField = null;
+	/**
+	 * Field marking if the event is ready to publish
+	 * @var string
+	 */
+	protected $readyToPublishField = "oktopublish";
+	
+	protected function newEvent()
+	{
+		return new Social();
+	}
+}

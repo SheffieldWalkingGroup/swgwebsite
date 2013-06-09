@@ -93,6 +93,11 @@ public $loadOnDemand = array(
 
 public $type = "Walk";
 
+	public function getType()
+	{
+		return self::TypeWalk;
+	}
+
 public function fromDatabase(array $dbArr)
 {
 	$this->id = $dbArr['SequenceID'];
