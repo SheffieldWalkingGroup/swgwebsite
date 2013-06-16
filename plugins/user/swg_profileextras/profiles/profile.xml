@@ -5,6 +5,12 @@
 			label="SWG Extras"
 		>
 			<field
+				name="fbid"
+				type="text"
+				description="Facebook ID"
+				label="Facebook ID"
+			/>
+			<field
 				name="leaderid"
 				type="sql"
 					query="SELECT ID, CONCAT_WS(' ',Forename,Surname) AS name FROM walkleaders WHERE ID != 46 ORDER BY Forename ASC, Surname ASC"
