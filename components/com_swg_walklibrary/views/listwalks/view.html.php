@@ -12,6 +12,7 @@ class SWG_WalkLibraryViewListWalks extends JView
 {
 	private $showList = false;
 	private $showSearch = true;
+	private $noWalksMsg;
 
 	// Overwriting JView display method
 	function display($tpl = null) 
@@ -34,6 +35,7 @@ class SWG_WalkLibraryViewListWalks extends JView
 				$this->pageTitle =  "List walks";
 				$this->showList = true;
 				$this->showSearch = false;
+				$this->noWalkMsg = "No walks found";
 				break;
 			case 1:
 				// Get this leader's record
@@ -42,15 +44,18 @@ class SWG_WalkLibraryViewListWalks extends JView
 				$this->pageTitle = "Walks suggested by ".$leader->displayName;
 				$this->showList = true;
 				$this->showSearch = false;
+				$this->noWalkMsg = "You haven't suggested any walks yet";
 				break;
 			case 2:
 				$this->pageTitle = "Suggested walks";
 				$this->showList = true;
 				$this->showSearch = false;
+				$this->noWalkMsg = "No walks have been suggested";
 				break;
 			case 3:
 			default:
 				$this->pageTitle = "Walks library";
+				$this->noWalkMsg = "No walks found";
 				if ($this->getModel()->hasWalkList())
 				{
 					$this->showList = true;
@@ -79,6 +84,7 @@ class SWG_WalkLibraryViewListWalks extends JView
 
 	public function showList() { return $this->showList; }
 	public function showSearch() { return $this->showSearch; }
+	public function noWalksMsg() { return $this->noWalkMsg; }
 	public function showSearchResults() { return $this->getModel()->hasWalkList(); }
 
 	public function urlToView(Walk $walk) { return $this->walkURL($walk,"walkdetails"); }
