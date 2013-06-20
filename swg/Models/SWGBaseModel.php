@@ -25,7 +25,14 @@ abstract class SWGBaseModel {
 	{
 		foreach ($this->dbmappings as $var => $dbField)
 		{
-			$this->__set($var,$dbArr[$dbField]);
+			try
+			{
+				$this->__set($var,$dbArr[$dbField]);
+			}
+			catch (UnexpectedValueException $e)
+			{
+				// TODO: Error handling
+			}
 		}
 	}
   
