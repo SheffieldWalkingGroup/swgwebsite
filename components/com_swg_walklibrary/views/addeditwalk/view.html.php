@@ -17,6 +17,11 @@ jimport('joomla.form.form');
  */
 class SWG_WalkLibraryViewAddEditWalk extends JView
 {
+	public $form;
+	public $walk;
+	public $editing;
+	public $showForm;
+	
 	function display($tpl = null)
 	{
 		$app		= JFactory::getApplication();
@@ -45,6 +50,7 @@ class SWG_WalkLibraryViewAddEditWalk extends JView
 			return false;
 		}
 		$this->showForm = true;
+		$this->editing = $model->editing();
 		// Display the view
 		parent::display($tpl);
 	}
