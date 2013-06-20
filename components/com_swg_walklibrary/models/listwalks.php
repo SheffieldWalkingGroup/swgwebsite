@@ -36,8 +36,7 @@ class SWG_WalkLibraryModelListWalks extends JModelForm
 			return array();
 		case 1:
 			// Get this leader's record
-			// TODO: Integrate with Joomla users
-			$leader = Leader::getLeader(109);
+			$leader = Leader::getJoomlaUser(JFactory::getUser()->id);
 			return Walk::getWalksBySuggester($leader);
 		}
 	}
