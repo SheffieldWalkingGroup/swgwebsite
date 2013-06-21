@@ -46,6 +46,7 @@ JHtml::_('behavior.tooltip');
 				echo "</p>"
 			?>
 			<input name="upload" type="submit" class="submit gpx-upload" value="Upload" />
+			<input name="clearroute" type="submit" class="submit gpx-clear" value="Clear route" />
 		</fieldset>
 		<fieldset>
 		<legend>Location</legend>

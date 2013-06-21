@@ -12,7 +12,7 @@ class Route extends SWGBaseModel implements Iterator {
 	* The route is not visible - only used to calculate walk length etc.
 	* @var int
 	*/
-	const Visibility_None = 0;
+	const Visibility_None = 1; // Avoid confusion with 'not set'
 	/**
 	* Leaders can download the route
 	* @var int
@@ -27,7 +27,7 @@ class Route extends SWGBaseModel implements Iterator {
 	* Any member can download the route
 	* @var int
 	*/
-	const Visibility_Members = 30;
+	const Visibility_Members = 30; // This should be the default
 
 
 	/**
@@ -71,6 +71,8 @@ class Route extends SWGBaseModel implements Iterator {
 	* @var int
 	*/
 	private $uploadedDateTime;
+	
+	private $visibility;
 
 	// For iterator use
 	private $pointer;
@@ -80,7 +82,26 @@ class Route extends SWGBaseModel implements Iterator {
 		$this->walk =& $w;
 		$this->pointer = 0;
 	}
-
+	
+	function __set($name, $value)
+	{
+		if ($name == "visibility")
+		{
+			if (in_array($value, array(self::Visibility_Leaders, self::Visibility_Map, self::Visibility_Members, self::Visibility_None)))
+			{
+				$this->visibility = $value;
+			}
+		}
+	}
+	
+	function __get($name)
+	{
+		if (in_array($name, array("visibility","id")))
+		{
+			return $this->$name;
+		}
+	}
+	
 	function setWalk(Walkable &$w)
 	{
 		$this->walk =& $w;
@@ -295,12 +316,14 @@ class Route extends SWGBaseModel implements Iterator {
 		$query->set("uploadeddatetime = ".time());
 		$query->set("length = ".$this->distance);
 		$query->set("ascent = ".$this->ascent);
+		if (isset($this->visibility))
+			$query->set("visibility = ".$this->visibility);
 		
 		// Connect to a walk or a walkinstance
 		if ($this->walk instanceof Walk)
-		$query->set("walkid = ".$this->walk->id);
+			$query->set("walkid = ".$this->walk->id);
 		else if ($this->walk instanceof WalkInstance)
-		$query->set("walkinstanceid = ".$this->walk->id);
+			$query->set("walkinstanceid = ".$this->walk->id);
 		
 		// Are we inserting or updating?
 		if (isset($this->id))
@@ -365,7 +388,7 @@ class Route extends SWGBaseModel implements Iterator {
 
 	/**
 	* Loads a route from the database from its ID
-	* @param int $id
+	* @param int $id Route ID to load
 	* @param Walkable $w Walk to attach this route to, if the object already exists. A new one will be created if not.
 	* @throws InvalidArgumentException If walkable passed in does not match walkable set in database
 	*/
@@ -432,6 +455,14 @@ class Route extends SWGBaseModel implements Iterator {
 		$rt = new Route($w);
 		
 		// TODO: uploadedby/time, length, ascent
+		// Load the basic route properties
+		$rt->id = $id;
+		
+		$rt->distance = $dbArr['length'];
+		$rt->ascent = $dbArr['ascent'];
+		$rt->uploadedBy = $dbArr['uploadedby']; // TODO: Load the actual user? Also, uploadedby should be a Joomla user, not a Leader
+		$rt->uploadedDateTime = strtotime($dbArr['uploadeddatetime']);
+		$rt->visibility = (int)$dbArr['visibility'];
 		
 		// Set all the waypoints
 		$query = $db->getQuery(true);
@@ -544,6 +575,7 @@ class Route extends SWGBaseModel implements Iterator {
 			"distance"         => $this->distance,
 			"ascent"           => $this->ascent,
 			"waypoints"        => array(),
+			"visibility"	   => $this->visibility,
 		);
 		
 		// Iterate through waypoints

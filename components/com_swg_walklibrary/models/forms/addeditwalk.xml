@@ -10,8 +10,8 @@
 		</fieldset>
 		<fieldset name="gpx">
 			<field name="route" type="file" label="GPX File" />
-			<field name="routeVisibility" type="radio" label="Route visibility">
-				<option value="0">None: just set the walk length and start point</option>
+			<field name="routeVisibility" type="radio" label="Route visibility" default="30">
+				<option value="1">None: just set the walk length and start point</option>
 				<option value="10">Allow leaders to download the route</option>
 				<option value="20">Show the route on the map</option>
 				<option value="30">Allow any member to download the route</option>

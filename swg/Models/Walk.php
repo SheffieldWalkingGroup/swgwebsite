@@ -142,9 +142,7 @@ public function __get($name)
 	// TODO: Only try once, and catch exceptions
 	if ($name == "route" && !isset($this->route))
 	{
-	$rt = Route::loadForWalkable($this,false,1);
-	if (!empty($rt))
-		$this->route = $rt[0];
+		$this->loadRoute();
 	}
 	
 	return $this->$name; // TODO: What params should be exposed?
@@ -245,6 +243,21 @@ public function __isset($name)
 }
 
 /**
+* Loads the route for this walk (if any)
+*/
+public function loadRoute()
+{
+	// Load the route if we don't have it already
+	// TODO: Only try once, and catch exceptions
+	if (!isset($this->route))
+	{
+	$rt = Route::loadForWalkable($this,false,1);
+	if (!empty($rt))
+		$this->route = $rt[0];
+	}
+}
+
+/**
 * Connects a route to this walk, and sets relevant data (e.g. length)
 * 
 * * The route may be able to give us:
@@ -288,6 +301,14 @@ public function setRoute(Route &$r)
 	// Resolution is half a mile
 	$this->miles = round($r->getDistance()*0.000621371192*2)/2;
 	$this->distanceGrade = $this->getDistanceGrade($this->miles);
+}
+
+/**
+ * Unset an existing route
+ */
+public function unsetRoute()
+{
+	$this->route = null;
 }
 
 /**

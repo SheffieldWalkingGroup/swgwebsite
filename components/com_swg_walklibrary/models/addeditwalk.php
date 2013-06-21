@@ -100,6 +100,20 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
 				$this->walk->setRoute($route);
 			}
 		}
+		
+		// If we have a route, allow the user to set options on it
+		if (isset($this->walk->route))
+		{
+			$this->walk->route->visibility = $formData['routeVisibility'];
+		}
+	}
+	
+	/**
+	 * Remove the route from this walk
+	 */
+	public function clearRoute()
+	{
+		$this->walk->unsetRoute();
 	}
 
 	/**
@@ -114,6 +128,7 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
 		else
 		{
 			$this->walk = Walk::getSingle($walkid);
+			$this->walk->loadRoute();
 		}
 	}
 
@@ -147,6 +162,10 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
 		
 		// Bind existing walk data
 		$form->bind($walk->valuesToForm());
+		if (isset($walk->route))
+		{
+			$form->setValue("routeVisibility", null, $walk->route->visibility);
+		}
 		
 		return $form;
 

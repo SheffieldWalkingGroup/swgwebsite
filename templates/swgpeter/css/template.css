@@ -211,6 +211,31 @@ nav .feed ul {
     padding-left:10px;
 }
 
+/* Mini menu */
+ul.minimenu
+{
+	list-style-type:none;
+	margin:3px 20px !important;
+	text-align:right;
+}
+
+ul.minimenu li
+{
+	display:inline;
+	padding:0 5px;
+	border-right:1px solid #555;
+}
+
+ul.minimenu li:last-child
+{
+	border-right:none;
+}
+
+ul.minimenu li a
+{
+	font-size:0.8em;
+}
+
 /* Main content area */
 
 div.main {
@@ -995,6 +1020,15 @@ div.slideshow {
 }
 
 /* Submit walks */
+#jform_routeVisibility input {
+	float:left;
+	clear:both;
+	margin-bottom:3px;
+}
+#jform_routeVisibility label {
+	float:left;
+	padding-top:5px;
+}
 .olMap {
 	position:relative;
 }

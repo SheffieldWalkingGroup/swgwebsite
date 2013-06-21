@@ -15,7 +15,7 @@ class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
 	{
 		if (!isset($this->model))
 		{
-		$this->model = parent::getModel($name, $prefix, array('ignore_request' => false));
+			$this->model = parent::getModel($name, $prefix, array('ignore_request' => false));
 		}
 		return $this->model;
 	}
@@ -48,9 +48,29 @@ class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
 		{
 			$view->display();
 		}
+		else if (JRequest::getVar('clearroute', false, 'post'))
+		{
+			// Remember that we've cleared the route, so we can delete it from the database when we save
+			JFactory::getApplication()->setUserState("deleteroute", $model->getWalk()->route->id);
+			
+			$model->clearRoute();
+			$view->display();
+		}
 		else
 		{
 			$model->getWalk()->save();
+			// Delete the route if necessary
+			$deleteRoute = JFactory::getApplication()->getUserState("deleteroute", false);
+			if ($deleteRoute)
+			{
+				$db =& JFactory::getDBO();
+				$query = $db->getQuery(true);
+				$query->delete("routes");
+				$query->where("routeid = ".(int)$deleteRoute);
+				$db->setQuery($query);
+				$db->query();
+			}
+			
 			// Redirect to the walk details page
 			$url = $_SERVER['REQUEST_URI'];
 			
