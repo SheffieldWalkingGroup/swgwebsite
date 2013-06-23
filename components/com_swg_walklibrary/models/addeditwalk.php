@@ -69,17 +69,36 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
 				// Check for a GPX element at the root
 				if ($gpx->getElementsByTagName("gpx")->length == 1)
 				{
-				// TODO: Turn on or off overwriting of existing properties
-				$route = new Route($this->walk);
-				$route->readGPX($gpx);
-				$this->walk->setRoute($route);
-				
-				// Store this route for later requests
-				JFactory::getApplication()->setUserState("uploadedroute", serialize($route));
+					// Get the route ID if we have an existing route
+					if (isset($this->walk->route))
+					{
+						$routeID = $this->walk->route->id;
+					}
+					else
+					{
+						$routeID = null;
+					}
+					// TODO: Turn on or off overwriting of existing properties
+					
+					if (isset($this->walk->route))
+					{
+						$route = $this->walk->route;
+					}
+					else
+					{
+						$route = new Route($this->walk);
+					}
+					$route->readGPX($gpx);
+					$route->uploadedBy = JFactory::getUser()->id;
+					$route->uploadedDateTime = time();
+					$this->walk->setRoute($route);
+					
+					// Store this route for later requests
+					JFactory::getApplication()->setUserState("uploadedroute", serialize($route));
 				}
 				else
 				{
-				echo "Must have only one GPX tag";
+					echo "Must have only one GPX tag";
 				}
 			}
 			else

@@ -61,13 +61,13 @@ class Route extends SWGBaseModel implements Iterator {
 	private $ascent;
 
 	/**
-	* Person who uploaded the route
-	* @var Leader
+	* Person who uploaded the route - Joomla user ID
+	* @var int
 	*/
 	private $uploadedBy;
 
 	/**
-	* Date/time when the route was uploaded
+	* Date/time when the route was uploaded - UNIX epoch
 	* @var int
 	*/
 	private $uploadedDateTime;
@@ -91,6 +91,10 @@ class Route extends SWGBaseModel implements Iterator {
 			{
 				$this->visibility = $value;
 			}
+		}
+		else if ($name == "uploadedBy" || $name == "uploadedDateTime")
+		{
+			$this->$name = (int)$value;
 		}
 	}
 	
@@ -312,8 +316,10 @@ class Route extends SWGBaseModel implements Iterator {
 		
 		// First, commit the route's general data
 		$query = $db->getQuery(true);
-		$query->set("uploadedby = ".JFactory::getUser()->id);
-		$query->set("uploadeddatetime = ".time());
+		if (isset($this->uploadedBy))
+			$query->set("uploadedby = ".$this->uploadedBy);
+		if (isset($this->uploadedDateTime))
+			$query->set("uploadeddatetime = '".$query->escape(strftime("%Y-%m-%d %T", $this->uploadedDateTime))."'");
 		$query->set("length = ".$this->distance);
 		$query->set("ascent = ".$this->ascent);
 		if (isset($this->visibility))
