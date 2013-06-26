@@ -271,7 +271,7 @@ var SWGMap = new Class({
 		
 		this.locations.addFeatures([startMarker]);
 		
-		if (walk.isLinear == 1)
+		if (walk.isLinear == 1 && walk.endLatLng != null)
 		{
 			var end = new OpenLayers.LonLat(walk.endLatLng.lng,walk.endLatLng.lat).transform(
 			    new OpenLayers.Projection("EPSG:4326"), this.map.getProjectionObject()

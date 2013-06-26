@@ -83,15 +83,21 @@ public function fromDatabase(array $dbArr)
 	$this->suggestedBy = Leader::getLeader($dbArr['suggestedby']);
 	
 	// Also set the lat/lng
-	$startOSRef = getOSRefFromSixFigureReference($this->startGridRef);
-	$startLatLng = $startOSRef->toLatLng();
-	$startLatLng->OSGB36ToWGS84();
-	$this->startLatLng = $startLatLng;
+	if (!empty($this->startGridRef))
+	{
+		$startOSRef = getOSRefFromSixFigureReference($this->startGridRef);
+		$startLatLng = $startOSRef->toLatLng();
+		$startLatLng->OSGB36ToWGS84();
+		$this->startLatLng = $startLatLng;
+	}
 	
-	$endOSRef = getOSRefFromSixFigureReference($this->endGridRef);
-	$endLatLng = $endOSRef->toLatLng();
-	$endLatLng->OSGB36ToWGS84();
-	$this->endLatLng = $endLatLng;
+	if (!empty($this->endGridRef))
+	{
+		$endOSRef = getOSRefFromSixFigureReference($this->endGridRef);
+		$endLatLng = $endOSRef->toLatLng();
+		$endLatLng->OSGB36ToWGS84();
+		$this->endLatLng = $endLatLng;
+	}
 		
 	// TODO: Load route?
 
