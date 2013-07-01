@@ -188,67 +188,80 @@ class Route extends SWGBaseModel implements Iterator {
 		
 		foreach ($routes as $route)
 		{
-			if ($isTrack)
-				$routePoints = $route->getElementsByTagName("trkpt");
-			else
-				$routePoints = $route->getElementsByTagName("rtept"); 
-		
-			/* Now we start to iterate through all the waypoints.
-			* For each point, we want the distance from the last point (added to cumulative
-				* distance) and the height *increase* since the last point.
-			* We assume that the points are close enough together that we can treat the surface
-			* of the Earth as a plane and use Pythagoras' theorem to calculate distances.
-			* To start with, we make the start point the previous point.
-			*/
-			$numPoints = $routePoints->length;
-			$lastKnownHeight = null; // Last known height - used if some nodes are missing height data
-			$prevPoint = null;
-			for ($i=0; $i<$numPoints; $i++)
+			$this->readGPXSection($route);
+		}
+	}
+	
+	/**
+	 * Read a single section (route or track) of a GPX file and add it to the total route
+	 * The sections are merged into one, with a straight line between the end of one and the start of the next.
+	 *
+	 * @param DOMElement $route Route or track root element
+	 */
+	private function readGPXSection(DOMElement $route)
+	{
+		if ($route->tagName == "trk")
+			$routePoints = $route->getElementsByTagName("trkpt");
+		else
+			$routePoints = $route->getElementsByTagName("rtept"); 
+	
+		/* Now we start to iterate through all the waypoints.
+		* For each point, we want the distance from the last point (added to cumulative
+			* distance) and the height *increase* since the last point.
+		* We assume that the points are close enough together that we can treat the surface
+		* of the Earth as a plane and use Pythagoras' theorem to calculate distances.
+		* To start with, we make the start point the previous point.
+		*/
+		$numPoints = $routePoints->length;
+		$lastKnownHeight = null; // Last known height - used if some nodes are missing height data
+		$prevPoint = null;
+		$iWrite = count($this->wayPoints);
+		for ($iRead=0; $iRead<$numPoints; $iRead++)
+		{
+			// Get the position of this waypoint
+			$next = $routePoints->item($iRead);
+			$nextPoint = new Waypoint();
+			$nextPoint->latLng = new LatLng($next->attributes->getNamedItem("lat")->nodeValue, $next->attributes->getNamedItem("lon")->nodeValue);
+			
+			// Now see if we can get the time, speed & altitude
+			if ($next->hasChildNodes())
 			{
-				// Get the position of this waypoint
-				$next = $routePoints->item($i);
-				$nextPoint = new Waypoint();
-				$nextPoint->latLng = new LatLng($next->attributes->getNamedItem("lat")->nodeValue, $next->attributes->getNamedItem("lon")->nodeValue);
-				
-				// Now see if we can get the time, speed & altitude
-				if ($next->hasChildNodes())
+				foreach ($next->childNodes as $childNode)
 				{
-					foreach ($next->childNodes as $childNode)
+					if ($childNode->nodeType == XML_ELEMENT_NODE)
 					{
-						if ($childNode->nodeType == XML_ELEMENT_NODE)
+						switch($childNode->tagName)
 						{
-							switch($childNode->tagName)
-							{
-								case "ele":
-								$nextPoint->alt = (int)$childNode->nodeValue;
-								break;
-								case "time":
-								$nextPoint->time = $childNode->nodeValue;
-								break;
-							}
+							case "ele":
+							$nextPoint->alt = (int)$childNode->nodeValue;
+							break;
+							case "time":
+							$nextPoint->time = $childNode->nodeValue;
+							break;
 						}
 					}
 				}
-				
-				$this->wayPoints[$i] = $nextPoint;
-				
-				// If we're on anything but the first waypoint, get the previous one for some calculations
-				if ($i >= 1)
-				{
-					$prevPoint = $this->wayPoints[$i-1];
-					
-					// Calculate distance & total ascent
-					$this->distance += $nextPoint->distanceTo($prevPoint);
-					if (isset($nextPoint->alt) && isset($lastKnownHeight))
-						$this->ascent += max($nextPoint->alt - $lastKnownHeight, 0);
-				}
-				
-				// Store the height for future rounds - if another waypoint is missing height info
-				// we look back to the last time we had it
-				if (isset($nextPoint->alt))
-				$lastKnownHeight = $nextPoint->alt;
-				
 			}
+			
+			$this->wayPoints[$iWrite] = $nextPoint;
+			
+			// If we're on anything but the first waypoint, get the previous one for some calculations
+			if ($iWrite >= 1)
+			{
+				$prevPoint = $this->wayPoints[$iWrite-1];
+				
+				// Calculate distance & total ascent
+				$this->distance += $nextPoint->distanceTo($prevPoint);
+				if (isset($nextPoint->alt) && isset($lastKnownHeight))
+					$this->ascent += max($nextPoint->alt - $lastKnownHeight, 0);
+			}
+			
+			// Store the height for future rounds - if another waypoint is missing height info
+			// we look back to the last time we had it
+			if (isset($nextPoint->alt))
+				$lastKnownHeight = $nextPoint->alt;
+			
+			$iWrite++;
 		}
 	}
 
