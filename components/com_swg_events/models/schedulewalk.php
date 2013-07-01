@@ -3,6 +3,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 require_once JPATH_BASE."/swg/swg.php";
+JLoader::register('WalkInstanceFactory', JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
 JLoader::register('WalkInstance', JPATH_BASE."/swg/Models/WalkInstance.php");
 JLoader::register('Walk', JPATH_BASE."/swg/Models/Walk.php");
 
@@ -39,7 +40,10 @@ class SWG_EventsModelScheduleWalk extends JModelForm
 	{
 		// Load an existing walk instance (if any)
 		if (!empty($formData['id']))
-			$this->wi = WalkInstance::getSingle($formData['id']);
+		{
+			$factory = new WalkInstanceFactory();
+			$this->wi = $factory->getSingle($formData['id']);
+		}
 		else
 			$this->wi = new WalkInstance();
 
@@ -108,10 +112,12 @@ class SWG_EventsModelScheduleWalk extends JModelForm
 		// Load or create the walk instance if not already done
 		if (!isset($this->wi))
 		{
+			$factory = new WalkInstanceFactory();
+			
 			if (JRequest::getInt("walkinstanceid",0,"get"))
-				$this->wi = WalkInstance::getSingle(JRequest::getInt("walkinstanceid",0,"get"));
+				$this->wi = $factory->getSingle(JRequest::getInt("walkinstanceid",0,"get"));
 			else if (JRequest::getInt("walkid",0,"get"))
-				$this->wi = WalkInstance::createFromWalk(Walk::getSingle(JRequest::getInt("walkid",0,"get")));
+				$this->wi = $factory->createFromWalk($factory->getSingle(JRequest::getInt("walkid",0,"get")));
 			else
 				$this->wi = new WalkInstance();
 		}

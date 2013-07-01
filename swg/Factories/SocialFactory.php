@@ -12,6 +12,8 @@ class SocialFactory extends EventFactory
 	 * @var string
 	 */
 	protected $table = "socialsdetails";
+	
+	protected $idField = "SequenceID";
 	/**
 	 * Field containing the start date
 	 * @var string
@@ -31,5 +33,15 @@ class SocialFactory extends EventFactory
 	protected function newEvent()
 	{
 		return new Social();
+	}
+	
+	protected function modifyQuery(JDatabaseQuery &$query)
+	{
+		$showWhat = array();
+		if ($this->getNormal)
+			$showWhat[] = "shownormal";
+		if ($this->getNewMember)
+			$showWhat[] = "shownewmember";
+		$query->where(implode(" OR ", $showWhat));
 	}
 }

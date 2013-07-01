@@ -4,6 +4,7 @@ require_once("SWGBaseModel.php");
 require_once("Waypoint.php");
 require_once("Walk.php");
 require_once("WalkInstance.php");
+require_once(JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
 include_once(JPATH_BASE."/swg/lib/phpcoord/phpcoord-2.3.php");
 
 class Route extends SWGBaseModel implements Iterator {
@@ -414,6 +415,8 @@ class Route extends SWGBaseModel implements Iterator {
 			return null;
 		$dbArr = $db->loadAssoc();
 		
+		$wiFactory = new WalkInstanceFactory();
+		
 		// If we've been given a Walkable, make sure it matches the one on the route
 		// It's OK to load a route for a WalkInstance on a Walk, and vice-versa
 		if ($w != null)
@@ -425,7 +428,7 @@ class Route extends SWGBaseModel implements Iterator {
 					// Try to load a matching walkInstance
 					if (!empty($dbArr['walkinstanceid']))
 					{
-						$wi = WalkInstance::getSingle($dbArr['walkinstanceid']);
+						$wi = $wiFactory->getSingle($dbArr['walkinstanceid']);
 						if ($wi->walk != $w->id)
 						{
 							throw new InvalidArgumentException("Loaded route is for WalkInstance ".$wi->id.", Walk ".$wi->walk." (does not match ".$w->id.")");
@@ -453,7 +456,7 @@ class Route extends SWGBaseModel implements Iterator {
 		else
 		{
 			// A WalkInstance
-			$w = WalkInstance::getSingle($dbArr['walkinstanceid']);
+			$w = $wiFactory->getSingle($dbArr['walkinstanceid']);
 		}
 		}
 		

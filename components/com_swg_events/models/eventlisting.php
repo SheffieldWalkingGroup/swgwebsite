@@ -6,10 +6,14 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.modelitem');
 require_once JPATH_BASE."/swg/swg.php";
 JLoader::register('WalkInstanceFactory', JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
+JLoader::register('SocialFactory', JPATH_BASE."/swg/Factories/SocialFactory.php");
+JLoader::register('WeekendFactory', JPATH_BASE."/swg/Factories/WeekendFactory.php");
+JLoader::register('WalkInstance', JPATH_BASE."/swg/Models/WalkInstance.php");
 JLoader::register('Social', JPATH_BASE."/swg/Models/Social.php");
 JLoader::register('Weekend', JPATH_BASE."/swg/Models/Weekend.php");
-JLoader::register('Event', JPATH_BASE."/swg/Models/Event.php");
 JLoader::register('EventAttendance', JPATH_BASE."/swg/Controllers/EventAttendance.php");
+JLoader::register('Event', JPATH_BASE."/swg/Models/Event.php");
+
  
 /**
  * Event listing model
@@ -296,22 +300,23 @@ class SWG_EventsModelEventlisting extends JModelItem
 		// Get the parameters set
 		$startDate = $this->paramDateToValue(JRequest::getInt("startDateType"), JRequest::getString("startDateSpecify"));
 		$endDate = $this->paramDateToValue(JRequest::getInt("endDateType"), JRequest::getString("endDateSpecify"));
-			
+		
+		// Set specific factory parameters
 		switch ($eventType) {
 			case SWG::EventType_Walk:
 				$factory = new WalkInstanceFactory();
-			break;
+				break;
 			case SWG::EventType_Social:
 				$factory = new SocialFactory();
-			$this->socials = Social::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0), true, true, JRequest::getBool("unpublished", false)); // TODO: Allow getNormal & getNewMember to be customised
-			$this->numSocials = Social::numEvents($startDate, $endDate, true, false);
-			break;
+				$factory->getNormal = true;
+				$factory->getNewMember = true;
+				break;
 			case SWG::EventType_Weekend:
-			$this->weekends = Weekend::get($startDate, $endDate, 100, JRequest::getInt("offset",0), (bool)JRequest::getInt("order",0), JRequest::getBool("unpublished", false));
-			$this->numWeekends = Weekend::numEvents($startDate, $endDate);
-			break;
+				$factory = new WeekendFactory();
+				break;
 		}
 		
+		// Set standard/shared factory parameters
 		$factory->startDate = $startDate;
 		$factory->endDate = $endDate;
 		$factory->limit = 100;
@@ -319,6 +324,7 @@ class SWG_EventsModelEventlisting extends JModelItem
 		$factory->reverse = JRequest::getBool("order");
 		$factory->showUnpublished = JRequest::getBool("unpublished",false);
 		
+		// Get events from factories
 		switch ($eventType)
 		{
 			case SWG::EventType_Walk:
@@ -326,8 +332,12 @@ class SWG_EventsModelEventlisting extends JModelItem
 				$this->walks = $factory->get();
 				break;
 			case SWG::EventType_Social:
+				$this->numSocials = $factory->numEvents();
+				$this->socials = $factory->get();
 				break;
 			case SWG::EventType_Weekend:
+				$this->numWeekends = $factory->numEvents();
+				$this->weekends = $factory->get();
 				break;
 		}
 	  

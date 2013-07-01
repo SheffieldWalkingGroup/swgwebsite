@@ -8,6 +8,8 @@ class WeekendFactory extends EventFactory
 	 * @var string
 	 */
 	protected $table = "weekendsaway";
+	
+	protected $idField = "SequenceID";
 	/**
 	 * Field containing the start date
 	 * @var string
@@ -26,6 +28,6 @@ class WeekendFactory extends EventFactory
 	
 	protected function newEvent()
 	{
-		return new Social();
+		return new Weekend();
 	}
 }

@@ -58,29 +58,6 @@ public function getType()
 }
 
 /**
-* Returns the number of events in a date range
-*/
-public abstract static function numEvents($startDate=self::DateToday, $endDate=self::DateEnd);
-
-/**
-* Gets the next few events of this type as an array
-* @param int $startTime Get events ON OR AFTER this date. Default is today. Accepts Unix time.
-* @param int $endTime Get events ON OR BEFORE this date. Default is the end of time. Accepts Unix time.
-* @param int $numToGet Maximum number of events to fetch. Default is no limit.
-* @param int $offset Number of events to skip before first displayed
-* @param bool $reverse True to return events newest first
-* @return array Array of Events
-*/
-public abstract static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $offset=null, $reverse=false);
-
-/**
-* Gets a limited number of events, starting today and going forwards
-* Partly for backwards-compatibility, but also to improve readability
-* @param int $numEvents Maximum number of events to get
-*/
-public abstract static function getNext($numEvents);
-
-/**
 * Takes a timestamp, and returns that date
 * @param int $time Timestamp. Supports DateToday constant.
 * @param bool $after True to return the day after this timestamp, false (default) to return the day of the timestamp
@@ -88,39 +65,20 @@ public abstract static function getNext($numEvents);
 public static function timeToDate($time, $after=false) {
 	$time = intval($time);
 	if ($time == self::DateToday)
-	$rawDate = getdate();
+		$rawDate = getdate();
 	else if ($time == self::DateYesterday)
-	$rawDate = getdate(time()-86400);
+		$rawDate = getdate(time()-86400);
 	else if ($time == self::DateTomorrow)
-	$rawDate = getDate(time()+86400);
+		$rawDate = getDate(time()+86400);
 	else
-	$rawDate = getdate($time);
+		$rawDate = getdate($time);
 	
 	// Add on one day
 	if ($after)
-	$rawDate += 86400;
+		$rawDate += 86400;
 	
 	$dateString = $rawDate['year']."-".$rawDate['mon']."-".$rawDate['mday'];
 	return $dateString;
-}
-
-/**
-* Gets a single event by its ID
-* @param int $id Event ID to fetch
-* @return Event object
-*/
-public abstract static function getSingle($id);
-
-// TODO: Merge into getSingle?
-public static function objectOrID($objectOrID) {
-	if ($objectOrID instanceof self)
-	{
-		return $objectOrID;
-	}
-	else
-	{
-		return self::getSingle($objectOrID);
-	}
 }
 
 public function getEventType() {

@@ -31,23 +31,30 @@ $showMoreLink = $params->get("moreLink", true);
 $newMembers = false; // Set this as a default
 
 switch($params->get('eventType')) {
-  case SWG::EventType_Walk:
-    JLoader::register('WalkInstance', JPATH_BASE."/swg/Models/WalkInstance.php");
-    $events = WalkInstance::getNext($numEvents);
-    require JModuleHelper::getLayoutPath('mod_swg_nextevents', 'walks');
-    break;
-  case SWG::EventType_NewMemberSocial:
-    $newMembers = true;
-  case SWG::EventType_Social:
-    JLoader::register('Social', JPATH_BASE."/swg/Models/Social.php");
-    $events = Social::getNext($numEvents,!$newMembers,$newMembers);
-    require JModuleHelper::getLayoutPath('mod_swg_nextevents', 'socials');
-    break;
+	case SWG::EventType_Walk:
+		JLoader::register('WalkInstanceFactory', JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
+		$factory = new WalkInstanceFactory();
+		$events = $factory->getNext($numEvents);
+		require JModuleHelper::getLayoutPath('mod_swg_nextevents', 'walks');
+		break;
+	case SWG::EventType_NewMemberSocial:
+		$newMembers = true;
+		// Fallthrough
+	case SWG::EventType_Social:
+		JLoader::register('SocialFactory', JPATH_BASE."/swg/Factories/SocialFactory.php");
+		$factory = new SocialFactory();
+		$factory->getNormal = !$newMembers;
+		$factory->getNewMember = $newMembers;
+		$events = $factory->getNext($numEvents);
+		require JModuleHelper::getLayoutPath('mod_swg_nextevents', 'socials');
+		break;
   case SWG::EventType_Weekend:
-    JLoader::register('Weekend', JPATH_BASE."/swg/Models/Weekend.php");
-    $events = Weekend::getNext($numEvents);
-    require JModuleHelper::getLayoutPath('mod_swg_nextevents', 'weekends');
-    break;
+		JLoader::register('WeekendFactory', JPATH_BASE."/swg/Factories/WeekendFactory.php");
+		$factory = new WeekendFactory();
+		$events = $factory->getNext($numEvents);
+		require JModuleHelper::getLayoutPath('mod_swg_nextevents', 'weekends');
+		break;
 }
+
 
 

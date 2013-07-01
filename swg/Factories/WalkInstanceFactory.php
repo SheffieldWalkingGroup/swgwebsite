@@ -14,6 +14,8 @@ class WalkInstanceFactory extends EventFactory
 	 * @var string
 	 */
 	protected $table = "walkprogrammewalks";
+	
+	protected $idField = "SequenceID";
 	/**
 	 * Field containing the start date
 	 * @var string
@@ -41,4 +43,46 @@ class WalkInstanceFactory extends EventFactory
 	{
 		return new WalkInstance();
 	}
+	
+	protected function modifyQuery(JDatabaseQuery &$query)
+	{
+		$query->where("NOT deleted");
+	}
+	
+	/**
+	 * Creates a new walk instance from a walk, pre-filling fields as
+	 * The following fields are used:
+	 *   * walkid
+	 *   * name
+	 *   * description
+	 *   * location
+	 *   * (start|end)(PlaceName|GridRef)
+	 *   * isLinear
+	 *   * miles
+	 *   * (difficulty|distance)Grade
+	 *   * childFriendly
+	 * Other values are left blank, 
+	 * but dogFriendly will be true if the leader AND walk are dog friendly (false otherwise)
+	 * @param Walk $walk The walk we're creating a WalkInstance for
+	 * @return WalkInstance the generated walk instance
+	 */
+	public function createFromWalk(Walk $walk) {
+		$wi = new WalkInstance();
+		$wi->walkid = $walk->id;
+		
+		// Most properties have the same names. Copy them over.
+		// Because we don't allow full read-write access to the walk's properties, 
+		// we get the list of usable properties from dbmappings.
+		foreach ($walk->dbmappings as $key => $v)
+		{
+			$value = $walk->$key;
+			if (property_exists($wi,$key))
+			{
+				$wi->$key = $value;
+			}
+		}
+		
+		return $wi;
+	}
+	
 }

@@ -26,8 +26,9 @@ if (isset($routeid))
 // Get a route for a walkinstance (this means getting the walk)
 if (isset($walkinstanceid))
 {
-	include_once(JPATH_BASE."/swg/Models/WalkInstance.php");
-	$wi = WalkInstance::getSingle($walkinstanceid);
+	include_once(JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
+	$f = new WalkInstanceFactory();
+	$wi = $f->getSingle($walkinstanceid);
 	$walkid = $wi->walkid;
 }
 // Get the route for a particular walk if walkid is set

@@ -17,24 +17,25 @@ jimport('joomla.event.dispatcher');
  */
 class SWG_EventsModelWalkDetails extends JModelItem
 {
-  
-  // A separate flag means we don't keep trying to fetch the walk if it's invalid
-  private $fetchedWalk = false;
-  private $walk = null;
-  
-  /**
-   * Returns the walk specified by the walkid parameter in the get string.
-   * Loads it from the database if necessary.
-   */
-  public function getWalk()
-  {
-    if (!$this->fetchedWalk)
-    {
-      // TODO: Check user has permission to view this walk
-      $this->walk = Walk::getSingle(JRequest::getInt("walkid",0,"get"));
-      $this->fetchedWalk = true;
-    }
-    
-    return $this->walk;
-  }
+	
+	// A separate flag means we don't keep trying to fetch the walk if it's invalid
+	private $fetchedWalk = false;
+	private $walk = null;
+	
+	/**
+	* Returns the walk specified by the walkid parameter in the get string.
+	* Loads it from the database if necessary.
+	*/
+	public function getWalk()
+	{
+		if (!$this->fetchedWalk)
+		{
+			// TODO: Check user has permission to view this walk
+			// TODO: Will be replaced by factory
+			$this->walk = Walk::getSingle(JRequest::getInt("walkid",0,"get"));
+			$this->fetchedWalk = true;
+		}
+		
+		return $this->walk;
+	}
 }

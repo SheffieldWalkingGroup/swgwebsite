@@ -47,6 +47,12 @@ abstract class EventFactory
 	 * @var string
 	 */
 	protected $table;
+	
+	/**
+	 * The ID field on the main table
+	 * @var string
+	 */
+	protected $idField;
 	/**
 	 * Field containing the start date
 	 * @var string
@@ -63,6 +69,9 @@ abstract class EventFactory
 	 */
 	protected $readyToPublishField;
 	
+	/**
+	 * Create a new factory with default settings
+	 */
 	public function __construct()
 	{
 		$this->startDate = Event::DateToday;
@@ -78,6 +87,11 @@ abstract class EventFactory
 		$this->includeAttendees = false;
 	}
 	
+	/**
+	 * Execute a search with the current settings.
+	 * Returns an array of events
+	 * @return Event[]
+	 */
 	public function get()
 	{
 		$db = JFactory::getDBO();
@@ -88,10 +102,12 @@ abstract class EventFactory
 		$query->where(array(
 			$this->startDateField." >= '".Event::timeToDate($this->startDate)."'",
 			$this->startDateField." <= '".Event::timeToDate($this->endDate)."'",
-			"NOT deleted",
 		));
 		if (!$this->showUnpublished)
 			$query->where($this->readyToPublishField);
+			
+		// This allows subclasses to modify the query. Normally they'll add extra WHERE clauses.
+		$this->modifyQuery($query);
 		
 		if ($this->reverse)
 		{
@@ -109,8 +125,6 @@ abstract class EventFactory
 		
 		$db->setQuery($query, $this->offset, $this->limit);
 		
-		// TODO: Allow subclasses to hook in here
-		
 		$data = $db->loadAssocList();
 		
 		// Build an array of events
@@ -122,6 +136,62 @@ abstract class EventFactory
 			$events[] = $event;
 		}
 		return $events;
+	}
+	
+	/**
+	 * Make any modifications needed to the query.
+	 * Query is passed by reference and modified in-place.
+	 * To be implemented by subclasses
+	 * @param JDatabaseQuery $query
+	 */
+	protected function modifyQuery(JDatabaseQuery &$query)
+	{
+		
+	}
+	
+	/**
+	 * Get the next few events based on the current factory settings
+	 * Start date is always today, end date is always the end.
+	 */
+	public function getNext($numEvents)
+	{
+		// Clone the current factory so we can override its settings without affecting other uses
+		// We use a clone instead of a new object so we can keep the settings that aren't fixed by getNext.
+		$factory = clone($this);
+		$factory->startDate = Event::DateToday;
+		$factory->endDate = Event::DateEnd;
+		$factory->limit = (int)$numEvents;
+		$factory->offset = 0;
+		$factory->reverse = false;
+		return $factory->get();
+	}
+	
+	/**
+	 * Get a single event with a known ID
+	 * @param int|Event $evt Event ID. If an actual event is passed in, the event is returned unchanged
+	 * @return Event
+	 */
+	public function getSingle($evt)
+	{
+		if ($evt instanceof Event)
+			return $evt;
+		
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select("*");
+		
+		$query->from($this->table);
+		$query->where(array($this->idField." = ".intval($id)));
+		$db->setQuery($query);
+		$res = $db->query();
+		if ($db->getNumRows($res) == 1)
+		{
+			$evt = $this->newEvent();
+			$evt->fromDatabase($db->loadAssoc());
+			return $evt;
+		}
+		else
+			return null;
 	}
 	
 	/**
@@ -138,17 +208,23 @@ abstract class EventFactory
 		$query->where(array(
 			$this->startDateField." >= '".Event::timeToDate($this->startDate)."'",
 			$this->startDateField." <= '".Event::timeToDate($this->endDate)."'",
-			"NOT deleted",
 		));
 		if (!$this->showUnpublished)
 			$query->where($this->readyToPublishField);
+		
+		$this->modifyQuery($query);
 		
 		$db->setQuery($query);
 		
 		return (int)$db->loadResult();
 	}
 	
+	/**
+	 * Create a new (blank) event object of this type
+	 * @return Event
+	 */
 	protected abstract function newEvent();
 	
+	// TODO: Simple methods to check if a given user has permission to do an action (mostly limit events to those the user can view)
 	
 }
