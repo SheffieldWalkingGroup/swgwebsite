@@ -21,23 +21,20 @@ class SWG_EventsViewEventListing extends JView
 		{
 			// Single event - connect directly to SWG backend
 			switch (strtolower($type)) {
-			case "social":
-				include_once(JPATH_BASE."/swg/Factories/SocialFactory.php");
-				$factory = new SocialFactory();
-				$result = $factory->getSingle($id);
-				break;
-			case "walk":
-				include_once(JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
-				$factory = new WalkInstanceFactory();
-				$result = $factory->getSingle($id);
-				break;
-			case "weekend";
-				include_once(JPATH_BASE."/swg/Factories/WeekendFactory.php");
-				$factory = new WeekendFactory();
-				$result = $factory->getSingle($id);
-				break;
-			default:
+				case "social":
+					include_once(JPATH_BASE."/swg/Factories/SocialFactory.php");
+					$factory = SWG::socialFactory();
+					break;
+				case "walk":
+					include_once(JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
+					$factory = SWG::walkInstanceFactory();
+					break;
+				case "weekend";
+					include_once(JPATH_BASE."/swg/Factories/WeekendFactory.php");
+					$factory = SWG::walkInstanceFactory();
+					break;
 			}
+			$result = $factory->getSingle($id);
 			print $result->jsonEncode();
 		}
 		else

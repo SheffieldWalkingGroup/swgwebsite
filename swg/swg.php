@@ -1,4 +1,7 @@
 <?php
+JLoader::register('SocialFactory', JPATH_BASE."/swg/Factories/SocialFactory.php");
+JLoader::register('WalkInstanceFactory', JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
+JLoader::register('WeekendFactory', JPATH_BASE."/swg/Factories/WeekendFactory.php");
 /**
  * A collection of general functions and constants
  * @author peter
@@ -9,6 +12,43 @@ class SWG {
 	const EventType_Social = 2;
 	const EventType_Weekend = 3;
 	const EventType_NewMemberSocial = 21;
+	
+	private static $factoryWalkInstance;
+	private static $factorySocial;
+	private static $factoryWeekend;
+	
+	/**
+	 * Returns the WalkInstance factory
+	 * @return WalkInstanceFactory
+	 */
+	public static function walkInstanceFactory()
+	{
+		if (!isset(self::$factoryWalkInstance))
+			self::$factoryWalkInstance = new WalkInstanceFactory();
+		return self::$factoryWalkInstance;
+	}
+	
+	/**
+	 * Returns the Social factory
+	 * @return SocialFactory
+	 */
+	public static function socialFactory()
+	{
+		if (!isset(self::$factorySocial))
+			self::$factorySocial = new SocialFactory();
+		return self::$factorySocial;
+	}
+	
+	/**
+	 * Returns the Weekend factory
+	 * @return WeekendFactory
+	 */
+	public static function weekendFactory()
+	{
+		if (!isset(self::$factoryWeekend))
+			self::$factoryWeekend = new WeekendFactory();
+		return self::$factoryWeekend;
+	}
 	
 	public static function printableEventType($typeID)
 	{

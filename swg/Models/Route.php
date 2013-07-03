@@ -428,7 +428,7 @@ class Route extends SWGBaseModel implements Iterator {
 			return null;
 		$dbArr = $db->loadAssoc();
 		
-		$wiFactory = new WalkInstanceFactory();
+		$wiFactory = SWG::walkInstanceFactory();
 		
 		// If we've been given a Walkable, make sure it matches the one on the route
 		// It's OK to load a route for a WalkInstance on a Walk, and vice-versa

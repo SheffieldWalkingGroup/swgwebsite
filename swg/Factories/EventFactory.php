@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Factory superclass for returning events.
+ *
+ * Factories are singletons - get a new factory by calling SWG::socialFactory(), SWG::walkInstanceFactory() or SWG::weekendFactory()
+ * Call $factory->reset() on a new factory to clear any previously-set filters
+ * Then add any filters or options you want
+ * Finally, call a fetch method:
+ * get() - gets any number of events matching the current filters
+ * numEvents() - list the total number of events matching the current filters
+ * getNext($num) - gets the next $num events from today. Ignores start & end date, limit & offset filters ($num is the limit)
+ * getSingle($id) - gets the event with ID $id, from the cache if stored. If you pass an actual event in, it will be returned unchanged
+ */
 abstract class EventFactory
 {
 	/**
@@ -70,9 +82,24 @@ abstract class EventFactory
 	protected $readyToPublishField;
 	
 	/**
+	 * Cache of events we've already loaded, with the ID as the key
+	 * @var Event[]
+	 */
+	protected $cache;
+	
+	/**
 	 * Create a new factory with default settings
 	 */
 	public function __construct()
+	{
+		$this->reset();
+	}
+	
+	/**
+	 * Resets all filters to their defaults
+	 * @return void
+	 */
+	public function reset()
 	{
 		$this->startDate = Event::DateToday;
 		$this->endDate = Event::DateEnd;
@@ -89,7 +116,8 @@ abstract class EventFactory
 	
 	/**
 	 * Execute a search with the current settings.
-	 * Returns an array of events
+	 * Returns an array of events.
+	 * Always gets results from the database and overwrites anything in the cache.
 	 * @return Event[]
 	 */
 	public function get()
@@ -134,6 +162,7 @@ abstract class EventFactory
 			$event = $this->newEvent();
 			$event->fromDatabase(array_shift($data));
 			$events[] = $event;
+			$this->cache[$event->id] = $event;
 		}
 		return $events;
 	}
@@ -147,51 +176,6 @@ abstract class EventFactory
 	protected function modifyQuery(JDatabaseQuery &$query)
 	{
 		
-	}
-	
-	/**
-	 * Get the next few events based on the current factory settings
-	 * Start date is always today, end date is always the end.
-	 */
-	public function getNext($numEvents)
-	{
-		// Clone the current factory so we can override its settings without affecting other uses
-		// We use a clone instead of a new object so we can keep the settings that aren't fixed by getNext.
-		$factory = clone($this);
-		$factory->startDate = Event::DateToday;
-		$factory->endDate = Event::DateEnd;
-		$factory->limit = (int)$numEvents;
-		$factory->offset = 0;
-		$factory->reverse = false;
-		return $factory->get();
-	}
-	
-	/**
-	 * Get a single event with a known ID
-	 * @param int|Event $evt Event ID. If an actual event is passed in, the event is returned unchanged
-	 * @return Event
-	 */
-	public function getSingle($evt)
-	{
-		if ($evt instanceof Event)
-			return $evt;
-		
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select("*");
-		
-		$query->from($this->table);
-		$query->where(array($this->idField." = ".intval($id)));
-		$db->setQuery($query);
-		$res = $db->query();
-		if ($db->getNumRows($res) == 1)
-		{
-			$evt = $this->newEvent();
-			$evt->fromDatabase($db->loadAssoc());
-			return $evt;
-		}
-		else
-			return null;
 	}
 	
 	/**
@@ -217,6 +201,60 @@ abstract class EventFactory
 		$db->setQuery($query);
 		
 		return (int)$db->loadResult();
+	}
+	
+	/**
+	 * Get the next few events based on the current factory settings
+	 * Start date is always today, end date is always the end.
+	 */
+	public function getNext($numEvents)
+	{
+		// Clone the current factory so we can override its settings without affecting other uses
+		// We use a clone instead of a new object so we can keep the settings that aren't fixed by getNext.
+		$factory = clone($this);
+		$factory->startDate = Event::DateToday;
+		$factory->endDate = Event::DateEnd;
+		$factory->limit = (int)$numEvents;
+		$factory->offset = 0;
+		$factory->reverse = false;
+		
+		$res = $factory->get();
+		// Put these results into THIS factory's cache
+		foreach ($res as $id=>$evt)
+			$this->cache[$id] = $evt;
+		
+		return $res;
+	}
+	
+	/**
+	 * Get a single event with a known ID. Uses the cache if we've already loaded it.
+	 * @param int|Event $evt Event ID. If an actual event is passed in, the event is returned unchanged
+	 * @return Event
+	 */
+	public function getSingle($evt)
+	{
+		if ($evt instanceof Event)
+			return $evt;
+		
+		if (isset($this->cache[$evt]))
+			return $this->cache[$evt];
+		
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select("*");
+		
+		$query->from($this->table);
+		$query->where(array($this->idField." = ".intval($id)));
+		$db->setQuery($query);
+		$res = $db->query();
+		if ($db->getNumRows($res) == 1)
+		{
+			$evt = $this->newEvent();
+			$evt->fromDatabase($db->loadAssoc());
+			return $evt;
+		}
+		else
+			return null;
 	}
 	
 	/**

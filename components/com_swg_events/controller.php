@@ -18,7 +18,7 @@ class SWG_EventsController extends JController
 		if (JFactory::getUser()->authorise("walk.editall", "com_swg_events"))
 			return true;
 		
-		$f = new WalkInstanceFactory();
+		$f = SWG::walkInstanceFactory();
 		$walk = $f->getSingle($walkOrID);
 		
 		return (

@@ -120,7 +120,7 @@ class SWG_EventsModelAddEditSocial extends JModelForm
 		}
 		else
 		{
-			$factory = new SocialFactory();
+			$factory = SWG::socialFactory();
 			$this->social = $factory->getSingle($id);
 		}
 	}

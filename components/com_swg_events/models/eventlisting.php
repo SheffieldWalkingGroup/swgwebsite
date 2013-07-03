@@ -304,19 +304,20 @@ class SWG_EventsModelEventlisting extends JModelItem
 		// Set specific factory parameters
 		switch ($eventType) {
 			case SWG::EventType_Walk:
-				$factory = new WalkInstanceFactory();
+				$factory = SWG::walkInstanceFactory();
 				break;
 			case SWG::EventType_Social:
-				$factory = new SocialFactory();
+				$factory = SWG::socialFactory();
 				$factory->getNormal = true;
 				$factory->getNewMember = true;
 				break;
 			case SWG::EventType_Weekend:
-				$factory = new WeekendFactory();
+				$factory = SWG::weekendFactory();
 				break;
 		}
 		
 		// Set standard/shared factory parameters
+		$factory->reset();
 		$factory->startDate = $startDate;
 		$factory->endDate = $endDate;
 		$factory->limit = 100;

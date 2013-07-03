@@ -27,7 +27,7 @@ if (isset($routeid))
 if (isset($walkinstanceid))
 {
 	include_once(JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
-	$f = new WalkInstanceFactory();
+	$f = SWG::walkInstanceFactory();
 	$wi = $f->getSingle($walkinstanceid);
 	$walkid = $wi->walkid;
 }

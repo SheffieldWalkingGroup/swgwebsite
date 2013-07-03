@@ -41,7 +41,7 @@ class SWG_EventsModelScheduleWalk extends JModelForm
 		// Load an existing walk instance (if any)
 		if (!empty($formData['id']))
 		{
-			$factory = new WalkInstanceFactory();
+			$factory = SWG::walkInstanceFactory();
 			$this->wi = $factory->getSingle($formData['id']);
 		}
 		else
@@ -112,7 +112,7 @@ class SWG_EventsModelScheduleWalk extends JModelForm
 		// Load or create the walk instance if not already done
 		if (!isset($this->wi))
 		{
-			$factory = new WalkInstanceFactory();
+			$factory = SWG::walkInstanceFactory();
 			
 			if (JRequest::getInt("walkinstanceid",0,"get"))
 				$this->wi = $factory->getSingle(JRequest::getInt("walkinstanceid",0,"get"));

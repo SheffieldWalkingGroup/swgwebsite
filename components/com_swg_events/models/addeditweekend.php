@@ -100,7 +100,7 @@ class SWG_EventsModelAddEditWeekend extends JModelForm
 		}
 		else
 		{
-			$factory = new WeekendFactory();
+			$factory = SWG::weekendFactory();
 			$this->weekend = $factory->getSingle($id);
 		}
 	}

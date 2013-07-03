@@ -33,7 +33,7 @@ $newMembers = false; // Set this as a default
 switch($params->get('eventType')) {
 	case SWG::EventType_Walk:
 		JLoader::register('WalkInstanceFactory', JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
-		$factory = new WalkInstanceFactory();
+		$factory = SWG::walkInstanceFactory();
 		$events = $factory->getNext($numEvents);
 		require JModuleHelper::getLayoutPath('mod_swg_nextevents', 'walks');
 		break;
@@ -42,7 +42,7 @@ switch($params->get('eventType')) {
 		// Fallthrough
 	case SWG::EventType_Social:
 		JLoader::register('SocialFactory', JPATH_BASE."/swg/Factories/SocialFactory.php");
-		$factory = new SocialFactory();
+		$factory = SWG::socialFactory();
 		$factory->getNormal = !$newMembers;
 		$factory->getNewMember = $newMembers;
 		$events = $factory->getNext($numEvents);
@@ -50,7 +50,7 @@ switch($params->get('eventType')) {
 		break;
   case SWG::EventType_Weekend:
 		JLoader::register('WeekendFactory', JPATH_BASE."/swg/Factories/WeekendFactory.php");
-		$factory = new WeekendFactory();
+		$factory = SWG::weekendFactory();
 		$events = $factory->getNext($numEvents);
 		require JModuleHelper::getLayoutPath('mod_swg_nextevents', 'weekends');
 		break;

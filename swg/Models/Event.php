@@ -186,74 +186,74 @@ public function sharedProperties()
 */
 class EventAlterations extends SWGBaseModel {
 
-protected $version = 0;
-protected $lastModified = null;
+	protected $version = 0;
+	protected $lastModified = null;
 
-protected $details = false;
-protected $cancelled = false;
-protected $placeTime = false;
-protected $organiser = false;
-protected $date = false;
+	protected $details = false;
+	protected $cancelled = false;
+	protected $placeTime = false;
+	protected $organiser = false;
+	protected $date = false;
 
-public function __construct() {
-	$this->version = 1;
-}
-
-public function setVersion($v) {
-	$this->version = (int)$v;
-}
-
-public function setLastModified($d) {
-	if (is_int($d))
-	$this->lastModified = $d;
-	else {
-		$this->lastModified = strtotime($d);
+	public function __construct() {
+		$this->version = 1;
 	}
-}
 
-public function incrementVersion()
-{
-	$this->version++;
-	$this->setLastModified(time());
-}
-	
-public function setDetails($d) {
-	$this->details = (bool)$d; 
-}
+	public function setVersion($v) {
+		$this->version = (int)$v;
+	}
 
-public function setCancelled($c) {
-	$this->cancelled = (bool)$c;
-}
+	public function setLastModified($d) {
+		if (is_int($d))
+		$this->lastModified = $d;
+		else {
+			$this->lastModified = strtotime($d);
+		}
+	}
 
-public function setPlaceTime($m) {
-	$this->placeTime = (bool)$m;
-}
+	public function incrementVersion()
+	{
+		$this->version++;
+		$this->setLastModified(time());
+	}
+		
+	public function setDetails($d) {
+		$this->details = (bool)$d; 
+	}
 
-public function setOrganiser($l) {
-	$this->organiser = (bool)$l;
-}
+	public function setCancelled($c) {
+		$this->cancelled = (bool)$c;
+	}
 
-public function setDate($d) {
-	$this->date = (bool)$d;
-}
+	public function setPlaceTime($m) {
+		$this->placeTime = (bool)$m;
+	}
 
-public function __get($name)
-{
-	return $this->$name; // TODO: What params should be exposed?
-}
+	public function setOrganiser($l) {
+		$this->organiser = (bool)$l;
+	}
 
-public function anyAlterations()
-{
-	return ($this->details || $this->cancelled || $this->placeTime || $this->organiser || $this->date);
-}
+	public function setDate($d) {
+		$this->date = (bool)$d;
+	}
 
-/**
-* Add in anyAlterations
-* @see SWGBaseModel::sharedProperties()
-*/
-public function sharedProperties() {
-	$prop = parent::sharedProperties();
-	$prop['any'] = $this->anyAlterations();
-	return $prop;
-}
+	public function __get($name)
+	{
+		return $this->$name; // TODO: What params should be exposed?
+	}
+
+	public function anyAlterations()
+	{
+		return ($this->details || $this->cancelled || $this->placeTime || $this->organiser || $this->date);
+	}
+
+	/**
+	* Add in anyAlterations
+	* @see SWGBaseModel::sharedProperties()
+	*/
+	public function sharedProperties() {
+		$prop = parent::sharedProperties();
+		$prop['any'] = $this->anyAlterations();
+		return $prop;
+	}
 }
