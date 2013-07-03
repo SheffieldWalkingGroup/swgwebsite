@@ -3,7 +3,6 @@
 defined('_JEXEC') or die('Restricted access');
 
 require_once JPATH_BASE."/swg/swg.php";
-JLoader::register('WalkInstanceFactory', JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
 JLoader::register('WalkInstance', JPATH_BASE."/swg/Models/WalkInstance.php");
 JLoader::register('Walk', JPATH_BASE."/swg/Models/Walk.php");
 

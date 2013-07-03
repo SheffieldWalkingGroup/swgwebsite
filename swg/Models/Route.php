@@ -4,7 +4,6 @@ require_once("SWGBaseModel.php");
 require_once("Waypoint.php");
 require_once("Walk.php");
 require_once("WalkInstance.php");
-require_once(JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
 include_once(JPATH_BASE."/swg/lib/phpcoord/phpcoord-2.3.php");
 
 class Route extends SWGBaseModel implements Iterator {

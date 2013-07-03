@@ -5,14 +5,12 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla modelitem library
 jimport('joomla.application.component.modelitem');
 require_once JPATH_BASE."/swg/swg.php";
-JLoader::register('WalkInstanceFactory', JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
+
 JLoader::register('Social', JPATH_BASE."/swg/Models/Social.php");
 JLoader::register('Weekend', JPATH_BASE."/swg/Models/Weekend.php");
 JLoader::register('EventAttendance', JPATH_BASE."/swg/Controllers/EventAttendance.php");
 JLoader::register('Event', JPATH_BASE."/swg/Models/Event.php");
 
-JLoader::register('EventAttendance', JPATH_BASE."/swg/Controllers/EventAttendance.php");
- 
 /**
  * Event listing model
  */

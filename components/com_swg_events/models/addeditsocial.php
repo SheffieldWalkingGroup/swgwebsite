@@ -3,7 +3,6 @@
 defined('_JEXEC') or die('Restricted access');
 
 require_once JPATH_BASE."/swg/swg.php";
-JLoader::register('SocialFactory', JPATH_BASE."/swg/Factories/SocialFactory.php");
 
 // Include dependancy of the main model form
 jimport('joomla.application.component.modelform');

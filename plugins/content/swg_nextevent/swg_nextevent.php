@@ -39,19 +39,16 @@ class plgContentSWG_NextEvent extends JPlugin {
 			switch (strtolower($type))
 			{
 				case "walk":
-					JLoader::register('WalkInstanceFactory', JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
 					$factory = SWG::walkInstanceFactory();
 					break;
 				case "newmembersocial":
 					$newMembers = true;
 				case "social":
-					JLoader::register('SocialFactory', JPATH_BASE."/swg/Factories/SocialFactory.php");
 					$factory = SWG::socialFactory();
 					$factory->getNormal = !$newMembers;
 					$factory->getNewMember = $newMembers;
 					break;
 				case "weekend":
-					JLoader::register('WeekendFactory', JPATH_BASE."/swg/Factories/WeekendFactory.php");
 					$factory = SWG::weekendFactory();
 					break;
 			}
