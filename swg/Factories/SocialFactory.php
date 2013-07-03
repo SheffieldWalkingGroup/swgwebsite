@@ -2,6 +2,7 @@
 require_once(JPATH_BASE."/swg/Models/Social.php");
 require_once("EventFactory.php");
 
+
 /**
  * Factory for returning socials
  *
