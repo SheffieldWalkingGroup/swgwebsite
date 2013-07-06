@@ -46,7 +46,7 @@ class Route extends SWGBaseModel implements Iterator {
 		
 	/**
 	* Waypoints of this route
-	* @var Waypoint
+	* @var Waypoint[]
 	*/
 	private $wayPoints = array();
 	/**
@@ -134,7 +134,7 @@ class Route extends SWGBaseModel implements Iterator {
 	* @param Waypoint $wp Waypoint to set
 	* TODO: Need to recalculate route
 	*/
-	public function setWaypoint($index, Waypoint &$wp)
+	public function setWaypoint($index, Waypoint $wp)
 	{
 		if (is_int($index))
 		{

@@ -122,10 +122,10 @@ public function toDatabase(JDatabaseQuery &$query)
 		return (!empty($this->name) && !empty($this->description) && !empty($this->start) && !empty($this->endDate) && !empty($this->placeName) && !empty($this->area));
 	}
 
-public function __get($name)
-{
-	return $this->$name; // TODO: What params should be exposed?
-}
+	public function __get($name)
+	{
+		return $this->$name; // TODO: What params should be exposed?
+	}
 
 	public function __set($name, $value)
 	{
