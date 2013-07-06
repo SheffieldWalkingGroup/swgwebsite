@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright	Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
+ * @copyright	Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -30,6 +30,8 @@ class plgSystemLanguageFilter extends JPlugin
 
 	public function __construct(&$subject, $config)
 	{
+		parent::__construct($subject, $config);
+
 		// Ensure that constructor is called one time
 		self::$cookie = SID == '';
 		if (!self::$default_lang) {
@@ -82,7 +84,7 @@ class plgSystemLanguageFilter extends JPlugin
 					$conf = JFactory::getConfig();
 					$cookie_domain 	= $conf->get('config.cookie_domain', '');
 					$cookie_path 	= $conf->get('config.cookie_path', '/');
-					setcookie(JApplication::getHash('language'), $lang_code, time() + 365 * 86400, $cookie_path, $cookie_domain);
+					setcookie(JApplication::getHash('language'), $lang_code, $this->getLangCookieTime(), $cookie_path, $cookie_domain);
 					// set the request var
 					JRequest::setVar('language', $lang_code);
 				}
@@ -209,7 +211,7 @@ class plgSystemLanguageFilter extends JPlugin
 
 			// Redirect only if not in post
 			$post = JRequest::get('POST');
-			if (!empty($lang_code) && $app->input->getMethod() != "POST" || count($post) == 0)
+			if (!empty($lang_code) && ($app->input->getMethod() != "POST" || count($post) == 0))
 			{
 				if ($this->params->get('remove_default_prefix', 0) == 0)
 				{
@@ -355,7 +357,7 @@ class plgSystemLanguageFilter extends JPlugin
 					$conf = JFactory::getConfig();
 					$cookie_domain 	= $conf->get('config.cookie_domain', '');
 					$cookie_path 	= $conf->get('config.cookie_path', '/');
-					setcookie(JApplication::getHash('language'), $lang_code, time() + 365 * 86400, $cookie_path, $cookie_domain);
+					setcookie(JApplication::getHash('language'), $lang_code, $this->getLangCookieTime(), $cookie_path, $cookie_domain);
 				}
 			}
 		}
@@ -387,7 +389,7 @@ class plgSystemLanguageFilter extends JPlugin
 					$associations = MenusHelper::getAssociations($active->id);
 				}
 			}
-			
+
 			$lang_code = $user['language'];
 			if (empty($lang_code))
 			{
@@ -402,7 +404,7 @@ class plgSystemLanguageFilter extends JPlugin
  				$conf = JFactory::getConfig();
  				$cookie_domain 	= $conf->get('config.cookie_domain', '');
  				$cookie_path 	= $conf->get('config.cookie_path', '/');
- 				setcookie(JApplication::getHash('language'), $lang_code, time() + 365 * 86400, $cookie_path, $cookie_domain);
+ 				setcookie(JApplication::getHash('language'), $lang_code, $this->getLangCookieTime(), $cookie_path, $cookie_domain);
 
 				// Change the language code
 				JFactory::getLanguage()->setLanguage($lang_code);
@@ -412,7 +414,7 @@ class plgSystemLanguageFilter extends JPlugin
 					$itemid = $associations[$lang_code];
 					$app->setUserState('users.login.form.return', 'index.php?&Itemid='.$itemid);
 				}
-				else 
+				else
 				{
 					$itemid = isset($homes[$lang_code]) ? $homes[$lang_code]->id : $homes['*']->id;
 					$app->setUserState('users.login.form.return', 'index.php?&Itemid='.$itemid);
@@ -506,5 +508,26 @@ class plgSystemLanguageFilter extends JPlugin
 				}
 			}
 		}
+	}
+
+	/**
+	 * Getting the Language Cookie settings
+	 *
+	 * @return  string  The cookie time.
+	 *
+	 * @since   3.0.4
+	 */
+	private function getLangCookieTime()
+	{
+		if ($this->params->get('lang_cookie', 1) == 1)
+		{
+			$lang_cookie = time() + 365 * 86400;
+		}
+		else
+		{
+			$lang_cookie = 0;
+		}
+
+		return $lang_cookie;
 	}
 }
