@@ -422,7 +422,7 @@ public function save() {
 	{
 	$query->set($dbField." = '".$db->escape($this->$var)."'");
 	}
-	//$query->set("suggestedby = ".$this->suggestedBy->id);
+	$query->set("suggestedby = ".$this->suggestedBy->id);
 	
 	// Update or insert?
 	if (!isset($this->id))
@@ -433,6 +433,7 @@ public function save() {
 	{
 	$query->where("ID = ".(int)$this->id);
 	$query->update("walks");
+
 	}
 	
 	$db->setQuery($query);
