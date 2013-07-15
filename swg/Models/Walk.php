@@ -103,12 +103,12 @@ class Walk extends SWGBaseModel implements Walkable {
 
 	}
 
+	// TODO: This isn't used - everything is in save()
 	public function toDatabase(JDatabaseQuery &$query)
 	{
 		parent::toDatabase($query);
 		
 		$query->set("suggestedby", $this->suggestedBy->id);
-		
 	}
 
 	public function valuesToForm()
@@ -425,7 +425,7 @@ class Walk extends SWGBaseModel implements Walkable {
 		{
 			$query->set($dbField." = '".$db->escape($this->$var)."'");
 		}
-		//$query->set("suggestedby = ".$this->suggestedBy->id);
+		$query->set("suggestedby = ".$this->suggestedBy->id);
 		
 		// Update or insert?
 		if (!isset($this->id))
