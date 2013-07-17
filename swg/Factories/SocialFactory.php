@@ -51,6 +51,8 @@ class SocialFactory extends EventFactory
 	 */
 	protected $readyToPublishField = "readytopublish";
 	
+	protected $eventTypeConst = Event::TypeSocial;
+	
 	protected function newEvent()
 	{
 		return new Social();
@@ -63,6 +65,6 @@ class SocialFactory extends EventFactory
 			$showWhat[] = "shownormal";
 		if ($this->getNewMember)
 			$showWhat[] = "shownewmember";
-		$query->where(implode(" OR ", $showWhat));
+		$query->where("(".implode(" OR ", $showWhat).")");
 	}
 }
