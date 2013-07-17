@@ -265,6 +265,9 @@
 				}
 				$this->postcode = $value;
 				break;
+			default:
+				// All others - fall through to Event
+				parent::__set($name, $value);
 		}
 	}
 

@@ -16,7 +16,8 @@ protected $start;
 protected $description;
 protected $okToPublish;
 protected $alterations; 
-protected $attended;
+protected $attendees;
+protected $attendedby;
 
 const DateToday = -1;
 const DateYesterday = -2;
@@ -42,10 +43,11 @@ public function __set($name, $value) {
 			$this->$name = $value;
 			break;
 		case "start":
+		case "attendees":
 			$this->$name = (int)$value;
 			break;
 		case "okToPublish":
-		case "attended":
+		case "attendedby":
 			$this->$name = (bool)$value;
 			break;
 	}

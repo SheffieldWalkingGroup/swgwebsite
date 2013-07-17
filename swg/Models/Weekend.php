@@ -193,6 +193,9 @@ public function toDatabase(JDatabaseQuery &$query)
 					}
 				}
 				break;
+			default:
+				// All others - fall through to Event
+				parent::__set($name, $value);
 			
 		}
 	}

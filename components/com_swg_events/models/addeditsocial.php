@@ -3,6 +3,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 require_once JPATH_BASE."/swg/swg.php";
+require_once JPATH_BASE."/swg/Models/Social.php";
 
 // Include dependancy of the main model form
 jimport('joomla.application.component.modelform');

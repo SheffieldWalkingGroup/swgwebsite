@@ -21,7 +21,7 @@ class WeekendFactory extends EventFactory
 	 */
 	protected $table = "weekendsaway";
 	
-	protected $idField = "SequenceID";
+	protected $idField = "ID";
 	/**
 	 * Field containing the start date
 	 * @var string
@@ -37,6 +37,8 @@ class WeekendFactory extends EventFactory
 	 * @var string
 	 */
 	protected $readyToPublishField = "oktopublish";
+	
+	protected $eventTypeConst = Event::TypeWeekend;
 	
 	protected function newEvent()
 	{

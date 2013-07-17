@@ -8,7 +8,6 @@ require_once JPATH_BASE."/swg/swg.php";
 
 JLoader::register('Social', JPATH_BASE."/swg/Models/Social.php");
 JLoader::register('Weekend', JPATH_BASE."/swg/Models/Weekend.php");
-JLoader::register('EventAttendance', JPATH_BASE."/swg/Controllers/EventAttendance.php");
 JLoader::register('Event', JPATH_BASE."/swg/Models/Event.php");
 
 /**
@@ -120,10 +119,6 @@ class SWG_EventsModelEventlisting extends JModelItem
 	    $this->loadedEvents = true;
 	  }
 	  
-	  // Get events that the current user has attended
-	  // TODO: Only get this if showing events in the past?
-	  $attended = EventAttendance::eventsAttendedBy(JFactory::getUser()->get('id'));
-	  
 	  /* 
 	   * Go through all lists in date order (oldest first).
 	   * If there are multiple events on a given day,
@@ -163,11 +158,6 @@ class SWG_EventsModelEventlisting extends JModelItem
 	    else 
 			// Unknown event - probably run out: stop looping and don't add it to the list
 			break;
-			
-		if (in_array(array("type"=>$nextEvent->getType(), "id"=>$nextEvent->id), $attended))
-		{
-			$nextEvent->attended = true;
-		}
 	    
 	    $events[] = $nextEvent;
 	     
@@ -320,6 +310,8 @@ class SWG_EventsModelEventlisting extends JModelItem
 		$factory->offset = JRequest::getInt("offset",0);
 		$factory->reverse = JRequest::getBool("order");
 		$factory->showUnpublished = JRequest::getBool("unpublished",false);
+		$factory->includeAttendees = true;
+		$factory->includeAttendedBy = Jfactory::getUser()->id;
 		
 		// Get events from factories
 		switch ($eventType)

@@ -49,10 +49,24 @@ abstract class EventFactory
 	public $showUnpublished;
 	
 	/**
-	 * Include the list of attendees for each event (TODO). Default is not to include them.
+	 * Show only events attended by this user/these users. Default is not to filter this.
+	 * Can only be accessed through helper methods to make sure values are safe.
+	 * @var array
+	 */
+	private $filterAttendedBy;
+	
+	/**
+	 * Include the number of attendees for each event. Default is not to include it.
 	 * @var bool
 	 */
 	public $includeAttendees;
+	
+	/**
+	 * Include a boolean flag saying whether the specified user attended an event. Default is not to include it.
+	 * Value should be a CMS user ID
+	 * @var int
+	 */
+	public $includeAttendedBy;
 	
 	/**
 	 * The main table to read for this event
@@ -88,6 +102,12 @@ abstract class EventFactory
 	protected $cache;
 	
 	/**
+	 * Reference to the event type constant
+	 * @var int
+	 */
+	protected $eventTypeConst;
+	
+	/**
 	 * Create a new factory with default settings
 	 */
 	public function __construct()
@@ -112,6 +132,9 @@ abstract class EventFactory
 		$this->showUnpublished = false;
 		
 		$this->includeAttendees = false;
+		$this->includeAttendedBy = null;
+		
+		$this->filterAttendedBy = array();
 	}
 	
 	/**
@@ -125,17 +148,15 @@ abstract class EventFactory
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select("{$this->table}.*");
-		$query->from($this->table);
 		
-		$query->where(array(
-			$this->startDateField." >= '".Event::timeToDate($this->startDate)."'",
-			$this->startDateField." <= '".Event::timeToDate($this->endDate)."'",
-		));
-		if (!$this->showUnpublished)
-			$query->where($this->readyToPublishField);
-			
-		// This allows subclasses to modify the query. Normally they'll add extra WHERE clauses.
-		$this->modifyQuery($query);
+		if ($this->includeAttendees)
+		{
+			$query->select("(SELECT COUNT(1) FROM eventattendance WHERE eventtype=".$this->eventTypeConst." AND eventid=".$this->table.".".$this->idField.") AS attendees");
+		}
+		if ($this->includeAttendedBy)
+			$query->select("EXISTS (SELECT 1 FROM eventattendance WHERE eventtype=".$this->eventTypeConst." AND eventid=".$this->table.".".$this->idField." AND user=".(int)$this->includeAttendedBy.") AS attendedby");
+		
+		$this->applyFilters($query);
 		
 		if ($this->reverse)
 		{
@@ -160,7 +181,14 @@ abstract class EventFactory
 		while (count($data) > 0 && count($events) != $this->limit)
 		{
 			$event = $this->newEvent();
-			$event->fromDatabase(array_shift($data));
+			$row = array_shift($data);
+			$event->fromDatabase($row);
+			if ($this->includeAttendees)
+			{
+				$event->attendees = $row['attendees'];
+			}
+			if ($this->includeAttendedBy)
+				$event->attendedby = $row['attendedby'];
 			$events[] = $event;
 			$this->cache[$event->id] = $event;
 		}
@@ -168,9 +196,35 @@ abstract class EventFactory
 	}
 	
 	/**
+	 * Apply currently set filters to the database query
+	 * @param JDatabaseQuery $query
+	 */
+	protected function applyFilters(JDatabaseQuery &$query)
+	{
+		$query->from($this->table);
+		
+		$query->where(array(
+			$this->startDateField." >= '".Event::timeToDate($this->startDate)."'",
+			$this->startDateField." <= '".Event::timeToDate($this->endDate)."'",
+		));
+		if (!$this->showUnpublished)
+			$query->where($this->readyToPublishField);
+			
+		// Filter by attendees
+		if (!empty($this->filterAttendedBy))
+		{
+			$query->join("INNER", "eventattendance ON eventattendance.eventtype=".$this->eventTypeConst." AND eventattendance.eventid=".$this->table.".".$this->idField);
+			$query->where("eventattendance.user IN (".implode(",",$this->filterAttendedBy).")");
+		}
+			
+		// This allows subclasses to modify the query. Normally they'll add extra WHERE clauses.
+		$this->modifyQuery($query);
+	}
+	
+	/**
 	 * Make any modifications needed to the query.
 	 * Query is passed by reference and modified in-place.
-	 * To be implemented by subclasses
+	 * To be implemented by subclasses if needed
 	 * @param JDatabaseQuery $query
 	 */
 	protected function modifyQuery(JDatabaseQuery &$query)
@@ -187,20 +241,22 @@ abstract class EventFactory
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select("count(1) as count");
-		$query->from($this->table);
 		
-		$query->where(array(
-			$this->startDateField." >= '".Event::timeToDate($this->startDate)."'",
-			$this->startDateField." <= '".Event::timeToDate($this->endDate)."'",
-		));
-		if (!$this->showUnpublished)
-			$query->where($this->readyToPublishField);
-		
-		$this->modifyQuery($query);
+		$this->applyFilters($query);
 		
 		$db->setQuery($query);
 		
 		return (int)$db->loadResult();
+	}
+	
+	/**
+	 * Return some cumulative stats for events matching the current filters
+	 * Stats returned depend on the specific factory
+	 * @return array[]
+	 */
+	public function cumulativeStats()
+	{
+		
 	}
 	
 	/**
@@ -255,6 +311,21 @@ abstract class EventFactory
 		}
 		else
 			return null;
+	}
+	
+	/**
+	 * Find events attended by this user.
+	 *
+	 * The new user ID is added to the existing users to check, and events attended by any of the users specified are found.
+	 * @param int $userID CMS user ID of the user to find
+	 */
+	public function addAttendee($userID)
+	{
+		$userID = (int)$userID;
+		if (!empty($userID) && !in_array($userID, $this->filterAttendedBy))
+		{
+			$this->filterAttendedBy[] = $userID;
+		}
 	}
 	
 	/**

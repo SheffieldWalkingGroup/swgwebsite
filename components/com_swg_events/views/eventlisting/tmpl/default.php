@@ -192,9 +192,20 @@ foreach ($this->events as $event):?>
 						</p>
 					<?php endif; ?>
 				<?php endif; ?>
-				<?php if ($event->attended):?>
-					<p>You did this</p>
-				<?php endif; ?>
+				<?php if ($event->attendees > 0):  // TODO: Potential warnings if value is unset??>
+					<p><?php echo $event->attendees;if ($event->attendees == 1):?> person<?php else:?> people<?php endif;?> did this</p>
+				<?php endif;?>
+					<p>
+						<a href="<?php echo JURI::current()?>?<?php echo JURI::buildQuery(array(
+							"task" 	  => "attendance.attend",
+							"evttype" => $event->getType(),
+							"evtid"   => $event->id,
+							"set"     => !$event->attendedby,
+						));?>"
+							><img src="/images/icons/<?php if ($event->attendedby):?>tick<?php else: ?>tickbox<?php endif;?>.png" width="19" height="16" /
+						></a>
+						You did this
+					</p>
 				<?php if ($this->showEditLinks($event)):?>
 					<p>
 						<a href="<?php echo $this->editURL($event);?>">Edit <?php echo strtolower($event->type);?></a>

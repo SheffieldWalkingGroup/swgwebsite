@@ -45,6 +45,8 @@ class WalkInstanceFactory extends EventFactory
 	 */
 	protected $readyToPublishField = "readytopublish";
 	
+	protected $eventTypeConst = Event::TypeWalk;
+	
 	public function __construct()
 	{
 		parent::__construct();
@@ -101,6 +103,24 @@ class WalkInstanceFactory extends EventFactory
 		}
 		
 		return $wi;
+	}
+	
+	/**
+	 * Return some cumulative stats for events matching the current filters
+	 * Stats returned depend on the specific factory
+	 * @return array[]
+	 */
+	public function cumulativeStats()
+	{
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select(array(
+			"SUM(miles) AS sum_miles",
+			"AVG(miles) AS mean_miles",
+		));
+		$this->applyFilters($query);
+		$db->setQuery($query);
+		return $db->loadAssoc();
 	}
 	
 }
