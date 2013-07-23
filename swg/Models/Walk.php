@@ -244,7 +244,9 @@ public function __isset($name)
 		case "route":
 			return (isset($this->route));
 			break;
-		
+		default:
+			return (isset($this->$name));
+			break;
 	}
 }
 
@@ -424,7 +426,7 @@ public function save() {
 	// First, do the basic fields
 	foreach ($this->dbmappings as $var => $dbField)
 	{
-	$query->set($dbField." = '".$db->escape($this->$var)."'");
+		$query->set($dbField." = '".$db->escape($this->$var)."'");
 	}
 	$query->set("suggestedby = ".$this->suggestedBy->id);
 	
