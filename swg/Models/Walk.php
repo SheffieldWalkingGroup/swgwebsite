@@ -284,29 +284,33 @@ public function loadRoute()
 * If any of these aren't available (i.e. start/end place names),
 * they are left unchanged. All others are always overwritten.
 * 
-* @param Route $r
+* @param Route $r Route to set
+* @param bool $setData If true, update walk data with the values from this route. Default is false.
 */
-public function setRoute(Route &$r)
+public function setRoute(Route &$r, $setData=false)
 {
 	$this->route =& $r;
 	
-	// Get start and end places
-	$start = $r->getWaypoint(0);
-	$this->startGridRef = $start->osRef->toSixFigureString();
-	$this->startPlaceName = $start->reverseGeocode();
-	
-	$end = $r->getWaypoint($r->numWaypoints()-1);
-	$this->endGridRef = $end->osRef->toSixFigureString();
-	$this->endPlaceName = $end->reverseGeocode();
-	
-	// Is this a linear walk? 
-	// TODO: Magic number
-	$this->isLinear = ($start->distanceTo($end) > 500);
-	
-	// Convert distance to miles, get the distance grade
-	// Resolution is half a mile
-	$this->miles = round($r->getDistance()*0.000621371192*2)/2;
-	$this->distanceGrade = $this->getDistanceGrade($this->miles);
+	if ($setData)
+	{
+		// Get start and end places
+		$start = $r->getWaypoint(0);
+		$this->startGridRef = $start->osRef->toSixFigureString();
+		$this->startPlaceName = $start->reverseGeocode();
+		
+		$end = $r->getWaypoint($r->numWaypoints()-1);
+		$this->endGridRef = $end->osRef->toSixFigureString();
+		$this->endPlaceName = $end->reverseGeocode();
+		
+		// Is this a linear walk? 
+		// TODO: Magic number
+		$this->isLinear = ($start->distanceTo($end) > 500);
+		
+		// Convert distance to miles, get the distance grade
+		// Resolution is half a mile
+		$this->miles = round($r->getDistance()*0.000621371192*2)/2;
+		$this->distanceGrade = $this->getDistanceGrade($this->miles);
+	}
 }
 
 /**

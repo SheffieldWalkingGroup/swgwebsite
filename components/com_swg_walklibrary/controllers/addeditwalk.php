@@ -52,6 +52,7 @@ class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
 		{
 			// Remember that we've cleared the route, so we can delete it from the database when we save
 			JFactory::getApplication()->setUserState("deleteroute", $model->getWalk()->route->id);
+			JFactory::getApplication()->setUserState("uploadedroute", null);
 			
 			$model->clearRoute();
 			$view->display();
