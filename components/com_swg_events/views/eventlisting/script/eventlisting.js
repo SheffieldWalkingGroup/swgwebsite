@@ -40,8 +40,6 @@ var EventWrapper = new Class({
 	    
 	    if (this.eventType == "walk")
     	{
-			
-			
 			// Add events to other links
 			var startLink = wrapper.getElements('a[rel="map-start"]')[0];
 			startLink.addEvent('click',function(event)
@@ -73,7 +71,6 @@ var EventWrapper = new Class({
     	}
 	    else
     	{
-			
 			// Socials & weekends only have one location
 			var generalLink = wrapper.getElements('a[rel="map"]')[0];
 			if (generalLink != undefined)
@@ -125,6 +122,46 @@ var EventWrapper = new Class({
 				)
 				this.highlightEvent();
 		}
+		
+		// Set up the attendance checkbox
+		var checkbox = wrapper.getElement("a.attendance");
+		
+		if (checkbox != null)
+		{
+			checkbox.addEvent('click',function(event)
+			{
+				// TODO: Lots of stuff here that can be abstracted out/simplified/etc
+				event.stop();
+				var state = (checkbox.getElement("img").src.indexOf("tickbox") == -1);
+				
+				var type;
+				if (self.eventType.toLowerCase() == "walk")
+					type = 1;
+				else if (self.eventType.toLowerCase() == "social")
+					type = 2;
+				else if (self.eventType.toLowerCase() == "weekend")
+					type = 3;
+				
+				var request = new Request.JSON({
+					// TODO: Should be format=json
+					url:"?task=attendance.attend&evttype="+type+"&evtid="+self.eventID+"&set="+!state+"&json=1",
+					onSuccess: function(data)
+					{
+						// TODO: Should also update number of attendees and total walk count in profile box (need to connect to code in profile module rather than making a direct alteration)
+						if (state)
+						{
+							checkbox.getElement("img").src = "/images/icons/tickbox.png";
+						}
+						else
+						{
+							checkbox.getElement("img").src = "/images/icons/tick.png";
+						}
+					}
+				});
+				// TODO: Show animation while waiting for response
+				request.get();
+			});
+		}
 	},
 		
 	openMap : function()
@@ -145,8 +182,16 @@ var EventWrapper = new Class({
 		this.map = new SWGMap("map_"+this.eventType+"_"+this.eventID);
 		if (this.eventType == "walk")
 		{
-			this.map.addWalkInstance(this.eventID);
 			this.map.setDefaultMap("landscape");
+			var wi = this.map.addWalkInstance(this.eventID);
+			this.map.addLoadedHandler(function()
+			{
+				var route = new Route("Planned route");
+				route.load("walkinstance", wi.id, 10, wi);
+				
+				var track = new Route("Recorded track");
+				track.load("walkinstance", wi.id, 20, wi);
+			});
 		}
 		else if (this.eventType == "social")
 		{

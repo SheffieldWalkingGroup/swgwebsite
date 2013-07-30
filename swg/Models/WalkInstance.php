@@ -46,6 +46,12 @@ protected $hasRoute;
 protected $routeVisibility;
 
 /**
+* Track for this walk
+* @var Route
+*/
+private $track;
+
+/**
 * Array of variable => dbfieldname
 * Only includes variables that can be represented directly in the database
 * (i.e. no arrays or objects)
@@ -223,6 +229,7 @@ public function toDatabase(JDatabaseQuery &$query)
 			'alterations_placeTime'	=> $this->alterations->date,
 			'alterations_cancelled'		=> $this->alterations->cancelled,
 			
+			'track' => ($this->track instanceof Track ? $this->track->jsonEncode() : false),
 		);
 		
 		if (isset($this->leader) && $this->leader->hasDisplayName)
@@ -233,10 +240,15 @@ public function toDatabase(JDatabaseQuery &$query)
 		// Try to load routes
 		if (isset($this->id))
 		{
-			$routes = Route::loadForWalkable($this, false, 1);
+			$routes = Route::loadForWalkable($this, false, Route::Type_Planned, 1);
 			if (!empty($routes))
 				$values['routeid'] = $routes[0]->id;
+			
+			$tracks = Route::loadForWalkable($this, false, Route::Type_Logged, 1);
+			if (!empty($tracks))
+				$values['trackid'] = $tracks[0]->id;
 		}
+		
 			
 		return $values;
 			
@@ -262,7 +274,7 @@ public function toDatabase(JDatabaseQuery &$query)
 		if ($this->routeVisibility < Route::Visibility_Members)
 			return false;
 			
-		$route = Route::loadForWalkable($this);
+		$route = Route::loadForWalkable($this, false, Route::Type_Planned);
 		return (isset($route));
 	}
 
@@ -284,6 +296,17 @@ public function toDatabase(JDatabaseQuery &$query)
 				if (!empty($this->backmarkerName))
 					$this->backmarker->setDisplayName($this->backmarkerName);
 				break;
+			case "walk":
+				return Walk::getSingle($this->walkid);
+				break;
+			case "track":
+				// Load the track if we don't have it already
+				// TODO: Only try once, and catch exceptions
+				if (!isset($this->track))
+				{
+					$this->loadTrack();
+				}
+				return $this->track;
 		}
 		return $this->$name; // TODO: What params should be exposed?
 	}
@@ -304,6 +327,10 @@ public function toDatabase(JDatabaseQuery &$query)
 			case "backmarkerId":
 				return (isset($this->backmarker) || isset($this->backmarkerId));
 				break;
+			case "track":
+				return (isset($this->track));
+				break;
+			
 		}
 	}
 
@@ -485,6 +512,40 @@ public function toDatabase(JDatabaseQuery &$query)
 				parent::__set($name, $value);
 		}
 	}
+	
+	/**
+	* Loads the track for this walk (if any)
+	*/
+	public function loadTrack()
+	{
+		// Load the route if we don't have it already
+		// TODO: Only try once, and catch exceptions
+		if (!isset($this->track))
+		{
+			$rt = Route::loadForWalkable($this,false,Route::Type_Logged,1);
+			if (!empty($rt))
+				$this->track = $rt[0];
+		}
+	}
+	
+	/**
+	* Assigns a track to this walks
+	* TODO: Store the recorded length
+	* TODO: Verify the track matches this walk (probably a separate function)
+	* @param Route $r
+	*/
+	public function setTrack(Route &$r)
+	{
+		$this->track =& $r;
+	}
+	
+	/**
+	* Unset an existing track
+	*/
+	public function unsetTrack()
+	{
+		$this->track = null;
+	}
 
 	/**
 	* Calculate the distance grade of a walk
@@ -506,9 +567,9 @@ public function toDatabase(JDatabaseQuery &$query)
 
 	public function getWalkDay() {
 		if (date("N",$this->start) < 6)
-		return "Weekday";
+			return "Weekday";
 		else
-		return date("l",$this->start);
+			return date("l",$this->start);
 	}
 
 	/**

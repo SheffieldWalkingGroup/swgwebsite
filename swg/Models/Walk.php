@@ -257,7 +257,7 @@ class Walk extends SWGBaseModel implements Walkable {
 		// TODO: Only try once, and catch exceptions
 		if (!isset($this->route))
 		{
-		$rt = Route::loadForWalkable($this,false,1);
+		$rt = Route::loadForWalkable($this,false,Route::Type_Planned,1);
 		if (!empty($rt))
 			$this->route = $rt[0];
 		}

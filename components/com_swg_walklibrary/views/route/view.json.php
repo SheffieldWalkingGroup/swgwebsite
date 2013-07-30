@@ -7,6 +7,8 @@ defined('_JEXEC') or die('Restricted access');
 $walkinstanceid = JRequest::getVar('walkinstanceid',null,"get","INTEGER");
 $walkid = JRequest::getVar('walkid',null,"get","INTEGER");
 $routeid = JRequest::getVar('routeid',null,"get","INTEGER");
+$type = JRequest::getInt('type',null,"get");
+	
 if (!isset($walkid) && !isset($routeid) && !isset($walkinstanceid))
 	jexit("Walk or route ID must be specified");
 
@@ -27,15 +29,18 @@ if (isset($routeid))
 if (isset($walkinstanceid))
 {
 	$f = SWG::walkInstanceFactory();
-	$wi = $f->getSingle($walkinstanceid);
-	$walkid = $wi->walkid;
+	$walk = $f->getSingle($walkinstanceid);
 }
 // Get the route for a particular walk if walkid is set
 if (isset($walkid))
 {
 	include_once(JPATH_BASE."/swg/Models/Walk.php");
 	$walk = Walk::getSingle($walkid);
-	$routes = Route::loadForWalkable($walk,false,1);
+}
+
+if (isset($walk))
+{
+	$routes = Route::loadForWalkable($walk,true,$type,1); // TODO: Support logged routes
 	if (!empty($routes))
 		$result = $routes[0];
 	else

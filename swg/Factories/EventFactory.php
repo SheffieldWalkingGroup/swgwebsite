@@ -300,7 +300,7 @@ abstract class EventFactory
 		$query->select("*");
 		
 		$query->from($this->table);
-		$query->where(array($this->idField." = ".intval($id)));
+		$query->where(array($this->idField." = ".intval($evt)));
 		$db->setQuery($query);
 		$res = $db->query();
 		if ($db->getNumRows($res) == 1)

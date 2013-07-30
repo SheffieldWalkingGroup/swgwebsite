@@ -221,8 +221,16 @@ function showMap(popup) {
 		switch (currentEvent.type)
 		{
 			case "Walk":
-				map.addWalkInstance(currentEvent.id);
-				map.showPoint(currentEvent.id, "start", 13);
+				var wi = map.addWalkInstance(currentEvent.id);
+				map.addLoadedHandler(function()
+				{
+					// Load the route when we've got the walk
+					var route = new Route("Planned route");
+					route.load("walkinstance", wi.id, 10, wi);
+					map.showPoint(currentEvent.id, "start", 13);
+					map.zoomToFit();
+				});
+				
 				break;
 			case "Social":
 				map.addSocial(currentEvent.id);

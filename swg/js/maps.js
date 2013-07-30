@@ -37,7 +37,7 @@ var SWGMap = new Class({
 	 * Methods to call when the map (and events) has finished loading
 	 * If more events are added, this event will trigger again when they've loaded
 	 */
-	listenersLoaded: new Array(),
+	listenersLoaded: {'once':new Array(), 'repeat':new Array()},
 	
 	/**
 	 * Creates a new map in the specified container
@@ -216,10 +216,17 @@ var SWGMap = new Class({
 	 * Loaded handlers are triggered when the map and all queued events have loaded
 	 * If more events are added, the handler will trigger again once those have loaded
 	 * @param func Function to call. No parameters are currently passed.
+	 * @param repeat boolean: True if this handler is to be called every time loading completes, false to call once only (default)
 	 */
-	addLoadedHandler: function(func)
+	addLoadedHandler: function(func, repeat)
 	{
-		this.listenersLoaded.push(func);
+		if (repeat == undefined)
+			repeat = false;
+		
+		if (repeat)
+			this.listenersLoaded.repeat.push(func);
+		else
+			this.listenersLoaded.once.push(func);
 	},
 	
 	/**
@@ -232,29 +239,37 @@ var SWGMap = new Class({
 		// Load the walk
 		// TODO: Handle failed loads
 		var walk = new Walk();
+		walk.map = this;
 		walk.load(walkID,this);
 		this.addEvent(walk);
+		return walk;
 	},
 	
 	addWalkInstance: function(wiID)
 	{
 		var wi = new WalkInstance();
+		wi.map = this;
 		wi.load(wiID,this);
 		this.addEvent(wi);
+		return wi;
 	},
 	
 	addSocial: function (socialID)
 	{
 		var social = new Social();
+		social.map = this;
 		social.load(socialID, this);
 		this.addEvent(social);
+		return social;
 	},
 	
 	addWeekend: function (weekendID)
 	{
 		var weekend = new Weekend();
+		weekend.map = this;
 		weekend.load(weekendID, this);
 		this.addEvent(weekend);
+		return weekend;
 	},
 	
 	/**
@@ -272,10 +287,20 @@ var SWGMap = new Class({
 		if (this.eventsLoading == 0)
 		{
 			// Fire off event notifications
-			for (var i=0; i<this.listenersLoaded.length; i++)
+			
+			// Take a copy of the fire once handlers. This allows handlers to add their own listeners
+			var onceListeners = this.listenersLoaded.once.slice(0);
+			this.listenersLoaded.once = []; // Clear trigger-once handlers
+			
+			for (var i=0; i<this.listenersLoaded.repeat.length; i++)
 			{
-				this.listenersLoaded[i]();
+				this.listenersLoaded.repeat[i]();
 			}
+			for (i=0; i<onceListeners.length; i++)
+			{
+				onceListeners[i]();
+			}
+			
 		}
 	},
 	
@@ -292,9 +317,6 @@ var SWGMap = new Class({
 				'end':null,
 				'meet':null
 		};
-		
-		// Try to load a route
-		walk.loadRoute(this);
 		
 		// Create markers for start and (possibly) end points
 		// Note: need to transform from WGS1984 to (usually) Spherical Mercator projection
@@ -380,6 +402,8 @@ var SWGMap = new Class({
 		{
 			this.showPoint(this.queuedMove.walkID, this.queuedMove.pointType, this.queuedMove.zoom);
 		}
+		
+		this.loadedEvent(walk);
 		
 	},
 	
@@ -473,8 +497,11 @@ var SWGMap = new Class({
 	/**
 	 * Called when a route has loaded
 	 */
-	loadedRoute: function(route, walk)
+	loadedRoute: function(route, walk, title)
 	{
+		if (title == undefined)
+			title = "Route";
+		
 		var points = new Array();
 		
 		var srcProjection = new OpenLayers.Projection("EPSG:4326");
@@ -501,13 +528,7 @@ var SWGMap = new Class({
 			rt = new OpenLayers.Geometry.LineString(points);
 			
 			rtFeature = new OpenLayers.Feature.Vector(
-					rt, null, {
-						strokeColor:"#FF9555",
-						strokeOpacity:1,
-						strokeWidth:3,
-						pointRadius:3,
-						pointerEvents:"visiblePainted"
-					}
+					rt, null, route.drawSettings()
 			);
 		}
 		else if (walk.isLinear == 1)
@@ -522,10 +543,9 @@ var SWGMap = new Class({
 					rt, null, {
 						strokeColor:"#FF9555",
 						strokeOpacity:1,
-						strokeWidth:3,
-						pointRadius:3,
+						strokeWidth:5,
 						pointerEvents:"visiblePainted",
-						strokeDashstyle:"dash"
+						strokeDashstyle:"dot"
 					}
 			);
 		}
@@ -533,7 +553,7 @@ var SWGMap = new Class({
 		// If we have some sort of route, add it
 		if (rt != undefined && rt != null)
 		{
-			rtLayer = new OpenLayers.Layer.Vector("Route");
+			rtLayer = new OpenLayers.Layer.Vector(title);
 			this.map.addLayer(rtLayer);
 			rtLayer.addFeatures([rtFeature]);
 			
@@ -614,6 +634,7 @@ var SWGMap = new Class({
 
 var Event = new Class({
 	bounds: null,
+	map:null,
 	initialize: function()
 	{
 		this.bounds = new OpenLayers.Bounds();
@@ -644,22 +665,13 @@ var Walkable = new Class({
 		this.parent();
 	},
 	
-	/**
-	 * Loads the route for this walk, and return it to the requestor.
-	 * This is a wrapper, used for the purpose of adding the walk object to the notification to the requestor
-	 * Returns false if no route available.
-	 */
-	loadRoute: function(requestor)
+	loadedRoute: function(route)
 	{
-		this.loadedRoute = function(route)
+		if (this.map != null)
 		{
-			requestor.loadedRoute(route, this);
-		};
-			
-		var route = new Route(this);
-		route.load(this['class'].toLowerCase(),this.id,this);
+			this.map.loadedRoute(route, this, route.title);
+		}
 	}
-	
 })
 
 /**
@@ -755,11 +767,12 @@ var Weekend = new Class({
 });
 
 var Route = new Class({
-	
-	initialize: function(walkable)
+	title:"Route",
+	waypoints:new Array(),
+	initialize: function(title)
 	{
-		if (walkable != undefined)
-			this.walkable = walkable;
+		if (title != undefined)
+			this.title = title;
 		
 		this.waypoints = [];
 	},
@@ -783,14 +796,15 @@ var Route = new Class({
 	/**
 	 * Loads a route by route ID, walk ID, or any other supported search
 	 * @param searchType String What to search by, e.g. "route" or "walk". See parser class for details
+	 * @param routeType int Type of route - 10 is planned, 20 is recorded.
 	 * @param id int ID of route/walk/other to search for
 	 * @param requestor Object Object to notify when a route is loaded. loadedRoute(this) is called. 
 	 */
-	load: function(searchType, id, requestor)
+	load: function(searchType, id, routeType, requestor)
 	{
 		var self=this;
 		var loader = new Request.JSON({
-			url: "/api/route?"+searchType+"id="+id+"&format=json",
+			url: "/api/route?"+searchType+"id="+id+"&type="+routeType+"&format=json",
 			onSuccess: function(data)
 			{
 				self.read(data);
@@ -799,6 +813,25 @@ var Route = new Class({
 			// TODO: onFailure
 		});
 		loader.get();
+	},
+	
+	drawSettings: function()
+	{
+		var settings = {
+			strokeColor:"#FF9555",
+			strokeOpacity:1,
+			strokeWidth:3,
+			pointRadius:3,
+			pointerEvents:"visiblePainted"
+		};
+		
+		if (this.type == 10)
+		{
+			// Planed route
+			settings.strokeDashstyle = "dash";
+		}
+		
+		return settings;
 	}
 });
 

@@ -53,7 +53,13 @@ class SWG_WalkLibraryViewWalkDetails extends JView
 		$document->addScriptDeclaration(<<<MAP
 window.addEvent("domready", function() {
 	var map = new SWGMap('map');
-	map.addWalk({$this->walk->id});
+	var walk = map.addWalk({$this->walk->id});
+	map.addLoadedHandler(function()
+	{
+		var route = new Route();
+		route.load("walk", walk.id, 10, walk);
+		//walk.loadRoute(map); // TODO: Should only load the most specific Route. Implement in other mapping pages. Detach route loading logic from walk object.
+	});
 });
 MAP
 );
