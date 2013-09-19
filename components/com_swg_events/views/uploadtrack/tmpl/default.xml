@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+	<layout title="Upload track">
+		<message>Upload a track for a walk that's already happened</message>
+	</layout>
+	<fields name="request">
+		<fieldset name="request">
+			<field name="returnPage" type="menuitem" label="Return to" description="Go to this page after uploading a route" published="1" default="">
+				<option value="">-- None --</option>
+			</field>
+			<field name="jumpToEvent" type="checkbox" label="Jump to walk" description="Jump to the walk after saving" value="1" default="0" />
+		</fieldset>
+	</fields>
+	
+</metadata>
