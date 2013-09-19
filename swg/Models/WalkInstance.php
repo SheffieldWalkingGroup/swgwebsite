@@ -330,6 +330,8 @@ public function toDatabase(JDatabaseQuery &$query)
 			case "track":
 				return (isset($this->track));
 				break;
+			default:
+				return (isset($this->$name));
 			
 		}
 	}

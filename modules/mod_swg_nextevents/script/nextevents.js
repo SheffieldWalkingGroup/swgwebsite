@@ -154,11 +154,14 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 			format:"json",
 			data:{"eventtype":eventType,"id":eventID},
 			method:"get",
-			onSuccess: function(event) {
+			onSuccess: function(data) {
+				// Create the event and cache it
+				var event = new Event();
+				event.populateFromArray(data);
 				cachedEvents[eventType][eventID] = event;
 				
 				// Is this the event we want now?
-				if (event.id == currentlyLoading)
+				if (data.id == currentlyLoading)
 				{
 					// Destroy the load indicator
 					loadIndicator.dispose();
@@ -180,7 +183,6 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 
 function postDisplay(container, event)
 {
-	
 	// Add cancellation/altered classes
 	if (event.alterations.any) 
 	{
@@ -193,6 +195,158 @@ function postDisplay(container, event)
 			});
 			infoPopup.adopt(cancelledText);
 		}
+	}
+	
+	// Add extra info not included in the basic event display
+	switch(event.type.toLowerCase()) {
+		case "walk":
+			// Transport details
+			var transportText = "";
+			if (event.meetPoint.id != 7) // TODO: Remove magic number
+			{
+				// Parse the meeting time
+				var meetTime = new Date(event.meetPoint.meetTime*1000);
+				transportText += "Meet at "+meetTime.format("%H:%M")+" at ";
+			}
+									
+			var transport = new Element("p", {
+				"class":"transport",
+				"html":"<span>Transport:</span> " + transportText
+			});
+			if (event.meetPoint.location != null)
+			{	
+				var transportLink = new Element("a", {
+					"title":"Map of meeting point",
+					"href":"http://www.streetmap.com/loc/N"+event.meetPoint.location.lat+",E"+event.meetPoint.location.lng,
+					"target":"_blank",
+					"rel":"map-transport",
+					"html":event.meetPoint.longDesc
+				});
+				transportLink.addEvent("click",function(event){
+					event.stop();
+					showMap();
+					map.showPoint(currentEvent.id, 'meet');
+				});
+				transport.adopt(transportLink);
+
+				transport.adopt(document.createTextNode(". "));
+			}
+			else
+				transport.adopt(document.createTextNode(event.meetPoint.longDesc+". "));
+			
+			if (event.meetPoint.extra != null)
+				transport.adopt(document.createTextNode(event.meetPoint.extra));
+			
+			if (event.alterations.placeTime)
+				transport.addClass("altered");
+			
+			// Inject this after the start
+			var start = container.getElement("p.start");
+			start.grab(transport, "after");
+			
+			// Leader phone number
+			var leaderText = event.leader.displayName+
+				" ("+event.leader.telephone+")";
+			if (event.leader.noContactOfficeHours)
+				leaderText += " &ndash; don't call during office hours";
+			
+			var leader = new Element("p", {
+				"class":"leader",
+				"html":"<span>Leader:</span> "+leaderText
+			});
+			if (event.alterations.organiser)
+				leader.addClass("altered");
+			
+			// This replaces the existing leader info, which just includes the name
+			leader.replaces(container.getElement("p.leader"));
+			
+			break;
+		case "weekend":
+			/*var area = new Element("span", {
+				"class":"area",
+				"text":event.area
+			});
+			area.inject(eventName,'before');
+			if (event.url != "") {
+				var moreInfo = new Element("p",{
+					"class":"moreinfo",
+					"html":"<span>More info:</span> <a href='"+event.url+"'>Here"
+				});
+			}
+			var places = new Element("p",{
+				"class":"places",
+				"html":"<span>Places:</span> "+event.places+" at "+event.cost+" (remember the booking and refunds policy)"
+			});
+			var bookingsOpen = new Element("p",{
+				"class":"bookingopen",
+				"html":"<span>Bookings open:</span> "+event.bookingsOpen
+			});
+			if (event.contact)
+			{
+				var contact = new Element("p",{
+					"class":event.type.toLowerCase()+"booking",
+					"html":"<span>Contact:</span> "+event.contact
+				});
+			}
+			var paymentDue = new Element("p",{
+				"class":"paymentdue",
+				"html":"<span>Payment due:</span> "+timestampToDate(event.paymentDue)
+			});
+			if (event.alterations.organiser)
+				contact.addClass("altered");
+			eventInfo.adopt(moreInfo,places,bookingsOpen,contact,paymentDue);*/
+			break;
+		case "social":
+			/*if (event.bookingsInfo)
+			{
+				var contact = new Element("p",{
+					"class":event.type.toLowerCase()+"booking",
+					"html":"<span>Contact:</span> "+event.bookingsInfo
+				});
+			}
+			if (event.alterations.organiser)
+				contact.addClass("altered");
+			if (contact != undefined)
+				eventInfo.adopt(contact);
+			
+			// Get the start and end time
+			// For new members, take the new member times if they exist and the normal times if not.
+			// Otherwise, just use normal times
+			var startTime, endTime;
+			
+			if (newMembers && event.newMemberStart != undefined)
+				startTime = timestampToTime(event.newMemberStart);
+			else if (event.start != undefined && timestampToTime(event.start) != "00:00")
+				startTime = timestampToTime(event.start);
+			
+			if (newMembers && event.newMemberEnd != undefined)
+				endTime = timestampToTime(event.newMemberEnd);
+			else if (event.end != undefined)
+				endTime = timestampToTime(event.end);
+			
+			// Now build the elements to display them (if they exist)
+			// Only display the end time if the start time is set.
+			if (startTime != undefined)
+			{
+				var start = new Element("p", {
+					"class":"start",
+					"html":"<span>Start:</span> "+startTime
+				});
+				eventInfo.adopt(start);
+				if (endTime != undefined)
+				{
+					var end = new Element("p",{
+						"class":"end",
+						"html":"<span>End:</span> "+endTime
+					});
+					eventInfo.adopt(end);
+				}
+			}
+			
+			if (event.type.toLowerCase() == "weekend")
+				eventInfo.adopt(bookingsOpen);
+			*/
+			break;
 	}
 	
 	// Direct new members to general info page

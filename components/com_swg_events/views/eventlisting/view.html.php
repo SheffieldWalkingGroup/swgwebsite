@@ -32,14 +32,14 @@ class SWG_EventsViewEventListing extends JView
 		$document->addScript('/swg/js/events.js');
 		$document->addScript('/components/com_swg_events/views/eventlisting/script/eventlisting.js');
 		$totalEvents = $this->get('NumEvents');
-		$apiParams = implode("&",$this->get('ApiParams'));
+		$apiParams = json_encode($this->get('ApiParams'));
 		$document->addScriptDeclaration(<<<MAP
 window.addEvent('domready', function()
 {
 	registerMapLinks();
 	document.addEvent("scroll",scrolled);
 	totalEvents = {$totalEvents};
-	apiParams = "{$apiParams}";
+	apiParams = {$apiParams};
 });
 			
 MAP

@@ -12,7 +12,7 @@ if ($this->showAnyAddLinks()):?>
 	</p>
 <? endif;
 foreach ($this->events as $event):?>
-  <div class="event published" id="<?php echo $event->getEventType();?>_<?php echo $event->id?>">
+  <div class="event published vevent" id="<?php echo $event->getEventType();?>_<?php echo $event->id?>">
 	<?php if ($event->alterations->cancelled): ?>
 		<p class="cancelled-message">Cancelled</p>
 		<?php if ($this->showEditLinks($event)): // Cancelled message blocks all normal links - this appears above it ?>
@@ -23,7 +23,7 @@ foreach ($this->events as $event):?>
 	<?php endif; ?>
     <div class="content <?php echo $event->getEventType(); if ($event instanceof WalkInstance) echo " walk".strtolower($event->getWalkDay()); if ($event->alterations->cancelled) echo " cancelled"; if (!$event->okToPublish) echo " unpublished";?>">
       <div class="eventheader">
-        <span class="date<?php if ($event->alterations->date) echo " altered\" title=\"Date altered"; ?>">
+        <time datetime="<?php echo date("Y-m-d\TH:iO", $event->start);?>" class="dtstart date<?php if ($event->alterations->date) echo " altered\" title=\"Date altered"; ?>">
           <?php 
             if ($event instanceof Weekend)
               // Display start and end dates for weekends. Only display month for start if the weekend straddles a month boundary
@@ -31,13 +31,14 @@ foreach ($this->events as $event):?>
             else
               echo date("l jS F".($this->notThisYear($event->start)?" Y":""),$event->start); // Just start date for other things
           ?>
-        </span>
+        </time>
         <?php if ($event instanceof WalkInstance):?>
           <span class="rating">
             <?php echo $event->distanceGrade.$event->difficultyGrade." (".$event->miles." miles)"; ?>
           </span>
         <?php endif;?>
-        <h3><?php echo $event->name; ?></h3>
+        <time datetime="<?php if (!$event instanceof Weekend) echo date("H:iO", ($event instanceof WalkInstance ? $event->estimateFinishTime() : $event->end)); else echo date("Y-m-d", $event->endDate+86400 /* Must end at midnight the next day */);?>" class="dtend"></time>
+        <h3 class="summary"><?php echo $event->name; ?></h3>
       </div>
       <div class="eventbody">
         <div class="description<?php if ($event->alterations->details) echo " altered\" title=\"Details altered"; ?>">
@@ -192,20 +193,26 @@ foreach ($this->events as $event):?>
 						</p>
 					<?php endif; ?>
 				<?php endif; ?>
-				<?php if ($event->attendees > 0):  // TODO: Potential warnings if value is unset??>
-					<p><?php echo $event->attendees;if ($event->attendees == 1):?> person<?php else:?> people<?php endif;?> did this</p>
-				<?php endif;?>
+				<?php if ($this->eventInPast($event)): ?>
+					<?php if ($event->attendees > 0):  // TODO: Potential warnings if value is unset? TODO: Add attendees & tickbox to past events on bottomless page?>
+						<p><?php echo $event->attendees;if ($event->attendees == 1):?> person<?php else:?> people<?php endif;?> did this</p>
+					<?php endif;?>
 					<p>
-						<a href="<?php echo JURI::current()?>?<?php echo JURI::buildQuery(array(
+						<a class="attendance" href="<?php echo JURI::current()?>?<?php echo JURI::buildQuery(array(
 							"task" 	  => "attendance.attend",
 							"evttype" => $event->getType(),
 							"evtid"   => $event->id,
-							"set"     => !$event->attendedby,
+							"set"     => (int)(!$event->attendedby),
 						));?>"
 							><img src="/images/icons/<?php if ($event->attendedby):?>tick<?php else: ?>tickbox<?php endif;?>.png" width="19" height="16" /
 						></a>
 						You did this
 					</p>
+					<?php if ($event->attendedby): ?>
+						<p><a href="/whats-on/previous-events/upload-track?wi=<?php echo $event->id;?>">Share GPS track</a></p>
+						<p><a href="/photos/upload-photos">Share photos</a></p>
+					<?php endif; ?>
+				<?php endif; ?>
 				<?php if ($this->showEditLinks($event)):?>
 					<p>
 						<a href="<?php echo $this->editURL($event);?>">Edit <?php echo strtolower($event->type);?></a>

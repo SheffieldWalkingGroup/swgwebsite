@@ -72,15 +72,15 @@ class SWG_EventsModelEventlisting extends JModelItem
 	public function getApiParams()
 	{
 		return array(
-			"includeWalks=" . JRequest::getBool("includeWalks"),
-			"includeSocials=" . JRequest::getBool("includeSocials"),
-			"includeWeekends=" . JRequest::getBool("includeWeekends"),
-			"startDateType=" . JRequest::getInt("startDateType"),
-			"startDateSpecify=" . JRequest::getString("startDateSpecify"),
-			"endDateType=" . JRequest::getInt("endDateType"),
-			"endDateSpecify=" . JRequest::getString("endDateSpecify"),
-			"order=" . JRequest::getBool("order"),
-			"unpublished=" . JRequest::getBool("unpublished",false),
+			"includeWalks" => JRequest::getBool("includeWalks"),
+			"includeSocials" => JRequest::getBool("includeSocials"),
+			"includeWeekends" => JRequest::getBool("includeWeekends"),
+			"startDateType" => JRequest::getInt("startDateType"),
+			"startDateSpecify" => JRequest::getString("startDateSpecify"),
+			"endDateType" => JRequest::getInt("endDateType"),
+			"endDateSpecify" => JRequest::getString("endDateSpecify"),
+			"order" => JRequest::getBool("order"),
+			"unpublished" => JRequest::getBool("unpublished",false),
 			
 		);
 	}
@@ -140,7 +140,8 @@ class SWG_EventsModelEventlisting extends JModelItem
 	  $nextEvent = null;
 	  $events = array();
 	  do {
-	    $nextEvent = $this->nextEvent($nextEvent, $walkPointer, $socialPointer, $weekendPointer, (JRequest::getInt("order") == 1));
+	    $nextEvent = $this->nextEvent($nextEvent, $walkPointer, $socialPointer, $weekendPointer, (JRequest::getBool("order")));
+	    
 	    // Increment the pointer for this event type
 	    // TODO: Pointer could be an array with event type as keys
 	    if ($nextEvent instanceof WalkInstance)
@@ -329,7 +330,6 @@ class SWG_EventsModelEventlisting extends JModelItem
 				$this->weekends = $factory->get();
 				break;
 		}
-	  
 	}
 	
 	/**
