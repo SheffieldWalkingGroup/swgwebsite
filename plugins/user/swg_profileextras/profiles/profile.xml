@@ -5,6 +5,12 @@
 			label="SWG Extras"
 		>
 			<field
+				name="joindate"
+				type="calendar"
+				description="Approximate date you joined SWG"
+				label="Join date"
+			/>
+			<field
 				name="fbid"
 				type="text"
 				description="Facebook ID"

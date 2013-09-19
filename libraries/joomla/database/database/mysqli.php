@@ -393,6 +393,7 @@ class JDatabaseMySQLi extends JDatabaseMySQL
 			{
 				if ($this->debug)
 				{
+die($this->errorMsg);
 					JError::raiseError(500, 'JDatabaseMySQLi::query: ' . $this->errorNum . ' - ' . $this->errorMsg);
 				}
 				return false;
