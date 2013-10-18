@@ -10,6 +10,8 @@ class SWG_EventsControllerUploadTrack extends JControllerForm
   
 	// Store the model so it can be given to the view
 	private $model;
+	
+	private $errors;
 
 	public function getModel($name = '', $prefix = '', $config = array('ignore_request' => true))
 	{
@@ -24,6 +26,8 @@ class SWG_EventsControllerUploadTrack extends JControllerForm
 	{
 		// Check for request forgeries.
 		JRequest::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		
+		$this->errors = array();
 
 		// Initialise variables.
 		$app	= JFactory::getApplication();
@@ -40,17 +44,48 @@ class SWG_EventsControllerUploadTrack extends JControllerForm
 			$gpx = DOMDocument::load($file['tmp_name']);
 			if ($gpx && $gpx->getElementsByTagName("gpx")->length == 1)
 			{
-				$route = new Route($model->getWalkInstance());
+				$route = new Route();
+				$wi = $model->getWalkInstance();
+				if ($wi != null)
+					$route->setWalk($wi);
 				$route->readGPX($gpx);
 				$route->uploadedBy = JFactory::getUser()->id;
 				$route->uploadedDateTime = time();
+				$route->type = Route::Type_Logged;
 				
-				// Store this route for later requests
-				JFactory::getApplication()->setUserState("uploadedroute", serialize($route));
+				if ($wi != null)
+				{
+					// Check that this route matches the walk
+					if ($route->checkAgainstWalk($model->getWalkInstance()))
+					{
+						// Store this route for later requests
+						JFactory::getApplication()->setUserState("uploadedroute", serialize($route));
+					}
+					else
+					{
+						throw new UserException("Can't upload this track", 0, "This track doesn't match that walk", "Check that the track you've uploaded doesn't contain anything other than the walk.");
+					}
+				}
+				else
+				{
+				    // Try to find a matching walk
+				    $wi = $route->findMatchingWalk();
+				    if (isset($wi))
+				    {
+						$route->setWalk($wi);
+						// Store this route for later requests
+						JFactory::getApplication()->setUserState("uploadedroute", serialize($route));
+						$model->setWalkInstance($wi);
+				    }
+				    else
+						throw new Exception("That track doesn't match any walks. Check that it doesn't contain anything other than the walk.");
+				}
+				
+				
 			}
 			else
 			{
-				echo "Not a valid GPX file";
+				throw new Exception("The track you uploaded is not a valid GPX file. If your track is in another format, please convert it to GPX first, then upload it again.");
 			}
 			
 			$view->display();
@@ -61,10 +96,17 @@ class SWG_EventsControllerUploadTrack extends JControllerForm
 			if ($route)
 			{
 				$route->save();
+				
+				// Set the distance on the WalkInstance, if it's not already set
+				if (empty($wi->distance))
+				{
+					$wi->distance = $route->getDistance();
+					$wi->save();
+				}
 			}
 			else
 			{
-			    echo "Error while saving route";
+			    throw new Exception("There was an error while saving your track. You can try again in a while, or email us if that doesn't work.");
 			}
 			
 			// TODO: Redirect to correct place - "My diary"?

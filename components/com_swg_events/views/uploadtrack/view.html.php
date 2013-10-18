@@ -24,37 +24,61 @@ class SWG_EventsViewUploadTrack extends JView
 	$this->form	= $this->get('Form');
 	
 	// Has the user uploaded a track to preview?
-	$track = $this->get('CachedTrack');
-	$this->gotTrack = isset($track);
-	if ($this->gotTrack)
-	{
-		$track->setWalk($this->wi);
-		$this->wi->setTrack($track);
-	}
+	$this->track = $this->get('CachedTrack');
+	$this->gotTrack = !empty($this->track);
 	
-	// Load the map JS
 	$document = JFactory::getDocument();
 	JHtml::_('behavior.framework', true);
-	$document->addScript('libraries/openlayers/OpenLayers.js');
-	$document->addScript('swg/js/maps.js');
-	$start = new Waypoint();
-	$start->osRef = getOSRefFromSixFigureReference($this->wi->startGridRef);
-	$end = new Waypoint();
-	$end->osRef = getOSRefFromSixFigureReference($this->wi->endGridRef);
+	$document->addScript('swg/js/common.js');
 	
-	// Create the map	
-	if (isset($track))
+	// Prepare any error messages
+	// TODO: Find how Joomla handles error messages (and make them look nicer) - maybe just throw exceptions out and have an exception handler that displays a popup
+	$errors = $this->getErrors();
+var_dump($errors);
+	$errJS = "";
+	if (!empty($errors))
 	{
-		$trackJSON = $track->jsonEncode();
-		$trackJS = "var route = new Route(wi);\nroute.read(".$track->jsonEncode().");\nmap.loadedRoute(route,wi);\n";
+		$errJS = "Popup('Could not upload track', ".implode("<br />", $errors).");";
+		$document->addScriptDeclaration(<<<ERR
+window.addEvent("domready", function() {
+	$errJS
+});
+ERR
+);
 	}
-	else
+	
+	// Do we know what walk we're working on?
+	if (isset($this->wi))
 	{
-	    $trackJS = "";
-	}
+		if ($this->gotTrack)
+		{
+			$this->track->setWalk($this->wi);
+			$this->wi->setTrack($this->track);
+		}
+		
+		// Load the map JS
+		$document->addScript('libraries/openlayers/OpenLayers.js');
+		$document->addScript('swg/js/maps.js');
+		$start = new Waypoint();
+		$start->osRef = getOSRefFromSixFigureReference($this->wi->startGridRef);
+		$end = new Waypoint();
+		$end->osRef = getOSRefFromSixFigureReference($this->wi->endGridRef);
+		
+		// Create the map	
+		if ($this->gotTrack)
+		{
+			$trackJSON = $this->track->jsonEncode();
+			$trackJS = "var route = new Route(wi);\nroute.read(".$this->track->jsonEncode().");\nmap.loadedRoute(route,wi);\n";
+		}
+		else
+		{
+			$trackJS = "";
+		}
+		
+		
 	
 	
-	$document->addScriptDeclaration(<<<MAP
+		$document->addScriptDeclaration(<<<MAP
 window.addEvent("domready", function() {
     var map = new SWGMap('map');
 	var wi = map.addWalkInstance({$this->wi->id});
@@ -65,6 +89,7 @@ window.addEvent("domready", function() {
 });
 MAP
 );
+	}
 	
 	// Display the view
 	parent::display($tpl);

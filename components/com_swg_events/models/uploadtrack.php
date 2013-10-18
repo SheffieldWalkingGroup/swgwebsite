@@ -51,6 +51,9 @@ class SWG_EventsModelUploadTrack extends JModelForm
 	public function getWalkInstance()
 	{
 		// TODO: Check user has permission to view this walk
+		if (isset($this->wi))
+			return $this->wi;
+		
 		$wiFact = SWG::walkInstanceFactory();
 		
 		// Do we have a walk from the form?
@@ -58,12 +61,22 @@ class SWG_EventsModelUploadTrack extends JModelForm
 		$formWI = JRequest::getInt('wi', array(), 'post', 'array');
 		if (!empty($formWI))
 		{
-		    return $wiFact->getSingle($formWI);
+		    $this->wi = $wiFact->getSingle($formWI);
 		}
 		else
 		{
-			return $wiFact->getSingle(JRequest::getInt("wi",0,"get"));
+			$this->wi = $wiFact->getSingle(JRequest::getInt("wi",0,"get"));
 		}
+		return $this->wi;
+	}
+	
+	/**
+	 * Sets the walkInstance to a specific walk
+	 * @param WalkInstance $wi
+	 */
+	public function setWalkInstance(WalkInstance $wi)
+	{
+		$this->wi = $wi;
 	}
 	
 	/**

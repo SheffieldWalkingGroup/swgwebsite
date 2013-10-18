@@ -89,9 +89,10 @@ class Route extends SWGBaseModel implements Iterator {
 	// For iterator use
 	private $pointer;
 
-	function __construct(Walkable &$w)
+	function __construct(Walkable &$w=null)
 	{
-		$this->walk =& $w;
+		if (isset($w))
+			$this->walk =& $w;
 		$this->pointer = 0;
 	}
 	
@@ -108,7 +109,10 @@ class Route extends SWGBaseModel implements Iterator {
 		{
 			$this->$name = (int)$value;
 		}
-		// TODO: Type
+		else if ($name == "type" && ($value == self::Type_Logged || $value == self::Type_Planned))
+		{
+			$this->type = $value;
+		}
 	}
 	
 	function __get($name)
@@ -332,10 +336,14 @@ class Route extends SWGBaseModel implements Iterator {
 	}
 
 	/**
-	* Save this route to the database
+	* Save this route to the database.
+	* @throws BadMethodCallException If the route has no Walk or WalkInstance set
 	*/
 	public function save()
 	{
+		if (!isset($this->walk))
+			throw new BadMethodCallException("Cannot save route without setting the walk first");
+		
 		$db =& JFactory::getDBO();
 		// Commit the whole route as one transaction
 		$db->transactionStart();
@@ -350,6 +358,8 @@ class Route extends SWGBaseModel implements Iterator {
 		$query->set("ascent = ".$this->ascent);
 		if (isset($this->visibility))
 			$query->set("visibility = ".$this->visibility);
+		if (isset($this->type))
+			$query->set("type = ".$this->type);
 		
 		// Connect to a walk or a walkinstance
 		if ($this->walk instanceof Walk)
@@ -416,6 +426,63 @@ class Route extends SWGBaseModel implements Iterator {
 		
 		// Commit the transaction TODO - if it's OK
 		$db->transactionCommit();
+	}
+	
+	/**
+	 * Checks if the route given is valid for a particular WalkInstance
+	 * * The date must be the same
+	 * * The start place must be within 1km of the planned start
+	 * * The end place must be within 1km of the planned end
+	 * * The length must be between 0.5 and 2 times the planned length
+	 * (there is no check of start *time*)
+	 * @param WalkInstance $w Walk to check against
+	 * @return bool True if route matches walk
+	 */
+	public function checkAgainstWalk(WalkInstance $w)
+	{
+		$start = $this->getWaypoint(0);
+		$end = $this->getWaypoint($this->numWaypoints()-1);
+		
+		if (strftime("%F", $start->time) != strftime("%F", $w->start))
+			return false;
+		
+		$plannedDistance = UnitConvert::Distance($w->miles, UnitConvert::Mile, UnitConvert::Metre);
+		if ($this->distance < $plannedDistance * 0.5 || $this->distance > $plannedDistance * 2)
+			return false;
+		
+		$plannedStart = new Waypoint();
+		$plannedStart->latLng = $w->startLatLng;
+		if ($start->distanceTo($plannedStart) > 1000)
+			return false;
+		
+		$plannedEnd = new Waypoint();
+		$plannedEnd->latLng = $w->endLatLng;
+		if ($end->distanceTo($plannedEnd) > 1000)
+			return false;
+		
+		return true;
+	}
+	
+	/**
+	 * Finds a walk that matches this one
+	 * Loads all walks on the same date as the track, then checks them with checkAgainstWalk.
+	 * Returns the first matching walk.
+	 * @return WalkInstance Matching walk, or null if no match
+	 */
+	public function findMatchingWalk()
+	{
+		$wiFactory = SWG::walkInstanceFactory();
+		$wiFactory->reset();
+		$wiFactory->startDate = $this->getWaypoint(0)->time;
+		$wiFactory->endDate = $this->getWaypoint(0)->time;
+		$walks = $wiFactory->get();
+		foreach ($walks as $walk)
+		{
+			if ($this->checkAgainstWalk($walk))
+				return $walk;
+		}
+		return null;
+		
 	}
 
 	/**
