@@ -36,6 +36,7 @@ class plgContentSWG_NextEvent extends JPlugin {
 				
 			
 			// Get the next event of that type
+			// TODO: eventFactory method to take strings
 			switch (strtolower($type))
 			{
 				case "walk":

@@ -117,6 +117,8 @@ function hitBottom()
 				wrapper.adopt(event.createHTML());
 				wrapper.inject(before, "before");
 				event.postWrapperSetup();
+				
+				events.push(event);
 				addedEvents++;
 			}
 			loadedEvents += addedEvents;

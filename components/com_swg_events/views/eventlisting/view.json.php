@@ -20,6 +20,7 @@ class SWG_EventsViewEventListing extends JView
 		if (isset($id) && isset($type))
 		{
 			// Single event - connect directly to SWG backend
+			// TODO: eventFactory method to take strings as well
 			switch (strtolower($type)) {
 				case "social":
 					$factory = SWG::socialFactory();

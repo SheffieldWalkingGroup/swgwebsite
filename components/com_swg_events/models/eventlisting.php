@@ -72,15 +72,16 @@ class SWG_EventsModelEventlisting extends JModelItem
 	public function getApiParams()
 	{
 		return array(
-			"includeWalks" => JRequest::getBool("includeWalks"),
-			"includeSocials" => JRequest::getBool("includeSocials"),
-			"includeWeekends" => JRequest::getBool("includeWeekends"),
+			"includeWalks" => JRequest::getBool("includeWalks") ? 1 : 0,
+			"includeSocials" => JRequest::getBool("includeSocials") ? 1 : 0,
+			"includeWeekends" => JRequest::getBool("includeWeekends") ? 1 : 0,
 			"startDateType" => JRequest::getInt("startDateType"),
 			"startDateSpecify" => JRequest::getString("startDateSpecify"),
 			"endDateType" => JRequest::getInt("endDateType"),
 			"endDateSpecify" => JRequest::getString("endDateSpecify"),
-			"order" => JRequest::getBool("order"),
-			"unpublished" => JRequest::getBool("unpublished",false),
+			"order" => JRequest::getBool("order") ? 1 : 0,
+			"unpublished" => JRequest::getBool("unpublished",false) ? 1 : 0,
+			"diaryMode" => JRequest::getBool("diaryMode", false) ? 1 : 0,
 			
 		);
 	}
@@ -285,22 +286,15 @@ class SWG_EventsModelEventlisting extends JModelItem
 	private function loadEvents($eventType)
 	{
 		// Get the parameters set
+		$factory = SWG::eventFactory($eventType);
 		$startDate = $this->paramDateToValue(JRequest::getInt("startDateType"), JRequest::getString("startDateSpecify"));
 		$endDate = $this->paramDateToValue(JRequest::getInt("endDateType"), JRequest::getString("endDateSpecify"));
 		
 		// Set specific factory parameters
-		switch ($eventType) {
-			case SWG::EventType_Walk:
-				$factory = SWG::walkInstanceFactory();
-				break;
-			case SWG::EventType_Social:
-				$factory = SWG::socialFactory();
-				$factory->getNormal = true;
-				$factory->getNewMember = true;
-				break;
-			case SWG::EventType_Weekend:
-				$factory = SWG::weekendFactory();
-				break;
+		if ($eventType == SWG::EventType_Social)
+		{
+			$factory->getNormal = true;
+			$factory->getNewMember = true;
 		}
 		
 		// Set standard/shared factory parameters
@@ -313,6 +307,12 @@ class SWG_EventsModelEventlisting extends JModelItem
 		$factory->showUnpublished = JRequest::getBool("unpublished",false);
 		$factory->includeAttendees = true;
 		$factory->includeAttendedBy = Jfactory::getUser()->id;
+		if (JRequest::getBool("diaryMode", false))
+		{
+			// Default is the current logged in user.
+			// TODO: Allow view access to other people's diaries
+			$factory->addAttendee(JFactory::getUser()->id);
+		}
 		
 		// Get events from factories
 		switch ($eventType)
