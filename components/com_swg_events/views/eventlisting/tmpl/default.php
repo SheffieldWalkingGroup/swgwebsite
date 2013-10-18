@@ -33,9 +33,25 @@ foreach ($this->events as $event):?>
           ?>
         </time>
         <?php if ($event instanceof WalkInstance):?>
-          <span class="rating">
-            <?php echo $event->distanceGrade.$event->difficultyGrade." (".$event->miles." miles)"; ?>
-          </span>
+			<p class="headerextra">
+				<span class="rating">
+					<?php echo $event->distanceGrade.$event->difficultyGrade;?>
+				</span>
+				<span class="distance">
+				(<?php // No space after bracket
+					if (empty($event->distance))
+					{
+						$inDist = $event->miles;
+						$inUnit = UnitConvert::Mile;
+					}
+					else
+					{
+						$inDist = $event->distance;
+						$inUnit = UnitConvert::Metre;
+					}
+					echo UnitConvert::DisplayDistance($inDist,$inUnit, UnitConvert::Mile).", ".UnitConvert::DisplayDistance($inDist, $inUnit, UnitConvert::Kilometre);
+					?>)
+			</p>
         <?php endif;?>
         <time datetime="<?php if (!$event instanceof Weekend) echo date("H:iO", ($event instanceof WalkInstance ? $event->estimateFinishTime() : $event->end)); else echo date("Y-m-d", $event->endDate+86400 /* Must end at midnight the next day */);?>" class="dtend"></time>
         <h3 class="summary"><?php echo $event->name; ?></h3>
@@ -209,7 +225,7 @@ foreach ($this->events as $event):?>
 						You did this
 					</p>
 					<?php if ($event->attendedby): ?>
-						<p><a href="/whats-on/previous-events/upload-track?wi=<?php echo $event->id;?>">Share GPS track</a></p>
+						<p><a href="/your-diary/upload-track?wi=<?php echo $event->id;?>">Share GPS track</a></p>
 						<p><a href="/photos/upload-photos">Share photos</a></p>
 					<?php endif; ?>
 				<?php endif; ?>
