@@ -5,6 +5,8 @@
   JHTML::_('behavior.mootools');
   $document = &JFactory::getDocument();
   $document->addScript('/templates/swgpeter/script/template.js');
+  
+  JLoader::register('SWG', JPATH_SITE."/swg/swg.php");
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" class="<?php echo $currentPage->alias; ?>"

@@ -596,7 +596,7 @@ div.slideshow {
 	clear:both;
 }
 
-.popup .header h3, .ratingTip .tip-title {
+.popup h3, .ratingTip .tip-title {
     text-align:center;
 }
 
@@ -855,7 +855,7 @@ div.slideshow {
 	position:relative;
 }
 
-.popup .eventheader h3 {
+.popup h3 {
 	background-image:none !important;
 	border-bottom:none;
 }
@@ -864,7 +864,7 @@ div.slideshow {
 	float:left;
 }
 
-.eventheader h3 {
+.eventheader h3, .popup h3 {
 	text-align:center;
 	font-size:20px;
 	margin:0;
@@ -874,8 +874,10 @@ div.slideshow {
 	font-weight:bold;
 }
 
-.eventheader .rating, .eventheader .area {
+.eventheader .headerextra {
+	display:inline;
 	float:right;
+	margin:0;
 }
 
 .eventinfo {
@@ -1155,4 +1157,30 @@ div.invisibleBacking {
 }
 .login-module-form .buttons {
 	margin:5px;
+}
+.mask {
+	background-color:#555;
+	opacity:0.6;
+}
+
+/* Error pages */
+.error {
+	margin:10px;
+}
+.errorimage {
+	position:relative;
+}
+
+.errorimage h1 {
+	position:absolute;
+	left:50px;
+	top:20px;
+	margin:0;
+}
+
+.errorimage h2 {
+	position:absolute;
+	margin:0;
+	left:100px;
+	top:70px;
 }

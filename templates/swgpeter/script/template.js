@@ -32,3 +32,42 @@ var hasLocalStorage = function() {
 }
 
 window.addEvent('domready', setupRatingTips);
+
+/**
+ * Display a popup message on top of the page
+ */
+function Popup(title, body, type)
+{
+	var popup = new Element("div", {
+		"class":"popup"
+	});
+	
+	var popupContents = new Element("div", {
+		"class":"content"
+	});
+	
+	var header = new Element("h3");
+	header.set("text", title);
+	
+	var contents = new Element("div",{
+		"class":"popupmessage"
+	});
+	contents.set("html", body);
+	
+	popup.adopt(popupContents);
+	popupContents.adopt(header);
+	popupContents.adopt(contents);
+	
+	var mask = new Mask(document.body, {
+		hideOnClick : true
+	});
+	
+	mask.addEvent("hide", function()
+	{
+		popup.destroy();
+	});
+	
+	popup.inject(document.body);
+	popup.position({position:"center"});
+	mask.show();
+}
