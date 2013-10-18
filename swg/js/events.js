@@ -7,6 +7,7 @@ var Event = new Class({
 	type : null,
 	id : null,
 	container : null,
+	htmlBody : null,
 	name : null,
 	start : null,
 	end : null,
@@ -14,6 +15,10 @@ var Event = new Class({
 	mapOpen : false,
 	map : null,
 	mapLink : null,
+	attended : null,
+	miles : null,
+	distanceGrade : null,
+	difficultyGrade : null,
 	
 	/**
 	 * Set up the event from an HTML element in the page
@@ -22,6 +27,7 @@ var Event = new Class({
 	populateFromHTML : function(container)
 	{
 		this.container = container;
+		this.htmlBody = container.getElement(".eventbody");
 		
 		this.type = container.id.substring(0,container.id.indexOf("_"));
 	    this.id   = container.id.substring(container.id.indexOf("_")+1);
@@ -29,6 +35,26 @@ var Event = new Class({
 		this.name = container.getElement(".summary").get("text");
 		var startTime = container.getElement(".dtstart").getProperty("datetime");
 		this.start = new Date(startTime);
+		
+		var attendedChk = container.getElement(".attendance img");
+		if (attendedChk != null) // No box for cancelled events
+		{
+			this.attended = attendedChk.getProperty("src").indexOf("tickbox") == -1;
+		}
+		
+		if (this.type == "walk")
+		{
+			// Split the rating element into grades & distance
+			var rating = container.getElement(".rating").get("text");
+			var ratingRE = /([A-Z])([0-9])[^0-9]*([0-9.]+)mi/;
+			var matches = ratingRE.exec(rating);
+			if (matches)
+			{
+				this.distanceGrade = matches[1];
+				this.difficultyGrade = matches[2];
+				this.miles = matches[3];
+			}
+		}
 		
 		// End time might be a full date, or just a time on the start date
 		var endTime = container.getElement(".dtend").getProperty("datetime");
@@ -97,7 +123,7 @@ var Event = new Class({
 			
 			if (this.attendedby && this.type.toLowerCase() == "walk")
 			{
-				container.getElements(".eventinfo").adopt(new Element("p", {html : "<a href='/whats-on/previous-events/upload-track?wi="+this.id+"'>Share GPS track</a>"}));
+				container.getElements(".eventinfo").adopt(new Element("p", {html : "<a href='/whats-on/your-diary/upload-track?wi="+this.id+"'>Share GPS track</a>"}));
 				container.getElements(".eventinfo").adopt(new Element("p", {html : "<a href='/photos/upload-photos'>Share photos</a>"}));
 			}
 			
@@ -234,20 +260,36 @@ var Event = new Class({
 				else if (self.type.toLowerCase() == "weekend")
 					type = 3;
 				
+				var attendParams = "evttype="+type+"&evtid="+self.id+"&set="+(attended ? 1 : 0);
 				var request = new Request.JSON({
 					// TODO: Should be format=json
-					url:"?task=attendance.attend&evttype="+type+"&evtid="+self.id+"&set="+(attended ? 1 : 0)+"&json=1",
+					url: "?task=attendance.attend&"+attendParams+"&json=1",
 					onSuccess: function(data)
 					{
-						// TODO: Should also update number of attendees and total walk count in profile box (need to connect to code in profile module rather than making a direct alteration)
+						self.attended = attended;
+						// TODO: Update attendees count on this event (could just redraw the event with JS methods used to load the bottomless page)
+						
 						if (attended)
 						{
 							checkbox.getElement("img").src = "/images/icons/tick.png";
+							
+							// Show the popup
+							var title = self.name+" added to your diary";
+							var body = "<p>This "+self.type+" has been added to <a href='/your-diary'>your diary</a>. "+
+										"<a href='?task=attendance.facebook&"+attendParams+"&json=1'>Post to facebook</a> "+
+										"<a href='/photos/upload-photos'>Share photos</a>";
+							if (type == "walk")
+								body += "<a href='/your-diary/upload-track?wi="+self.id+"'>Share GPS track</a>";
+							body += "</p>";
+							Popup(title, body);
 						}
 						else
 						{
 							checkbox.getElement("img").src = "/images/icons/tickbox.png";
 						}
+						
+						// Fire an event on the document element so any modules that show this info can update
+						document.fireEvent("attendanceChange", self);
 					}
 				});
 				// TODO: Show animation while waiting for response
@@ -268,7 +310,7 @@ var Event = new Class({
 		}
 		
 		// Put the map elements in place
-		this.content.adopt(this.mapContainer);
+		this.htmlBody.parentNode.adopt(this.mapContainer);
 		
 		// Create the map
 		this.map = new SWGMap("map_"+this.type+"_"+this.id);
@@ -412,17 +454,20 @@ function displayEvent(event, container, newMembers) {
 	infoHeader.adopt(eventDate, eventName);
 	container.adopt(infoHeader);
 	
-	var eventBody = new Element("div", {"class":"eventbody"});
-	container.adopt(eventBody);
+	this.eventBody = new Element("div", {"class":"eventbody"});
+	container.adopt(this.eventBody);
 	
 	var description = new Element("div", {"class":"description","html":"<p>"+event.description+"</p>"});
-	eventBody.adopt(description);
+	this.eventBody.adopt(description);
 	if (event.alterations.details)
 		description.addClass("altered");
 	
 	var eventInfo = new Element("div", {"class":"eventinfo"});
-	eventBody.adopt(eventInfo);
-	eventBody.adopt(new Element("div", {"style":"clear:both;"}));
+	this.eventBody.adopt(eventInfo);
+	this.eventBody.adopt(new Element("div", {"style":"clear:both;"}));
+	
+	var extraHead = new Element("p", {"class":"headerextra"});
+	extraHead.inject(eventName,'before');
 	
 	// Now do specific components
 	switch(event.type.toLowerCase()) {
@@ -435,8 +480,10 @@ function displayEvent(event, container, newMembers) {
 				day = "saturday";
 			container.addClass("walk"+day);
 			
-			var rating = new Element("span", {"class":"rating", "text":event.distanceGrade+event.difficultyGrade+" ("+event.miles+" miles)"});
-			rating.inject(eventName,'before');
+			var rating = new Element("span", {"class":"rating", "text":event.distanceGrade+event.difficultyGrade});
+			var distance = new Element("span", {"class":"distance", "text":" ("+event.miles+" miles)"});
+			extraHead.adopt(rating);
+			extraHead.adopt(distance);
 			
 			// TODO: icons
 			var start = new Element("p", {
@@ -542,7 +589,7 @@ function displayEvent(event, container, newMembers) {
 				"class":"area",
 				"text":event.area
 			});
-			area.inject(eventName,'before');
+			extraHead.adopt(area,'before');
 			if (event.url != "") {
 				var moreInfo = new Element("p",{
 					"class":"moreinfo",

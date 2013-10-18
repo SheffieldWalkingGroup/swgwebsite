@@ -58,9 +58,9 @@ class Waypoint extends SWGBaseModel
 				break;
 			case "time":
 				if (is_numeric($value))
-				$this->time = (int)$value;
+					$this->time = (int)$value;
 				else if (strtotime($value))
-				$this->time = strtotime($value);
+					$this->time = strtotime($value);
 				break;
 		}
 	}

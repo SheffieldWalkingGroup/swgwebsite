@@ -71,7 +71,7 @@ public static function timeToDate($time, $after=false) {
 	else if ($time == self::DateYesterday)
 		$rawDate = getdate(time()-86400);
 	else if ($time == self::DateTomorrow)
-		$rawDate = getDate(time()+86400);
+		$rawDate = getdate(time()+86400);
 	else
 		$rawDate = getdate($time);
 	

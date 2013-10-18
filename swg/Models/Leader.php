@@ -76,7 +76,7 @@ class Leader extends SWGBaseModel {
 		if ($db->getNumRows($res) == 1)
 			return new Leader($db->loadAssoc());
 		else
-			return new Leader();
+			return null;
 	}
 
 	public static function getLeader($id) {
@@ -91,7 +91,7 @@ class Leader extends SWGBaseModel {
 		if ($db->getNumRows($res) == 1)
 			return new Leader($db->loadAssoc());
 		else
-			return new Leader();
+			return null;
 
 	}
 
