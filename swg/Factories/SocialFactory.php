@@ -67,4 +67,22 @@ class SocialFactory extends EventFactory
 			$showWhat[] = "shownewmember";
 		$query->where("(".implode(" OR ", $showWhat).")");
 	}
+	
+	/**
+	 * Return some cumulative stats for events matching the current filters
+	 * Stats returned depend on the specific factory
+	 * @return array[]
+	 */
+	public function cumulativeStats()
+	{
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select(array(
+			"COUNT(1) AS count",
+		));
+		
+		$this->applyFilters($query);
+		$db->setQuery($query);
+		return $db->loadAssoc();
+	}
 }

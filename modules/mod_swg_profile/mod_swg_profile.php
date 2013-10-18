@@ -23,6 +23,12 @@ if ($db->getNumRows())
 	$joindate = strtotime($results['profile_value']);
 }
 
+// Load JS to handle attendance changes
+JHtml::_('behavior.framework', true);
+
+JHTML::script("swg/js/events.js",true);
+JHTML::script("modules/mod_swg_profile/script/profile.js",true);
+
 // Get attended walks
 $wiFact = SWG::WalkInstanceFactory();
 $wiFact->reset();

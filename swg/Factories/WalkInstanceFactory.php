@@ -47,6 +47,12 @@ class WalkInstanceFactory extends EventFactory
 	
 	protected $eventTypeConst = Event::TypeWalk;
 	
+	/**
+	 * Optional filter by walk leader. Leader object or ID
+	 * @var Leader|int
+	 */
+	public $leader = null;
+	
 	public function __construct()
 	{
 		parent::__construct();
@@ -67,6 +73,16 @@ class WalkInstanceFactory extends EventFactory
 	protected function modifyQuery(JDatabaseQuery &$query)
 	{
 		$query->where("NOT deleted");
+		
+		if (isset($this->leader))
+		{
+			if ($this->leader instanceof Leader)
+				$query->where("leaderid = ".$this->leader->id);
+			else if (is_int($this->leader))
+				$query->where("leaderid = ".$this->leader);
+			else if (ctype_digit($this->leader))
+				$query->where("leaderid = ".(int)$this->leader);
+		}
 	}
 	
 	/**
@@ -115,12 +131,27 @@ class WalkInstanceFactory extends EventFactory
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select(array(
+			"COUNT(1) AS count",
 			"SUM(miles) AS sum_miles",
 			"AVG(miles) AS mean_miles",
+			"SUM(
+				CASE 
+					WHEN distance IS NOT NULL THEN distance
+					ELSE (miles*".UnitConvert::getUnit(UnitConvert::Mile, 'factor').")
+				END
+			) AS sum_distance",
+			"AVG(
+				CASE 
+					WHEN distance IS NOT NULL THEN distance
+					ELSE (miles*".UnitConvert::getUnit(UnitConvert::Mile,'factor').")
+				END
+			) AS mean_distance",
 		));
+		
 		$this->applyFilters($query);
 		$db->setQuery($query);
 		return $db->loadAssoc();
 	}
+	
 	
 }

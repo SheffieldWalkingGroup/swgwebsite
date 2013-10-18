@@ -38,6 +38,7 @@ private $meetPlaceTime;
 protected $meetPoint;
 
 protected $headCount;
+protected $distance;
 protected $mileometer;
 protected $reviewComments;
 protected $deleted;
@@ -84,7 +85,10 @@ public $dbmappings = array(
 	'meetPlaceTime' => 'meetplacetime',
 	
 	'okToPublish'	=> 'readytopublish',
-	'routeVisibility'=> 'routevisibility'
+	'routeVisibility'=> 'routevisibility',
+	
+	'headCount'		=> 'headcount',
+	'distance'		=> 'distance',
 	
 	// TODO: Headcount, mileometer...
 );
@@ -181,6 +185,11 @@ public function toDatabase(JDatabaseQuery &$query)
 		$query->set("backmarkername = '".$query->escape($this->backmarkerName)."'");
 	else
 		$query->set("backmarkername = ''");
+		
+	if (isset($this->distance))
+		$query->set("distance = ".(int)$this->distance);
+	if (isset($this->headCount))
+		$query->set("headcount = ".(int)$this->headCount);
 	
 	$query->set('version = '. (int)$this->alterations->version);
 	$query->set('lastmodified = '. (int)$this->alterations->lastModified);
@@ -222,6 +231,9 @@ public function toDatabase(JDatabaseQuery &$query)
 			'meetPointId'	=> $this->meetPointId,
 			'meetTime' 		=> strftime("%H:%M", $this->start),
 			'meetPlaceTime'	=> $this->__get("meetPoint")->extra,
+			
+			'headCount'		=> $this->headCount,
+			'distance'		=> $this->distance,
 			
 			'alterations_details'=> $this->alterations->details,
 			'alterations_date'=>$this->alterations->placeTime,
@@ -298,15 +310,29 @@ public function toDatabase(JDatabaseQuery &$query)
 				break;
 			case "walk":
 				return Walk::getSingle($this->walkid);
-				break;
 			case "track":
 				// Load the track if we don't have it already
 				// TODO: Only try once, and catch exceptions
 				if (!isset($this->track))
-				{
 					$this->loadTrack();
-				}
 				return $this->track;
+			case "distance":
+				// If we don't have a (real) distance set, convert the (estimated) miles into metres and give that
+				break;
+			
+			// If the walk is circular, return the equivalent start point
+			case "endPlaceName":
+			case "endLatLng":
+			case "endGridRef":
+				if ($this->isLinear)
+					return $this->$name;
+				else
+				{
+				    $var = "start".substr($name, 3);
+				    return $this->$var;
+				}
+				
+				
 		}
 		return $this->$name; // TODO: What params should be exposed?
 	}
@@ -349,6 +375,8 @@ public function toDatabase(JDatabaseQuery &$query)
 				break;
 			// Integer
 			case "start":
+			case "headCount":
+			case "distance":
 				$this->$name = (int)$value;
 				break;
 			// Booleans

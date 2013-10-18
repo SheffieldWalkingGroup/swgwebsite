@@ -254,10 +254,7 @@ abstract class EventFactory
 	 * Stats returned depend on the specific factory
 	 * @return array[]
 	 */
-	public function cumulativeStats()
-	{
-		
-	}
+	public abstract function cumulativeStats();
 	
 	/**
 	 * Get the next few events based on the current factory settings

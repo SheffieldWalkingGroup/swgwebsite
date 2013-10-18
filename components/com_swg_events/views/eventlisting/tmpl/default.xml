@@ -32,6 +32,8 @@
 			</field>
 			<field name="protocolReminders" type="textarea" label="Protocol reminders" description="One reminder on each line. These will be displayed between events." rows="10" cols="60" filter="raw" />
 			
+			<field name="diaryMode" type="checkbox" label="Diary mode" description="Show events a user has attended" value="1" default="0" />
+			
 			<!-- I'd like to separate these -->
 			<field name="unpublished" type="checkbox" label="Show unpublished events" description="Display unpublished events to users who are allowed to see them" value="1" default="0" />
 			<field name="showEditOptions" type="checkbox" label="Show edit options" description="Allow users to add &amp; edit events if their permissions allow" value="1" default="0" />
