@@ -1,5 +1,8 @@
 <?php
 defined('JPATH_BASE') or die;
+JLoader::register('Leader', JPATH_BASE."/swg/Models/Leader.php");
+JLoader::register('Facebook', JPATH_BASE."/libraries/facebook/facebook.php");
+JLoader::register('SWG', JPATH_BASE."/swg/swg.php");
 
 /**
  * Adds any extras onto user profiles.
@@ -44,6 +47,20 @@ class plgUserSWG_ProfileExtras extends JPlugin
 				foreach ($results as $v)
 				{
 					$k = str_replace('swg_extras.', '', $v[0]);
+					switch ($k)
+					{
+						case "joindate":
+							$v[1] = strftime("%B %Y");
+							break;
+						case "leaderid":
+							if (!empty($v[1]))
+							{
+								$v[1] = Leader::getLeader($v[1])->displayName;
+							}
+							else
+							    $v[1] = "Not a leader";
+							break;
+					}
 					$data->swg_extras[$k] = json_decode($v[1], true);
 					if ($data->swg_extras[$k] === null)
 					{
@@ -120,9 +137,16 @@ class plgUserSWG_ProfileExtras extends JPlugin
 
 				foreach ($data['swg_extras'] as $k => $v)
 				{
-					$tuples[] = '('.$userId.', '.$db->quote('swg_extras.'.$k).', '.$db->quote(json_encode($v)).', '.$order++.')';
+					$tuples[] = '('.$userId.', '.$db->quote('swg_extras.'.$k).', '.$db->quote($v).', '.$order++.')';
 				}
-
+				
+				// Joomla won't give us access to the FB token via the form field, so set that from the session
+				$fb = new Facebook(SWG::$fbconf);
+				if ($fb->getUser())
+				{
+					$tuples[] = '('.$userId.', '.$db->quote('swg_extras.fbtoken').', '.$db->quote($fb->getAccessToken()).', '.$order++.')';
+				}
+				
 				$db->setQuery('INSERT INTO #__user_profiles VALUES '.implode(', ', $tuples));
 echo $db->getQuery();
 

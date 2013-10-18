@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-	<fields name="swg_extras">
+	<fields name="swg_extras" addfieldpath="/plugins/user/swg_profileextras/fields">
 		<fieldset name="swg_extras"
 			label="SWG Extras"
 		>
@@ -9,12 +9,6 @@
 				type="calendar"
 				description="Approximate date you joined SWG"
 				label="Join date"
-			/>
-			<field
-				name="fbid"
-				type="text"
-				description="Facebook ID"
-				label="Facebook ID"
 			/>
 			<field
 				name="leaderid"
@@ -28,6 +22,14 @@
 				<option value="">-- Not a leader --</option>
 			</field>
 
+		</fieldset>
+		<fieldset name="facebook" label="Facebook">
+			<field name="fb_key" type="FacebookLogin" label="Facebook account" description="WEGARE" />
+			<field name="fb_eventpost" type="radio" default="0" label="Post events to facebook" description="Post the events you go to on Facebook">
+				<option value="-1">Never</option>
+				<option value="0">Ask each time</option>
+				<option value="1">Automatically</option>
+			</field>
 		</fieldset>
 	</fields>
 </form>
