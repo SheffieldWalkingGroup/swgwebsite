@@ -92,6 +92,67 @@ class SWG_EventsControllerAttendance extends JControllerAdmin
 		
 		return false;
 	}
+	
+	public function facebook()
+	{
+		$fb = SWG::getFacebook();
+		if (!$fb)
+			return;
+			
+		// Do we have publish permissions?
+		$perms = $fb->api('me/permissions');
+		$session = JFactory::getSession();
+		if (empty($perms['data'][0]['publish_actions']))
+		{
+			if ($session->get("FBRequestPerm", false))
+			{
+				// Already requested permissions, don't do it again
+				$session->set("FBRequestPerm", false);
+				throw new UserException("Need publish permission", 0, "You need to give the Sheffield Walking Group app publish permissions to post events to Facebook.");
+			}
+			else
+			{
+				// Get publish permissions, then return here. Store a note in the session so we can handle the user rejecting the permission
+				//$session->set("FBRequestPerm", true);
+				$current = JURI::getInstance();
+				$url = $fb->getLoginUrl(array(
+					"scope" => 'publish_actions',
+					"redirect_uri" => $current->toString(),
+				));
+				// TODO: check if we're using the API - can't redirect that
+				header("Location: ".$url);
+				exit(0);
+			}
+		}
+		
+		$session->set("FBRequestPerm", false);
+		
+		// Post the event
+		$evtid = JRequest::getInt("evtid");
+// 		$factory = SWG::eventFactory();
+// 		$event = $factory->getSingle($evtid);
+		
+		$eventURI = new JURI("index.php?option=com_swg_events&view=eventlisting"); // TODO: Individual event links
+		switch(JRequest::getInt("evttype"))
+		{
+			case SWG::EventType_Walk:
+				// TODO: Did this person lead the walk?
+				$action = "do";
+				$type = "walk";
+				break;
+			case SWG::EventType_Social:
+				$action = "go_to";
+				$type = "social";
+				$url = "http://samples.ogp.me/205234152933611";
+				break;
+			case SWG::EventType_Weekend:
+				$action = "go_to";
+				$type = "weekend_away";
+				break;
+		}
+		$fb->api('me/sheffwalkinggroup:'.$action, 'POST',	array($type => $eventURI->toString()));
+		// TODO: Need to store this post ID (event attendance table?) in case we change it later
+	}
 
 	
 
