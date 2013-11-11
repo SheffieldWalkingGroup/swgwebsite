@@ -45,6 +45,15 @@ if ($this->showForm): ?>
 				</div>
 			<?php endforeach; ?>
 		</fieldset>
+		<fieldset>
+			<legend>Alterations</legend>
+			<?php foreach ($this->form->getFieldset('alterations') as $field): ?>
+				<div>
+					<?php echo $field->label; ?>
+					<?php echo $field->input; ?>
+				</div>
+			<?php endforeach; ?>
+		</fieldset>
 		<input type="submit" class="submit" value="Save" />
 	</form>
 <?php endif; ?>

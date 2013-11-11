@@ -131,14 +131,14 @@ foreach ($this->events as $event):?>
 			<?php endif;?>
           <?php elseif ($event instanceof Social):?>
             <?php if ($this->isTimeSet($event->start)):?>
-              <p class="start"><span>Start: </span><?php echo date("H:i", $event->start); ?></p>
+              <p class="start<?php if ($event->alterations->placeTime) echo " altered\" title=\"Place & time altered"; ?>"><span>Start: </span><?php echo date("H:i", $event->start); ?></p>
               <?php if ($this->isTimeSet($event->end)):?>
               <p class="end"><span>End: </span><?php echo date("H:i", $event->end); ?> (approx)</p>
               <?php endif;
             endif; ?>
             
             <?php if ($event->location != ""): ?>
-              <p class="location">
+              <p class="location<?php if ($event->alterations->placeTime) echo " altered\" title=\"Place & time altered"; ?>">
                 <span>Location: </span><?php if ($event->hasMap()):?><a href="#" rel="map"><?php endif;
                     echo nl2br($event->location);
                   ?>
@@ -153,7 +153,7 @@ foreach ($this->events as $event):?>
             <?php endif;?>
             
             <?php if ($event->bookingsInfo != ""): ?>
-				<p class="socialbooking">
+				<p class="socialbooking<?php if ($event->alterations->organiser) echo " altered\" title=\"Organiser altered"; ?>">
 					<span>Contact:</span> <?php echo $event->bookingsInfo; ?>
 				</p>
 			<?php endif; ?>
@@ -168,7 +168,7 @@ foreach ($this->events as $event):?>
               <span>Places:</span> <?php echo $event->places." at ".$event->cost?> (remember the <a href="/weekends/bookings-payment-policy">booking and refunds policy</a>)
             </p>
             <?php if ($event->contact != ""): ?>
-				<p class="weekendbooking">
+				<p class="weekendbooking<?php if ($event->alterations->organiser) echo " altered\" title=\"Organiser altered"; ?>">
 					<span>Contact:</span> <?php echo $event->contact; ?>
 					<?php if ($event->noContactOfficeHours):?>
 						&ndash; don't call during office hours

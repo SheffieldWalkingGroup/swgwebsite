@@ -67,8 +67,15 @@
 		else if ($dbArr['latitude'] == "" && $dbArr['longitude'] == "")
 			$this->latLng = null;
 		
+		// Set up the alterations
 		$this->alterations->setVersion($dbArr['version']);
 		$this->alterations->setLastModified(strtotime($dbArr['lastmodified']));
+		
+		$this->alterations->setDetails($dbArr['detailsaltered']);
+		$this->alterations->setCancelled($dbArr['cancelled']);
+		$this->alterations->setPlaceTime($dbArr['placetimealtered']);
+		$this->alterations->setOrganiser($dbArr['organiseraltered']);
+		$this->alterations->setDate($dbArr['datealtered']);
 		
 	}
 
@@ -97,6 +104,12 @@
 		
 		$query->set("version = ".$this->alterations->version);
 		$query->set("lastmodified = '".$query->escape($this->alterations->lastModified)."'");
+		$query->set('detailsaltered = '. (int)$this->alterations->details);
+		$query->set('cancelled = '. (int)$this->alterations->cancelled);
+		$query->set('placetimealtered = '. (int)$this->alterations->placeTime);
+		$query->set('organiseraltered = '. (int)$this->alterations->organiser);
+		$query->set('datealtered = '. (int)$this->alterations->date);
+	
 		if (!empty($this->latLng))
 		{
 			$query->set("latitude = ".$this->latLng->lat);
@@ -127,6 +140,11 @@
 			'location'		=> $this->location,
 			'cost'			=> $this->cost,
 			
+			'alterations_details'	=> $this->alterations->details,
+			'alterations_date'		=> $this->alterations->placeTime,
+			'alterations_organiser'	=> $this->alterations->organiser,
+			'alterations_placeTime'	=> $this->alterations->date,
+			'alterations_cancelled'	=> $this->alterations->cancelled,
 		);
 		
 		if (!empty($this->start))

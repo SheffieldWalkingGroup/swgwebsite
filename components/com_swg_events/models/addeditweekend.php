@@ -67,6 +67,13 @@ class SWG_EventsModelAddEditWeekend extends JModelForm
 	else
 		$this->weekend->endDate = null;
 	
+	// Alterations
+	$this->weekend->alterations->incrementVersion();
+	$this->weekend->alterations->setDetails($formData['alterations_details']);
+	$this->weekend->alterations->setCancelled($formData['alterations_cancelled']);
+	$this->weekend->alterations->setOrganiser($formData['alterations_organiser']);
+	$this->weekend->alterations->setDate($formData['alterations_date']);
+	
 	if ($this->weekend->isValid())
 	{
 		$this->weekend->save();
