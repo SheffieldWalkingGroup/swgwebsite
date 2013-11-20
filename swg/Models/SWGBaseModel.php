@@ -1,6 +1,6 @@
 <?php
 
-require_once("swg/swg.php");
+require_once(JPATH_SITE."/swg/swg.php");
 /**
  * A base model providing global functionality
  */
