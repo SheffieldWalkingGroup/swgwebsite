@@ -351,6 +351,7 @@ public static function getWalksBySuggester(Leader $suggester)
 	// TODO: This is a stored proc currently - can we use this?
 	$query->where(array(
 		"suggestedby = ".(int)$suggester->id,
+		"suggestedby IS NOT NULL", // Shouldn't be able to get here if the current user is null, but Paul's bug report suggests it sometimes happens.
 	));
 	$query->order(array("walkname ASC"));
 	$db->setQuery($query);
