@@ -41,10 +41,20 @@ class SWG_WalkLibraryViewListWalks extends JView
 				// Get this leader's record
 				// TODO: Integrate with Joomla users
 				$leader = Leader::getJoomlaUser(JFactory::getUser()->id);
-				$this->pageTitle = "Walks suggested by ".$leader->displayName;
-				$this->showList = true;
-				$this->showSearch = false;
-				$this->noWalkMsg = "You haven't suggested any walks yet";
+				if ($leader == null)
+				{
+					$this->pageTitle = "Walks you've suggested";
+					$this->showList = true;
+					$this->showSearch = false;
+					$this->noWalkMsg = "Your leader account hasn't been set up properly. Please contact the vice chair or webmaster.";
+				}
+				else
+				{
+					$this->pageTitle = "Walks suggested by ".$leader->displayName;
+					$this->showList = true;
+					$this->showSearch = false;
+					$this->noWalkMsg = "You haven't suggested any walks yet";
+				}
 				break;
 			case 2:
 				$this->pageTitle = "Suggested walks";
