@@ -119,5 +119,10 @@ class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
 		// TODO: Leaders can edit own walks
 		return JFactory::getUser()->authorise("walk.editall","com_swg_walklibrary");
 	}
+	
+	function canEditAll()
+	{
+		return JFactory::getUser()->authorise("walk.editall","com_swg_walklibrary");
+	}
 
 }

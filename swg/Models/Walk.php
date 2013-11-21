@@ -129,7 +129,7 @@ public function valuesToForm()
       'fileLinks'=>$this->fileLinks,
       'information'=>$this->information,
       'routeImage'=>$this->routeImage,
-      'suggestedBy'=>$this->suggestedBy,
+      'suggestedBy'=>$this->suggestedBy->id,
       'status'=>$this->status,
       'specialTBC'=>$this->specialTBC,
       'dogFriendly'=>$this->dogFriendly,

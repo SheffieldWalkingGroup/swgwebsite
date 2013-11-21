@@ -22,13 +22,15 @@ class SWG_WalkLibraryViewAddEditWalk extends JView
 	public $editing;
 	public $showForm;
 	
+	protected $controller;
+	
 	function display($tpl = null)
 	{
 		$app		= JFactory::getApplication();
 		$params		= $app->getParams();
 		$dispatcher = JDispatcher::getInstance();
 		$model	    = $this->getModel('addeditwalk');
-		$controller = JController::getInstance('SWG_WalkLibrary');
+		$this->controller = JController::getInstance('SWG_WalkLibrary');
 
 		// Get some data from the models
 		$state		= $this->get('State');
@@ -36,8 +38,8 @@ class SWG_WalkLibraryViewAddEditWalk extends JView
 		$this->walk	= $this->get('Walk');
 		// Check the current user can edit this walk (or add a new one)
 		if (
-			($model->editing() && !$controller->canEdit($this->walk)) ||
-			(!$model->editing() && !$controller->canAdd())
+			($model->editing() && !$this->controller->canEdit($this->walk)) ||
+			(!$model->editing() && !$this->controller->canAdd())
 		)
 		{
 			return JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));

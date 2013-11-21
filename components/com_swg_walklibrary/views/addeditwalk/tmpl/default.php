@@ -21,6 +21,12 @@ JHtml::_('behavior.tooltip');
 				echo "<br>";
 				echo $this->form->getLabel('description');
 				echo $this->form->getInput('description');
+				if ($this->controller->canEditAll())
+				{
+					echo "<br>";
+					echo $this->form->getLabel('suggestedBy');
+					echo $this->form->getInput('suggestedBy');
+				}
 			?>
 		</fieldset>
 		<fieldset>
