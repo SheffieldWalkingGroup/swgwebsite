@@ -164,7 +164,7 @@ public function save($incrementVersion = true) {
 	else 
 	{
 		$query->where("ID = ".(int)$this->id);
-		$query->update($table);
+		$query->update("walkleaders");
 	}
 	
 	foreach ($this->dbmappings as $var => $dbField)
