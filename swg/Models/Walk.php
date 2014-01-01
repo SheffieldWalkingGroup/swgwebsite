@@ -129,7 +129,7 @@ public function valuesToForm()
       'fileLinks'=>$this->fileLinks,
       'information'=>$this->information,
       'routeImage'=>$this->routeImage,
-      'suggestedBy'=>$this->suggestedBy->id,
+      'suggestedBy'=>(isset($this->suggestedBy) ? $this->suggestedBy->id : null),
       'status'=>$this->status,
       'specialTBC'=>$this->specialTBC,
       'dogFriendly'=>$this->dogFriendly,
@@ -228,10 +228,15 @@ public function __set($name, $value)
 	case "location":
 	case "fileLinks":
 	case "routeImage":
-	case "suggestedBy":
 	case "status":
 	case "specialTBC":
 		$this->$name = $value;
+		break;
+	case "suggestedBy":
+		if ($value instanceof Leader)
+			$this->$name = $value;
+		else if (is_numeric($value))
+			$this->$name = Leader::getLeader($value);
 		break;
 	case "routeVisibility":
 		$this->$name = (int)$value;

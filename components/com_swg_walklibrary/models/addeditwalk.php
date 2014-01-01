@@ -46,7 +46,10 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
 		{
 			try
 			{
-				$this->walk->$name = $value;
+				if ($name == "suggestedBy")
+					$this->walk->suggestedBy = Leader::getLeader($value);
+				else
+					$this->walk->$name = $value;
 			}
 			catch (UnexpectedValueException $e)
 			{
