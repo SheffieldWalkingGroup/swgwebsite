@@ -52,6 +52,7 @@ class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
 		{
 			// Remember that we've cleared the route, so we can delete it from the database when we save
 			JFactory::getApplication()->setUserState("deleteroute", $model->getWalk()->route->id);
+			JFactory::getApplication()->setUserState("uploadedroute", null);
 			
 			$model->clearRoute();
 			$view->display();
@@ -116,6 +117,11 @@ class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
 	function canEdit($walkOrID)
 	{
 		// TODO: Leaders can edit own walks
+		return JFactory::getUser()->authorise("walk.editall","com_swg_walklibrary");
+	}
+	
+	function canEditAll()
+	{
 		return JFactory::getUser()->authorise("walk.editall","com_swg_walklibrary");
 	}
 

@@ -7,6 +7,11 @@
 				name="description" type="textarea" rows="10" cols="50" 
 				label="Description of walk (suitable for publication in the walks programme)"
 			/>
+			<field 
+				name="suggestedBy" type="sql" label="Suggested by" 
+				query="SELECT ID, CONCAT_WS(' ', Forename, Surname) AS name FROM walkleaders WHERE Surname != 'TBC' ORDER BY Forename ASC, Surname ASC"
+				key_field="ID" value_field="name"
+			/>
 		</fieldset>
 		<fieldset name="gpx">
 			<field name="route" type="file" label="GPX File" />

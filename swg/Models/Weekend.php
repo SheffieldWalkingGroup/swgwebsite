@@ -1,8 +1,11 @@
 <?php
 require_once("Event.php");
 /**
-* A weekend away
-*/
+ * A weekend away
+ * 
+ * Note: Weekends don't have place/time alterations.
+ * There's no start time, and if the place is altered then the whole event should be cancelled & recreated
+ */
 class Weekend extends Event {
 protected $endDate;
 protected $placeName;
@@ -29,6 +32,7 @@ public $dbmappings = array(
 	'contact'		=> 'contact',
 	'bookingsOpen'	=> 'bookingsopen',
 	'okToPublish'	=> 'oktopublish',
+	
 );
 
 public $type = "Weekend";
@@ -54,6 +58,15 @@ public function fromDatabase(array $dbArr)
 	
 	if (!empty($dbArr['latitude']) && !empty($dbArr['longitude']))
 		$this->latLng = new LatLng($dbArr['latitude'], $dbArr['longitude']);
+	
+	// Set up the alterations
+	$this->alterations->setVersion($dbArr['version']);
+	$this->alterations->setLastModified(strtotime($dbArr['lastmodified']));
+	
+	$this->alterations->setDetails($dbArr['detailsaltered']);
+	$this->alterations->setCancelled($dbArr['cancelled']);
+	$this->alterations->setOrganiser($dbArr['organiseraltered']);
+	$this->alterations->setDate($dbArr['datealtered']);
 }
 
 public function toDatabase(JDatabaseQuery &$query)
@@ -69,6 +82,10 @@ public function toDatabase(JDatabaseQuery &$query)
 	
 	$query->set("version = ".$this->alterations->version);
 	$query->set("lastmodified = '".$query->escape($this->alterations->lastModified)."'");
+	$query->set('detailsaltered = '. (int)$this->alterations->details);
+	$query->set('cancelled = '. (int)$this->alterations->cancelled);
+	$query->set('organiseraltered = '. (int)$this->alterations->organiser);
+	$query->set('datealtered = '. (int)$this->alterations->date);
 	
 	if (!empty($this->latLng))
 	{
@@ -101,6 +118,10 @@ public function toDatabase(JDatabaseQuery &$query)
 			'challenge'		=> $this->challenge,
 			'swg'			=> $this->swg,
 			
+			'alterations_details'	=> $this->alterations->details,
+			'alterations_date'		=> $this->alterations->placeTime,
+			'alterations_organiser'	=> $this->alterations->organiser,
+			'alterations_cancelled'	=> $this->alterations->cancelled,
 		);
 		
 		if (!empty($this->start))

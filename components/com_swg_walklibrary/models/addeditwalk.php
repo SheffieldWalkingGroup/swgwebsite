@@ -46,7 +46,10 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
 		{
 			try
 			{
-				$this->walk->$name = $value;
+				if ($name == "suggestedBy")
+					$this->walk->suggestedBy = Leader::getLeader($value);
+				else
+					$this->walk->$name = $value;
 			}
 			catch (UnexpectedValueException $e)
 			{
@@ -91,10 +94,11 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
 					$route->readGPX($gpx);
 					$route->uploadedBy = JFactory::getUser()->id;
 					$route->uploadedDateTime = time();
-					$this->walk->setRoute($route);
+					$this->walk->setRoute($route, true);
 					
 					// Store this route for later requests
 					JFactory::getApplication()->setUserState("uploadedroute", serialize($route));
+					JFactory::getApplication()->setUserState("deleteroute", false);
 				}
 				else
 				{

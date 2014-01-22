@@ -112,6 +112,14 @@ foreach ($this->events as $event):?>
 				if ($event->meetPoint->hasExtraInfo()) {
 					echo $event->meetPoint->extra;
 				}
+				
+				// If we're meeting at the walk start, offer directions. Transport direct only works 2 months in advance.
+				// TODO: Offer directions to normal meeting points?
+				if ($event->meetPoint->isAtWalkStart() && $event->start > time() && $event->start < time() + 86400*60)
+				{
+					echo "<br /><a href='http://www.transportdirect.info/web2/journeyplanning/jplandingpage.aspx?id=pdf&amp;do=l&amp;dn=".urlencode($event->startPlaceName)."&amp;d=".$event->startLatLng->lat.",".$event->startLatLng->lng."&amp;da=a&amp;dt=".strftime("%d%m%Y&amp;t=%H%M", $event->start)."' target='_blank'>Get directions</a>";
+				}
+				
 				// Emergency - meet point is 'other' and we have no description
 				if ($event->meetPoint->isOther() && !$event->meetPoint->hasExtraInfo())
 					echo "No meeting place set.";
@@ -140,14 +148,14 @@ foreach ($this->events as $event):?>
 			<?php endif;?>
           <?php elseif ($event instanceof Social):?>
             <?php if ($this->isTimeSet($event->start)):?>
-              <p class="start"><span>Start: </span><?php echo date("H:i", $event->start); ?></p>
+              <p class="start<?php if ($event->alterations->placeTime) echo " altered\" title=\"Place & time altered"; ?>"><span>Start: </span><?php echo date("H:i", $event->start); ?></p>
               <?php if ($this->isTimeSet($event->end)):?>
               <p class="end"><span>End: </span><?php echo date("H:i", $event->end); ?> (approx)</p>
               <?php endif;
             endif; ?>
             
             <?php if ($event->location != ""): ?>
-              <p class="location">
+              <p class="location<?php if ($event->alterations->placeTime) echo " altered\" title=\"Place & time altered"; ?>">
                 <span>Location: </span><?php if ($event->hasMap()):?><a href="#" rel="map"><?php endif;
                     echo nl2br($event->location);
                   ?>
@@ -156,7 +164,6 @@ foreach ($this->events as $event):?>
             <?php endif; ?>
             
             <?php if (!$this->eventInPast($event)): ?>
-            
 				<?php if ($event->cost != ""):?>
 				<p class="cost">
 					<span>Cost: </span><?php echo nl2br($event->cost);?>
@@ -165,7 +172,7 @@ foreach ($this->events as $event):?>
 				
 				<?php if ($event->bookingsInfo != ""): ?>
 					<p class="socialbooking">
-						<span>Contact:</span> <?php echo $event->bookingsInfo; ?>
+						<p class="socialbooking<?php if ($event->alterations->organiser) echo " altered\" title=\"Organiser altered"; ?>">
 					</p>
 				<?php endif; ?>
 			<?php endif; ?>
@@ -177,15 +184,14 @@ foreach ($this->events as $event):?>
             <?php endif; ?>
             <?php if (!$this->eventInPast($event)): ?>
 				<p class="places">
-				<span>Places:</span> <?php echo $event->places." at ".$event->cost?> (remember the <a href="/weekends/bookings-payment-policy">booking and refunds policy</a>)
+					<span>Places:</span> <?php echo $event->places." at ".$event->cost?> (remember the <a href="/weekends/bookings-payment-policy">booking and refunds policy</a>)
 				</p>
 				<?php if ($event->contact != ""): ?>
-					<p class="weekendbooking">
+					<p class="weekendbooking<?php if ($event->alterations->organiser) echo " altered\" title=\"Organiser altered"; ?>">
 						<span>Contact:</span> <?php echo $event->contact; ?>
 						<?php if ($event->noContactOfficeHours):?>
 							&ndash; don't call during office hours
 						<?php endif; ?>
-
 					</p>
 				<?php endif; ?>
 				<?php if ($event->bookingsOpen): ?>

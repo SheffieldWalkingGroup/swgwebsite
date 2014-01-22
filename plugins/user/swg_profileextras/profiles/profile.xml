@@ -4,6 +4,16 @@
 		<fieldset name="swg_extras"
 			label="SWG Extras"
 		>
+			<field 
+				name="leadersetup"
+				type="checkbox"
+				label="Leader"
+				value="1"
+				default="0"
+				description="Check this to create a leader account for this user"
+			/>
+				
+		  
 			<field
 				name="joindate"
 				type="calendar"
@@ -15,11 +25,11 @@
 				type="sql"
 					query="SELECT ID, CONCAT_WS(' ',Forename,Surname) AS name FROM walkleaders WHERE ID != 46 ORDER BY Forename ASC, Surname ASC"
 				key_field="ID" value_field="name"
-				description="Leader"
-				label="Leader"
+				description="Manually connect this user to a specific leader account"
+				label="Leader account"
 				default=""
 			>
-				<option value="">-- Not a leader --</option>
+				<option value="">-- Automatic --</option>
 			</field>
 
 		</fieldset>

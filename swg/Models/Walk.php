@@ -103,44 +103,36 @@ class Walk extends SWGBaseModel implements Walkable {
 
 	}
 
-	// TODO: This isn't used - everything is in save()
-	public function toDatabase(JDatabaseQuery &$query)
-	{
-		parent::toDatabase($query);
-		
-		$query->set("suggestedby", $this->suggestedBy->id);
-	}
-
-	public function valuesToForm()
-	{
-		return array(
-		'id'=>$this->id,
-		'name'=>$this->name,
-		'distanceGrade'=>$this->distanceGrade,
-		'difficultyGrade'=>$this->difficultyGrade,
-		'miles'=>$this->miles,
-		'location'=>$this->location,
-		'isLinear'=>(int)$this->isLinear, // Joomla seems to ignore false?
-		'startGridRef'=>$this->startGridRef,
-		'startPlaceName'=>$this->startPlaceName,
-		'endGridRef'=>$this->endGridRef,
-		'endPlaceName'=>$this->endPlaceName,
-		'description'=>$this->description,
-		'fileLinks'=>$this->fileLinks,
-		'information'=>$this->information,
-		'routeImage'=>$this->routeImage,
-		'suggestedBy'=>$this->suggestedBy,
-		'status'=>$this->status,
-		'specialTBC'=>$this->specialTBC,
-		'dogFriendly'=>$this->dogFriendly,
-		'transportByCar'=>$this->transportByCar,
-		'transportPublic'=>$this->transportPublic,
-		'childFriendly'=>$this->childFriendly,
-			
-		'route' => ($this->route instanceof Route ? $this->route->jsonEncode() : false),
-		'routeVisibility' => $this->routeVisibility,
-		);
-	}
+public function valuesToForm()
+{
+	return array(
+      'id'=>$this->id,
+      'name'=>$this->name,
+      'distanceGrade'=>$this->distanceGrade,
+      'difficultyGrade'=>$this->difficultyGrade,
+      'miles'=>$this->miles,
+      'location'=>$this->location,
+      'isLinear'=>(int)$this->isLinear, // Joomla seems to ignore false?
+      'startGridRef'=>$this->startGridRef,
+      'startPlaceName'=>$this->startPlaceName,
+      'endGridRef'=>$this->endGridRef,
+      'endPlaceName'=>$this->endPlaceName,
+      'description'=>$this->description,
+      'fileLinks'=>$this->fileLinks,
+      'information'=>$this->information,
+      'routeImage'=>$this->routeImage,
+      'suggestedBy'=>(isset($this->suggestedBy) ? $this->suggestedBy->id : null),
+      'status'=>$this->status,
+      'specialTBC'=>$this->specialTBC,
+      'dogFriendly'=>$this->dogFriendly,
+      'transportByCar'=>$this->transportByCar,
+      'transportPublic'=>$this->transportPublic,
+      'childFriendly'=>$this->childFriendly,
+        
+      'route' => ($this->route instanceof Route ? $this->route->jsonEncode() : false),
+      'routeVisibility' => $this->routeVisibility,
+    );
+}
 
 	public function __get($name)
 	{
@@ -236,6 +228,7 @@ class Walk extends SWGBaseModel implements Walkable {
 		case "routeVisibility":
 			$this->$name = (int)$value;
 		}
+
 	}
 	public function __isset($name)
 	{
@@ -244,7 +237,9 @@ class Walk extends SWGBaseModel implements Walkable {
 			case "route":
 				return (isset($this->route));
 				break;
-			
+			default:
+				return (isset($this->$name));
+				break;
 		}
 	}
 
@@ -263,33 +258,36 @@ class Walk extends SWGBaseModel implements Walkable {
 		}
 	}
 
-	/**
-	* Connects a route to this walk, and sets relevant data (e.g. length)
-	* 
-	* * The route may be able to give us:
-	* * Distance
-	*     - Calculated
-	* * Location
-	*     - Which region are most of the points in?
-	* * Linearity
-	*     - Is the end within 500m of the start?
-	* * Start grid ref
-	*     - Convert to OSGB36
-	* * Start place name
-	*     - May be stored as a waypoint in the route
-	*     - List of known start points
-	*     - Reverse geocoding
-	* * End grid ref
-	* * TODO: End place name
-	* If any of these aren't available (i.e. start/end place names),
-	* they are left unchanged. All others are always overwritten.
-	* 
-	* @param Route $r
-	*/
-	public function setRoute(Route &$r)
+/**
+* Connects a route to this walk, and sets relevant data (e.g. length)
+* 
+* * The route may be able to give us:
+* * Distance
+*     - Calculated
+* * Location
+*     - Which region are most of the points in?
+* * Linearity
+*     - Is the end within 500m of the start?
+* * Start grid ref
+*     - Convert to OSGB36
+* * Start place name
+*     - May be stored as a waypoint in the route
+*     - List of known start points
+*     - Reverse geocoding
+* * End grid ref
+* * TODO: End place name
+* If any of these aren't available (i.e. start/end place names),
+* they are left unchanged. All others are always overwritten.
+* 
+* @param Route $r Route to set
+* @param bool $setData If true, update walk data with the values from this route. Default is false.
+*/
+public function setRoute(Route &$r, $setData=false)
+{
+	$this->route =& $r;
+	
+	if ($setData)
 	{
-		$this->route =& $r;
-		
 		// Get start and end places
 		$start = $r->getWaypoint(0);
 		$this->startGridRef = $start->osRef->toSixFigureString();
@@ -308,60 +306,59 @@ class Walk extends SWGBaseModel implements Walkable {
 		$this->miles = round($r->getDistance()*0.000621371192*2)/2;
 		$this->distanceGrade = $this->getDistanceGrade($this->miles);
 	}
+}
 
-	/**
-	* Unset an existing route
-	*/
-	public function unsetRoute()
-	{
-		$this->route = null;
-	}
+/**
+ * Unset an existing route
+ */
+public function unsetRoute()
+{
+	$this->route = null;
+}
 
-	/**
-	* Calculate the distance grade of a walk
-	* @param float $miles Number of miles
-	*/
-	private function getDistanceGrade($miles)
-	{
-		if ($miles <= 8)
-			return "A";
-		else if ($miles <= 12)
-			return "B";
-		else
-			return "C";
-	}
+/**
+* Calculate the distance grade of a walk
+* @param float $miles Number of miles
+*/
+private function getDistanceGrade($miles)
+{
+	if ($miles <= 8)
+		return "A";
+	else if ($miles <= 12)
+		return "B";
+	else
+		return "C";
+}
 
-	/**
-	* Gets walks suggested by a specified person 
-	* @param Leader $suggester
-	* TODO: Move to WalkFactory
-	*/
-	public static function getWalksBySuggester(Leader $suggester)
-	{
-		$db =& JFactory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select("*");
-		$query->from("walks");
-		
-		// TODO: This is a stored proc currently - can we use this?
-		$query->where(array(
-			"suggestedby = ".(int)$suggester->id,
-		));
-		$query->order(array("walkname ASC"));
-		$db->setQuery($query);
-		$walkData = $db->loadAssocList();
-		
-		// Build an array of WalkInstances
-		// TODO: Set actual SQL limit
-		$walks = array();
-		while (count($walkData) > 0) {
+/**
+* Gets walks suggested by a specified person 
+* @param Leader $suggester
+*/
+public static function getWalksBySuggester(Leader $suggester)
+{
+	$db =& JFactory::getDBO();
+	$query = $db->getQuery(true);
+	$query->select("*");
+	$query->from("walks");
+	
+	// TODO: This is a stored proc currently - can we use this?
+	$query->where(array(
+		"suggestedby = ".(int)$suggester->id,
+		"suggestedby IS NOT NULL", // Shouldn't be able to get here if the current user is null, but Paul's bug report suggests it sometimes happens.
+	));
+	$query->order(array("walkname ASC"));
+	$db->setQuery($query);
+	$walkData = $db->loadAssocList();
+	
+	// Build an array of WalkInstances
+	// TODO: Set actual SQL limit
+	$walks = array();
+	while (count($walkData) > 0) {
 		$walk = new Walk();
 		$walk->fromDatabase(array_shift($walkData));
 		$walks[] = $walk;
-		}
-		
-		return $walks;
 	}
+}
 
 	// TODO: Move to WalkFactory
 	public static function getSingle($id) {

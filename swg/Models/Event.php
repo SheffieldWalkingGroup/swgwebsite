@@ -169,7 +169,7 @@ public function save($incrementVersion = true) {
 	
 	// TODO: Handle failure
 	
-	// Commit the transaction - the route is not a critical part of the walk
+	// Commit the transaction
 	$db->transactionCommit();
 }
 
