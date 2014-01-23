@@ -23,6 +23,18 @@ class WalkInstanceFactory extends EventFactory
 	public $includeRoute;
 	
 	/**
+	 * Filter to walks in this programme. Default is unfiltered
+	 * @var int|null Programme ID, or null for any/no programme
+	 */
+	public $walkProgramme;
+	
+	/**
+	 * Optional filter by walk leader. Leader object or ID
+	 * @var Leader|int
+	 */
+	public $leader = null;
+	
+	/**
 	 * The main table to read for this event
 	 * @var string
 	 */
@@ -47,12 +59,6 @@ class WalkInstanceFactory extends EventFactory
 	
 	protected $eventTypeConst = Event::TypeWalk;
 	
-	/**
-	 * Optional filter by walk leader. Leader object or ID
-	 * @var Leader|int
-	 */
-	public $leader = null;
-	
 	public function __construct()
 	{
 		parent::__construct();
@@ -61,6 +67,8 @@ class WalkInstanceFactory extends EventFactory
 	public function reset()
 	{
 		$this->includeRoute = false;
+		$this->walkProgramme = null;
+		$this->leader = null;
 		
 		parent::reset();
 	}
@@ -82,6 +90,21 @@ class WalkInstanceFactory extends EventFactory
 				$query->where("leaderid = ".$this->leader);
 			else if (ctype_digit($this->leader))
 				$query->where("leaderid = ".(int)$this->leader);
+		}
+		
+		if (isset($this->walkProgramme))
+		{
+			if ($this->walkProgramme instanceof WalkProgramme)
+			{
+				$wpID = $this->walkProgramme->id;
+			}
+			else
+			{
+			    $wpID = (int)$this->walkProgramme;
+			}
+			
+			$query->join('INNER', 'walkprogrammewalklinks ON WalkProgrammeWalkID = walkprogrammewalks.SequenceID');
+			$query->where("walkprogrammewalklinks.ProgrammeID = ".$wpID);
 		}
 	}
 	

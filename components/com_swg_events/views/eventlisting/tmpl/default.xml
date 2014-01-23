@@ -5,9 +5,18 @@
 	</layout>
 	<fields name="request">
 		<fieldset name="request">
-			<field name="includeWalks" type="checkbox" label="Include walks" description="Include walks" value="1" default="0" />
-			<field name="includeSocials" type="checkbox" label="Include socials" description="Include socials" value="1" default="0" />
-			<field name="includeWeekends" type="checkbox" label="Include weekends" description="Include weekends" value="1" default="0" />
+			<field name="includeWalks" type="radio" label="Include walks" description="Include walks" default="0">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</field>
+			<field name="includeSocials" type="radio" label="Include socials" description="Include socials" default="0">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</field>
+			<field name="includeWeekends" type="radio" label="Include weekends" description="Include weekends" default="0">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</field>
 			<field name="startDateType" type="list" label="Earliest date" default="1" description="Display events on or after this day">
 				<option value="0">The beginning</option>
 				<option value="1">Yesterday</option>
@@ -26,6 +35,13 @@
 				<option value="5">Specify</option>
 			</field>
 			<field name="endDateSpecify" type="calendar" label="Specify latest date" description="Only needed if latest date is 'Specify'" />
+			<field name="walkProgramme" type="radio" label="Include walks from" default="0" description="Only include walks from a particular programme (other events are not affected)">
+				<option value="0">Any programme</option>
+				<option value="1">Current published programme</option>
+				<option value="2">Next programme</option>
+				<option value="3">Specify a programme</option>
+			</field>
+			<field name="walkProgrammeSpecify" type="sql" label="Specify walks programme" default="null" query="SELECT SequenceID, Description FROM walksprogramme ORDER BY StartDate DESC" key_field="SequenceID" value_field="Description" />
 			<field name="order" type="radio" label="Ordering" default="0">
 				<option value="0">Oldest first</option>
 				<option value="1">Newest first</option>

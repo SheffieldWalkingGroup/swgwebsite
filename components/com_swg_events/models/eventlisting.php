@@ -9,6 +9,8 @@ require_once JPATH_BASE."/swg/swg.php";
 JLoader::register('Social', JPATH_BASE."/swg/Models/Social.php");
 JLoader::register('Weekend', JPATH_BASE."/swg/Models/Weekend.php");
 JLoader::register('Event', JPATH_BASE."/swg/Models/Event.php");
+JLoader::register('WalkInstance', JPATH_BASE."/swg/Models/WalkInstance.php");
+JLoader::register('WalkProgramme', JPATH_BASE."/swg/Models/WalkProgramme.php");
 
 /**
  * Event listing model
@@ -290,15 +292,36 @@ class SWG_EventsModelEventlisting extends JModelItem
 		$startDate = $this->paramDateToValue(JRequest::getInt("startDateType"), JRequest::getString("startDateSpecify"));
 		$endDate = $this->paramDateToValue(JRequest::getInt("endDateType"), JRequest::getString("endDateSpecify"));
 		
+		$factory->reset();
+		
 		// Set specific factory parameters
 		if ($eventType == SWG::EventType_Social)
 		{
 			$factory->getNormal = true;
 			$factory->getNewMember = true;
 		}
+		if ($eventType == SWG::EventType_Walk)
+		{
+			if (JRequest::getInt("walkProgramme") != 0)
+			{
+				switch (JRequest::getInt("walkProgramme"))
+				{
+					case 1:
+						// Current published
+						$factory->walkProgramme = WalkProgramme::getCurrentProgrammeID();
+						break;
+					case 2:
+						$factory->walkProgramme = WalkProgramme::getNextProgrammeID();
+						break;
+					case 3:
+						// Specify
+						$factory->walkProgramme = JRequest::getInt("walkProgrammeSpecify");
+						break;
+				}
+			}
+		}
 		
 		// Set standard/shared factory parameters
-		$factory->reset();
 		$factory->startDate = $startDate;
 		$factory->endDate = $endDate;
 		$factory->limit = 100;
@@ -344,7 +367,6 @@ class SWG_EventsModelEventlisting extends JModelItem
 	    case 1: // Yesterday
 	      return Event::DateYesterday;
 	    case 2: // Today
-	    default:
 	      return Event::DateToday;
 	    case 3: // Tomorrow
 	      return Event::DateTomorrow;
@@ -352,6 +374,8 @@ class SWG_EventsModelEventlisting extends JModelItem
 	      return Event::DateEnd;
 	    case 5:
 	      return strtotime($specifiedDate);
+	    default:
+		  return null;
 	  }
 	}
 	
