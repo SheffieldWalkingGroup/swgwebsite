@@ -2,21 +2,13 @@
  * TODO: Support non-maps
  */
 
-var mapContainer, mapElement, map, lastOpenedEventWrapper, highlightedEvents, totalEvents, loadingEvents=false, apiParams, loadedEvents=100, canLoadMore;
+var mapContainer, mapElement, map, lastOpenedEventWrapper, totalEvents, loadingEvents=false, apiParams, loadedEvents=100, canLoadMore;
 
 var events = new Array();
 
 function registerMapLinks()
 {
-	// Load which events have been highlighted
-	if (hasLocalStorage())
-	{
-		if (localStorage.highlightedEvents)
-			highlightedEvents = JSON.parse(localStorage.highlightedEvents);
-		else
-			highlightedEvents = new Object();
-	}
-	
+	setupEventsShared();
 	events = new Array();
 	
 	var eventElements = $(document.body).getElements("div.event");

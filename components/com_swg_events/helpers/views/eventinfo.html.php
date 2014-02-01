@@ -20,7 +20,6 @@ abstract class SWG_EventsHelperEventInfo extends JView
 		$document->addScript('/libraries/openlayers/OpenLayers.debug.js');
 		$document->addScript('/swg/js/maps.js');
 		$document->addScript('/swg/js/events.js');
-		$document->addScript('/components/com_swg_events/views/eventlisting/script/eventlisting.js');	
 	}
 	
 	/**

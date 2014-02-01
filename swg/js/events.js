@@ -1,3 +1,17 @@
+var highlightedEvents;
+
+function setupEventsShared()
+{
+	// Load which events have been highlighted
+	if (hasLocalStorage())
+	{
+		if (localStorage.highlightedEvents)
+			highlightedEvents = JSON.parse(localStorage.highlightedEvents);
+		else
+			highlightedEvents = new Object();
+	}
+}
+
 /**
  * Data-based representation of an event, and its HTML representation on the page
  * Events that are displayed in the initial load have certain elements loaded as the page is initialised
@@ -234,11 +248,11 @@ var Event = new Class({
 			
 			// Should this event already be highlighted?
 			if (
-					highlightedEvents[this.type] != undefined &&
-					highlightedEvents[this.type][this.id] != undefined &&
-					highlightedEvents[this.type][this.id]
-				)
-				this.highlightEvent();
+				highlightedEvents[this.type] != undefined &&
+				highlightedEvents[this.type][this.id] != undefined &&
+				highlightedEvents[this.type][this.id]
+			)
+			this.highlightEvent();
 		}
 		
 		// Set up the attendance checkbox
@@ -304,9 +318,12 @@ var Event = new Class({
 			return;
 		
 		// Close all (other) map elements
-		for (var i=0; i<events.length; i++)
+		if (typeof(events) != "undefined")
 		{
-			events[i].closeMap();
+			for (var i=0; i<events.length; i++)
+			{
+				events[i].closeMap();
+			}
 		}
 		
 		// Put the map elements in place
@@ -382,7 +399,7 @@ var Event = new Class({
 	
 	highlightEvent : function()
 	{
-		this.container.parentNode.addClass("highlighted");
+		this.container.addClass("highlighted");
 		
 		// Store the highlighting
 		if (highlightedEvents[this.type] == undefined)
@@ -406,7 +423,7 @@ var Event = new Class({
 	
 	unhighlightEvent : function()
 	{
-		this.container.parentNode.removeClass("highlighted");
+		this.container.removeClass("highlighted");
 		
 		// Clear the highlighting from storage
 		delete highlightedEvents[this.type][this.id];

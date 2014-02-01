@@ -30,6 +30,7 @@ class SWG_EventsViewEventListing extends SWG_EventsHelperEventInfo
 		$this->mapJS($document);
 		$totalEvents = $this->get('NumEvents');
 		$apiParams = json_encode($this->get('ApiParams'));
+		$document->addScript('/components/com_swg_events/views/eventlisting/script/eventlisting.js');	
 		$document->addScriptDeclaration(<<<MAP
 window.addEvent('domready', function()
 {
