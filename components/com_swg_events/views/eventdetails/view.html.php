@@ -17,6 +17,7 @@ class SWG_EventsViewEventDetails extends SWG_EventsHelperEventInfo
 	{
 		// Assign data to the view
 		$this->event = $this->get('Event');
+		$this->forceMapOpen = true;
 		
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) 
@@ -34,6 +35,9 @@ window.addEvent('domready', function()
 	setupEventsShared();
 	var event= new Event();
 	event.populateFromHTML({$containerID});
+	event.setupMap();
+	event.mapContainer.style.height = "400px";
+	event.mapOpen = true;
 });
 MAP
 );	

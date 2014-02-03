@@ -191,7 +191,7 @@
 			<?php endif;endif; ?>
 			<?php if (!$event->alterations->cancelled): // Can't click links when cancelled ?>
 				<div class="controls">
-				<?php if ($event->hasMap()): ?>
+				<?php if ($event->hasMap() && !$this->forceMapOpen): ?>
 					<p>
 						<a href="#" rel="toggle-map" title="Show a map of this <?php echo strtolower($event->type);?>">Show map</a>
 					</p>

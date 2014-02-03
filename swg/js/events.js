@@ -311,21 +311,9 @@ var Event = new Class({
 			});
 		}
 	},
-		
-	openMap : function()
+	
+	setupMap : function()
 	{
-		if (this.mapOpen)
-			return;
-		
-		// Close all (other) map elements
-		if (typeof(events) != "undefined")
-		{
-			for (var i=0; i<events.length; i++)
-			{
-				events[i].closeMap();
-			}
-		}
-		
 		// Put the map elements in place
 		this.htmlBody.parentNode.adopt(this.mapContainer);
 		
@@ -354,6 +342,23 @@ var Event = new Class({
 			this.map.addWeekend(this.id);
 			this.map.setDefaultMap("street"); // Landscape map doesn't work well at small scales
 		}
+	},
+		
+	openMap : function()
+	{
+		if (this.mapOpen)
+			return;
+		
+		// Close all (other) map elements
+		if (typeof(events) != "undefined")
+		{
+			for (var i=0; i<events.length; i++)
+			{
+				events[i].closeMap();
+			}
+		}
+		
+		this.setupMap();
 		
 		// Open the map
 		var self = this;
@@ -362,12 +367,15 @@ var Event = new Class({
 			onComplete: function() {
 				self.mapOpen = true;
 				
-				self.mapLink.set('html',"Hide map");
-				self.mapLink.removeEvents();
-				self.mapLink.addEvent('click',function(e){
-					self.closeMap();
-					e.stop();
-				});
+				if ($defined(self.mapLink))
+				{
+					self.mapLink.set('html',"Hide map");
+					self.mapLink.removeEvents();
+					self.mapLink.addEvent('click',function(e){
+						self.closeMap();
+						e.stop();
+					});
+				}
 			}
 		});
 		openFx.start("height",400);
@@ -386,12 +394,15 @@ var Event = new Class({
 				self.map.destroy();
 				self.mapContainer.dispose();
 				
-				self.mapLink.set('html',"Show map");
-				self.mapLink.removeEvents();
-				self.mapLink.addEvent('click',function(e){
-					self.openMap();
-					e.stop();
-				});
+				if ($defined(self.mapLink))
+				{
+					self.mapLink.set('html',"Show map");
+					self.mapLink.removeEvents();
+					self.mapLink.addEvent('click',function(e){
+						self.openMap();
+						e.stop();
+					});
+				}
 			}
 		});
 		closeFx.start("height",0);

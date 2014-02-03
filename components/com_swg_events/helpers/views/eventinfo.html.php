@@ -10,6 +10,8 @@ jimport('joomla.application.component.view');
 */
 abstract class SWG_EventsHelperEventInfo extends JView
 {
+	protected $forceMapOpen = false;
+	
 	/**
 	 * Adds the map javascript to the document
 	 */
