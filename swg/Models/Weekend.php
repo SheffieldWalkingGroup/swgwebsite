@@ -172,7 +172,7 @@ public function __get($name)
 					$this->$name = $value;
 					// Calculate the payment due date.
 					// Payment is due by the end of the month before the weekend.
-					$this->paymentDue = strtotime("last day of previous month", $value);
+					$this->paymentDue = strtotime("last day of -1 month", $value);
 				}
 				else
 				{
