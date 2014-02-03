@@ -171,13 +171,8 @@ public function __get($name)
 				{
 					$this->$name = $value;
 					// Calculate the payment due date.
-					// Payment is due on the monday at least 8 days before the start date
-					// Start date is expected to be midnight on Friday for a normal weekend
-					$this->paymentDue = $value - 8*86400;
-					while (strftime("%u", $this->paymentDue) != 1)
-					{
-						$this->paymentDue -= 86400;
-					}
+					// Payment is due by the end of the month before the weekend.
+					$this->paymentDue = strtotime("last day of previous month", $value);
 				}
 				else
 				{
