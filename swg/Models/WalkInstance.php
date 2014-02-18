@@ -619,4 +619,26 @@ public function toDatabase(JDatabaseQuery &$query)
 	public function hasMap() {
 		return true;
 	}
+	
+	public function getOrganiser()
+	{
+		return $this->__get("leader")->getJoomlaUser();
+	}
+	
+	public function getOrganiserWord()
+	{
+		return "leader";
+	}
+	
+	public function isOrganiser($user)
+	{
+		if ($user instanceof Leader)
+		{
+			return ($user->id == $this->leaderId);
+		}
+		else if ($user instanceof JUser)
+		{
+			return ($this->__get("leader")->joomlaUserID == $user->id);
+		}
+	}
 }

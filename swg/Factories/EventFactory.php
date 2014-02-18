@@ -171,7 +171,6 @@ abstract class EventFactory
 				$order[] = $this->startTimeField." ASC";
 		}
 		$query->order($order);
-		
 		$db->setQuery($query, $this->offset, $this->limit);
 		
 		$data = $db->loadAssocList();
@@ -188,7 +187,7 @@ abstract class EventFactory
 				$event->attendees = $row['attendees'];
 			}
 			if ($this->includeAttendedBy)
-				$event->attendedby = $row['attendedby'];
+				$event->attendedBy = $row['attendedby'];
 			$events[] = $event;
 			$this->cache[$event->id] = $event;
 		}
@@ -290,24 +289,59 @@ abstract class EventFactory
 			return $evt;
 		
 		if (isset($this->cache[$evt]))
-			return $this->cache[$evt];
-		
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select("*");
-		
-		$query->from($this->table);
-		$query->where(array($this->idField." = ".intval($evt)));
-		$db->setQuery($query);
-		$res = $db->query();
-		if ($db->getNumRows($res) == 1)
 		{
-			$evt = $this->newEvent();
-			$evt->fromDatabase($db->loadAssoc());
-			return $evt;
+			$event = $this->cache[$evt];
+			
+			if ($this->includeAttendees && !isset($event->numAttendees))
+			{
+				// New query to add the attendees
+				$db = JFactory::getDBO();
+				$query = $db->getQuery(true);
+				$query->select("COUNT(*)");
+				$query->from("eventattendance");
+				$query->where(array(
+					"eventtype = ".$this->eventTypeConst,
+					"eventid = ".$event->id
+				));
+				$db->setQuery($query);
+				$res = $db->query();
+				$event->numAttendees = $res->loadResult();
+				$this->cache[$evt] = $event;
+			}
 		}
 		else
-			return null;
+		{
+		    $db = JFactory::getDBO();
+			$query = $db->getQuery(true);
+			$query->select($this->table.".*");
+			$query->from($this->table);
+			$query->where(array($this->table.".".$this->idField." = ".intval($evt)));
+			
+			if ($this->includeAttendees)
+			{
+				$query->select("COUNT(eventattendance.user) AS numattendees");
+				$query->leftJoin("eventattendance ON eventid = ".$this->table.".".$this->idField);
+				$query->where("eventattendance.eventtype = ".$this->eventTypeConst);
+			}
+			
+			$db->setQuery($query);
+			$res = $db->query();
+			if ($db->getNumRows($res) == 1)
+			{
+				$event = $this->newEvent();
+				$event->fromDatabase($db->loadAssoc());
+			}
+			else
+				return null;
+		}
+		
+		// TODO: Load & cache attended by; cache event. Should load user profiles for attendees.
+		if ($this->includeAttendedBy && !isset($event->attendedBy))
+		{
+			$event->getAttendees();
+		}
+		
+		return $event;
 	}
 	
 	/**

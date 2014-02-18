@@ -70,49 +70,58 @@ private $dbmappings = array(
 	}
 
 
-function __set($name, $value)
-{
-	switch ($name)
+	function __set($name, $value)
 	{
-		case "surname":
-		case "forename":
-		case "email":
-		case "notes":
-		case "telephone":
-		case "username":
-		case "password":
-			// Text
-			$this->$name = $value;
-			break;
-		case "joomlaUserID":
-			// Integer
-			$this->$name = (int)$value;
-			break;
-		case "noContactOfficeHours":
-		case "active":
-		case "dogFriendly":
-		case "publishInOtherSites":
-			// Boolean
-			$this->$name = (bool)$value;
-			break;
+		switch ($name)
+		{
+			case "surname":
+			case "forename":
+			case "email":
+			case "notes":
+			case "telephone":
+			case "username":
+			case "password":
+				// Text
+				$this->$name = $value;
+				break;
+			case "joomlaUserID":
+				// Integer
+				$this->$name = (int)$value;
+				break;
+			case "noContactOfficeHours":
+			case "active":
+			case "dogFriendly":
+			case "publishInOtherSites":
+				// Boolean
+				$this->$name = (bool)$value;
+				break;
+		}
 	}
-}
 
-/**
-* Customises the leader's display name.
-* If this isn't set, it defaults to Firstname S (initial)
-* @param string $displayName
-*/
-function setDisplayName($displayName) {
-	$this->displayName = $displayName;
-	$this->hasDisplayName = true;
-}
+	/**
+	* Customises the leader's display name.
+	* If this isn't set, it defaults to Firstname S (initial)
+	* @param string $displayName
+	*/
+	function setDisplayName($displayName) {
+		$this->displayName = $displayName;
+		$this->hasDisplayName = true;
+	}
+	
+	/**
+	 * Return the Joomla user associated with this leader
+	 * @return JUser
+	 */
+	public function getJoomlaUser()
+	{
+		return JUser::getInstance($this->joomlaUserID);
+	}
 
 	/**
 	* Return the leader associated with a particular Joomla user account
 	* @param int $id Joomla user ID
 	*/
-	public static function getJoomlaUser($id) {
+	public static function fromJoomlaUser($id) {
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select("*");

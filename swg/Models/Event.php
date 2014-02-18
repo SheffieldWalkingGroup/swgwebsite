@@ -16,8 +16,8 @@ abstract class Event extends SWGBaseModel {
 	protected $description;
 	protected $okToPublish;
 	protected $alterations; 
-	protected $attendees;
-	protected $attendedby;
+	protected $numAttendees;
+	protected $attendedBy;
 
 	const DateToday = -1;
 	const DateYesterday = -2;
@@ -31,6 +31,15 @@ abstract class Event extends SWGBaseModel {
 	public function __construct() {
 		$this->alterations = new EventAlterations();
 	}
+	
+	public function fromDatabase(array $dbArr)
+	{
+		if (isset($dbArr['numattendees']))
+		{
+			$this->numAttendees = (int)$dbArr['numattendees'];
+		}
+		parent::fromDatabase($dbArr);
+	}
 
 	/**
 	* Default mutator, for basic properties
@@ -43,7 +52,7 @@ abstract class Event extends SWGBaseModel {
 				$this->$name = $value;
 				break;
 			case "start":
-			case "attendees":
+			case "numAttendees":
 				$this->$name = (int)$value;
 				break;
 			case "okToPublish":
@@ -90,6 +99,75 @@ abstract class Event extends SWGBaseModel {
 	public function isCancelled() {
 		return $this->alterations->cancelled;
 	}
+	
+	/**
+	 * Returns an array of users who attended this event
+	 * TODO: Check timings - does loading each user individually slow it down enough to be worth writing our own code to load users?
+	 * @return int[] Array of user IDs
+	 */
+	public function getAttendees()
+	{
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select("user as id");
+		$query->from("eventattendance");
+		$query->where(array(
+			"eventtype = ".$this->getType(),
+			"eventid = ".$this->id,
+		));
+		$db->setQuery($query);
+		$attendIDs = $db->loadColumn(0);
+		$this->attendedBy = array();
+		foreach ($attendIDs as $attendee)
+		{
+			$this->attendedBy[$attendee] = JUser::getInstance($attendee);
+		}
+		return $this->attendedBy;
+	}
+	
+	/**
+	 * Finds if a specified user attended this event
+	 * @param int $userId
+	 * @return bool
+	 */
+	public function wasAttendedBy($userID)
+	{
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select("*");
+		$query->from("eventattendance");
+		$query->where(array(
+			"user = ".(int)$userID,
+			"eventtype = ".$this->getType(),
+			"eventid = ".$this->id,
+		));
+		$db->setQuery($query, 0, 1);
+		$attended = $db->loadAssocList();
+		return (count($attended) > 0);
+	}
+	
+	/**
+	 * Get the organiser of this event
+	 * @return JUser
+	 */
+	public abstract function getOrganiser();
+	
+	/**
+	 * Returns a word to describe the organiser of the event.
+	 * Lower case - manipulate if needed
+	 * @return string
+	 */
+	public function getOrganiserWord()
+	{
+		return "organiser";
+	}
+	
+	/**
+	 * True if the given user is the organiser of this event
+	 * @param JUser|Leader $user User to check
+	 * @return boolean
+	 */
+	public abstract function isOrganiser($user);
 
 	/**
 	* Whether this event can display a map

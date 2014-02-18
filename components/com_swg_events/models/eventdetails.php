@@ -58,6 +58,9 @@ class SWG_EventsModelEventDetails extends JModelItem
 					jexit("Invalid event type");
 			}
 			
+			$factory->includeAttendedBy = true;
+			$factory->includeAttendees = true;
+			
 			$event = $factory->getSingle($id);
 			if ($event == null)
 			{

@@ -127,15 +127,15 @@ var Event = new Class({
 					task : "attendance.attend",
 					evttype : this.type,
 					evtid : this.id,
-					set : (this.attendedby ? 0 : 1)
+					set : (this.attendedBy ? 0 : 1)
 				}),
-				"html" : "<img src='/images/icons/"+(this.attendedby ? "tick" : "tickbox")+".png' width='19' height='16' /> You did this"
+				"html" : "<img src='/images/icons/"+(this.attendedBy ? "tick" : "tickbox")+".png' width='19' height='16' /> You did this"
 			});
 			
 			attendPara.adopt(attendButton);
 			container.getElements(".eventinfo").adopt(attendPara);
 			
-			if (this.attendedby && this.type.toLowerCase() == "walk")
+			if (this.attendedBy && this.type.toLowerCase() == "walk")
 			{
 				container.getElements(".eventinfo").adopt(new Element("p", {html : "<a href='/whats-on/your-diary/upload-track?wi="+this.id+"'>Share GPS track</a>"}));
 				container.getElements(".eventinfo").adopt(new Element("p", {html : "<a href='/photos/upload-photos'>Share photos</a>"}));

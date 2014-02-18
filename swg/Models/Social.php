@@ -292,5 +292,14 @@
 	public function hasMap() {
 		return (!empty($this->latLng) || !empty($this->postcode));
 	}
-
+	
+	public function getOrganiser()
+	{
+		return null; // not implemented yet
 	}
+	
+	public function isOrganiser($user)
+	{
+		return false; // not implemented yet
+	}
+}

@@ -20,7 +20,7 @@ class EventAttendance
 	public function addAttendee($userID)
 	{
 		// Check if this user has already attended this event
-		if ($this->attendedBy($userID))
+		if ($event->wasAttendedBy($userID))
 			return;
 		
 		$db = JFactory::getDBO();
@@ -31,46 +31,6 @@ class EventAttendance
 			"user = ".(int)$userID,
 		));
 		$query->insert("eventattendance");
-	}
-	
-	/**
-	 * Returns an array of users who attended this event
-	 * @return int[] Array of user IDs
-	 */
-	public function getAttendees()
-	{
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select("user as id");
-		$query->from("eventattendance");
-		$query->where(array(
-			"eventtype = ".$event->getType(),
-			"eventid = ".$event->id,
-		));
-		$db->setQuery($query);
-		$attended = $db->loadAssocList();
-		return $attended;
-	}
-	
-	/**
-	 * Finds if a specified user attended an event
-	 * @param int $userId
-	 * @return bool
-	 */
-	public function attendedBy($userID)
-	{
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select("*");
-		$query->from("eventattendance");
-		$query->where(array(
-			"user = ".(int)$userID,
-			"eventtype = ".$event->getType(),
-			"eventid = ".$event->id,
-		));
-		$db->setQuery($query, 0, 1);
-		$attended = $db->loadAssocList();
-		return (count($attended) > 0);
 	}
 	
 	/**
