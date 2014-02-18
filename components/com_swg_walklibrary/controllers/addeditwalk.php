@@ -40,7 +40,7 @@ class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
 		// If this is a new walk, set the suggester to the current user
 		if (!isset($model->getWalk()->id))
 		{
-			$model->getWalk()->suggestedBy = Leader::getJoomlaUser(JFactory::getUser()->id);
+			$model->getWalk()->suggestedBy = Leader::fromJoomlaUser(JFactory::getUser()->id);
 		}
 		
 		// Did we save the walk, or just upload a GPX file?

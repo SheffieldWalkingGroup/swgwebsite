@@ -36,7 +36,7 @@ class SWG_WalkLibraryModelListWalks extends JModelForm
 			return array();
 		case 1:
 			// Get this leader's record
-			$leader = Leader::getJoomlaUser(JFactory::getUser()->id);
+			$leader = Leader::fromJoomlaUser(JFactory::getUser()->id);
 			if (!empty($leader))
 				return Walk::getWalksBySuggester($leader);
 			else {

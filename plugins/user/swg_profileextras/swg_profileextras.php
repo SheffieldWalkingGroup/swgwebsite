@@ -105,7 +105,7 @@ class plgUserSWG_ProfileExtras extends JPlugin
 	function onUserAfterSave($data, $isNew, $result, $error)
 	{
 		$userId = JArrayHelper::getValue($data, 'id', null, 'int');
-		$oldLeader = Leader::getJoomlaUser($userId);
+		$oldLeader = Leader::fromJoomlaUser($userId);
 		
 		if ($oldLeader == null && !empty($data['swg_extras']['leadersetup']))
 		{

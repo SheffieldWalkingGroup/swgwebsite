@@ -40,7 +40,7 @@ class SWG_WalkLibraryViewListWalks extends JView
 			case 1:
 				// Get this leader's record
 				// TODO: Integrate with Joomla users
-				$leader = Leader::getJoomlaUser(JFactory::getUser()->id);
+				$leader = Leader::fromJoomlaUser(JFactory::getUser()->id);
 				if ($leader == null)
 				{
 					$this->pageTitle = "Walks you've suggested";

@@ -38,7 +38,7 @@ foreach ($startDates as $period => $days)
 	$weekend[$period] = $weFact->cumulativeStats();
 	
 	// TODO: Check this doesn't fail for non-leaders: should say "0"
-	$wiFact->leader = Leader::getJoomlaUser($user->id);
+	$wiFact->leader = Leader::fromJoomlaUser($user->id);
 	if (!empty($wiFact->leader))
 		$led[$period] = $wiFact->cumulativeStats();
 	else

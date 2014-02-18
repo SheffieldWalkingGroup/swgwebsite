@@ -28,7 +28,7 @@ class SWG_LeaderUtilsModelManageAvailability extends JModelForm
 	public function __construct()
 	{
 		$this->setProgramme(WalkProgramme::getNextProgrammeId());
-		$this->setLeader(Leader::getJoomlaUser(JFactory::getUser()->id));
+		$this->setLeader(Leader::fromJoomlaUser(JFactory::getUser()->id));
 		
 		parent::__construct();
 	}
