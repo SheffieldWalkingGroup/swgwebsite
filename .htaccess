@@ -1,7 +1,7 @@
-AuthUserFile /etc/apache2/.htpasswd
-AuthGroupFile /dev/null
-AuthName "SWG new site demo"
-AuthType Basic
+#AuthUserFile /etc/apache2/.htpasswd
+#AuthGroupFile /dev/null
+#AuthName "SWG new site demo"
+#AuthType Basic
 #require user swg
 
 # API Redirects from stable URLs to actual Joomla pages

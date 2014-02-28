@@ -10,9 +10,9 @@ if ($this->showAnyAddLinks()):?>
 		<?php if ($this->showAddSocial()):?><a href="<?php echo $this->addEditSocialURL();?>">Add social</a><?php endif;?>
 		<?php if ($this->showAddWeekend()):?><a href="<?php echo $this->addEditWeekendURL();?>">Add weekend</a><?php endif;?>
 	</p>
-<? endif;
+<?php endif;
 foreach ($this->events as $event):?>
-  <div class="event published" id="<?php echo $event->getEventType();?>_<?php echo $event->id?>">
+	<div class="event published" id="<?php echo $event->getEventType();?>_<?php echo $event->id?>">
 	<?php if ($event->alterations->cancelled): ?>
 		<p class="cancelled-message">Cancelled</p>
 		<?php if ($this->showEditLinks($event)): // Cancelled message blocks all normal links - this appears above it ?>
