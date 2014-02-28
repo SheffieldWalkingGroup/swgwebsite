@@ -10,7 +10,7 @@ if ($this->showAnyAddLinks()):?>
 		<?php if ($this->showAddSocial()):?><a href="<?php echo $this->addEditSocialURL();?>">Add social</a><?php endif;?>
 		<?php if ($this->showAddWeekend()):?><a href="<?php echo $this->addEditWeekendURL();?>">Add weekend</a><?php endif;?>
 	</p>
-<? endif;
+<?php endif;
 foreach ($this->events as $event):?>
 	<?php include JPATH_SITE."/components/com_swg_events/helpers/tmpl/eventinfo.php"; ?>
 	<?php

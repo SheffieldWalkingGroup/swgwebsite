@@ -175,13 +175,9 @@ public function toDatabase(JDatabaseQuery &$query)
 				{
 					$this->$name = $value;
 					// Calculate the payment due date.
-					// Payment is due on the monday at least 8 days before the start date
-					// Start date is expected to be midnight on Friday for a normal weekend
-					$this->paymentDue = $value - 8*86400;
-					while (strftime("%u", $this->paymentDue) != 1)
-					{
-						$this->paymentDue -= 86400;
-					}
+					// Payment is due by the end of the month before the weekend.
+					// Looks like "last day of -1 month" is only supported by PHP 5.3, so let's do this the old-fashioned way
+					$this->paymentDue = strtotime(strftime("%Y-%m-01", $value)) - 86400;
 				}
 				else
 				{
