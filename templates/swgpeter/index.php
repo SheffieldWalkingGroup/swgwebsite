@@ -2,7 +2,7 @@
   defined( '_JEXEC' ) or die( 'Restricted access' );
   $currentPage = JFactory::getApplication()->getMenu()->getActive();
   
-  JHTML::_('behavior.mootools');
+  JHTML::_('behavior.framework');
   $document = &JFactory::getDocument();
   $document->addScript('/templates/swgpeter/script/template.js');
 ?>

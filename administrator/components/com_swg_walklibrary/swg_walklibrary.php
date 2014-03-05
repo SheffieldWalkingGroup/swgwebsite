@@ -6,7 +6,7 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controller');
  
 // Get an instance of the controller prefixed by HelloWorld
-$controller = JController::getInstance('SWG_WalkLibrary');
+$controller = JControllerLegacy::getInstance('SWG_WalkLibrary');
  
 // Perform the Request task
 $controller->execute(JRequest::getCmd('task'));

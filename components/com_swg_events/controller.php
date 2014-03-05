@@ -7,7 +7,7 @@ jimport('joomla.application.component.controller');
 /**
  * SWG_Events Component Controller
  */
-class SWG_EventsController extends JController
+class SWG_EventsController extends JControllerLegacy
 {
 	public static function canAddWalk()
 	{

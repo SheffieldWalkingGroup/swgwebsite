@@ -13,7 +13,7 @@ jimport('joomla.form.form');
  * Because most (all?) fields can be changed on a WalkInstance,
  * this can take either a Walk or a WalkInstance
  */
-class SWG_WalkLibraryViewWalkDetails extends JView
+class SWG_WalkLibraryViewWalkDetails extends JViewLegacy
 {
 	function display($tpl = null)
 	{
@@ -21,7 +21,7 @@ class SWG_WalkLibraryViewWalkDetails extends JView
 		$params		= $app->getParams();
 		$dispatcher = JDispatcher::getInstance();
 		$model	    = $this->getModel('walkdetails');
-		$controller = JController::getInstance('SWG_WalkLibrary');
+		$controller = JControllerLegacy::getInstance('SWG_WalkLibrary');
 
 		// Get some data from the models
 		$state		= $this->get('State');

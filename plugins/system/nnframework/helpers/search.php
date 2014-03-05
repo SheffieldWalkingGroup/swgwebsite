@@ -1,11 +1,11 @@
 <?php
 /**
  * @package          NoNumber Framework
- * @version         12.9.7
+ * @version         14.2.6
  *
  * @author           Peter van Westen <peter@nonumber.nl>
  * @link             http://www.nonumber.nl
- * @copyright        Copyright © 2012 NoNumber
+ * @copyright        Copyright © 2014 NoNumber
  * @license          http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -15,60 +15,58 @@
  */
 
 /**
- * @package        Joomla.Site
- * @subpackage     com_search
- * @copyright      Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Site
+ * @subpackage  com_search
+ *
+ * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.model');
 
 /**
  * Search Component Search Model
  *
- * @package        Joomla.Site
- * @subpackage     com_search
- * @since          1.5
+ * @package     Joomla.Site
+ * @subpackage  com_search
+ * @since       1.5
  */
-class SearchModelSearch extends JModel
+class SearchModelSearch extends JModelLegacy
 {
 	/**
-	 * Sezrch data array
+	 * Search data array
 	 *
 	 * @var array
 	 */
-	var $_data = null;
+	protected $_data = null;
 
 	/**
 	 * Search total
 	 *
 	 * @var integer
 	 */
-	var $_total = null;
+	protected $_total = null;
 
 	/**
 	 * Search areas
 	 *
 	 * @var integer
 	 */
-	var $_areas = null;
+	protected $_areas = null;
 
 	/**
 	 * Pagination object
 	 *
 	 * @var object
 	 */
-	var $_pagination = null;
+	protected $_pagination = null;
 
 	/**
 	 * Constructor
 	 *
 	 * @since 1.5
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -77,17 +75,17 @@ class SearchModelSearch extends JModel
 		$config = JFactory::getConfig();
 
 		// Get the pagination request variables
-		$this->setState('limit', $app->getUserStateFromRequest('com_search.limit', 'limit', $config->get('list_limit'), 'int'));
-		$this->setState('limitstart', JRequest::getVar('limitstart', 0, '', 'int'));
+		$this->setState('limit', $app->getUserStateFromRequest('com_search.limit', 'limit', $config->get('list_limit'), 'uint'));
+		$this->setState('limitstart', $app->input->get('limitstart', 0, 'uint'));
 
 		// Set the search parameters
-		$keyword = urldecode(JRequest::getString('searchword'));
-		$match = JRequest::getWord('searchphrase', 'all');
-		$ordering = JRequest::getWord('ordering', 'newest');
+		$keyword = urldecode($app->input->getString('searchword'));
+		$match = $app->input->get('searchphrase', 'all', 'word');
+		$ordering = $app->input->get('ordering', 'newest', 'word');
 		$this->setSearch($keyword, $match, $ordering);
 
 		//Set the search areas
-		$areas = JRequest::getVar('areas');
+		$areas = $app->input->get('areas', null, 'array');
 		$this->setAreas($areas);
 	}
 
@@ -100,21 +98,25 @@ class SearchModelSearch extends JModel
 	 * @param string mathcing option, exact|any|all
 	 * @param string ordering option, newest|oldest|popular|alpha|category
 	 */
-	function setSearch($keyword, $match = 'all', $ordering = 'newest')
+	public function setSearch($keyword, $match = 'all', $ordering = 'newest')
 	{
-		if (isset($keyword)) {
+		if (isset($keyword))
+		{
 			$this->setState('origkeyword', $keyword);
-			if ($match !== 'exact') {
+			if ($match !== 'exact')
+			{
 				$keyword = preg_replace('#\xE3\x80\x80#s', ' ', $keyword);
 			}
 			$this->setState('keyword', $keyword);
 		}
 
-		if (isset($match)) {
+		if (isset($match))
+		{
 			$this->setState('match', $match);
 		}
 
-		if (isset($ordering)) {
+		if (isset($ordering))
+		{
 			$this->setState('ordering', $ordering);
 		}
 	}
@@ -124,10 +126,10 @@ class SearchModelSearch extends JModel
 	 *
 	 * @access    public
 	 *
-	 * @param    array    Active areas
-	 * @param    array    Search areas
+	 * @param   array  Active areas
+	 * @param   array  Search areas
 	 */
-	function setAreas($active = array(), $search = array())
+	public function setAreas($active = array(), $search = array())
 	{
 		$this->_areas['active'] = $active;
 		$this->_areas['search'] = $search;
@@ -139,39 +141,47 @@ class SearchModelSearch extends JModel
 	 * @access public
 	 * @return array
 	 */
-	function getData()
+	public function getData()
 	{
 		// Lets load the content if it doesn't already exist
-		if (empty($this->_data)) {
+		if (empty($this->_data))
+		{
 			$areas = $this->getAreas();
 
 			JPluginHelper::importPlugin('search');
-			$dispatcher = JDispatcher::getInstance();
-			$results = $dispatcher->trigger('onContentSearch', array(
+			$dispatcher = JEventDispatcher::getInstance();
+			$results = $dispatcher->trigger(
+				'onContentSearch', array(
 					$this->getState('keyword'),
 					$this->getState('match'),
 					$this->getState('ordering'),
-					$areas['active'])
+					$areas['active']
+				)
 			);
 
 			$rows = array();
-			foreach ($results as $result) {
+			foreach ($results as $result)
+			{
 				$rows = array_merge((array) $rows, (array) $result);
 			}
 
 			$this->_total = count($rows);
-			if ($this->getState('limit') > 0) {
+			if ($this->getState('limit') > 0)
+			{
 				$this->_data = array_splice($rows, $this->getState('limitstart'), $this->getState('limit'));
-			} else {
+			}
+			else
+			{
 				$this->_data = $rows;
 			}
 
 			/* >>> ADDED: Run content plugins over results */
-			$app = JFactory::getApplication();
-			$params = $app->getParams('com_content');
+			$params = JFactory::getApplication()->getParams('com_content');
 			$params->set('nn_search', 1);
-			foreach ($this->_data as $item) {
-				if ($item->text != '') {
+			foreach ($this->_data as $item)
+			{
+				if ($item->text != '')
+				{
 					$results = $dispatcher->trigger('onContentPrepare', array('com_content.article', &$item, &$params, 0));
 					// strip html tags from title
 					$item->title = strip_tags($item->title);
@@ -187,9 +197,9 @@ class SearchModelSearch extends JModel
 	 * Method to get the total number of weblink items for the category
 	 *
 	 * @access public
-	 * @return integer
+	 * @return  integer
 	 */
-	function getTotal()
+	public function getTotal()
 	{
 		return $this->_total;
 	}
@@ -198,13 +208,13 @@ class SearchModelSearch extends JModel
 	 * Method to get a pagination object of the weblink items for the category
 	 *
 	 * @access public
-	 * @return integer
+	 * @return  integer
 	 */
-	function getPagination()
+	public function getPagination()
 	{
 		// Lets load the content if it doesn't already exist
-		if (empty($this->_pagination)) {
-			jimport('joomla.html.pagination');
+		if (empty($this->_pagination))
+		{
 			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
@@ -216,18 +226,21 @@ class SearchModelSearch extends JModel
 	 *
 	 * @since 1.5
 	 */
-	function getAreas()
+	public function getAreas()
 	{
 		// Load the Category data
-		if (empty($this->_areas['search'])) {
+		if (empty($this->_areas['search']))
+		{
 			$areas = array();
 
 			JPluginHelper::importPlugin('search');
-			$dispatcher = JDispatcher::getInstance();
+			$dispatcher = JEventDispatcher::getInstance();
 			$searchareas = $dispatcher->trigger('onContentSearchAreas');
 
-			foreach ($searchareas as $area) {
-				if (is_array($area)) {
+			foreach ($searchareas as $area)
+			{
+				if (is_array($area))
+				{
 					$areas = array_merge($areas, $area);
 				}
 			}

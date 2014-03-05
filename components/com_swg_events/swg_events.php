@@ -6,7 +6,7 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controller');
  
 // Get an instance of the controller prefixed by SWG_Events
-$controller = JController::getInstance('SWG_Events');
+$controller = JControllerLegacy::getInstance('SWG_Events');
  
 // Perform the Request task
 $controller->execute(JRequest::getCmd('task'));

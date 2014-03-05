@@ -1,7 +1,10 @@
 <?php
 /**
- * @copyright	Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Administrator
+ * @subpackage  com_users
+ *
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
@@ -9,15 +12,18 @@ defined('_JEXEC') or die;
 /**
  * View class for a list of users.
  *
- * @package		Joomla.Administrator
- * @subpackage	com_users
- * @since		1.6
+ * @package     Joomla.Administrator
+ * @subpackage  com_users
+ * @since       1.6
  */
-class UsersViewDebugGroup extends JViewLegacy
+class UsersViewDebuggroup extends JViewLegacy
 {
 	protected $actions;
+
 	protected $items;
+
 	protected $pagination;
+
 	protected $state;
 
 	/**
@@ -40,24 +46,52 @@ class UsersViewDebugGroup extends JViewLegacy
 		$this->components	= UsersHelperDebug::getComponents();
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
+		if (count($errors = $this->get('Errors')))
+		{
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
 
 		$this->addToolbar();
+		$this->sidebar = JHtmlSidebar::render();
 		parent::display($tpl);
 	}
 
 	/**
 	 * Add the page title and toolbar.
 	 *
-	 * @since	1.6
+	 * @since   1.6
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::sprintf('COM_USERS_VIEW_DEBUG_GROUP_TITLE', $this->group->id, $this->group->title), 'groups');
+		JToolbarHelper::title(JText::sprintf('COM_USERS_VIEW_DEBUG_GROUP_TITLE', $this->group->id, $this->group->title), 'users groups');
 
-		JToolBarHelper::help('JHELP_USERS_DEBUG_GROUPS');
+		JToolbarHelper::help('JHELP_USERS_DEBUG_GROUPS');
+
+		JHtmlSidebar::setAction('index.php?option=com_users&view=debuggroup&user_id=' . (int) $this->state->get('filter.user_id'));
+
+		$option = '';
+		if (!empty($this->components))
+		{
+			$option = JHtml::_('select.options', $this->components, 'value', 'text', $this->state->get('filter.component'));
+		}
+
+		JHtmlSidebar::addFilter(
+			JText::_('COM_USERS_OPTION_SELECT_COMPONENT'),
+			'filter_component',
+			$option
+		);
+
+		JHtmlSidebar::addFilter(
+			JText::_('COM_USERS_OPTION_SELECT_LEVEL_START'),
+			'filter_level_start',
+			JHtml::_('select.options', $this->levels, 'value', 'text', $this->state->get('filter.level_start'))
+		);
+
+		JHtmlSidebar::addFilter(
+			JText::_('COM_USERS_OPTION_SELECT_LEVEL_END'),
+			'filter_level_end',
+			JHtml::_('select.options', $this->levels, 'value', 'text', $this->state->get('filter.level_end'))
+		);
 	}
 }

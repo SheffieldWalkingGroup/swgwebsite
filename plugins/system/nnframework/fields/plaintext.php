@@ -4,15 +4,14 @@
  * Displays plain text as element
  *
  * @package         NoNumber Framework
- * @version         12.9.7
+ * @version         14.2.6
  *
  * @author          Peter van Westen <peter@nonumber.nl>
  * @link            http://www.nonumber.nl
- * @copyright       Copyright © 2012 NoNumber All Rights Reserved
+ * @copyright       Copyright © 2014 NoNumber All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// No direct access
 defined('_JEXEC') or die;
 
 require_once JPATH_PLUGINS . '/system/nnframework/helpers/text.php';
@@ -23,44 +22,75 @@ require_once JPATH_PLUGINS . '/system/nnframework/helpers/text.php';
 class JFormFieldNN_PlainText extends JFormField
 {
 	public $type = 'PlainText';
+	private $params = null;
 
 	protected function getLabel()
 	{
+		JHtml::stylesheet('nnframework/style.min.css', false, true);
+
 		$this->params = $this->element->attributes();
-		$label = NNText::html_entity_decoder(JText::_($this->def('label')));
-		if (!$label != '') {
+		$label = $this->prepareText($this->get('label'));
+
+		$description = (trim($this->value) != '') ? trim($this->value) : $this->get('description');
+		$description = $this->prepareText($description);
+
+		if (!$label && !$description)
+		{
 			return '';
 		}
-		return parent::getLabel();
+
+		if (!$label)
+		{
+			return '<div>' . $description . '</div>';
+		}
+
+		if (!$description)
+		{
+			return '<div>' . $label . '</div>';
+		}
+
+		return '<label class="hasTooltip" title="' . htmlentities($description) . '">'
+		. $label . '</label>';
 	}
 
 	protected function getInput()
 	{
-		$this->params = $this->element->attributes();
+		$label = $this->prepareText($this->get('label'));
 
-		$description = ($this->value != '') ? $this->value : $this->def('description');
+		$description = (trim($this->value) != '') ? trim($this->value) : $this->get('description');
+		$description = $this->prepareText($description);
 
-		// variables
-		$v1 = JText::_($this->def('var1'));
-		$v2 = JText::_($this->def('var2'));
-		$v3 = JText::_($this->def('var3'));
-		$v4 = JText::_($this->def('var4'));
-		$v5 = JText::_($this->def('var5'));
-
-		$html = JText::sprintf($description, $v1, $v2, $v3, $v4, $v5);
-		$html = trim(NNText::html_entity_decoder($html));
-		$html = str_replace('&quot;', '"', $html);
-		$html = str_replace('span style="font-family:monospace;"', 'span class="nn_code"', $html);
-
-		if ($this->def('label') || $this->value) {
-			// display as label if there is more than just a description
-			$html = '<fieldset id="' . $this->id . '" class="radio"><label>' . $html . '</label></fieldset>';
+		if (!$label || !$description)
+		{
+			return '';
 		}
 
-		return $html;
+		return '<fieldset class="nn_plaintext">' . $description . '</fieldset>';
 	}
 
-	private function def($val, $default = '')
+	private function prepareText($str = '')
+	{
+		if ($str == '')
+		{
+			return '';
+		}
+
+		// variables
+		$v1 = JText::_($this->get('var1'));
+		$v2 = JText::_($this->get('var2'));
+		$v3 = JText::_($this->get('var3'));
+		$v4 = JText::_($this->get('var4'));
+		$v5 = JText::_($this->get('var5'));
+
+		$str = JText::sprintf(JText::_($str), $v1, $v2, $v3, $v4, $v5);
+		$str = trim(NNText::html_entity_decoder($str));
+		$str = str_replace('&quot;', '"', $str);
+		$str = str_replace('span style="font-family:monospace;"', 'span class="nn_code"', $str);
+
+		return $str;
+	}
+
+	private function get($val, $default = '')
 	{
 		return (isset($this->params[$val]) && (string) $this->params[$val] != '') ? (string) $this->params[$val] : $default;
 	}

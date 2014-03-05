@@ -3,7 +3,7 @@
  * @package     Joomla.Plugin
  * @subpackage  User.profile
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -37,7 +37,6 @@ class JFormFieldTos extends JFormFieldRadio
 	 */
 	protected function getLabel()
 	{
-		// Initialise variables.
 		$label = '';
 
 		if ($this->hidden)
@@ -63,7 +62,7 @@ class JFormFieldTos extends JFormFieldRadio
 
 		// Build the class for the label.
 		$class = !empty($this->description) ? 'hasTip' : '';
-		$class =$class . ' required';
+		$class = $class . ' required';
 		$class = !empty($this->labelClass) ? $class . ' ' . $this->labelClass : $class;
 
 		// Add the opening label tag and main attributes attributes.

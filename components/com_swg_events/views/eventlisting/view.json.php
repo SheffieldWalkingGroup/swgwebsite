@@ -8,9 +8,9 @@ jimport('joomla.application.component.view');
 /**
  * HTML Event listing class for the SWG Events component
  */
-class SWG_EventsViewEventListing extends JView
+class SWG_EventsViewEventListing extends JViewLegacy
 {
-	// Overwriting JView display method
+	// Overwriting JViewLegacy display method
 	function display($tpl = null) 
 	{
 		// What type of event to we want?

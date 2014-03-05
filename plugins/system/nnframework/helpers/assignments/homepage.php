@@ -3,15 +3,14 @@
  * NoNumber Framework Helper File: Assignments: HomePage
  *
  * @package         NoNumber Framework
- * @version         12.9.7
+ * @version         14.2.6
  *
  * @author          Peter van Westen <peter@nonumber.nl>
  * @link            http://www.nonumber.nl
- * @copyright       Copyright © 2012 NoNumber All Rights Reserved
+ * @copyright       Copyright © 2014 NoNumber All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// No direct access
 defined('_JEXEC') or die;
 
 /**
@@ -21,31 +20,46 @@ class NNFrameworkAssignmentsHomePage
 {
 	function passHomePage(&$parent, &$params, $selection = array(), $assignment = 'all')
 	{
-		$app = JFactory::getApplication();
-		$menu = $app->getMenu('site');
-		$home = $menu->getDefault(JFactory::getLanguage()->getTag());
+		$home = JFactory::getApplication()->getMenu('site')->getDefault(JFactory::getLanguage()->getTag());
 
 		// return if option or other set values do not match the homepage menu item values
-		if ($parent->params->option) {
+		if ($parent->params->option)
+		{
 			// check if option is different to home menu
-			if (!$home || !isset($home->query['option']) || $home->query['option'] != $parent->params->option) {
+			if (!$home || !isset($home->query['option']) || $home->query['option'] != $parent->params->option)
+			{
 				return $parent->pass(0, $assignment);
 			}
 
+			if (!$parent->params->option)
+			{
+				// set the view/task/layout in the menu item to empty if not set
+				$home->query['view'] = isset($home->query['view']) ? $home->query['view'] : '';
+				$home->query['task'] = isset($home->query['task']) ? $home->query['task'] : '';
+				$home->query['layout'] = isset($home->query['layout']) ? $home->query['layout'] : '';
+			}
+
 			// check set values against home menu query items
-			foreach ($home->query as $k => $v) {
+			foreach ($home->query as $k => $v)
+			{
 				if ((isset($parent->params->{$k}) && $parent->params->{$k} != $v)
-					|| (!isset($parent->params->{$k}) && JRequest::getCmd($k) != $v)
-				) {
+					|| (
+						(!isset($parent->params->{$k}) || in_array($v, array('virtuemart')))
+						&& JFactory::getApplication()->input->get($k) != $v
+					)
+				)
+				{
 					return $parent->pass(0, $assignment);
 				}
 			}
 
 			// check post values against home menu params
-			foreach ($home->params->toObject() as $k => $v) {
+			foreach ($home->params->toObject() as $k => $v)
+			{
 				if (($v && isset($_POST[$k]) && $_POST[$k] != $v)
 					|| (!$v && isset($_POST[$k]) && $_POST[$k])
-				) {
+				)
+				{
 					return $parent->pass(0, $assignment);
 				}
 			}
@@ -53,7 +67,8 @@ class NNFrameworkAssignmentsHomePage
 
 		$pass = $this->checkPass($home);
 
-		if (!$pass) {
+		if (!$pass)
+		{
 			$pass = $this->checkPass($home, 1);
 		}
 
@@ -64,29 +79,36 @@ class NNFrameworkAssignmentsHomePage
 	{
 		$pass = 0;
 
-		$uri = JFactory::getURI();
+		$uri = JURI::getInstance();
 
-		if ($addlang) {
+		if ($addlang)
+		{
 			$sef = $uri->getVar('lang');
-			if (empty($sef)) {
+			if (empty($sef))
+			{
 				$langs = array_keys(JLanguageHelper::getLanguages('sef'));
 				$path = JString::substr($uri->toString(array('scheme', 'user', 'pass', 'host', 'port', 'path')), JString::strlen($uri->base()));
 				$path = preg_replace('#^index\.php/?#', '', $path);
 				$parts = explode('/', $path);
 				$part = reset($parts);
-				if (in_array($part, $langs)) {
+				if (in_array($part, $langs))
+				{
 					$sef = $part;
 				}
 			}
-			if (empty($sef)) {
+			if (empty($sef))
+			{
 				return 0;
 			}
 		}
 
 		$query = $uri->toString(array('query'));
-		if (strpos($query, 'option=') === false && strpos($query, 'Itemid=') === false) {
+		if (strpos($query, 'option=') === false && strpos($query, 'Itemid=') === false)
+		{
 			$url = $uri->toString(array('host', 'path'));
-		} else {
+		}
+		else
+		{
 			$url = $uri->toString(array('host', 'path', 'query'));
 		}
 
@@ -109,16 +131,20 @@ class NNFrameworkAssignmentsHomePage
 		$root = preg_replace('#^.*?://#', '', $root);
 		// remove the www.
 		$root = preg_replace('#^www\.#', '', $root);
+		//remove the port
+		$root = preg_replace('#:[0-9]+#', '', $root);
 		// so also passes on urls with trailing /, ?, &, /?, etc...
 		$root = preg_replace('#(Itemid=[0-9]*).*^#', '\1', $root);
 		// remove trailing /
 		$root = trim(preg_replace('#/$#', '', $root));
 
-		if ($addlang) {
+		if ($addlang)
+		{
 			$root .= '/' . $sef;
 		}
 
-		if (!$pass) {
+		if (!$pass)
+		{
 			/* Pass urls:
 			 * [root]
 			 */
@@ -126,7 +152,8 @@ class NNFrameworkAssignmentsHomePage
 			$pass = preg_match($regex, $url);
 		}
 
-		if (!$pass) {
+		if (!$pass)
+		{
 			/* Pass urls:
 			 * [root]?Itemid=[menu-id]
 			 * [root]/?Itemid=[menu-id]

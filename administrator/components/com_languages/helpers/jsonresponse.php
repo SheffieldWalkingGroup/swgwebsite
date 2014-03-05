@@ -1,77 +1,80 @@
 <?php
 /**
- * @package		Joomla.Administrator
- * @subpackage	com_languages
- * @copyright	Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Administrator
+ * @subpackage  com_languages
+ *
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die;
 
 /**
  * JSON Response class
  *
- * @package	Joomla.Administrator
- * @since		2.5
+ * @package     Joomla.Administrator
+ * @subpackage  com_languages
+ * @since       2.5
+ * @deprecated	4.0
  */
 class JJsonResponse
 {
 	/**
 	 * Determines whether the request was successful
 	 *
-	 * @var		boolean
-	 * @since	2.5
+	 * @var    boolean
+	 * @since  2.5
 	 */
-	public $success		= true;
+	public $success = true;
 
 	/**
 	 * Determines whether the request wasn't successful.
 	 * This is always the negation of $this->success,
 	 * so you can use both flags equivalently.
 	 *
-	 * @var		boolean
-	 * @since	2.5
+	 * @var    boolean
+	 * @since  2.5
 	 */
-	public $error			= false;
+	public $error = false;
 
 	/**
 	 * The main response message
 	 *
-	 * @var		string
-	 * @since	2.5
+	 * @var    string
+	 * @since  2.5
 	 */
-	public $message		= null;
+	public $message = null;
 
 	/**
 	 * Array of messages gathered in the JApplication object
 	 *
-	 * @var		array
-	 * @since	2.5
+	 * @var    array
+	 * @since  2.5
 	 */
-	public $messages	= null;
+	public $messages = null;
 
 	/**
 	 * The response data
 	 *
-	 * var		array/object
-	 * @since	2.5
+	 * @var    mixed
+	 * @since  2.5
 	 */
-	public $data			= null;
+	public $data = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param		array/object	$response	The Response data
-	 * @param		string				$message	The main response message
-	 * @param		boolean				$error		True, if the success flag shall be set to false, defaults to false
-	 *
-	 * @return	void
+	 * @param   mixed    $response  The Response data
+	 * @param   string   $message   The main response message
+	 * @param   boolean  $error     True, if the success flag shall be set to false, defaults to false
 	 *
 	 * @since		2.5
+	 * @deprecated	4.0	 Use JResponseJson instead
 	 */
 	public function __construct($response = null, $message = null, $error = false)
 	{
+		JLog::add('Class JJsonResponse is deprecated. Use class JResponseJson instead.', JLog::WARNING, 'deprecated');
+
 		$this->message = $message;
 
 		// Get the message queue
@@ -99,25 +102,25 @@ class JJsonResponse
 		if ($response instanceof Exception)
 		{
 			// Prepare the error response
-			$this->success	= false;
-			$this->error		= true;
+			$this->success = false;
+			$this->error = true;
 			$this->message	= $response->getMessage();
 		}
 		else
 		{
 			// Prepare the response data
-			$this->success	= !$error;
-			$this->error		= $error;
-			$this->data			= $response;
+			$this->success = !$error;
+			$this->error = $error;
+			$this->data = $response;
 		}
 	}
 
 	/**
 	 * Magic toString method for sending the response in JSON format
 	 *
-	 * @return	string	The response in JSON format
+	 * @return  string  The response in JSON format
 	 *
-	 * @since		2.5
+	 * @since   2.5
 	 */
 	public function __toString()
 	{

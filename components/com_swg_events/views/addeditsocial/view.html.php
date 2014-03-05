@@ -9,7 +9,7 @@ jimport('joomla.form.form');
 /**
  * HTML Add/Edit social class for the SWG events component
  */
-class SWG_EventsViewAddEditSocial extends JView
+class SWG_EventsViewAddEditSocial extends JViewLegacy
 {
   function display($tpl = null)
   {
@@ -17,7 +17,7 @@ class SWG_EventsViewAddEditSocial extends JView
 	$params		= $app->getParams();
 	$dispatcher = JDispatcher::getInstance();
     /*$model	    = $this->getModel('addeditsocial');
-    $controller = JController::getInstance('SWG_Events');*/
+    $controller = JControllerLegacy::getInstance('SWG_Events');*/
 
 	// Get some data from the models
 	$state		= $this->get('State');

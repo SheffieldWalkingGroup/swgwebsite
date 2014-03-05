@@ -8,7 +8,7 @@ jimport('joomla.application.component.controller');
 /**
  * SWG_Walks Component Controller
  */
-class SWG_WalkLibraryController extends JController
+class SWG_WalkLibraryController extends JControllerLegacy
 {
 	/* Permissions checks */
 	function canAdd()

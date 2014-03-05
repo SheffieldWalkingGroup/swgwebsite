@@ -15,7 +15,7 @@ jimport('joomla.form.form');
  * When a GPX file is uploaded, any blank fields are filled in and if the option to
  * overwrite existing data is enabled, all known fields are filled in. 
  */
-class SWG_WalkLibraryViewAddEditWalk extends JView
+class SWG_WalkLibraryViewAddEditWalk extends JViewLegacy
 {
 	public $form;
 	public $walk;
@@ -30,7 +30,7 @@ class SWG_WalkLibraryViewAddEditWalk extends JView
 		$params		= $app->getParams();
 		$dispatcher = JDispatcher::getInstance();
 		$model	    = $this->getModel('addeditwalk');
-		$this->controller = JController::getInstance('SWG_WalkLibrary');
+		$this->controller = JControllerLegacy::getInstance('SWG_WalkLibrary');
 
 		// Get some data from the models
 		$state		= $this->get('State');
