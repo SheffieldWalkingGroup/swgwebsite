@@ -12,7 +12,7 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_helloworld'))
 jimport('joomla.application.component.controller');
  
 // Get an instance of the controller prefixed by HelloWorld
-$controller = JController::getInstance('SWG_Events');
+$controller = JControllerLegacy::getInstance('SWG_Events');
  
 // Perform the Request task
 $controller->execute(JRequest::getCmd('task'));

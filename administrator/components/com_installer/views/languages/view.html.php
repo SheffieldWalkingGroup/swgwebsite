@@ -2,14 +2,13 @@
 /**
  * @package     Joomla.Administrator
  * @subpackage  com_installer
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
- * @since       2.5.7
  */
-// No direct access
+
 defined('_JEXEC') or die;
 
-include_once dirname(__FILE__).'/../default/view.php';
+include_once __DIR__ . '/../default/view.php';
 
 /**
  * Language installer view
@@ -42,12 +41,12 @@ class InstallerViewLanguages extends InstallerViewDefault
 	 *
 	 * @return mixed|void
 	 */
-	public function display($tpl=null)
+	public function display($tpl = null)
 	{
 		// Get data from the model
-		$this->state		= $this->get('State');
-		$this->items		= $this->get('Items');
-		$this->pagination	= $this->get('Pagination');
+		$this->state      = $this->get('State');
+		$this->items      = $this->get('Items');
+		$this->pagination = $this->get('Pagination');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -66,16 +65,16 @@ class InstallerViewLanguages extends InstallerViewDefault
 	 */
 	protected function addToolbar()
 	{
-		$canDo	= InstallerHelper::getActions();
-		JToolBarHelper::title(JText::_('COM_INSTALLER_HEADER_' . $this->getName()), 'install.png');
+		$canDo = JHelperContent::getActions('com_installer');
+		JToolBarHelper::title(JText::_('COM_INSTALLER_HEADER_' . $this->getName()), 'puzzle install');
 
 		if ($canDo->get('core.admin'))
 		{
 			JToolBarHelper::custom('languages.install', 'upload', 'upload', 'COM_INSTALLER_TOOLBAR_INSTALL', true, false);
 			JToolBarHelper::custom('languages.find', 'refresh', 'refresh', 'COM_INSTALLER_TOOLBAR_FIND_LANGUAGES', false, false);
-			JToolBarHelper::custom('languages.purge', 'purge', 'purge', 'JTOOLBAR_PURGE_CACHE', false, false);
 			JToolBarHelper::divider();
 			parent::addToolbar();
+
 			// TODO: this help screen will need to be created
 			JToolBarHelper::help('JHELP_EXTENSIONS_EXTENSION_MANAGER_LANGUAGES');
 		}

@@ -3,15 +3,14 @@
  * NoNumber Framework Helper File: Assignments: Agents
  *
  * @package         NoNumber Framework
- * @version         12.9.7
+ * @version         14.2.6
  *
  * @author          Peter van Westen <peter@nonumber.nl>
  * @link            http://www.nonumber.nl
- * @copyright       Copyright © 2012 NoNumber All Rights Reserved
+ * @copyright       Copyright © 2014 NoNumber All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// No direct access
 defined('_JEXEC') or die;
 
 /**
@@ -28,37 +27,44 @@ class NNFrameworkAssignmentsAgents
 
 		$selection = $parent->makeArray($selection);
 
-		if (!empty($selection)) {
+		if (!empty($selection))
+		{
 			jimport('joomla.environment.browser');
 			$browser = JBrowser::getInstance();
 			$a = $browser->getAgentString();
-			if (!(stripos($a, 'Chrome') === false)) {
+			if (!(stripos($a, 'Chrome') === false))
+			{
 				$a = preg_replace('#(Chrome/.*)Safari/[0-9\.]*#is', '\1', $a);
-			} else if (!(stripos($a, 'Opera') === false)) {
+			}
+			else if (!(stripos($a, 'Opera') === false))
+			{
 				$a = preg_replace('#(Opera/.*)Version/#is', '\1Opera/', $a);
 			}
-			foreach ($selection as $sel) {
-				if (!$sel) {
+			foreach ($selection as $sel)
+			{
+				if (!$sel)
+				{
 					continue;
 				}
-				if ($sel == 'mobile') {
-					if ($this->isMobile()) {
+				if ($sel == 'mobile')
+				{
+					if ($this->isMobile())
+					{
 						$pass = 1;
 						break;
 					}
-				} else if ($sel == 'searchbots' || $sel == 'crawlers') {
-					if ($this->isSearchBot()) {
-						$pass = 1;
-						break;
-					}
-				} else {
-					if (!(strpos($sel, '#') === 0)) {
+				}
+				else
+				{
+					if (!(strpos($sel, '#') === 0))
+					{
 						$sel = '#' . preg_quote($sel, '#') . '#';
 					}
 					// also check for _ instead of . for Safari agents
 					$sel = preg_replace('#\\\.([^\]])#', '[\._]\1', $sel);
 					$sel = str_replace('\.]', '\._]', $sel);
-					if (preg_match($sel . 'i', $a)) {
+					if (preg_match($sel . 'i', $a))
+					{
 						$pass = 1;
 						break;
 					}
@@ -82,13 +88,16 @@ class NNFrameworkAssignmentsAgents
 	 */
 	function isMobile()
 	{
-		/* taken from http://detectmobilebrowsers.com */
+		/*
+		 * Taken from http://detectmobilebrowsers.com
+		 * Based on version: 9 September 2013
+		 */
 
 		$browser = JBrowser::getInstance();
 		$a = $browser->getAgentString();
 
 		$mobiles = array(
-			'android.+mobile',
+			'(android|bb\d+|meego).+mobile',
 			'avantgo',
 			'bada\/',
 			'blackberry',
@@ -105,6 +114,7 @@ class NNFrameworkAssignmentsAgents
 			'maemo',
 			'midp',
 			'mmp',
+			'mobile.+firefox',
 			'netfront',
 			'opera m(ob|in)i',
 			'palm( os)?',
@@ -113,6 +123,7 @@ class NNFrameworkAssignmentsAgents
 			'plucker',
 			'pocket',
 			'psp',
+			'series[46]0',
 			'symbian',
 			'treo',
 			'up\.(browser|link)',
@@ -120,15 +131,16 @@ class NNFrameworkAssignmentsAgents
 			'wap',
 			'windows (ce|phone)',
 			'xda',
-			'xiino/i'
+			'xiino'
 		);
-		if (preg_match('#(' . implode('|', $mobiles) . ')#i', $a)) {
+		if (preg_match('#(' . implode('|', $mobiles) . ')#i', $a))
+		{
 			return 1;
 		}
 
 		$a = substr($a, 0, 4);
 		$mobiles = array(
-			'/1207',
+			'1207',
 			'6310',
 			'6590',
 			'3gso',
@@ -228,7 +240,7 @@ class NNFrameworkAssignmentsAgents
 			'ma(te|ui|xo)',
 			'mc(01|21|ca)',
 			'm\-cr',
-			'me(di|rc|ri)',
+			'me(rc|ri)',
 			'mi(o8|oa|ts)',
 			'mmef',
 			'mo(01|02|bi|de|do|t[\- ov]|zz)',
@@ -315,23 +327,8 @@ class NNFrameworkAssignmentsAgents
 			'zeto',
 			'zte\-'
 		);
-		if (preg_match('#(' . implode('|', $mobiles) . ')#i', $a)) {
-			return 1;
-		}
-
-		return 0;
-	}
-
-	/**
-	 * isMobile
-	 */
-	function isSearchBot()
-	{
-		$browser = JBrowser::getInstance();
-		$a = $browser->getAgentString();
-		$crawlers = '(nuhk|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask Jeeves/Teoma|ia_archiver)';
-
-		if (preg_match('#' . $crawlers . '#i', $a)) {
+		if (preg_match('#(' . implode('|', $mobiles) . ')#i', $a))
+		{
 			return 1;
 		}
 

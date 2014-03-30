@@ -8,7 +8,7 @@ jimport('joomla.application.component.view');
 /**
 * Methods shared by all event info views
 */
-abstract class SWG_EventsHelperEventInfo extends JView
+abstract class SWG_EventsHelperEventInfo extends JViewLegacy
 {
 	protected $forceMapOpen = false;
 	

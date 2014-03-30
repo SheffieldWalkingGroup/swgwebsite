@@ -12,7 +12,7 @@ include_once(JPATH_SITE."/components/com_swg_events/helpers/views/eventinfo.html
 */
 class SWG_EventsViewEventListing extends SWG_EventsHelperEventInfo
 {
-	// Overwriting JView display method
+	// Overwriting JViewLegacy display method
 	function display($tpl = null) 
 	{
 		// Assign data to the view

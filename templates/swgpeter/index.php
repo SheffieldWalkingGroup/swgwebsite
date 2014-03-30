@@ -1,11 +1,10 @@
 <?php 
   defined( '_JEXEC' ) or die( 'Restricted access' );
   $currentPage = JFactory::getApplication()->getMenu()->getActive();
-  
-  JHTML::_('behavior.mootools');
+
+  JHTML::_('behavior.framework');
   $document = &JFactory::getDocument();
   $document->addScript('/templates/swgpeter/script/template.js');
-  
   JLoader::register('SWG', JPATH_SITE."/swg/swg.php");
 ?>
 <!DOCTYPE html>
@@ -67,5 +66,17 @@
             </footer>
             </div>
         </div>
+        
+        <!-- Google analytics -->
+        <script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-816266-1', 'sheffieldwalkinggroup.org.uk');
+ga('send', 'pageview');
+
+		</script>
     </body>
 </html>

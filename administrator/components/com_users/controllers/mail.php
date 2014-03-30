@@ -1,7 +1,10 @@
 <?php
 /**
- * @copyright	Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License <http://www.gnu.org/copyleft/gpl.html>
+ * @package     Joomla.Administrator
+ * @subpackage  com_users
+ *
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
@@ -9,8 +12,8 @@ defined('_JEXEC') or die;
 /**
  * Users mail controller.
  *
- * @package		Joomla.Administrator
- * @subpackage	com_users
+ * @package     Joomla.Administrator
+ * @subpackage  com_users
  */
 class UsersControllerMail extends JControllerLegacy
 {
@@ -20,9 +23,12 @@ class UsersControllerMail extends JControllerLegacy
 		JSession::checkToken('request') or jexit(JText::_('JINVALID_TOKEN'));
 
 		$model = $this->getModel('Mail');
-		if ($model->send()) {
+		if ($model->send())
+		{
 			$type = 'message';
-		} else {
+		}
+		else
+		{
 			$type = 'error';
 		}
 

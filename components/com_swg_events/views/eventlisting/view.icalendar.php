@@ -8,9 +8,9 @@ jimport('joomla.application.component.view');
 /**
  * iCalendar output from the eventlisting view of the SWG Events component
  */
-class SWG_EventsViewEventListing extends JView
+class SWG_EventsViewEventListing extends JViewLegacy
 {
-	// Overwriting JView display method
+	// Overwriting JViewLegacy display method
 	function display($tpl = "icalendar") 
 	{
 		// Assign data to the view

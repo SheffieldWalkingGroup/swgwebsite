@@ -3,13 +3,11 @@
  * @package     Joomla.Administrator
  * @subpackage  com_categories
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.controllerform');
 
 /**
  * The Category Controller
@@ -31,7 +29,7 @@ class CategoriesControllerCategory extends JControllerForm
 	/**
 	 * Constructor.
 	 *
-	 * @param  array  $config  An optional associative array of configuration settings.
+	 * @param  array   $config  An optional associative array of configuration settings.
 	 *
 	 * @since  1.6
 	 * @see    JController
@@ -43,7 +41,7 @@ class CategoriesControllerCategory extends JControllerForm
 		// Guess the JText message prefix. Defaults to the option.
 		if (empty($this->extension))
 		{
-			$this->extension = JRequest::getCmd('extension', 'com_content');
+			$this->extension = $this->input->get('extension', 'com_content');
 		}
 	}
 
@@ -59,6 +57,7 @@ class CategoriesControllerCategory extends JControllerForm
 	protected function allowAdd($data = array())
 	{
 		$user = JFactory::getUser();
+
 		return ($user->authorise('core.create', $this->extension) || count($user->getAuthorisedCategories($this->extension, 'core.create')));
 	}
 
@@ -74,7 +73,6 @@ class CategoriesControllerCategory extends JControllerForm
 	 */
 	protected function allowEdit($data = array(), $key = 'parent_id')
 	{
-		// Initialise variables.
 		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
 		$user = JFactory::getUser();
 		$userId = $user->get('id');
@@ -97,6 +95,7 @@ class CategoriesControllerCategory extends JControllerForm
 		{
 			// Now test the owner is the user.
 			$ownerId = (int) isset($data['created_user_id']) ? $data['created_user_id'] : 0;
+
 			if (empty($ownerId) && $recordId)
 			{
 				// Need to do a lookup from the model.
@@ -116,6 +115,7 @@ class CategoriesControllerCategory extends JControllerForm
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -124,7 +124,7 @@ class CategoriesControllerCategory extends JControllerForm
 	 *
 	 * @param   object  $model  The model.
 	 *
-	 * @return  boolean	 True if successful, false otherwise and internal error is set.
+	 * @return  boolean  True if successful, false otherwise and internal error is set.
 	 *
 	 * @since   1.6
 	 */
@@ -172,5 +172,36 @@ class CategoriesControllerCategory extends JControllerForm
 		$append .= '&extension=' . $this->extension;
 
 		return $append;
+	}
+
+	/**
+	 * Function that allows child controller access to model data after the data has been saved.
+	 *
+	 * @param   JModelLegacy  $model      The data model object.
+	 * @param   array         $validData  The validated data.
+	 *
+	 * @return  void
+	 *
+	 * @since   3.1
+	 */
+	protected function postSaveHook(JModelLegacy $model, $validData = array())
+	{
+		$item = $model->getItem();
+
+		if (isset($item->params) && is_array($item->params))
+		{
+			$registry = new JRegistry;
+			$registry->loadArray($item->params);
+			$item->params = (string) $registry;
+		}
+
+		if (isset($item->metadata) && is_array($item->metadata))
+		{
+			$registry = new JRegistry;
+			$registry->loadArray($item->metadata);
+			$item->metadata = (string) $registry;
+		}
+
+		return;
 	}
 }

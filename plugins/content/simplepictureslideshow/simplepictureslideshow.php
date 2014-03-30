@@ -1,11 +1,11 @@
 <?php
 /*
-// "Simple Picture Slideshow" Plugin for Joomla 2.5 - Version 1.5.5
+// "Simple Picture Slideshow" Plugin for Joomla 3.1 - Version 1.5.8
 // License: GNU General Public License version 2 or later; see LICENSE.txt
 // Author: Andreas Berger - andreas_berger@bretteleben.de
-// Copyright (C) 2012 Andreas Berger - http://www.bretteleben.de. All rights reserved.
+// Copyright (C) 2013 Andreas Berger - http://www.bretteleben.de. All rights reserved.
 // Project page and Demo at http://www.bretteleben.de
-// ***Last update: 2012-03-19***
+// ***Last update: 2013-08-23***
 */
 
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -15,18 +15,22 @@ jimport('joomla.plugin.plugin');
 
 class plgContentSimplepictureslideshow extends JPlugin {
 
-	public $myarticleid = '00';//substitute article id on frontpage
+	public $bespscounter = 0;//substitute article id
 
 	public function onContentPrepare($context, &$article, &$params, $limitstart) {
 
 		// checking
+		$document=JFactory::getDocument();   
+		if($document->getType() != 'html') {
+			return;
+		}
 		if (!isset($article->text)||!preg_match("#{besps}(.*?){/besps}#s", $article->text) ) {
 			return;
 		}
 
 		// paths
 		$path_absolute = 	JPATH_SITE;
-		$path_site = 			JURI :: base();
+		$path_site = 			JURI :: base(true);
 		if(substr($path_site, -1)=="/") $path_site = substr($path_site, 0, -1);
 		$path_imgroot = '/images/'; 																			// default image root folder
 		$path_ctrls 	= '/images/besps_buttons/'; 												// button folder
@@ -77,9 +81,21 @@ class plgContentSimplepictureslideshow extends JPlugin {
 
 //images
 		if (preg_match_all("#{besps}(.*?){/besps}#s", $article->text, $matches, PREG_PATTERN_ORDER) > 0) {
-			//$document =& JFactory::getDocument(); //2.5
-			$document =JFactory::getDocument();
 			$bs_count = -1;
+			//substitute article id - start
+			$headerstuff = $document->getHeadData();
+			foreach($headerstuff['custom'] as $key => $custom){
+				if(stristr($custom, 'besps_count') !== false){
+					$bespscount=explode(" ", trim($custom));
+					$this->bespscounter=$bespscount[2];
+					unset($headerstuff['custom'][$key]);
+				}
+			}
+		  $document->setHeadData($headerstuff);
+			$this->bespscounter = $this->bespscounter+1;
+			$document->addCustomTag('<!-- besps_count '.$this->bespscounter.' -->' );
+			//substitute article id - end
+
 			foreach ($matches[0] as $match) {
 				$bs_count++;
 				//split string and check for overrides
@@ -180,7 +196,7 @@ class plgContentSimplepictureslideshow extends JPlugin {
 					}
 
 					//create a unique identifier for every gallery
-					$identifier=(isset($article->id))?($article->id."_".$bs_count):($this->myarticleid."_".$bs_count);
+					$identifier=$this->bespscounter."_".$bs_count;
 
 					//call the script once
 					if($bs_count<=0){

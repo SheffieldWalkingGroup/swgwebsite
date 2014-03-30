@@ -1,7 +1,10 @@
 <?php
 /**
- * @copyright	Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Administrator
+ * @subpackage  com_media
+ *
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
@@ -9,24 +12,23 @@ defined('_JEXEC') or die;
 /**
  * HTML View class for the Media component
  *
- * @package		Joomla.Administrator
- * @subpackage	com_media
- * @since 1.0
+ * @package     Joomla.Administrator
+ * @subpackage  com_media
+ * @since       1.0
  */
 class MediaViewImages extends JViewLegacy
 {
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		$config = JComponentHelper::getParams('com_media');
-		$app	= JFactory::getApplication();
 		$lang	= JFactory::getLanguage();
-		$append = '';
 
 		JHtml::_('behavior.framework', true);
 		JHtml::_('script', 'media/popup-imagemanager.js', true, true);
 		JHtml::_('stylesheet', 'media/popup-imagemanager.css', array(), true);
 
-		if ($lang->isRTL()) {
+		if ($lang->isRTL())
+		{
 			JHtml::_('stylesheet', 'media/popup-imagemanager_rtl.css', array(), true);
 		}
 

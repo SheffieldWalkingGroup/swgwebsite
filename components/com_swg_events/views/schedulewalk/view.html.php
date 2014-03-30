@@ -9,7 +9,7 @@ jimport('joomla.form.form');
 /**
  * HTML schedule walk class for the SWG events component
  */
-class SWG_EventsViewScheduleWalk extends JView
+class SWG_EventsViewScheduleWalk extends JViewLegacy
 {
 	function display($tpl = null)
 	{
