@@ -1,0 +1,102 @@
+html
+{
+	background:none !important;
+}
+
+html body
+{
+	margin:0;
+	background-color: #C7D6DF;
+}
+
+html body .wrapper
+{
+	margin:0;
+	border-radius:0;
+	box-shadow:none;
+	background-color: #C7D6DF;
+	padding:10px;
+	width:auto;
+}
+
+html nav
+{
+	float:none;
+	width:100%;
+	margin:0;
+}
+
+html nav .moduletable_menu
+{
+	border:none;
+	position:relative;
+	clear:both;
+}
+
+html .moduletable_menu h3
+{
+	display:none;
+}
+
+html .moduletable_menu ul
+{
+	border:1px solid #555;
+	border-radius:5px;
+	background-color:#6e93ad;
+	font-size:2em;
+	width:auto;
+}
+
+html nav .menu li a
+{
+	width:auto;
+}
+
+.logo
+{
+	float:left;
+}
+
+.mobile-menu-button
+{
+	font-size:4em;
+	color:#000;
+	padding:0;
+	float:right;
+	background-color:#fff;
+	border:1px solid #ccc;
+	border-bottom:none;
+	position:relative;
+}
+
+.mobile-menu-button:after
+{
+	content: ".";
+	display:block;
+	height:0;
+	clear:both;
+	visibility:hidden;
+}
+
+
+html div.main
+{
+	margin: 0;
+}
+
+.whoarewe.box,
+.intro,
+.moduletableslideshow,
+.home .boxes
+{
+	display:none;
+}
+
+footer
+{
+	margin:0 !important;
+}
+footer div.wrap
+{
+	position:relative !important;
+}
