@@ -174,8 +174,8 @@ public function __get($name)
 					// Payment is due by the end of the month before the date 2 weeks before the weekend
 					// Looks like "last day of -1 month" is only supported by PHP 5.3, so let's do this the old-fashioned way
 					$threeWeeksBefore = $value - (86400 * 14);
-					$this->paymentDue = strtotime("last day of -1 month", $threeWeeksBefore);
-				}
+					// Looks like "last day of -1 month" is only supported by PHP 5.3, so let's do this the old-fashioned way
+                                       $this->paymentDue = strtotime(strftime("%Y-%m-01", $threeWeeksBefore)) - 86400;}
 				else
 				{
 					$this->$name = null;
