@@ -109,7 +109,7 @@
 		$query->set('placetimealtered = '. (int)$this->alterations->placeTime);
 		$query->set('organiseraltered = '. (int)$this->alterations->organiser);
 		$query->set('datealtered = '. (int)$this->alterations->date);
-	
+		
 		if (!empty($this->latLng))
 		{
 			$query->set("latitude = ".$this->latLng->lat);
@@ -133,8 +133,8 @@
 			'okToPublish'	=> $this->okToPublish,
 			
 			'bookingsInfo'	=> $this->bookingsInfo,
-			'shownormal'	=> (int)$this->showNormal,
-			'shownewmember'	=> (int)$this->showNewMember,
+			'showNormal'	=> (int)$this->showNormal,
+			'showNewMember'	=> (int)$this->showNewMember,
 			
 			'postcode'		=> $this->postcode,
 			'location'		=> $this->location,

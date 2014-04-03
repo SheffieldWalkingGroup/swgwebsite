@@ -3,8 +3,8 @@
 		<field name="id" type="hidden" />
 		<fieldset name="basic" addfieldpath="/administrator/components/com_swg_events/models/fields">
 			<field name="name" type="text" label="Title" maxlength="100" required="required" size="57" />
-			<field name="shownormal" type="checkbox" label="Social is for current members" value="1" checked="checked" default="0" />
-			<field name="shownewmember" type="checkbox" label="This is a new members' social (e.g. pub meets)" value="1" default="0" />
+			<field name="showNormal" type="checkbox" label="Social is for current members" value="1" checked="checked" default="0" />
+			<field name="showNewMember" type="checkbox" label="This is a new members' social (e.g. pub meets)" value="1" default="0" />
 			<field name="date" type="calendar" label="Date" required="required" />
 			<field name="starttime" type="text" label="Start time (hh:mm)" />
 			<field name="endtime" type="text" label="End time (if known)" />

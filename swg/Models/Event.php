@@ -175,7 +175,7 @@ public function save($incrementVersion = true) {
 		$idField = "ID";
 	}
 	else
-	throw new Exception("Don't know how to save this");
+		throw new Exception("Don't know how to save this");
 	
 	// Update or insert?
 	if (!isset($this->id))
