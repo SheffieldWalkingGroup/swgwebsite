@@ -35,7 +35,7 @@
 						$inDist = $event->distance;
 						$inUnit = UnitConvert::Metre;
 					}
-					echo UnitConvert::DisplayDistance($inDist,$inUnit, UnitConvert::Mile).", ".UnitConvert::DisplayDistance($inDist, $inUnit, UnitConvert::Kilometre);
+					echo UnitConvert::DisplayDistance($inDist,$inUnit, UnitConvert::Mile)."<span class='unit2'>, ".UnitConvert::DisplayDistance($inDist, $inUnit, UnitConvert::Kilometre)."</span>";
 					?>)
 			</p>
 		<?php endif;?>

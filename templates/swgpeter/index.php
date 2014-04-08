@@ -31,8 +31,12 @@
        <!-- TODO: Try to move the h1 tag to the top of the HTML. May require some absolute positioning, esp. of the right panel -->
         <div class="wrapper">
             <nav>
-                <a href="/"><img src="/images/SWG_logo_2009_small.png" width="190" height="58" alt="SWG Logo" /></a>
-                <jdoc:include type="modules" name="left" style="xhtml" />
+                <a href="/" class="logo"><img src="/images/SWG_logo_2009_small.png" width="190" height="58" alt="SWG Logo" /></a>
+                <a href="#menu" class="mobile menu-button">&#9776;</a>
+                <div class="menu-wrap">
+					<div class="mobile menu-tab-join"></div>
+					<jdoc:include type="modules" name="left" style="xhtml" />
+				</div>
             </nav>
             <div class="main <?php echo $currentPage->alias; ?>">
                 

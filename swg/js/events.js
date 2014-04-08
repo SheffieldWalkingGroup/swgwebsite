@@ -310,6 +310,9 @@ var Event = new Class({
 				request.get();
 			});
 		}
+		
+		// Fire the event ready event
+		window.fireEvent("eventReady", [this, this.container]);
 	},
 	
 	setupMap : function()

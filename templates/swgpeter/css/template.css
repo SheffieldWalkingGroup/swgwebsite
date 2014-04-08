@@ -85,6 +85,11 @@ table td
 	padding:5px;
 }
 
+.mobile
+{
+	display:none;
+}
+
 /* Overall page styles */
 
 html {
