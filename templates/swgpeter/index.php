@@ -12,6 +12,7 @@
    xml:lang="<?php echo $this->language; ?>" lang="<?php echo $this->language; ?>" >
     <head>
         <jdoc:include type="head" />
+        <meta name="viewport" content="width=device-width, user-scalable=no">
         <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/system/css/system.css" type="text/css" />
         <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/system/css/general.css" type="text/css" />
         <style type="text/css">
