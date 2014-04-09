@@ -19,7 +19,6 @@
 			@import url("<?php echo $this->baseurl;?>/templates/<?php echo $this->template;?>/css/template.css");
 			@import url("<?php echo $this->baseurl;?>/templates/<?php echo $this->template;?>/css/mobile.css") screen and (max-device-width:600px);
         </style>
-        <meta name="viewport" content="width=1016">
         <!--[if lt IE 9]>
             <script>
                 document.createElement('header');
