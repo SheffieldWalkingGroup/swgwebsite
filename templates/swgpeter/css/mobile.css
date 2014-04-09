@@ -79,8 +79,8 @@ nav .menu li.current
 	display:none;
 	position:absolute;
 	top:50px;
-	right:10px;
-	left:10px;
+	right:0px;
+	left:0px;
 }
 
 nav.open .menu-wrap
