@@ -78,7 +78,7 @@ nav .menu li.current
 {
 	display:none;
 	position:absolute;
-	top:40px;
+	top:50px;
 	right:10px;
 	left:10px;
 }
@@ -105,7 +105,7 @@ nav.open .menu-wrap
 	border:1px solid #555;
 	position:absolute;
 	border-radius:2px;
-	right:10px;
+	right:0px;
 	top:10px;
 }
 
