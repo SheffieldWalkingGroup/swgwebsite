@@ -32,7 +32,7 @@
         <div class="wrapper">
             <nav>
                 <a href="/" class="logo"><img src="/images/SWG_logo_2009_small.png" width="190" height="58" alt="SWG Logo" /></a>
-                <a href="#menu" class="mobile menu-button">&#9776;</a>
+                <a href="#menu" class="mobile menu-button">Menu</a>
                 <div class="menu-wrap">
 					<div class="mobile menu-tab-join"></div>
 					<jdoc:include type="modules" name="left" style="xhtml" />

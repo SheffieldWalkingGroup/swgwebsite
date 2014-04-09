@@ -87,6 +87,8 @@ nav.open .menu-wrap
 {
 	display:inline;
 	font-size:4em;
+	text-indent:-4000px;
+	overflow:hidden;
 	color:#000;
 	padding:0;
 	float:right;
@@ -99,6 +101,19 @@ nav.open .menu-wrap
 	border-radius:2px;
 	right:10px;
 	top:0;
+}
+
+.menu-button:before
+{
+	content: "";
+	position: absolute;
+	top: 0.3em;
+	left:0.1em;
+	margin:auto;
+	width: 0.8em;
+	height: 0.145em;
+	border-top: 0.4em double #000;
+	border-bottom: 0.13em solid #000;
 }
 
 nav.open .menu-button
