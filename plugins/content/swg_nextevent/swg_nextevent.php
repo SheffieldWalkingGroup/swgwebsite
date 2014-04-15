@@ -1,6 +1,7 @@
 <?php
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
+JLoader::register('SWG', JPATH_SITE."/swg/swg.php");
 jimport( 'joomla.plugin.plugin' );
 class plgContentSWG_NextEvent extends JPlugin {
   
