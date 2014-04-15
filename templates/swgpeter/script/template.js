@@ -32,7 +32,8 @@ var hasLocalStorage = function() {
 }
 // TODO: Js for mobile template - matchMedia - http://www.sitepoint.com/javascript-media-queries/ - https://developer.mozilla.org/en-US/docs/Web/API/Window.matchMedia#Browser_compatibility
 
-window.addEvent('domready', setupRatingTips);
+if (typeof(Tips) != "undefined")
+	window.addEvent('domready', setupRatingTips);
 
 
 /**
@@ -125,7 +126,7 @@ var Mobile = new Class({
 		});
 		
 		// Resize the banner image
-		var banner = document.body.getElement(".random-imagebanner img");
+		var banner = document.body.getElement(".random-image img");
 		if (banner != null)
 		{
 			banner.setStyle("height", banner.offsetWidth * 0.3368);

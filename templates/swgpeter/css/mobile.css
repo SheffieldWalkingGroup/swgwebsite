@@ -167,7 +167,7 @@ nav .moduletable_menu
 	clear:both;
 }
 
-.random-imagebanner img
+.random-image img
 {
 	width:100%;
 	height:0; /* Overridden by JS - set to 0 here so we don't show a large image & shrink it */
