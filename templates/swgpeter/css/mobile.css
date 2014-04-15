@@ -224,6 +224,23 @@ nav .moduletable h3,
 	margin-bottom:0;
 }
 
+.event .eventheader::after
+{
+	content: url(/images/buttons/arrow-8-down.png) "Expand";
+	width:24px;
+	height:24px;
+	position:absolute;
+	right:4px;
+	top:4px;
+	bottom:0;
+	overflow:hidden;
+}
+
+.event.open .eventheader::after
+{
+	content: url(/images/buttons/arrow-8-up.png) "Collapse";
+}
+
 .eventheader .date
 {
 	font-size:10px;
@@ -250,6 +267,7 @@ nav .moduletable h3,
 .eventheader h3
 {
 	margin-left:60px;
+	margin-right:20px;
 }
 
 footer

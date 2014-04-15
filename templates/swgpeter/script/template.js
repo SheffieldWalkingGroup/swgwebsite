@@ -76,6 +76,8 @@ function Popup(title, body, type)
 }
 
 var Mobile = new Class({
+	mobile: false,
+	
 	menuButton: null,
 	nav: null,
 	menu: null,
@@ -84,6 +86,8 @@ var Mobile = new Class({
 	
 	start: function()
 	{
+		this.mobile = true;
+		
 		// Stop the slideshow. TODO: Can we get a guaranteed identifier?
 		//besps_1_0.b_stop();
 		this.nav = document.body.getElement("nav");
@@ -165,16 +169,14 @@ var Mobile = new Class({
 		heading.addEvent("click", function(ev)
 		{
 			var box = heading.retrieve("target");
-			if (box.retrieve("open"))
+			if (box.hasClass("open"))
 			{
-				// TODO: Animate
-				box.store("open", false);
+				box.removeClass("open");
 				box.tween("height", box.retrieve("closedheight"));
 			}
 			else
 			{
-				// TODO: Animate
-				box.store("open", true);
+				box.addClass("open");
 				box.tween("height", box.retrieve("openheight"));
 			}
 		});
@@ -182,7 +184,12 @@ var Mobile = new Class({
 	
 	stop: function()
 	{
-		this.menuButton.removeEvent("click");
+		if (this.mobile)
+		{
+			this.menuButton.removeEvent("click");
+			
+			this.mobile = false;
+		}
 	},
 	
 	eventHooks: function(event, container)
