@@ -43,26 +43,6 @@
 		<h3 class="summary"><?php echo $event->name; ?></h3>
 	</div>
 	<div class="eventbody">
-		<div class="description<?php if ($event->alterations->details) echo " altered\" title=\"Details altered"; ?>">
-		<p><?php echo nl2br($event->description); ?></p>
-		<?php if ($event instanceof WalkInstance):?>
-			<p class="icons">
-			<?php if ($event->isLinear):?>
-				<img src="/images/stories/linearwalk.png" border="0" alt="Linear walks start at one place and finish at another; usually this means we have to use public transport" title="Linear walks start at one place and finish at another; usually this means we have to use public transport" />
-			<?php endif; if ($event->dogFriendly):?>
-				<img src="/images/stories/dogs.png" border="0" alt="Dog-friendly: the route is suitable for bringing dogs along." title="Dog-friendly: the route is suitable for bringing dogs along." width="19" height="16" />
-			<?php endif; if ($event->childFriendly):?>
-				<img src="/images/stories/pushchair.png" border="0" alt="Kiddy-friendly: route (and pace) of walk are suitable for bringing infants. Check with the walk leader what kind of prams/buggies can be used." title="Kiddy-friendly: route (and pace) of walk are suitable for bringing infants. Check with the walk leader what kind of prams/buggies can be used." width="30" height="28" />
-			<?php endif; if ($event->speedy):?>
-				<img src="/images/stories/speedy.png" border="0" alt="Fast-paced walk. This kind of walk will be done faster than usual, aiming for an early finish." title="Fast-paced walk. This kind of walk will be done faster than usual, aiming for an early finish." width="24" height="30" />
-			<?php endif; ?>
-			</p>
-		<?php elseif ($event instanceof Weekend && $event->challenge): ?>
-			<p class="icons">
-			<img src="/images/stories/challenge.png" border="0" alt="Challenge walk: more than a day-walk, a mini-expedition" title="Challenge walk: more than a day-walk, a mini-expedition" width="19" height="34" />
-			</p>
-		<?php endif;?>
-		</div>
 		<div class="eventinfo">
 		<?php if ($event instanceof WalkInstance):?>
 			<p class="start">
@@ -120,7 +100,8 @@
 					// Hide leader contact details if event has already happened
 					if (!$this->eventInPast($event) && $event->leader->telephone != "")
 					{
-						echo " (".$event->leader->telephone.")"; 
+						// TODO: Shouldn't use a or span
+						echo " (<a class='leadertel'>".$event->leader->telephone."</a>)"; 
 						if ($event->leader->noContactOfficeHours)
 							echo " &ndash; don't call during office hours";
 					}
@@ -230,6 +211,27 @@
 			<?php endif; ?>
 		
 		</div>
+		<div class="description<?php if ($event->alterations->details) echo " altered\" title=\"Details altered"; ?>">
+		<p><?php echo nl2br($event->description); ?></p>
+		<?php if ($event instanceof WalkInstance):?>
+			<p class="icons">
+			<?php if ($event->isLinear):?>
+				<img src="/images/stories/linearwalk.png" border="0" alt="Linear walks start at one place and finish at another; usually this means we have to use public transport" title="Linear walks start at one place and finish at another; usually this means we have to use public transport" />
+			<?php endif; if ($event->dogFriendly):?>
+				<img src="/images/stories/dogs.png" border="0" alt="Dog-friendly: the route is suitable for bringing dogs along." title="Dog-friendly: the route is suitable for bringing dogs along." width="19" height="16" />
+			<?php endif; if ($event->childFriendly):?>
+				<img src="/images/stories/pushchair.png" border="0" alt="Kiddy-friendly: route (and pace) of walk are suitable for bringing infants. Check with the walk leader what kind of prams/buggies can be used." title="Kiddy-friendly: route (and pace) of walk are suitable for bringing infants. Check with the walk leader what kind of prams/buggies can be used." width="30" height="28" />
+			<?php endif; if ($event->speedy):?>
+				<img src="/images/stories/speedy.png" border="0" alt="Fast-paced walk. This kind of walk will be done faster than usual, aiming for an early finish." title="Fast-paced walk. This kind of walk will be done faster than usual, aiming for an early finish." width="24" height="30" />
+			<?php endif; ?>
+			</p>
+		<?php elseif ($event instanceof Weekend && $event->challenge): ?>
+			<p class="icons">
+			<img src="/images/stories/challenge.png" border="0" alt="Challenge walk: more than a day-walk, a mini-expedition" title="Challenge walk: more than a day-walk, a mini-expedition" width="19" height="34" />
+			</p>
+		<?php endif;?>
+		</div>
+		
 		<div style="clear:right;">&nbsp;</div>
 	</div>
 	</div>
