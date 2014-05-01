@@ -911,7 +911,7 @@ div.slideshow {
 	text-indent:0px;
 }
 
-.eventinfo p span {
+.eventinfo p span.lbl {
 	width:72px;
 	display:inline-block;
 	position:absolute;

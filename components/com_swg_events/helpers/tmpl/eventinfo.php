@@ -46,14 +46,14 @@
 		<div class="eventinfo">
 		<?php if ($event instanceof WalkInstance):?>
 			<p class="start">
-			<span>Start:</span>
+			<span class='lbl'>Start:</span>
 			<a href="http://www.streetmap.com/loc/<?php echo $event->startGridRef?>" title="Map of approximate location" rel="map-start" target="_blank">
 				<?php echo $event->startGridRef.", ".$event->startPlaceName?>
 			</a>
 			</p>
 			<?php if ($event->isLinear):?>
 			<p class="end">
-				<span>End:</span>
+				<span class='lbl'>End:</span>
 				<a href="http://www.streetmap.com/loc/<?php echo $event->endGridRef?>" title="Map of approximate location" rel="map-end" target="_blank">
 				<?php echo $event->endGridRef.", ".$event->endPlaceName;?>
 				</a>
@@ -61,7 +61,7 @@
 			<?php endif; ?>
 			<?php if (isset($event->meetPoint) && !$this->eventInPast($event)): ?>
 				<p class="transport<?php if ($event->alterations->placeTime) echo " altered\" title=\"Place & time altered"; ?>">
-				<span>Transport:</span>
+				<span class='lbl'>Transport:</span>
 				<?php if (!$event->meetPoint->isOther()) {
 					echo "Meet at ".strftime("%H:%M", $event->meetPoint->meetTime)." at ";
 					if ($event->meetPoint->location)
@@ -93,24 +93,25 @@
 				</p>
 			<?php endif; ?>
 			<?php if (isset($event->leader)): ?>
-				<p class="leader<?php if ($event->alterations->organiser) echo " altered\" title=\"Leader changed"; ?>">
-				<span>Walk Leader:</span>
-				<?php
-					echo $event->leader->displayName;
-					// Hide leader contact details if event has already happened
-					if (!$this->eventInPast($event) && $event->leader->telephone != "")
-					{
-						// TODO: Shouldn't use a or span
-						echo " (<a class='leadertel'>".$event->leader->telephone."</a>)"; 
-						if ($event->leader->noContactOfficeHours)
-							echo " &ndash; don't call during office hours";
-					}
-				?>
+				<p itemscope="" itemtype="http://schema.org/Person" class="leader<?php if ($event->alterations->organiser) echo " altered\" title=\"Leader changed"; ?>">
+					<span class='lbl'>Walk Leader:</span>
+					<span class='val<?php echo $event->leader->noContactOfficeHours ? " noContactOfficeHours":"" ?>'>
+						<span itemprop="name"><?php echo $event->leader->displayName; ?></span>
+						<?php
+							// Hide leader contact details if event has already happened
+							if (!$this->eventInPast($event) && $event->leader->telephone != "")
+							{
+								echo " (<span itemprop='telephone' class='leadertel'>".$event->leader->telephone."</span>)"; 
+								if ($event->leader->noContactOfficeHours)
+									echo " &ndash; don't call during office hours";
+							}
+						?>
+					</span>
 				</p>
 			<?php endif; 
 			if (isset($event->backmarker)): ?>
 				<p class="backmarker">
-				<span>Backmarker:</span> <?php echo $event->backmarker->displayName; ?>
+				<span class='lbl'>Backmarker:</span> <?php echo $event->backmarker->displayName; ?>
 				</p>
 			<?php endif;?>
 		<?php elseif ($event instanceof Social):?>

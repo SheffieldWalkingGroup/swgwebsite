@@ -33,6 +33,7 @@ var Event = new Class({
 	miles : null,
 	distanceGrade : null,
 	difficultyGrade : null,
+	organiser: null,
 	
 	/**
 	 * Set up the event from an HTML element in the page
@@ -68,6 +69,16 @@ var Event = new Class({
 				this.difficultyGrade = matches[2];
 				this.miles = matches[3];
 			}
+			
+			this.organiser = new Organiser();
+			var organiserBits = container.getElement(".leader .val");
+			var nameEl = organiserBits.getElement("[itemprop=name]")
+			if (nameEl)
+				this.organiser.displayName = nameEl.innerHTML;
+			var telEl = organiserBits.getElement("[itemprop=telephone]")
+			if (telEl)
+				this.organiser.telephone = telEl.innerHTML;
+			this.organiser.noContactOfficeHours = organiserBits.hasClass("noContactOfficeHours");
 		}
 		
 		// End time might be a full date, or just a time on the start date
@@ -100,6 +111,8 @@ var Event = new Class({
 				this[i] = data[i];
 			}
 		}
+		
+		// TODO: Populate organiser info
 	},
 	
 	/**
@@ -453,7 +466,48 @@ var Event = new Class({
 			self.highlightEvent();
 			
 		});
+	},
+	
+	phoneCallLeaderPopup : function()
+	{
+		var leader = this.organiser;
+		
+		var header = "Contact leader";
+		
+		var callButton = "<a class='contact-leader call'";
+		
+		var content = "<p>Contact the leader to ask about this walk, or text them to book on. "+
+			"Please be considerate and avoid calling late at night, for example." +
+			(leader.noContactOfficeHours ? "<br>This leader has asked not to be contacted during office hours.":"")+"</p>";
+		
+		if (!leader.noContactOfficeHours || function() {
+			var date = new Date();
+			// Return true at the weekend, or after 17:30 on weekdays
+			return (
+				date.getDay == 0 || date.getDay == 6 ||
+				date.getHours() >= 18 ||
+				date.getHours() == 17 && date.getMinutes() >= 30
+			);
+		})
+		{
+			callButton += " href='tel:"+leader.telephone+"'>Call leader to ask questions";
+		}
+		else
+		{
+			callButton += ">This leader does not want to be called during office hours";
+		}
+		callButton += "</a>";
+		content += callButton;
+		
+		content += "<a class='contact-leader text' href='sms:"+leader.telephone+"'>Text leader to book on this walk.<br>Leaders are not expected to reply to texts.</a>";
+		Popup(header, content)
 	}
+});
+
+var Organiser = new Class({
+	displayName: "",
+	telephone: "",
+	noContactOfficeHours: false
 });
 
 /**

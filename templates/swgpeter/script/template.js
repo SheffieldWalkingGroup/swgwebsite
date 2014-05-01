@@ -218,6 +218,42 @@ var Mobile = new Class({
 			
 		}
 		
+		// Set up map links
+		
+		// Set up telephone links
+		var leaderTelEl = container.getElement(".leadertel");
+		if (leaderTelEl)
+		{
+			var leaderTel = leaderTelEl.textContent;
+			
+			var leaderLink = new Element("a", {
+				'html' : 'Contact leader',
+				'events' : {
+					click: function()
+					{
+						event.phoneCallLeaderPopup()
+					}
+				}
+			});
+			leaderTelEl.parentNode.adopt(leaderLink);
+			
+			/*
+			// TODO: No call during office hours option
+			var call = document.createElement("a");
+			call.href = "tel:"+leaderTel;
+			call.text = "Call leader to ask questions";
+			
+			var text = document.createElement("a");
+			text.href = "sms:"+leaderTel;
+			text.text = "Text leader to book on this walk";
+			
+			var leaderPara = leaderTelEl.parentNode;
+			leaderPara.appendChild(document.createElement("br"));
+			leaderPara.appendChild(call);
+			leaderPara.appendChild(document.createElement("br"));
+			leaderPara.appendChild(text);*/
+		}
+		
 		// Set up folding
 		this.setupFolding(container, container.getElement(".eventheader"));
 	}

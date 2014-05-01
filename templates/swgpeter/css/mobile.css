@@ -279,3 +279,29 @@ footer div.wrap
 {
 	position:relative !important;
 }
+
+.popup,
+.popup .content
+{
+	width:95%;
+}
+
+a.contact-leader
+{
+	border:1px solid #555;
+	display:block;
+	width:80%;
+	margin:10px auto;
+	padding:5px;
+	color:#fff;
+}
+
+a.contact-leader.call
+{
+	background-color:#6b8eac;
+}
+
+a.contact-leader.text
+{
+	background-color:#8dab6a;
+}
