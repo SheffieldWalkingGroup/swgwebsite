@@ -38,7 +38,7 @@ nav
 	display:none;
 }
 
-.moduletable_menu ul
+.moduletable_menu>ul
 {
 	border:1px solid #555;
 	border-radius:5px 0 5px 5px;
@@ -47,6 +47,11 @@ nav
 	width:auto;
 	overflow:hidden;
 	box-shadow: -2px 2px 2px black;
+}
+
+.moduletable_menu ul ul
+{
+	
 }
 
 /* TODO: Remove from nav */
@@ -64,9 +69,14 @@ nav .menu li a
 	background-image:none !important;
 }
 
-nav .menu li.current
+nav .menu li.active
 {
 	background-color:#c7d6df;
+}
+
+nav .menu li.current>a
+{
+	text-decoration:underline;
 }
 
 .logo
@@ -281,7 +291,7 @@ nav .moduletable h3,
 	float:right;
 	position:relative;
 	bottom:3px;
-	background-image:url(/images/icons/open-in-new-window.png);
+	background-image:url(/images/buttons/open-in-new-window.png);
 	padding:16px 0 0 16px;
 	width:0;
 	height:0;
