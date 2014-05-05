@@ -47,6 +47,7 @@
 		<?php if ($event instanceof WalkInstance):?>
 			<p class="start">
 			<span class='lbl'>Start:</span>
+			<a class='mobile app-link' href='geo:<?php echo $event->startLatLng->lat.",".$event->startLatLng->lng;?>'>Open in map app</a>
 			<a href="http://www.streetmap.com/loc/<?php echo $event->startGridRef?>" title="Map of approximate location" rel="map-start" target="_blank">
 				<?php echo $event->startGridRef.", ".$event->startPlaceName?>
 			</a>
@@ -54,8 +55,9 @@
 			<?php if ($event->isLinear):?>
 			<p class="end">
 				<span class='lbl'>End:</span>
+				<a class='mobile app-link' href='geo:<?php echo $event->endLatLng->lat.",".$event->endLatLng->lng;?>'>Open in map app</a>
 				<a href="http://www.streetmap.com/loc/<?php echo $event->endGridRef?>" title="Map of approximate location" rel="map-end" target="_blank">
-				<?php echo $event->endGridRef.", ".$event->endPlaceName;?>
+					<?php echo $event->endGridRef.", ".$event->endPlaceName;?>
 				</a>
 			</p>
 			<?php endif; ?>
@@ -124,7 +126,7 @@
 			
 			<?php if ($event->location != ""): ?>
 			<p class="location<?php if ($event->alterations->placeTime) echo " altered\" title=\"Place & time altered"; ?>">
-				<span>Location: </span><?php if ($event->hasMap()):?><a href="#" rel="map"><?php endif;
+				<span>Location: </span><?php if ($event->hasMap()):?><a href="#" rel="map"><a class='mobile app-link' href='geo:<?php echo $event->latLng->lat.",".$event->latLng->lng;?>'>Open in map app</a><?php endif;
 					echo nl2br($event->location);
 				?>
 				<?php if ($event->hasMap()) echo "</a>";?>

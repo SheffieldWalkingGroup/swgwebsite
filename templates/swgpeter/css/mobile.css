@@ -270,6 +270,29 @@ nav .moduletable h3,
 	margin-right:20px;
 }
 
+.event .map-container
+{
+	padding: 0 10px 20px;
+}
+
+.event .eventinfo .app-link
+{
+	display:inline-block;
+	float:right;
+	position:relative;
+	bottom:3px;
+	background-image:url(/images/icons/open-in-new-window.png);
+	padding:16px 0 0 16px;
+	width:0;
+	height:0;
+	overflow:hidden;
+}
+
+.olFramedCloudPopupContent
+{
+	font-size:0.9em;
+}
+
 footer
 {
 	clear:both;

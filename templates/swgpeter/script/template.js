@@ -72,6 +72,13 @@ function Popup(title, body, type)
 	
 	popup.inject(document.body);
 	popup.position({position:"center"});
+	
+	// TODO: Only run if on mobile - and preferably on Android only
+	window.addEvent('backbutton', function(evt)
+	{
+		alert("Back");
+	});
+	
 	mask.show();
 }
 
@@ -217,8 +224,6 @@ var Mobile = new Class({
 			}
 			
 		}
-		
-		// Set up map links
 		
 		// Set up telephone links
 		var leaderTelEl = container.getElement(".leadertel");

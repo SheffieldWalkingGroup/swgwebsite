@@ -383,7 +383,7 @@ var Event = new Class({
 			onComplete: function() {
 				self.mapOpen = true;
 				
-				if ($defined(self.mapLink))
+				if (typeof (self.mapLink) != "undefined")
 				{
 					self.mapLink.set('html',"Hide map");
 					self.mapLink.removeEvents();
@@ -394,6 +394,17 @@ var Event = new Class({
 				}
 			}
 		});
+		
+		// Need to also set the height of the event container if one is set
+		if(this.container.style.height)
+		{
+			var openContainer = new Fx.Tween(this.container, 
+			{
+				transition: Fx.Transitions.Quad.easeOut
+			});
+			openContainer.start("height", this.container.getStyle('height').toInt() + 400);
+		}
+		
 		openFx.start("height",400);
 	},
 	
@@ -410,7 +421,7 @@ var Event = new Class({
 				self.map.destroy();
 				self.mapContainer.dispose();
 				
-				if ($defined(self.mapLink))
+				if (typeof(self.mapLink) != "undefined")
 				{
 					self.mapLink.set('html',"Show map");
 					self.mapLink.removeEvents();
@@ -421,6 +432,18 @@ var Event = new Class({
 				}
 			}
 		});
+		
+		// Need to also set the height of the event container if one is set
+		// If the height is 0, it's already closed, so do nothing
+		if(this.container.style.height && this.container.style.height > 0)
+		{
+			var openContainer = new Fx.Tween(this.container, 
+			{
+				transition: Fx.Transitions.Quad.easeOut
+			});
+			openContainer.start("height", this.container.retrieve("openheight"));
+		}
+		
 		closeFx.start("height",0);
 	},
 	

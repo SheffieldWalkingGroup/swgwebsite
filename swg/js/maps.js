@@ -330,7 +330,10 @@ var SWGMap = new Class({
 		
 		var startPopup = new OpenLayers.Popup.FramedCloud("StartPopup",
 		    start, null,
-		    "Start: "+walk.startGridRef+"<br>"+walk.startPlaceName+"<br><a href='http://www.streetmap.co.uk/loc/"+walk.startGridRef+"' target='_blank'>View on Ordnance Survey map</a>", null, true
+		    "Start: "+walk.startGridRef+
+		    "<br>"+walk.startPlaceName+
+		    "<br><a href='http://www.streetmap.co.uk/loc/"+walk.startGridRef+"' target='_blank'>View on Ordnance Survey map</a>"
+			, null, true
 		);
 		// Need to centre the map before adding popups
 		// TODO: Temporary - should zoom to bounding box around start & end (or route if available)
