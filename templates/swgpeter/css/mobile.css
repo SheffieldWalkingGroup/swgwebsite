@@ -324,17 +324,19 @@ a.contact-leader
 	border:1px solid #555;
 	display:block;
 	width:80%;
+	min-height:30px;
 	margin:10px auto;
-	padding:5px;
+	padding:5px 5px 5px 40px;
 	color:#fff;
 }
 
 a.contact-leader.call
 {
-	background-color:#6b8eac;
+	background:url(/images/icons/mobile.png) #6b8eac 15px 50% no-repeat;
+	
 }
 
 a.contact-leader.text
 {
-	background-color:#8dab6a;
+	background:url(/images/icons/mail.png) #8dab6a 5px 50% no-repeat;
 }
