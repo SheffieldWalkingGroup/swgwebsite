@@ -30,6 +30,7 @@ class SWG_EventsViewEventListing extends SWG_EventsHelperEventInfo
 		$this->mapJS($document);
 		$totalEvents = $this->get('NumEvents');
 		$apiParams = json_encode($this->get('ApiParams'));
+		$canRecordAttendance = (SWG_EventsController::canRecordAttendance() ? 'true' : 'false');
 		$document->addScript('/components/com_swg_events/views/eventlisting/script/eventlisting.js');	
 		$document->addScriptDeclaration(<<<MAP
 window.addEvent('domready', function()
@@ -38,6 +39,7 @@ window.addEvent('domready', function()
 	document.addEvent("scroll",scrolled);
 	totalEvents = {$totalEvents};
 	apiParams = {$apiParams};
+	canRecordAttendance = {$canRecordAttendance};
 });
 MAP
 );	

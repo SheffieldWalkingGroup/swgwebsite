@@ -188,19 +188,19 @@
 				<?php if ($this->eventInPast($event)): ?>
 					<?php if ($event->numAttendees > 0):  // TODO: Potential warnings if value is unset? TODO: Add attendees & tickbox to past events on bottomless page?>
 						<p><?php echo $event->numAttendees;if ($event->numAttendees == 1):?> person<?php else:?> people<?php endif;?> did this</p>
-					<?php endif;?>
-					<p>
-						<a class="attendance" href="<?php echo JURI::current()?>?<?php echo JURI::buildQuery(array(
-							"task" 	  => "attendance.attend",
-							"evttype" => $event->getType(),
-							"evtid"   => $event->id,
-							"set"     => (int)(!$event->attendedBy),
-						));?>"
-							><img src="/images/icons/<?php if ($event->attendedBy):?>tick<?php else: ?>tickbox<?php endif;?>.png" width="19" height="16" /
-						></a>
-						You did this
-					</p>
-					<?php if ($event->attendedBy): ?>
+					<?php endif; if (SWG_EventsController::canRecordAttendance()): ?>
+						<p>
+							<a class="attendance" href="<?php echo JURI::current()?>?<?php echo JURI::buildQuery(array(
+								"task" 	  => "attendance.attend",
+								"evttype" => $event->getType(),
+								"evtid"   => $event->id,
+								"set"     => (int)(!$event->attendedBy),
+							));?>"
+								><img src="/images/icons/<?php if ($event->attendedBy):?>tick<?php else: ?>tickbox<?php endif;?>.png" width="19" height="16" /
+							></a>
+							You did this
+						</p>
+					<?php endif; if ($event->attendedBy): ?>
 						<p><a href="/your-diary/upload-track?wi=<?php echo $event->id;?>">Share GPS track</a></p>
 						<p><a href="/photos/upload-photos">Share photos</a></p>
 					<?php endif; ?>

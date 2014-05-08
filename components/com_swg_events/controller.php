@@ -51,6 +51,11 @@ class SWG_EventsController extends JControllerLegacy
 		return JFactory::getUser()->authorise("weekend.editall","com_swg_events");
 	}
 	
+	public static function canRecordAttendance()
+	{
+		return JFactory::getUser()->authorise("common.recordattendance", "com_swg_events");
+	}
+	
 	public static function canEdit($event)
 	{
 		if ($event instanceof WalkInstance)

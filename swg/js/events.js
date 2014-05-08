@@ -131,7 +131,7 @@ var Event = new Class({
 		displayEvent(this, container, false);
 		
 		// Add attendance checkbox for past events
-		if (this.start < new Date())
+		if (canRecordAttendance && this.start < new Date())
 		{
 			var attendPara = new Element("p");
 			var attendButton = new Element("a", {
