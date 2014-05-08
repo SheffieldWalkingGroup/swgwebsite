@@ -172,12 +172,10 @@ nav .moduletable_menu h3, nav .moduletable h3 {
 
 nav .moduletable_menu h3{
 	border-top:1px solid #555;
-    background:url(/templates/swgpeter/images/menuhead-ltblue.png);
 }
 
 /* Top-level menu only */
 nav .menu {
-	background:url(/templates/swgpeter/images/menubody-ltblue.png);
     width:186px;
 }
 
@@ -215,10 +213,6 @@ nav .menu  ul ul {
 
 nav .menu  ul ul a {
     width:134px;
-}
-
-nav .moduletable h3, .boxes .box h3 {
-    background:url(/templates/swgpeter/images/lboxhead-ltgreen.png);
 }
 
 nav .feed ul {
@@ -402,14 +396,6 @@ div.slideshow {
 	margin:0;
 }
 
-.boxes h3 {
-    background-image:url(/templates/swgpeter/images/boxhead-ltgreen.png) !important;
-}
-
-.intro .moduletable h3 {
-	background-image:url(/templates/swgpeter/images/rboxhead-ltgreen.png) !important;
-}
-
 .boxes>.box, .intro .moduletable {
     position:relative;
     border-style:solid;
@@ -443,10 +429,6 @@ div.slideshow {
 /*     font-family:'Lora',serif; */
     font-family:sans-serif;
     font-size:18px;
-}
-
-.main h3 {
-	background:url(/templates/swgpeter/images/contenthead-green.png);
 }
 
 .moduletable ul, .moduletable ol {
@@ -739,7 +721,6 @@ div.slideshow {
 	border-style:solid;
 	border-width:1px 0;
 	border-color:#555;
-	background:url("/templates/swgpeter/images/contentbody-green.png") repeat scroll 0 0 transparent;
 }
 
 .precontent .moduletable h3:first-child, .postcontent .moduletable h3:first-child {
@@ -794,44 +775,72 @@ div.slideshow {
 	opacity:0.9;
 }
 
-.walksaturday {
-    background:url(/templates/swgpeter/images/contentbody-green.png);
+/* Gradient backgrounds & headings */
+
+nav .moduletable h3,
+.boxes h3,
+.intro .moduletable h3
+{
+	background-color:#9bb67c; /* IE <= 9 fallback */
+    background:linear-gradient( 90deg, rgba(155,182,124,0), rgba(155,182,124,1) 43%, rgba(155,182,124,1) 57%, rgba(155,182,124,0) ) !important;
+    background:-webkit-linear-gradient( 90deg, rgba(155,182,124,0), rgba(155,182,124,1) 43%, rgba(155,182,124,1) 57%, rgba(155,182,124,0) ) !important;
+	
 }
 
-.walksaturday .eventheader {
-    background:url(/templates/swgpeter/images/contenthead-green.png);
+.walksaturday .eventheader,
+.main h3
+{
+    background:linear-gradient( 90deg, rgba(155,182,124,0), rgba(155,182,124,1) 12.5%, rgba(155,182,124,1) 87.5%, rgba(155,182,124,0) );
 }
 
-.walksunday, .ratingTip .tip-text {
-    background:url(/templates/swgpeter/images/contentbody-blue.png);
+.walksaturday,
+.precontent .moduletable, 
+.postcontent .moduletable {
+    background:linear-gradient( 90deg, rgba(155,182,124,0), rgba(155,182,124,0.38) 8%, rgba(155,182,124,0.38) 92%, rgba(155,182,124,0) );
 }
 
 .walksunday .eventheader, .ratingTip .tip-title {
-    background:url(/templates/swgpeter/images/contenthead-blue.png);
+	background-color:#7c9bb6;
+    background:linear-gradient( 90deg, rgba(124,155,182,0), rgba(124,155,182,1) 12.5%, rgba(124,155,182,1) 87.5%, rgba(124,155,182,0) );
 }
 
-.walkweekday {
-    background:url(/templates/swgpeter/images/contentbody-magenta.png);
+.walksunday, .ratingTip .tip-text {
+    background:linear-gradient( 90deg, rgba(124,155,182,0), rgba(124,155,182,0.38) 8%, rgba(124,155,182,0.38) 92%, rgba(124,155,182,0) );
 }
 
 .walkweekday .eventheader {
-    background:url(/templates/swgpeter/images/contenthead-magenta.png);
+	background-color:#ab6a8d;
+    background:linear-gradient( 90deg, rgba(171,106,141,0), rgba(171,106,141,1) 12.5%, rgba(171,106,141,1) 87.5%, rgba(171,106,141,0) );
 }
 
-.weekend {
-    background:url(/templates/swgpeter/images/contentbody-yellow.png);
+.walkweekday {
+    background:linear-gradient( 90deg, rgba(171,106,141,0), rgba(171,106,141,0.38) 8%, rgba(171,106,141,0.38) 92%, rgba(171,106,141,0) );
 }
 
 .weekend .eventheader {
-    background:url(/templates/swgpeter/images/contenthead-yellow.png);
+	background-color:#f6f5d4;
+    background:linear-gradient( 90deg, rgba(246,245,212,0), rgba(246,245,212,1) 12.5%, rgba(246,245,212,1) 87.5%, rgba(246,245,212,0) );
 }
 
-.social {
-    background:url(/templates/swgpeter/images/contentbody-orange.png);
+.weekend {
+    background:linear-gradient( 90deg, rgba(246,245,212,0), rgba(246,245,212,0.38) 8%, rgba(246,245,212,0.38) 92%, rgba(246,245,212,0) );
 }
 
 .social .eventheader {
-    background:url(/templates/swgpeter/images/contenthead-orange.png);
+	background-color:#ff9555;
+    background:linear-gradient( 90deg, rgba(255,149,85,0), rgba(255,149,85,1) 12.5%, rgba(255,149,85,1) 87.5%, rgba(255,149,85,0) );
+}
+
+.social {
+    background:background:linear-gradient( 90deg, rgba(255,149,85,0), rgba(255,149,85,0.38) 8%, rgba(255,149,85,0.38) 92%, rgba(255,149,85,0) );
+}
+
+nav.menu,
+nav .moduletable_menu h3
+{
+	background-color:#7c9bb6;
+	background:linear-gradient( 90deg, rgba(124,155,182,0), rgba(124,155,182,1) 43%, rgba(124,155,182,1) 57%, rgba(124,155,182,0) ) !important;
+    background:-webkit-linear-gradient( 90deg, rgba(124,155,182,0), rgba(124,155,182,1) 43%, rgba(124,155,182,1) 57%, rgba(124,155,182,0) ) !important;
 }
 
 .event .cancelled, .popup .cancelled * {
