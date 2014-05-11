@@ -1,8 +1,8 @@
 <?php
 defined('JPATH_BASE') or die;
-JLoader::register('Leader', JPATH_BASE."/swg/Models/Leader.php");
-JLoader::register('Facebook', JPATH_BASE."/libraries/facebook/facebook.php");
-JLoader::register('SWG', JPATH_BASE."/swg/swg.php");
+JLoader::register('Leader', JPATH_SITE."/swg/Models/Leader.php");
+JLoader::register('Facebook', JPATH_SITE."/libraries/facebook/facebook.php");
+JLoader::register('SWG', JPATH_SITE."/swg/swg.php");
 
 /**
  * Adds any extras onto user profiles.
