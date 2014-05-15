@@ -37,6 +37,7 @@ private $dbmappings = array(
 	'dogFriendly'			=> "dogfriendly",
 	'publishInOtherSites'	=> "publishinothersites",
 	'joomlaUserID'			=> "joomlauser",
+	'displayName'			=> "displayname",
 );
 	
 	/**
@@ -47,25 +48,19 @@ private $dbmappings = array(
 	function __construct($dbArr = null) {
 		if (isset($dbArr))
 		{
-			$this->id = $dbArr['ID'];
-			$this->surname = $dbArr['Surname'];
-			$this->forename = $dbArr['Forename'];
-			$this->telephone = $dbArr['Telephone'];
-			$this->email = $dbArr['Email'];
-			$this->notes = $dbArr['Notes'];
-			$this->noContactOfficeHours = (bool)$dbArr['nocontactofficehours'];
-			$this->active = (bool)$dbArr['active'];
-			$this->dogFriendly = (bool)$dbArr['dogfriendly'];
-			$this->publishInOtherSites = (bool)$dbArr['publishinothersites'];
-			$this->joomlaUserID = (int)$dbArr['joomlauser'];
+			parent::fromDatabase($dbArr);
 			
 			// Set a default display name
-			// TODO: Could scan for multiple surnames and include all of them
-			if ($this->id == self::TBC)
-				$this->displayName = "TBC";
-			else
+			if (empty($this->displayName))
+			{
 				$this->displayName = ucwords($this->forename)." ".strtoupper(substr($this->surname,0,1));
-			$this->hasDisplayName = false;
+				$this->hasDisplayName = false;
+			}
+			else
+			{
+				$this->hasDisplayName = true;
+			}
+			
 		}
 	}
 
@@ -81,6 +76,7 @@ private $dbmappings = array(
 			case "telephone":
 			case "username":
 			case "password":
+			case "displayName":
 				// Text
 				$this->$name = $value;
 				break;
