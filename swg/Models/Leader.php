@@ -50,6 +50,8 @@ private $dbmappings = array(
 		{
 			parent::fromDatabase($dbArr);
 			
+			$this->id = $dbArr['ID'];
+			
 			// Set a default display name
 			if (empty($this->displayName))
 			{

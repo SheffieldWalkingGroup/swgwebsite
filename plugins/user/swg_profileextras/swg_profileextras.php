@@ -40,7 +40,7 @@ class plgUserSWG_ProfileExtras extends JPlugin
 					$this->_subject->setError($db->getErrorMsg());
 					return false;
 				}
-
+				
 				// Merge the profile data.
 				$data->swg_extras = array();
 				
@@ -67,25 +67,18 @@ class plgUserSWG_ProfileExtras extends JPlugin
 						$data->swg_extras[$k] = $v[1];
 					}
 				}
-			}
-
-			if (!isset($data->swg_extras) and $userId > 0)
-			{
-				$db = JFactory::getDbo();
-				$db->setQuery("SELECT ID FROM walkleaders WHERE joomlauser = '$userId' LIMIT 1");
-				$result = $db->loadAssoc();
 				
-				if (!empty($result))
+				// Get leader details
+				$leader = Leader::fromJoomlaUser($userId);
+				
+				if (isset($leader))
 				{
-					$data->swg_extras = array(
-						'leaderid' => $result['ID'],
-						'leadersetup' => 1,
-						
-					);
+					$data->swg_extras['leaderid'] = $leader->id;
+					$data->swg_extras['leadersetup'] = 1;
+					$data->swg_extras['programmename'] = $leader->displayName;
 				}
+				
 			}
-			
-			
 		}
 	}
 	function onContentPrepareForm(JForm $form, $data)
@@ -98,6 +91,12 @@ class plgUserSWG_ProfileExtras extends JPlugin
 		JForm::addFormPath(dirname(__FILE__) . '/profiles');
 		$form->loadFile('profile', false);
 		
+		// If we're admin we can do some extra things
+		if ($name != "com_users.user")
+		{
+			$form->setFieldAttribute("programmename","readonly",true, "swg_extras");
+		}
+		
 		return true;
 	
 	}
@@ -106,6 +105,7 @@ class plgUserSWG_ProfileExtras extends JPlugin
 	{
 		$userId = JArrayHelper::getValue($data, 'id', null, 'int');
 		$oldLeader = Leader::fromJoomlaUser($userId);
+		$leaderChanged = false;
 		
 		if ($oldLeader == null && !empty($data['swg_extras']['leadersetup']))
 		{
@@ -120,7 +120,7 @@ class plgUserSWG_ProfileExtras extends JPlugin
 			$leader->joomlaUserID = $userId;
 			
 			$leader->save();
-			
+			$leaderChanged = true;
 		}
 		else if (!empty($data['swg_extras']['leaderid']) && $data['swg_extras']['leaderid'] != $oldLeader->id)
 		{
@@ -135,21 +135,42 @@ class plgUserSWG_ProfileExtras extends JPlugin
 			$leader = Leader::getLeader($data['swg_extras']['leaderid']);
 			$leader->joomlaUserID = $userId;
 			$leader->save();
+			$leaderChanged = true;
 		}
 		
 		$db = JFactory::getDbo();
-		// Remove any existing links to this user
-		$db->setQuery("UPDATE walkleaders SET joomlauser = null WHERE joomlauser = '$userId'");
-		$db->query(); // TODO: Check for success
-		// Create the new link
-		$db->setQuery("UPDATE walkleaders SET joomlauser = '$userId' WHERE ID = '{$data['swg_extras']['leaderid']}'");
-		$db->query();
+		
+		if ($leaderChanged)
+		{
+			// Remove any existing links to this user
+			$db->setQuery("UPDATE walkleaders SET joomlauser = null WHERE joomlauser = '$userId'");
+			$db->query(); // TODO: Check for success
+			// Create the new link
+			$db->setQuery("UPDATE walkleaders SET joomlauser = '$userId' WHERE ID = '{$data['swg_extras']['leaderid']}'");
+			$db->query();
+		}
+		else
+		{
+			$leader = Leader::fromJoomlaUser($userId);
+		}
+		
+		if (isset($leader))
+		{
+			// If the name for the programme has been changed, save this to the walk leaders table and remove the update request
+			if (isset($data['swg_extras']['programmename']) && $data['swg_extras']['programmename'] != $leader->displayName)
+			{
+				$leader->setDisplayName($data['swg_extras']['programmename']);
+				$leader->save();
+			}
+			// Always remove the programme name before saving
+			unset($data['swg_extras']['programmename']);
+		}
 
 		if ($userId && $result && isset($data['swg_extras']) && (count($data['swg_extras'])))
 		{
 			try
 			{
-				//Sanitize the date
+				// Sanitize the date
 				if (!empty($data['swg_extras']['joindate']))
 				{
 					$date = new JDate($data['swg_extras']['joindate']);
@@ -183,7 +204,6 @@ class plgUserSWG_ProfileExtras extends JPlugin
 				}
 				
 				$db->setQuery('INSERT INTO #__user_profiles VALUES '.implode(', ', $tuples));
-echo $db->getQuery();
 
 				if (!$db->query())
 				{

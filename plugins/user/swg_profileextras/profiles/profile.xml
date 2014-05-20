@@ -4,6 +4,17 @@
 		<fieldset name="swg_extras"
 			label="SWG Extras"
 		>
+			
+			<field
+				name="joindate"
+				type="calendar"
+				description="Approximate date you joined SWG"
+				label="Join date"
+			/>
+			
+
+		</fieldset>
+		<fieldset name="leading" label="Walk leading">
 			<field 
 				name="leadersetup"
 				type="checkbox"
@@ -12,14 +23,7 @@
 				default="0"
 				description="Check this to create a leader account for this user"
 			/>
-				
-		  
-			<field
-				name="joindate"
-				type="calendar"
-				description="Approximate date you joined SWG"
-				label="Join date"
-			/>
+			
 			<field
 				name="leaderid"
 				type="sql"
@@ -31,7 +35,13 @@
 			>
 				<option value="">-- Automatic --</option>
 			</field>
-
+			
+			<field
+				name="programmename"
+				type="text"
+				label="Current name in the programme"
+				description="Your current name, as displayed in the public events programme. Contact the group to have this changed."
+			/>
 		</fieldset>
 		<fieldset name="facebook" label="Facebook">
 			<field name="fb_key" type="FacebookLogin" label="Facebook account" description="WEGARE" />
