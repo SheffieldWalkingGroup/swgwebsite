@@ -13,6 +13,7 @@ class plgUserSWG_ProfileExtras extends JPlugin
 {
 	function onContentPrepareData($context, $data)
 	{
+
  		if (!in_array($context, array('com_users.profile', 'com_users.user', 'com_users.registration', 'com_admin.profile')))
  		{
 			return true;
@@ -76,6 +77,11 @@ class plgUserSWG_ProfileExtras extends JPlugin
 					$data->swg_extras['leaderid'] = $leader->id;
 					$data->swg_extras['leadersetup'] = 1;
 					$data->swg_extras['programmename'] = $leader->displayName;
+					$data->swg_extras['telephone'] = $leader->telephone;
+					$data->swg_extras['nocontactofficehours'] = $leader->noContactOfficeHours;
+					$data->swg_extras['publishinothersites'] = $leader->publishInOtherSites;
+					$data->swg_extras['notes'] = $leader->notes;
+					$data->swg_extras['dogfriendly'] = $leader->dogFriendly;
 				}
 				
 			}
@@ -95,6 +101,9 @@ class plgUserSWG_ProfileExtras extends JPlugin
 		if ($name != "com_users.user")
 		{
 			$form->setFieldAttribute("programmename","readonly",true, "swg_extras");
+// 			$form->setFieldAttrib("leaderid", "readonly", )
+			$form->removeField("leaderid", "swg_extras");
+			$form->removeField("leadersetup", "swg_extras");
 		}
 		
 		return true;
@@ -156,14 +165,23 @@ class plgUserSWG_ProfileExtras extends JPlugin
 		
 		if (isset($leader))
 		{
-			// If the name for the programme has been changed, save this to the walk leaders table and remove the update request
-			if (isset($data['swg_extras']['programmename']) && $data['swg_extras']['programmename'] != $leader->displayName)
-			{
+			// Save details to the Leader
+			if (!empty($data['swg_extras']['programmename']))
 				$leader->setDisplayName($data['swg_extras']['programmename']);
-				$leader->save();
-			}
-			// Always remove the programme name before saving
-			unset($data['swg_extras']['programmename']);
+			
+			if (!empty($data['swg_extras']['telephone']))
+				$leader->telephone = $data['swg_extras']['telephone'];
+			
+			$leader->noContactOfficeHours = (!empty($data['swg_extras']['nocontactofficehours']) ? true : false);
+			$leader->publishInOtherSites = (!empty($data['swg_extras']['publishinothersites']) ? true : false);
+			$leader->dogFriendly = (!empty($data['swg_extras']['dogfriendly']) ? true : false);
+			$leader->notes = $data['swg_extras']['notes'];
+			$leader->save();
+			
+			// Don't save this data to the profile info
+			$ex &= $data['swg_extras'];
+			
+			//unset($ex['programmename'], $ex['telephone'], $ex['nocontactofficehours'], $ex['publishinothersites'], $ex['dogfriendly'], $ex['notes']);
 		}
 
 		if ($userId && $result && isset($data['swg_extras']) && (count($data['swg_extras'])))

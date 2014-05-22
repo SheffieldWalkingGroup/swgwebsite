@@ -36,12 +36,12 @@
 				<option value="">-- Automatic --</option>
 			</field>
 			
-			<field
-				name="programmename"
-				type="text"
-				label="Current name in the programme"
-				description="Your current name, as displayed in the public events programme. Contact the group to have this changed."
-			/>
+			<field name="programmename" type="text" label="Current name in the programme" description="Your current name, as displayed in the public events programme. Contact the group to have this changed."/>
+			<field name="telephone" type="text" label="Telephone" validate="tel" description="This number will be displayed on the website when you run a walk or other event"/>
+			<field name="nocontactofficehours" type="checkbox" label="No contact during office hours please" value="1" default="0"/>
+			<field name="publishinothersites" type="checkbox" label="Allow my walks to be posted on other sites" value="1" default="1" description="Allow my walks to be posted on other sites (e.g. ramblers)"/>
+			<field name="notes" type="textarea" label="Walk leading preferences" rows="10" cols="50" description="Notes (walk preferences, willingness to backmark, etc)"/>
+			<field name="dogfriendly" type="checkbox" label="Dogs welcome on my walks" value="1" default="1"/>
 		</fieldset>
 		<fieldset name="facebook" label="Facebook">
 			<field name="fb_key" type="FacebookLogin" label="Facebook account" description="WEGARE" />

@@ -2,7 +2,7 @@
   defined( '_JEXEC' ) or die( 'Restricted access' );
   $currentPage = JFactory::getApplication()->getMenu()->getActive();
 
-  JHTML::_('behavior.framework');
+  JHTML::_('behavior.framework', true);
   $document = &JFactory::getDocument();
   $document->addScript('/templates/swgpeter/script/template.js');
   JLoader::register('SWG', JPATH_SITE."/swg/swg.php");
@@ -51,7 +51,7 @@
 		<div class="precontent">
 		  <jdoc:include type="modules" name="precontent" style="xhtml" />
 		</div>
-                
+                <jdoc:include type="message" />
                 <jdoc:include type="component" />
                 
                 <div class="postcontent">

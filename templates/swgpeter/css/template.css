@@ -85,7 +85,7 @@ table td
 	padding:5px;
 }
 
-.mobile
+body .mobile
 {
 	display:none;
 }
@@ -1220,4 +1220,27 @@ div.invisibleBacking {
 #manageavailability table {
 	width:100%;
 	border-bottom:1px solid #555;
+}
+
+#system-message .alert
+{
+	border:1px solid #555;
+	border-radius:15px;
+	box-shadow:4px 10px 10px #222;
+	padding:0 10px;
+	position:relative;
+}
+
+#system-message .alert-warning
+{
+	background-color:#ff9555;
+	box-shadow:4px 7px 10px #a86338;
+}
+
+#system-message .close
+{
+	cursor: pointer;
+	position:absolute;
+	top:10px;
+	right:10px;
 }
