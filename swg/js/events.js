@@ -313,13 +313,43 @@ var Event = new Class({
 							checkbox.getElement("img").src = "/images/icons/tick.png";
 							
 							// Show the popup
-							var title = self.name+" added to your diary";
-							var body = "<p>This "+self.type+" has been added to <a href='/your-diary'>your diary</a>. "+
-										"<a href='?task=attendance.facebook&"+attendParams+"&json=1'>Post to facebook</a> "+
-										"<a href='/photos/upload-photos'>Share photos</a>";
-							if (type == "walk")
-								body += "<a href='/your-diary/upload-track?wi="+self.id+"'>Share GPS track</a>";
-							body += "</p>";
+							var title = self.name;
+							
+							var mainText = new Element("p", {
+								'class' : 'diary-added-msg',
+								'html' : "This "+self.type+" has been added to <a href='/your-diary'>your diary</a>."
+							});
+							
+							var optionsList = new Element("ul", {'class' : 'diary-added-options'});
+							var postToFB = new Element("li");
+							var postToFBLink = new Element("a", {
+								'href' : "?task=attendance.facebook&"+attendParams+"&json=1",
+								'html' : "<img src='/images/icons/facebook_100.png' width='100' height='100' alt='' /><br />Post to Facebook"
+							});
+							postToFB.adopt(postToFBLink);
+							var sharePhotos = new Element("li");
+							var sharePhotosLink = new Element("a", {
+								'href' : "/photos/upload-photos",
+								'html' : "<img src='/images/icons/image_100.png' width='100' height='100' alt='' /><br/ >Share photos"
+							});
+							sharePhotos.adopt(sharePhotosLink);
+							
+							optionsList.adopt(postToFB, sharePhotos);
+							
+							if (type == 1) // Event::Type_Walk
+							{
+								var shareTrack = new Element("li");
+								shareTrackLink = new Element("a", {
+									'href' : "/your-diary/upload-track?wi="+self.id,
+									'html' : "<img src='/images/icons/track_100.png' width='100' height='100' alt='' /><br />Share GPS track"
+								});
+								shareTrack.adopt(shareTrackLink);
+								optionsList.adopt(shareTrack);
+							}
+							
+							var body = new Element("div");
+							body.adopt(mainText, optionsList);
+							
 							Popup(title, body);
 						}
 						else

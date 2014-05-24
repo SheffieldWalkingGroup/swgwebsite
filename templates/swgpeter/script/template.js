@@ -52,10 +52,17 @@ function Popup(title, body, type)
 	var header = new Element("div", {'class' : 'header'});
 	header.adopt(heading);
 	
-	var contents = new Element("div",{
-		"class":"popupmessage"
-	});
-	contents.set("html", body);
+	var contents;
+	
+	if (body instanceof Element)
+		contents = body;
+	else
+	{
+		contents = new Element("div",{
+			"class":"popupmessage"
+		});
+		contents.set("html", body);
+	}
 	
 	popup.adopt(popupContents);
 	popupContents.adopt(header);

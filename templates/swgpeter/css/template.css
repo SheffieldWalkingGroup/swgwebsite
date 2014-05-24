@@ -1244,3 +1244,27 @@ div.invisibleBacking {
 	top:10px;
 	right:10px;
 }
+
+.diary-added-msg
+{
+	font-size:1.2em;
+	text-align:center;
+}
+
+.diary-added-options
+{
+	list-style-type:none;
+	display:inline-block;
+}
+
+.diary-added-options li
+{
+	float:left;
+	width:120px;
+	text-align:center;
+}
+
+.diary-added-options li img
+{
+	margin-bottom:10px;
+}
