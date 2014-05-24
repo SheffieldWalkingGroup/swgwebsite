@@ -238,7 +238,7 @@ public function valuesToForm()
 				return (isset($this->route));
 				break;
 			default:
-				return (isset($this->$name));
+				return parent::__isset($this->$name);
 				break;
 		}
 	}

@@ -69,4 +69,9 @@ abstract class SWGBaseModel {
 		}
 		return $properties;
 	}
+	
+	public function __isset($name)
+	{
+		return (isset($this->$name));
+	}
 }
