@@ -35,6 +35,12 @@ class WalkInstanceFactory extends EventFactory
 	public $leader = null;
 	
 	/**
+	 * Optional filter by start time - must be before this.
+	 * @var int Timestamp in seconds from midnight
+	 */
+	public $startTimeMax = null;
+	
+	/**
 	 * The main table to read for this event
 	 * @var string
 	 */
@@ -69,6 +75,7 @@ class WalkInstanceFactory extends EventFactory
 		$this->includeRoute = false;
 		$this->walkProgramme = null;
 		$this->leader = null;
+		$this->startTimeMax = null;
 		
 		parent::reset();
 	}
@@ -105,6 +112,11 @@ class WalkInstanceFactory extends EventFactory
 			
 			$query->join('INNER', 'walkprogrammewalklinks ON WalkProgrammeWalkID = walkprogrammewalks.SequenceID');
 			$query->where("walkprogrammewalklinks.ProgrammeID = ".$wpID);
+		}
+		
+		if (isset($this->startTimeMax))
+		{
+			$query->where("meettime <= '".strftime("%H:%M", $this->startTimeMax)."'");
 		}
 	}
 	

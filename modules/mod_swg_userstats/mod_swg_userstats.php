@@ -37,6 +37,11 @@ foreach ($startDates as $period => $days)
 	$socials[$period] = $soFact->cumulativeStats();
 	$weekend[$period] = $weFact->cumulativeStats();
 	
+	// Stats for all-day walks (walks starting at or before 14:00)
+	$wiFact->startTimeMax = 14*3600;
+	$daywalks[$period] = $wiFact->cumulativeStats();
+	$wiFact->startTimeMax = null;
+	
 	// TODO: Check this doesn't fail for non-leaders: should say "0"
 	$wiFact->leader = Leader::fromJoomlaUser($user->id);
 	if (!empty($wiFact->leader))

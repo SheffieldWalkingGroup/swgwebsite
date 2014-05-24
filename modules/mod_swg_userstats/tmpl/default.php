@@ -17,7 +17,13 @@ defined( '_JEXEC' ) or die( 'Restricted access' ); ?>
 			<tr>
 				<th scope="row">Walks done</th>
 				<?php foreach ($cols as $period): ?>
-					<td><?php echo $walks[$period]['count']." (".UnitConvert::DisplayDistance($walks[$period]['sum_distance'], UnitConvert::Metre, UnitConvert::Mile, false).")";?></td>
+					<td><?php echo $walks[$period]['count'].($walks[$period]['count'] ? " (".UnitConvert::DisplayDistance($walks[$period]['sum_distance'], UnitConvert::Metre, UnitConvert::Mile, false).")" : "");?></td>
+				<?php endforeach; ?>
+			</tr>
+			<tr>
+				<th scope="row"><abbr title="Day walks are those starting no later than 14:00 - i.e. not evening walks">All-day walks</abbr></th>
+				<?php foreach ($cols as $period): ?>
+					<td><?php echo $daywalks[$period]['count'].($daywalks[$period]['count'] ? " (".UnitConvert::DisplayDistance($daywalks[$period]['sum_distance'], UnitConvert::Metre, UnitConvert::Mile, false).")" : "");?></td>
 				<?php endforeach; ?>
 			</tr>
 			<tr>
@@ -27,9 +33,15 @@ defined( '_JEXEC' ) or die( 'Restricted access' ); ?>
 				<?php endforeach; ?>
 			</tr>
 			<tr>
+				<th scope="row">Average day walk</th>
+				<?php foreach ($cols as $period): ?>
+					<td><?php echo UnitConvert::DisplayDistance($daywalks[$period]['mean_distance'], UnitConvert::Metre, UnitConvert::Mile, false);?></td>
+				<?php endforeach; ?>
+			</tr>
+			<tr>
 				<th scope="row">Walks led</th>
 				<?php foreach ($cols as $period): ?>
-					<td><?php echo $led[$period]['count']. " (".$led[$period]['sum_miles']." miles)";?></td>
+					<td><?php echo $led[$period]['count']. ($led[$period]['count'] ? " (".$led[$period]['sum_miles']." miles)" : "");?></td>
 				<?php endforeach; ?>
 			</tr>
 			<tr>
