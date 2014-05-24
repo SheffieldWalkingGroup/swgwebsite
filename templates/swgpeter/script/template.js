@@ -32,9 +32,7 @@ var hasLocalStorage = function() {
 }
 // TODO: Js for mobile template - matchMedia - http://www.sitepoint.com/javascript-media-queries/ - https://developer.mozilla.org/en-US/docs/Web/API/Window.matchMedia#Browser_compatibility
 
-if (typeof(Tips) != "undefined")
-	window.addEvent('domready', setupRatingTips);
-
+window.addEvent('domready', setupRatingTips);
 
 /**
  * Display a popup message on top of the page
@@ -49,8 +47,10 @@ function Popup(title, body, type)
 		"class":"content"
 	});
 	
-	var header = new Element("h3");
-	header.set("text", title);
+	var heading = new Element("h3");
+	heading.set("text", title);
+	var header = new Element("div", {'class' : 'header'});
+	header.adopt(heading);
 	
 	var contents = new Element("div",{
 		"class":"popupmessage"
@@ -93,6 +93,13 @@ var Mobile = new Class({
 	
 	start: function()
 	{
+		// Prevent slideshow images from loading
+		var imgs = document.body.getElements('.slideshow .besps_slides img');
+		for (var i=0; i<imgs.length; i++)
+		{
+			imgs[i].erase('src');
+		}
+		
 		this.mobile = true;
 		
 		// Stop the slideshow. TODO: Can we get a guaranteed identifier?
@@ -108,6 +115,8 @@ var Mobile = new Class({
 		this.nav.setStyle("visibility", "visible");
 		this.menu.setStyle("height", 0);
 		var self = this;
+		
+		document.body.addClass("mobile");
 		
 		menuFx = new Fx.Tween(this.menu,{
 			duration: 100,
@@ -159,6 +168,7 @@ var Mobile = new Class({
 		{
 			self.eventHooks.call(self, event, container);
 		});
+		
 	},
 	
 	setupFolding: function(box, heading) 
@@ -196,6 +206,8 @@ var Mobile = new Class({
 			this.menuButton.removeEvent("click");
 			
 			this.mobile = false;
+			
+			document.body.removeClass("mobile");
 		}
 	},
 	
