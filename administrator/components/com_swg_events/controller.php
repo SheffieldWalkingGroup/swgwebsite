@@ -8,7 +8,7 @@ jimport('joomla.application.component.controller');
 /**
  * General Controller of HelloWorld component
  */
-class SWG_EventsController extends JController
+class SWG_EventsController extends JControllerLegacy
 {
   /**
    * display task

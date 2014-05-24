@@ -8,7 +8,7 @@ jimport('joomla.application.component.view');
 /**
  * HelloWorlds View
  */
-class SWG_EventsViewSWG_Events extends JView
+class SWG_EventsViewSWG_Events extends JViewLegacy
 {
   /**
    * HelloWorlds view display method
