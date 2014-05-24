@@ -18,6 +18,8 @@ abstract class Event extends SWGBaseModel {
 	protected $alterations; 
 	protected $numAttendees;
 	protected $attendedBy;
+	// True if all attendees have been loaded. We can cache individual attendees without loading them all.
+	private $loadedAttendees = false;
 
 	const DateToday = -1;
 	const DateYesterday = -2;
@@ -107,20 +109,24 @@ abstract class Event extends SWGBaseModel {
 	 */
 	public function getAttendees()
 	{
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select("user as id");
-		$query->from("eventattendance");
-		$query->where(array(
-			"eventtype = ".$this->getType(),
-			"eventid = ".$this->id,
-		));
-		$db->setQuery($query);
-		$attendIDs = $db->loadColumn(0);
-		$this->attendedBy = array();
-		foreach ($attendIDs as $attendee)
+		if (!$this->loadedAttendees)
 		{
-			$this->attendedBy[$attendee] = JUser::getInstance($attendee);
+			$db = JFactory::getDBO();
+			$query = $db->getQuery(true);
+			$query->select("user as id");
+			$query->from("eventattendance");
+			$query->where(array(
+				"eventtype = ".$this->getType(),
+				"eventid = ".$this->id,
+			));
+			$db->setQuery($query);
+			$attendIDs = $db->loadColumn(0);
+			$this->attendedBy = array();
+			foreach ($attendIDs as $attendee)
+			{
+				$this->attendedBy[$attendee] = JUser::getInstance($attendee);
+			}
+			$this->loadedAttendees = true;
 		}
 		return $this->attendedBy;
 	}
@@ -132,18 +138,45 @@ abstract class Event extends SWGBaseModel {
 	 */
 	public function wasAttendedBy($userID)
 	{
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select("*");
-		$query->from("eventattendance");
-		$query->where(array(
-			"user = ".(int)$userID,
-			"eventtype = ".$this->getType(),
-			"eventid = ".$this->id,
-		));
-		$db->setQuery($query, 0, 1);
-		$attended = $db->loadAssocList();
-		return (count($attended) > 0);
+		// Check if we've already got that info
+		if (isset($this->attendedBy[$userID]))
+		{
+			return $this->attendedBy[$userID];
+		}
+		else if (!$this->loadedAttendees)
+		{
+			$db = JFactory::getDBO();
+			$query = $db->getQuery(true);
+			$query->select("*");
+			$query->from("eventattendance");
+			$query->where(array(
+				"user = ".(int)$userID,
+				"eventtype = ".$this->getType(),
+				"eventid = ".$this->id,
+			));
+			$db->setQuery($query, 0, 1);
+			$attended = $db->loadAssocList();
+			$this->attendedBy[$userID] = count($attended) > 0;
+			return $this->attendedBy[$userID];
+		}
+		else
+			return false;
+	}
+	
+	/**
+	 * Set whether an individual attended this event.
+	 * THIS IS NOT SAVED: Use EventAttendance for this.
+	 * @param int $userID
+	 * @param bool $attended
+	 */
+	public function setAttendedBy($userID, $attended)
+	{
+		$this->attendedBy[$userID] = (bool)$attended;
+	}
+	
+	public function setAttendees(array $attendees)
+	{
+		$this->attendedBy = $attendees;
 	}
 	
 	/**

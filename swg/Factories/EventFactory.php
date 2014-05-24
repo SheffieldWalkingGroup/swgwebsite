@@ -184,10 +184,13 @@ abstract class EventFactory
 			$event->fromDatabase($row);
 			if ($this->includeAttendees)
 			{
-				$event->attendees = $row['attendees'];
+				$event->numAttendees = $row['attendees'];
 			}
 			if ($this->includeAttendedBy)
-				$event->attendedBy = $row['attendedby'];
+			{
+				$event->setAttendedBy((int)$this->includeAttendedBy, (bool)$row['attendedby']);
+			}
+				
 			$events[] = $event;
 			$this->cache[$event->id] = $event;
 		}

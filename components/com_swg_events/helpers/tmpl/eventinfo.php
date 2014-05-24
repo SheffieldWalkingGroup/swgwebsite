@@ -185,7 +185,7 @@
 						</p>
 					<?php endif; ?>
 				<?php endif; ?>
-				<?php if ($this->eventInPast($event)): ?>
+				<?php if ($this->eventInPast($event)): $attended = $event->wasAttendedBy(Jfactory::getUser()->id); ?>
 					<?php if ($event->numAttendees > 0):  // TODO: Potential warnings if value is unset? TODO: Add attendees & tickbox to past events on bottomless page?>
 						<p><?php echo $event->numAttendees;if ($event->numAttendees == 1):?> person<?php else:?> people<?php endif;?> did this</p>
 					<?php endif; if (SWG_EventsController::canRecordAttendance()): ?>
@@ -194,13 +194,13 @@
 								"task" 	  => "attendance.attend",
 								"evttype" => $event->getType(),
 								"evtid"   => $event->id,
-								"set"     => (int)(!$event->attendedBy),
+								"set"     => (int)(!$attended),
 							));?>"
-								><img src="/images/icons/<?php if ($event->attendedBy):?>tick<?php else: ?>tickbox<?php endif;?>.png" width="19" height="16" /
+								><img src="/images/icons/<?php if ($attended):?>tick<?php else: ?>tickbox<?php endif;?>.png" width="19" height="16" /
 							></a>
 							You did this
 						</p>
-					<?php endif; if ($event->attendedBy): ?>
+					<?php endif; if ($attended): ?>
 						<p><a href="/your-diary/upload-track?wi=<?php echo $event->id;?>">Share GPS track</a></p>
 						<p><a href="/photos/upload-photos">Share photos</a></p>
 					<?php endif; ?>
