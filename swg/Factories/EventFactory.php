@@ -182,6 +182,10 @@ abstract class EventFactory
 			$event = $this->newEvent();
 			$row = array_shift($data);
 			$event->fromDatabase($row);
+			if (empty($event->name))
+			{
+				continue; // Reject invalid events
+			}
 			if ($this->includeAttendees)
 			{
 				$event->numAttendees = $row['attendees'];

@@ -130,30 +130,42 @@ var Event = new Class({
 		
 		displayEvent(this, container, false);
 		
-		// Add attendance checkbox for past events
-		if (canRecordAttendance && this.start < new Date())
+		if (this.alterations.cancelled)
 		{
-			var attendPara = new Element("p");
-			var attendButton = new Element("a", {
-				"class" : "attendance",
-				"href" : window.location+"?"+Object.toQueryString({
-					task : "attendance.attend",
-					evttype : this.type,
-					evtid : this.id,
-					set : (this.attendedBy ? 0 : 1)
-				}),
-				"html" : "<img src='/images/icons/"+(this.attendedBy ? "tick" : "tickbox")+".png' width='19' height='16' /> You did this"
+			var cancelledMsg = new Element("p", {
+				'class' : 'cancelled-message',
+				'html' : 'Cancelled'
 			});
-			
-			attendPara.adopt(attendButton);
-			container.getElements(".eventinfo").adopt(attendPara);
-			
-			if (this.attendedBy && this.type.toLowerCase() == "walk")
+			container.adopt(cancelledMsg);
+		}
+		else
+		{
+		
+			// Add attendance checkbox for past events
+			if (canRecordAttendance && this.start < new Date())
 			{
-				container.getElements(".eventinfo").adopt(new Element("p", {html : "<a href='/whats-on/your-diary/upload-track?wi="+this.id+"'>Share GPS track</a>"}));
-				container.getElements(".eventinfo").adopt(new Element("p", {html : "<a href='/photos/upload-photos'>Share photos</a>"}));
+				var attendPara = new Element("p");
+				var attendButton = new Element("a", {
+					"class" : "attendance",
+					"href" : window.location+"?"+Object.toQueryString({
+						task : "attendance.attend",
+						evttype : this.type,
+						evtid : this.id,
+						set : (this.attendedBy[userID] ? 0 : 1)
+					}),
+					"html" : "<img src='/images/icons/"+(this.attendedBy[userID] ? "tick" : "tickbox")+".png' width='19' height='16' /> You did this"
+				});
+				
+				attendPara.adopt(attendButton);
+				container.getElements(".eventinfo").adopt(attendPara);
+				
+				if (this.attendedBy[userID] && this.type.toLowerCase() == "walk")
+				{
+					container.getElements(".eventinfo").adopt(new Element("p", {html : "<a href='/whats-on/your-diary/upload-track?wi="+this.id+"'>Share GPS track</a>"}));
+					container.getElements(".eventinfo").adopt(new Element("p", {html : "<a href='/photos/upload-photos'>Share photos</a>"}));
+				}
+				
 			}
-			
 		}
 		
 		// Move extra stuff
