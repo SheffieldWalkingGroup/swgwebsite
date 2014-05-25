@@ -151,6 +151,23 @@ class SWG {
 		}
 		return $session->get("facebook");
 	}
+	
+	/**
+	 * Converts a time in server local time to UTC
+	 * @param int $localtime Time in server local time
+	 * @return int Time in UTC
+	 */
+	public static function localToUTC($localtime)
+	{
+		$offset = strftime("%z", $localtime);
+		
+		$offsetSecs = (substr($offset, 1, 2) * 3600) + (substr($offset, 3, 2) * 60);
+		if (substr($offset, 0, 1) == "-")
+			$offsetSecs = $offsetSecs * -1;
+		
+		$utc = ($localtime + $offsetSecs);
+		return $utc;
+	}
 }
 
 /**
