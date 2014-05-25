@@ -18,10 +18,10 @@ class UnitConvert
 	 */
 	private static $distance = array(
 		self::Metre		=> array('name' => "metre", 'symbol' => "m", 'factor' => 1,),
-		self::Kilometre	=> array('name' => "kilometre", 'symbol' => "km", 'factor' => 1000,),
+		self::Kilometre	=> array('name' => "kilometre", 'symbol' => "km", 'factor' => 1000,'format' => ".0f"),
 		self::Mile			=> array('name' => "mile", 'symbol' => 'mi', 'factor' => 1609.34,),
-		self::Brontosaurus	=> array('name' => "brontosaurus", 'symbol' => "br", 'factor' => 138.2851, 'pluralname' => "brontosauruses",),
-		self::Tram			=> array('name' => "supertram", 'symbol' => "tram", "factor" => 34.8,),
+		self::Brontosaurus	=> array('name' => "brontosaurus", 'symbol' => "br", 'factor' => 138.2851, 'pluralname' => "brontosauruses",'format' => ".0f"),
+		self::Tram			=> array('name' => "supertram", 'symbol' => "tram", "factor" => 34.8,'format' => ".0f"),
 		self::London	=> array('name' => "time to London", 'symbol' => "London", 'factor' => 228018, 'pluralname' => "times to London",'format' => ".2f"),
 		self::World		=> array('name' => "time round the world", 'symbol' => "C♁", 'factor' => 4e7, 'pluralname' => "times round the world", 'format' => ".3f"),
 	);
