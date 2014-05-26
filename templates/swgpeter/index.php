@@ -39,6 +39,7 @@
 				</div>
             </nav>
             <div class="main <?php echo $currentPage->alias; ?>">
+				<h1 class="mobile mobile-header">Sheffield Walking Group</h1>
                 
                 <jdoc:include type="modules" name="top" style="xhtml" />
                 

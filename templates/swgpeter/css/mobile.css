@@ -28,12 +28,19 @@ nav
 	left:0;
 	right:0;
 	width:inherit;
-	height:62px;
+	height:auto;
 	background-color:#c7d6df;
 	z-index:20;
 }
 
-.moduletable_menu h3
+.logo img
+{
+	width:157px;
+	height:48px;
+}
+
+.moduletable_menu h3,
+nav h3
 {
 	display:none;
 }
@@ -54,7 +61,7 @@ nav
 	
 }
 
-/* TODO: Remove from nav */
+/* Remove from nav */
 nav .whoarewe
 {
 	display:none;
@@ -88,7 +95,7 @@ nav .menu li.current>a
 {
 	display:none;
 	position:absolute;
-	top:50px;
+	top:45px;
 	right:0px;
 	left:0px;
 }
@@ -99,17 +106,17 @@ nav.open .menu-wrap
 	z-index:100;
 }
 
-.menu-button
+body .menu-button
 {
 	display:inline;
-	font-size:4em;
+	font-size:3.4em;
 	text-indent:-4000px;
 	overflow:hidden;
 	color:#000;
 	padding:0;
 	float:right;
-	width:50px;
-	height:60px;
+	width:42px;
+	height:48px;
 	text-align:center;
 	background-color:#fff;
 	border:1px solid #555;
@@ -143,7 +150,7 @@ nav .menu-tab-join
 {
 	display:inline;
 	content:"";
-	width:56px;
+	width:48px;
 	border-right:1px solid #555;
 	height:6px;
 	position:absolute;
@@ -158,7 +165,7 @@ nav .menu-tab-join:after
 	width:50%;
 	height:5px;
 	position:absolute;
-	right:48px;
+	right:40px;
 	top:0px;
 	content:"";
 	z-index:2;
@@ -185,20 +192,75 @@ nav .moduletable_menu
 
 div.slideshow
 {
+	margin:0;
+}
+
+div.slideshow,
+div.slideshow div,
+div.slideshow div.bs_inside /* Override */
+{
 	width:100%;
 }
 
-.slideshow h1
+.home .slideshow h1,
+.home .slideshow h2,
+.home div.intro,
+.home .boxes
 {
-	font-size:180%;
-	top:4px;
+	display:none;
 }
 
-.slideshow h2
+.main .slideshow h1
 {
-	font-size:150%;
-	top:28px;
-	left:30px;
+	display:none;
+}
+ 
+.main .slideshow h2
+{
+	font-size:1.6em;
+	top:4px;
+	left:20px;
+}
+
+body .mobile-header
+{
+	display:block;
+	margin-bottom:0;
+}
+
+h1
+{
+	background:linear-gradient(90deg, rgba(155, 182, 124, 0), #9BB67C 12.5%, #9BB67C 87.5%, rgba(155, 182, 124, 0)) repeat scroll 0 0 rgba(0, 0, 0, 0);
+	margin:0;
+	border-color:#555;
+	border-style:solid;
+	border-width:1px 0;
+	padding:6px;
+	font-size:1.8em;
+}
+
+.home h1
+{
+	text-align:center;
+	font-size:2.4em; /* Larger font on homepage - fills width */
+	padding:6px 0;
+}
+
+.home h2
+{
+	background:linear-gradient(90deg, rgba(155, 182, 124, 0), #9BB67C 12.5%, #9BB67C 87.5%, rgba(155, 182, 124, 0)) repeat scroll 0 0 rgba(0, 0, 0, 0);
+	margin:0;
+	padding:6px;
+	font-size:1.2em;
+	border-color:#555;
+	border-style:solid;
+	border-width:0 0 1px 0;
+}
+
+.home .mobile-home-text
+{
+	display:block;
+	margin-top:0;
 }
 
 .closable
@@ -208,18 +270,7 @@ div.slideshow
 
 div.main
 {
-	margin: 50px 0 0 0;
-}
-
-.moduletableslideshow
-{
-	display:none;
-}
-
-nav .moduletable h3,
-.boxes .box h3
-{
-	background-image: linear-gradient(to right, rgba(155,182,124,0.01), rgba(155,182,124,1) 38%, rgba(155,182,124,1) 62%, rgba(155,182,124,0.01));
+	margin: 55px 0 0 0;
 }
 
 .event
@@ -306,6 +357,7 @@ footer
 {
 	clear:both;
 	margin:0 !important;
+	padding-top:12px;
 }
 footer div.wrap
 {

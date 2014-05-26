@@ -101,11 +101,12 @@ var Mobile = new Class({
 	start: function()
 	{
 		// Prevent slideshow images from loading
-		var imgs = document.body.getElements('.slideshow .besps_slides img');
+		// TODO: Can't do this before the slides have already loaded. Will find another way - maybe write a custom slideshow.
+		/*var imgs = document.body.getElements('.slideshow .besps_slides img');
 		for (var i=0; i<imgs.length; i++)
 		{
 			imgs[i].erase('src');
-		}
+		}*/
 		
 		this.mobile = true;
 		
@@ -158,6 +159,24 @@ var Mobile = new Class({
 		{
 			banner.setStyle("height", banner.offsetWidth * 0.3368);
 		}
+		// Resize the slideshow images
+		var slideshowDivs = document.body.getElements(".home .slideshow div");
+		if (slideshowDivs.length != 0)
+		{
+			var height = slideshowDivs[0].offsetWidth * (2/3);
+			for (var i=0;i<slideshowDivs.length;i++)
+			{
+				if (!slideshowDivs[i].hasClass("bs_inside"))
+					slideshowDivs[i].setStyle("height", height);
+			}
+			
+			var slideshowImgs = document.body.getElements(".slideshow .besps_slides img");
+			for (var i=0; i<slideshowImgs.length; i++)
+			{
+				slideshowImgs[i].setStyle("width", slideshowDivs[0].width);
+				slideshowImgs[i].setStyle("height", height);
+			}
+		}
 		
 		// Make any suitable text boxes expandable
 		var textBoxHeadings = document.body.getElements(".moduletable h3:first-of-type");
@@ -165,7 +184,8 @@ var Mobile = new Class({
 		{
 			var heading = textBoxHeadings[i];
 			var box = heading.getParent(".moduletable");
-			this.setupFolding(box, heading);
+			if (!box.hasClass("keep-open"))
+				this.setupFolding(box, heading);
 		}
 		
 		// Modify events
