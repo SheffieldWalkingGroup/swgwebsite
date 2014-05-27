@@ -60,35 +60,35 @@ private $track;
 * @var array
 */
 public $dbmappings = array(
-	'name'		=> 'name',
-	'walkid'		=> 'walklibraryid',
-	'distanceGrade'	=> 'distancegrade',
+	'name'				=> 'name',
+	'walkid'			=> 'walklibraryid',
+	'distanceGrade'		=> 'distancegrade',
 	'difficultyGrade'	=> 'difficultygrade',
-	'miles'          => 'miles',
-	'location'       => 'location',
-	'isLinear'       => 'islinear',
-	'startGridRef'   => 'startgridref',
-	'startPlaceName' => 'startplacename',
-	'endGridRef'     => 'endgridref',
-	'endPlaceName'   => 'endplacename',
-	'description'    => 'routedescription',
-	'childFriendly'  => 'childfriendly',
-	'dogFriendly'    => 'dogfriendly',
-	'speedy'		=> 'speedy',
-	'challenge'	=> 'challenge',
+	'miles'				=> 'miles',
+	'location'			=> 'location',
+	'isLinear'			=> 'islinear',
+	'startGridRef'		=> 'startgridref',
+	'startPlaceName'	=> 'startplacename',
+	'endGridRef'		=> 'endgridref',
+	'endPlaceName'		=> 'endplacename',
+	'description'		=> 'routedescription',
+	'childFriendly'		=> 'childfriendly',
+	'dogFriendly'		=> 'dogfriendly',
+	'speedy'			=> 'speedy',
+	'challenge'			=> 'challenge',
 	
-	'leaderId'	=> 'leaderid',
-	'leaderName'	=> 'leadername',
-	'backmarkerId'	=> 'backmarkerid',
-	'backmarkerName'=> 'backmarkername',
-	'meetPointId'	=> 'meetplace',
-	'meetPlaceTime' => 'meetplacetime',
+	'leaderId'			=> 'leaderid',
+	'leaderName'		=> 'leadername',
+	'backmarkerId'		=> 'backmarkerid',
+	'backmarkerName'	=> 'backmarkername',
+	'meetPointId'		=> 'meetplace',
+	'meetPlaceTime' 	=> 'meetplacetime',
 	
-	'okToPublish'	=> 'readytopublish',
-	'routeVisibility'=> 'routevisibility',
+	'okToPublish'		=> 'readytopublish',
+	'routeVisibility'	=> 'routevisibility',
 	
-	'headCount'		=> 'headcount',
-	'distance'		=> 'distance',
+	'headCount'			=> 'headcount',
+	'distance'			=> 'distance',
 	
 	// TODO: Headcount, mileometer...
 );
@@ -219,10 +219,11 @@ public function toDatabase(JDatabaseQuery &$query)
 			'endGridRef'	=> $this->endGridRef,
 			'endPlaceName'	=> $this->endPlaceName,
 			
-			'childfriendly'	=> $this->childFriendly,
-			'dogfriendly'	=> $this->dogFriendly,
+			'childFriendly'	=> $this->childFriendly,
+			'dogFriendly'	=> $this->dogFriendly,
 			'speedy'		=> $this->speedy,
 			'isLinear'		=> $this->isLinear,
+			'challenge'		=> $this->challenge,
 			
 			'leaderid'		=> $this->leaderId,
 			'leadername'	=> $this->leaderName,
@@ -260,6 +261,10 @@ public function toDatabase(JDatabaseQuery &$query)
 			if (!empty($tracks))
 				$values['trackid'] = $tracks[0]->id;
 		}
+		
+echo "<pre>";
+print_r($values);
+echo "</pre>";
 		
 			
 		return $values;
@@ -383,6 +388,8 @@ public function toDatabase(JDatabaseQuery &$query)
 			case "isLinear":
 			case "dogFriendly":
 			case "childFriendly":
+			case "speedy":
+			case "challenge":
 				$this->$name = (bool)$value;
 				break;
 			// More specific processing
