@@ -282,6 +282,7 @@ div.main
 {
 	width:auto;
 	margin-bottom:0;
+	float:none;
 }
 
 .event .eventheader::after
@@ -330,6 +331,11 @@ div.main
 	margin-right:20px;
 }
 
+.eventbody
+{
+	padding-bottom:10px;
+}
+
 .event .map-container
 {
 	padding: 0 10px 20px;
@@ -346,6 +352,12 @@ div.main
 	width:0;
 	height:0;
 	overflow:hidden;
+}
+
+.event .detail-link
+{
+	left:10px;
+	font-size:0.9em;
 }
 
 .olFramedCloudPopupContent

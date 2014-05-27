@@ -795,7 +795,7 @@ nav .moduletable h3,
 
 .walksaturday,
 .precontent .moduletable, 
-.postcontent .moduletable,
+.postcontent .moduletable
 {
     background:linear-gradient( 90deg, rgba(155,182,124,0), rgba(155,182,124,0.38) 8%, rgba(155,182,124,0.38) 92%, rgba(155,182,124,0) );
 }
