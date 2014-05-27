@@ -300,6 +300,10 @@ var Mobile = new Class({
 		
 		// Set up folding
 		this.setupFolding(container, container.getElement(".eventheader"));
+		
+		// Remove the link in the header
+		var header = container.getElement("h3");
+		header.set("text", header.get("text"));
 	}
 });
 

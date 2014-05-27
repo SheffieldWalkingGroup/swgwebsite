@@ -9,7 +9,7 @@ include JPATH_SITE."/components/com_swg_events/helpers/tmpl/eventinfo.php";
 
 ?>
 <!-- TODO: Must have at least 1 attendee - the organiser. Backmarker as well if set -->
-<h3><?php if ($event->numAttendees == 0):?>No-one<?php elseif ($event->numAttendees == 1):?>1 Person<?php else: echo $event->numAttendees;?>People<?php endif; ?> Did This</h3>
+<h3><?php if ($event->numAttendees == 0):?>No-one<?php elseif ($event->numAttendees == 1):?>1 Person<?php else: echo $event->numAttendees;?>People<?php endif; ?> logged this in their diary</h3>
 <?php if ($event->numAttendees > 0):?>
 <ul class="event-attendance">
 	

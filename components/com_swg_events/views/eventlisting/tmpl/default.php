@@ -12,8 +12,9 @@ if ($this->showAnyAddLinks()):?>
 	</p>
 <?php endif;
 foreach ($this->events as $event):?>
-	<?php include JPATH_SITE."/components/com_swg_events/helpers/tmpl/eventinfo.php"; ?>
-	<?php
+	<?php 
+		$detailLink = "/event?type=".$event->type."&amp;id=".$event->id;
+		include JPATH_SITE."/components/com_swg_events/helpers/tmpl/eventinfo.php";
 		// Display any relevant protocol reminders after each event
 		if (!empty($this->protocolReminders) && is_array($this->protocolReminders))
 		{
