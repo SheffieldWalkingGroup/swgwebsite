@@ -343,15 +343,15 @@ public function toDatabase(JDatabaseQuery &$query)
 		{
 			case "meetPoint":
 			case "meetPointId":
-				return (isset($this->meetPoint) || isset($this->meetPointId));
+				return (isset($this->meetPoint) || (isset($this->meetPointId) && $this->meetPointId != 0));
 				break;
 			case "leader":
 			case "leaderId":
-				return (isset($this->leader) || isset($this->leaderId));
+				return (isset($this->leader) || (isset($this->leaderId) && $this->leaderId != 0));
 				break;
 			case "backmarker":
 			case "backmarkerId":
-				return (isset($this->backmarker) || isset($this->backmarkerId));
+				return (isset($this->backmarker) || (isset($this->backmarkerId) && $this->backmarkerId != 0));
 				break;
 			case "track":
 				return (isset($this->track));
