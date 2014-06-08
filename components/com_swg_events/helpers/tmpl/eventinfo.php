@@ -13,12 +13,15 @@
 		<?php 
 			if ($event instanceof Weekend)
 			// Display start and end dates for weekends. Only display month for start if the weekend straddles a month boundary
-			echo date("l jS".($this->notSameMonth($event->start, $event->endDate)?" F":""), $event->start)." - ".date("l jS F".($this->notThisYear($event->endDate)?" Y":""), $event->endDate); 
+			echo date("l jS".($this->notSameMonth($event->start, $event->endDate)?" F":""), $event->start); 
 			else
 			echo date("l jS F".($this->notThisYear($event->start)?" Y":""),$event->start); // Just start date for other things
 		?>
 		</time>
-		<?php if ($event instanceof WalkInstance):?>
+		<?php if ($event instanceof Weekend):?>
+			<span class="date">&nbsp;-&nbsp;</span>
+			<time datetime="<?php echo date("Y-m-d", $event->endDate+86399 /* End at 23:59 */);?>" class="dtend date"><?php echo date("l jS F".($this->notThisYear($event->endDate)?" Y":""), $event->endDate);?></time>
+		<?php elseif ($event instanceof WalkInstance):?>
 			<p class="headerextra">
 				<span class="rating">
 					<?php echo $event->distanceGrade.$event->difficultyGrade;?>
@@ -38,8 +41,10 @@
 					echo UnitConvert::DisplayDistance($inDist,$inUnit, UnitConvert::Mile)."<span class='unit2'>, ".UnitConvert::DisplayDistance($inDist, $inUnit, UnitConvert::Kilometre)."</span>";
 					?>)
 			</p>
+			<time datetime="<?php echo date("H:iO", $event->estimateFinishTime());?>" class="dtend date"></time>
+		<?php elseif ($event instanceof Social): ?>
+			<time datetime="<?php echo date("H:iO", $event->end);?>" class="dtend date"></time>
 		<?php endif;?>
-		<time datetime="<?php if (!$event instanceof Weekend) echo date("H:iO", ($event instanceof WalkInstance ? $event->estimateFinishTime() : $event->end)); else echo date("Y-m-d", $event->endDate+86400 /* Must end at midnight the next day */);?>" class="dtend"></time>
 		<h3 class="summary"><?php echo (!empty($detailLink) ? "<a href='{$detailLink}'>{$event->name}</a>" : $event->name); ?></h3>
 	</div>
 	<div class="eventbody">
