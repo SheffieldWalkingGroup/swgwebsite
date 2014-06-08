@@ -41,6 +41,7 @@ var Event = new Class({
 	 */
 	populateFromHTML : function(container)
 	{
+		this.alterations = {any: false, cancelled: false, placeTime: false, organiser: false, details: false, date: false};
 		this.container = container;
 		this.htmlBody = container.getElement(".eventbody");
 		
@@ -48,8 +49,14 @@ var Event = new Class({
 	    this.id   = container.id.substring(container.id.indexOf("_")+1);
 		
 		this.name = container.getElement(".summary").get("text");
-		var startTime = container.getElement(".dtstart").getProperty("datetime");
-		this.start = new Date(startTime);
+		var start = container.getElement(".dtstart");
+		if (start.hasClass("altered"))
+		{
+			this.alterations.date = true;
+			this.alterations.any = true;
+		}
+		var startTime = start.getProperty("datetime")
+		this.start = new Date(startTime); // TODO iPhone
 		
 		var attendedChk = container.getElement(".attendance img");
 		if (attendedChk != null) // No box for cancelled events
@@ -79,6 +86,37 @@ var Event = new Class({
 			if (telEl)
 				this.organiser.telephone = telEl.innerHTML;
 			this.organiser.noContactOfficeHours = organiserBits.hasClass("noContactOfficeHours");
+			
+			if (organiserBits.parentNode.hasClass("altered"))
+			{
+				this.alterations.organiser = true;
+				this.alterations.any = true;
+			}
+			
+			if (this.htmlBody.getElement(".transport").hasClass("altered"))
+			{
+				this.alterations.placeTime = true;
+				this.alterations.any = true;
+			}
+		}
+		else if (this.type == "weekend")
+		{
+			if (this.htmlBody.getElement("weekendbooking") && this.htmlBody.getElement("weekendbooking").hasClass("altered"))
+			{
+				this.alterations.organiser = true;
+				this.alterations.any = true;
+			}
+		}
+		else if (this.type == "social")
+		{
+			if (
+				(this.htmlBody.getElement("start") && this.htmlBody.getElement("start").hasClass("altered")) || 
+				(this.htmlBody.getElement("location") && this.htmlBody.getElement("location").hasClass("altered"))
+			)
+			{
+				this.alterations.placeTime = true;
+				this.alterations.any = true;
+			}
 		}
 		
 		// End time might be a full date, or just a time on the start date
@@ -88,6 +126,20 @@ var Event = new Class({
 			var endTime = startTime.substring(0, 10) + "T" + endTime;
 		}
 		this.end = new Date(endTime);
+		
+		// Look for remaining alterations
+		
+		if (container.getElement(".content").hasClass("cancelled"))
+		{
+			this.alterations.cancelled = true;
+			this.alterations.any = true;
+		}
+		
+		if (this.htmlBody.getElement(".description").hasClass("altered"))
+		{
+			this.alterations.details = true;
+			this.alterations.any = true;
+		}
 		
 		this.postWrapperSetup();
 	},
