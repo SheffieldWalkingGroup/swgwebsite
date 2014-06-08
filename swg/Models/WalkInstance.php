@@ -262,11 +262,6 @@ public function toDatabase(JDatabaseQuery &$query)
 				$values['trackid'] = $tracks[0]->id;
 		}
 		
-echo "<pre>";
-print_r($values);
-echo "</pre>";
-		
-			
 		return $values;
 			
 	}
