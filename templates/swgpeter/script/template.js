@@ -293,8 +293,18 @@ var Mobile = new Class({
 			leaderPara.appendChild(text);*/
 		}
 		
-		// Set up folding
-		this.setupFolding(container, container.getElement(".eventheader"));
+		
+		if (event.alterations.cancelled)
+		{
+			// Lock closed
+			container.style.height = container.getElement(".eventheader").offsetHeight+"px";
+			container.addClass("closable");
+		}
+		else
+		{
+			// Set up folding
+			this.setupFolding(container, container.getElement(".eventheader"));
+		}
 		
 		// Remove the link in the header
 		var header = container.getElement("h3");

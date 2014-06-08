@@ -281,6 +281,28 @@ div.main
 	width:100%;
 }
 
+.event .cancelled .eventheader h3
+{
+	text-decoration:line-through;
+}
+
+.event .cancelled
+{
+	opacity:0.3;
+}
+
+.event .cancelled .eventheader:after
+{
+	display:none;
+}
+
+.event .cancelled-message
+{
+	font-size:2em;
+	font-weight:bold;
+	margin-top:0.5em;
+}
+
 .event .description
 {
 	width:auto;
