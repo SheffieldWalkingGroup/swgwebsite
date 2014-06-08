@@ -247,20 +247,15 @@ var Mobile = new Class({
 			var time = times[i];
 			if (time.innerHTML == "")
 				continue;
-			switch (event.type)
-			{
-				case "walk":
-				case "social":
-					// Single date, reasonably verbose
-					var date = new Date(time.get("datetime"));
-					time.innerHTML = displayDate(date);
-					break;
-				case "weekend":
-					// 2 dates, shorter
-					// TODO: Don't like the different style. Should just be "25 Apr".
-					var date = new Date(time.get("datetime"));
-					time.innerHTML = shortDate(date);
-			}
+			// iPhone Safari is shit and can't parse dates
+			var datestring = time.get("datetime");
+			var datearr = datestring.split(/[- :T+]/);
+			if (datearr[3] == undefined)
+				datearr[3] = 0;
+			if (datearr[4] == undefined)
+				datearr[4] = 0;
+			var date = new Date(datearr[0], datearr[1]-1, datearr[2], datearr[3], datearr[4]);
+			time.innerHTML = displayDate(date);
 			
 		}
 		

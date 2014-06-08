@@ -217,9 +217,11 @@ div.slideshow div.bs_inside /* Override */
  
 .main .slideshow h2
 {
-	font-size:1.6em;
+	font-size:1.5em;
 	top:4px;
-	left:20px;
+	left:15px;
+	max-width:323px;
+	white-space:normal;
 }
 
 body .mobile-header
@@ -242,7 +244,7 @@ h1
 .home h1
 {
 	text-align:center;
-	font-size:2.4em; /* Larger font on homepage - fills width */
+	font-size:2.3em; /* Larger font on homepage - fills width */
 	padding:6px 0;
 }
 
@@ -251,7 +253,8 @@ h1
 	background:linear-gradient(90deg, rgba(155, 182, 124, 0), #9BB67C 12.5%, #9BB67C 87.5%, rgba(155, 182, 124, 0)) repeat scroll 0 0 rgba(0, 0, 0, 0);
 	margin:0;
 	padding:6px;
-	font-size:1.2em;
+	font-size:1.18em;
+	text-align:center;
 	border-color:#555;
 	border-style:solid;
 	border-width:0 0 1px 0;
@@ -306,6 +309,12 @@ div.main
 {
 	font-size:10px;
 	margin-top:-2px;
+}
+
+.eventheader .dtend
+{
+	clear:left;
+	padding-top:3px;
 }
 
 .eventheader .headerextra
