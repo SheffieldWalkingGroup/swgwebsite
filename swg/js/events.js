@@ -93,7 +93,7 @@ var Event = new Class({
 				this.alterations.any = true;
 			}
 			
-			if (this.htmlBody.getElement(".transport").hasClass("altered"))
+			if (this.htmlBody.getElement(".transport") && this.htmlBody.getElement(".transport").hasClass("altered"))
 			{
 				this.alterations.placeTime = true;
 				this.alterations.any = true;
