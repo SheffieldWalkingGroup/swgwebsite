@@ -30,45 +30,48 @@ class SWG_EventsModelEventlisting extends JModelItem
 	private $weekends;
 	private $numWeekends;
 	
+	private $startDate;
+	private $endDate;
+	
 	function __construct()
 	{
-	  $walks = array();
-	  $socials = array();
-	  $weekends = array();
-	  
-	  parent::__construct();
+		$walks = array();
+		$socials = array();
+		$weekends = array();
+		
+		parent::__construct();
 	}
 	
 	public function getProtocolReminders()
 	{
-	  $pr = array();
-	  
-	  $db = JFactory::getDBO();
-	  $query = $db->getQuery(true);
-	  $query->select("*");
-	  $query->from("#__swg_events_protocolreminders");
-	  
-	  // Filter reminders to those for events on this page, e.g. only show walk reminders if there are walks on the page
-	  $types = array();
-	  if (JRequest::getBool("includeWalks"))
-	    $types[] = "eventtype = ".SWG::EventType_Walk;
-	  if (JRequest::getBool("includeSocials"))
-	    $types[] = "eventtype = ".SWG::EventType_Social;
-	  if (JRequest::getBool("includeWeekends"))
-	    $types[] = "eventtype = ".SWG::EventType_Weekend;
-	  $query->where($types, "OR");
-	  
-	  $query->order(array("Ordering ASC", "RAND()"));
-	  $db->setQuery($query);
-	  $protocolData = $db->loadAssocList();
-	  
-	  // Build an array of reminders
-	  while (count($protocolData)) {
-	    $thisProtocol = array_shift($protocolData);
-	    $pr[] = $thisProtocol;
-	  }
-	  
-	  return $pr;
+		$pr = array();
+		
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select("*");
+		$query->from("#__swg_events_protocolreminders");
+		
+		// Filter reminders to those for events on this page, e.g. only show walk reminders if there are walks on the page
+		$types = array();
+		if (JRequest::getBool("includeWalks"))
+			$types[] = "eventtype = ".SWG::EventType_Walk;
+		if (JRequest::getBool("includeSocials"))
+			$types[] = "eventtype = ".SWG::EventType_Social;
+		if (JRequest::getBool("includeWeekends"))
+			$types[] = "eventtype = ".SWG::EventType_Weekend;
+		$query->where($types, "OR");
+		
+		$query->order(array("Ordering ASC", "RAND()"));
+		$db->setQuery($query);
+		$protocolData = $db->loadAssocList();
+		
+		// Build an array of reminders
+		while (count($protocolData)) {
+			$thisProtocol = array_shift($protocolData);
+			$pr[] = $thisProtocol;
+		}
+		
+		return $pr;
 	}
 	
 	public function getApiParams()
@@ -111,68 +114,78 @@ class SWG_EventsModelEventlisting extends JModelItem
 	 */
 	public function getEvents()
 	{
-	  // If we haven't already loaded the events, do so
-	  if (!$this->loadedEvents) {
-	    if (JRequest::getBool("includeWalks"))
-	      $this->loadEvents(SWG::EventType_Walk);
-	    if (JRequest::getBool("includeSocials"))
-	      $this->loadEvents(SWG::EventType_Social);
-	    if (JRequest::getBool("includeWeekends"))
-	      $this->loadEvents(SWG::EventType_Weekend);
-	    $this->loadedEvents = true;
-	  }
-	  
-	  /* 
-	   * Go through all lists in date order (oldest first).
-	   * If there are multiple events on a given day,
-	   * the order is Weekend, walk, social.
-	   * This is based on the likely order that events will occur
-	   * in reality.
-	   * We maintain a set of dates of the next event seen,
-	   * so can skip dates with no events.
-	   */
-	  if (count($this->walks) == 0 && count($this->socials) == 0 && count($this->weekends) == 0)
-	    // no point in continuing
-	    return array();
-	  
-	  // The pointers are needed anyway to simplify loops below
-	  $walkPointer = 0;
-	  $socialPointer = 0;
-	  $weekendPointer = 0;
-	  	  
-	  $nextEvent = null;
-	  $events = array();
-	  do {
-	    $nextEvent = $this->nextEvent($nextEvent, $walkPointer, $socialPointer, $weekendPointer, (JRequest::getBool("order")));
-	    
-	    // Increment the pointer for this event type
-	    // TODO: Pointer could be an array with event type as keys
-	    if ($nextEvent instanceof WalkInstance)
-	    {
-			$walkPointer++;
+		// If we haven't already loaded the events, do so
+		if (!$this->loadedEvents) {
+			if (JRequest::getBool("includeWalks"))
+				$this->loadEvents(SWG::EventType_Walk);
+			if (JRequest::getBool("includeSocials"))
+				$this->loadEvents(SWG::EventType_Social);
+			if (JRequest::getBool("includeWeekends"))
+				$this->loadEvents(SWG::EventType_Weekend);
+			$this->loadedEvents = true;
 		}
-	    else if ($nextEvent instanceof Social)
-	    {
-			$socialPointer++;
-		}
-	    else if ($nextEvent instanceof Weekend)
-	    {
-			$weekendPointer++;
-		}
-	    else 
-			// Unknown event - probably run out: stop looping and don't add it to the list
-			break;
-	    
-	    $events[] = $nextEvent;
-	     
-	  } while (
-	    count($events) < 100 && (
-          (count($this->walks) > $walkPointer) || 
-          (count($this->socials) > $socialPointer) || 
-          (count($this->weekends) > $weekendPointer)
-      ));
+		
+		/*
+		* TODO: Find dates with no walks (if enabled):
+		* 1. Get the start date of the current page
+		* 2. Get all dates in the walks programme table. If this page is only showing a specific programme, only get those dates. Don't include dates from a special programme unless we're showing that programme.
+		* 3. Get the date of each walk. Cross off that date from the list of dates
+		* 4. Add your walk here messages
+		* 5. Explain to committee why manually created messages are BAD
+		* 6. Clean up all manually created messages
+		*/
+		
+		/* 
+		* Go through all lists in date order (oldest first).
+		* If there are multiple events on a given day,
+		* the order is Weekend, walk, social.
+		* This is based on the likely order that events will occur
+		* in reality.
+		* We maintain a set of dates of the next event seen,
+		* so can skip dates with no events.
+		*/
+		if (count($this->walks) == 0 && count($this->socials) == 0 && count($this->weekends) == 0)
+			// no point in continuing
+			return array();
 	  
-	  return $events;
+		// The pointers are needed anyway to simplify loops below
+		$walkPointer = 0;
+		$socialPointer = 0;
+		$weekendPointer = 0;
+		
+		$nextEvent = null;
+		$events = array();
+		do {
+			$nextEvent = $this->nextEvent($nextEvent, $walkPointer, $socialPointer, $weekendPointer, (JRequest::getBool("order")));
+			
+			// Increment the pointer for this event type
+			// TODO: Pointer could be an array with event type as keys
+			if ($nextEvent instanceof WalkInstance)
+			{
+				$walkPointer++;
+			}
+			else if ($nextEvent instanceof Social)
+			{
+				$socialPointer++;
+			}
+			else if ($nextEvent instanceof Weekend)
+			{
+				$weekendPointer++;
+			}
+			else 
+				// Unknown event - probably run out: stop looping and don't add it to the list
+				break;
+			
+			$events[] = $nextEvent;
+			
+		} while (
+			count($events) < 100 && (
+			(count($this->walks) > $walkPointer) || 
+			(count($this->socials) > $socialPointer) || 
+			(count($this->weekends) > $weekendPointer)
+		));
+		
+		return $events;
 	}
 	
 	/**
@@ -189,59 +202,59 @@ class SWG_EventsModelEventlisting extends JModelItem
 		$nextSocial = $this->nextEventByType($prevEvent, $this->socials, $minSocial,$reverse);
 		$nextWeekend = $this->nextEventByType($prevEvent, $this->weekends, $minWeekend,$reverse);
 		
-	  // Now find whether a walk, a social or a weekend is the next event
-	  // If two are equal, put walks first, then socials, then weekends.
-	  // Two events of the same type will go in the order they are in the database
-	  // First, try to match all three
-	  if (isset($nextWalk,$nextSocial,$nextWeekend))
-	  {
-		if ($reverse)
-			$start = max($nextWalk->start, $nextSocial->start, $nextWeekend->start);
+		// Now find whether a walk, a social or a weekend is the next event
+		// If two are equal, put walks first, then socials, then weekends.
+		// Two events of the same type will go in the order they are in the database
+		// First, try to match all three
+		if (isset($nextWalk,$nextSocial,$nextWeekend))
+		{
+			if ($reverse)
+				$start = max($nextWalk->start, $nextSocial->start, $nextWeekend->start);
+			else
+				$start = min($nextWalk->start, $nextSocial->start, $nextWeekend->start);
+		}
+		// Now, match any two
+		elseif (isset($nextWalk, $nextSocial))
+		{
+			if ($reverse)
+				$start = max($nextWalk->start, $nextSocial->start);
+			else
+				$start = min($nextWalk->start, $nextSocial->start);
+		}
+		else if (isset($nextWalk, $nextWeekend))
+		{
+			if ($reverse)
+				$start = max($nextWalk->start, $nextWeekend->start);
+			else
+				$start = min($nextWalk->start, $nextWeekend->start);
+		}
+		else if (isset($nextSocial, $nextWeekend))
+		{
+			if ($reverse)
+				$start = max($nextSocial->start, $nextWeekend->start);
+			else
+				$start = min($nextSocial->start, $nextWeekend->start);
+		}
+		// We only have one - return that straight away without bothering to go to the next step
+		else if (isset($nextWalk))
+			return $nextWalk;
+		else if (isset($nextSocial))
+			return $nextSocial;
+		else if (isset($nextWeekend))
+			return $nextWeekend;
+		// Nothing...
 		else
-			$start = min($nextWalk->start, $nextSocial->start, $nextWeekend->start);
-	  }
-	  // Now, match any two
-	  elseif (isset($nextWalk, $nextSocial))
-	  {
-		if ($reverse)
-			$start = max($nextWalk->start, $nextSocial->start);
+			return null;
+		
+		// If we get here, we found multiple possible events. Check which one it was and return it
+		if (isset($nextWalk) && $nextWalk->start == $start)
+			return $nextWalk;
+		else if (isset($nextSocial) && $nextSocial->start == $start)
+			return $nextSocial;
+		else if (isset($nextWeekend))
+			return $nextWeekend;
 		else
-			$start = min($nextWalk->start, $nextSocial->start);
-	  }
-	  else if (isset($nextWalk, $nextWeekend))
-	  {
-		if ($reverse)
-			$start = max($nextWalk->start, $nextWeekend->start);
-		else
-			$start = min($nextWalk->start, $nextWeekend->start);
-	  }
-	  else if (isset($nextSocial, $nextWeekend))
-	  {
-		if ($reverse)
-			$start = max($nextSocial->start, $nextWeekend->start);
-		else
-			$start = min($nextSocial->start, $nextWeekend->start);
-	  }
-	  // We only have one - return that straight away without bothering to go to the next step
-	  else if (isset($nextWalk))
-	    return $nextWalk;
-	  else if (isset($nextSocial))
-	    return $nextSocial;
-	  else if (isset($nextWeekend))
-	    return $nextWeekend;
-	  // Nothing...
-	  else
-	    return null;
-	  
-	  // If we get here, we found multiple possible events. Check which one it was and return it
-	  if (isset($nextWalk) && $nextWalk->start == $start)
-	    return $nextWalk;
-	  else if (isset($nextSocial) && $nextSocial->start == $start)
-	    return $nextSocial;
-	  else if (isset($nextWeekend))
-	    return $nextWeekend;
-	  else
-	    return null;
+			return null;
 	}
 	
 	/**
@@ -289,8 +302,8 @@ class SWG_EventsModelEventlisting extends JModelItem
 	{
 		// Get the parameters set
 		$factory = SWG::eventFactory($eventType);
-		$startDate = $this->paramDateToValue(JRequest::getInt("startDateType"), JRequest::getString("startDateSpecify"));
-		$endDate = $this->paramDateToValue(JRequest::getInt("endDateType"), JRequest::getString("endDateSpecify"));
+		$this->startDate = $this->paramDateToValue(JRequest::getInt("startDateType"), JRequest::getString("startDateSpecify"));
+		$this->endDate = $this->paramDateToValue(JRequest::getInt("endDateType"), JRequest::getString("endDateSpecify"));
 		
 		$factory->reset();
 		
@@ -322,8 +335,8 @@ class SWG_EventsModelEventlisting extends JModelItem
 		}
 		
 		// Set standard/shared factory parameters
-		$factory->startDate = $startDate;
-		$factory->endDate = $endDate;
+		$factory->startDate = $this->startDate;
+		$factory->endDate = $this->endDate;
 		$factory->limit = 100;
 		$factory->offset = JRequest::getInt("offset",0);
 		$factory->reverse = JRequest::getBool("order");
@@ -361,22 +374,22 @@ class SWG_EventsModelEventlisting extends JModelItem
 	 * @param String $specifiedDate Specified date (pass 5 for dateType to use this)
 	 */
 	private function paramDateToValue($dateType, $specifiedDate="") {
-	  switch ($dateType) {
-	    case 0: // The beginning
-	      return 0;
-	    case 1: // Yesterday
-	      return Event::DateYesterday;
-	    case 2: // Today
-	      return Event::DateToday;
-	    case 3: // Tomorrow
-	      return Event::DateTomorrow;
-	    case 4: // The end
-	      return Event::DateEnd;
-	    case 5:
-	      return strtotime($specifiedDate);
-	    default:
-		  return null;
-	  }
+		switch ($dateType) {
+			case 0: // The beginning
+				return 0;
+			case 1: // Yesterday
+				return Event::DateYesterday;
+			case 2: // Today
+				return Event::DateToday;
+			case 3: // Tomorrow
+				return Event::DateTomorrow;
+			case 4: // The end
+				return Event::DateEnd;
+			case 5:
+				return strtotime($specifiedDate);
+			default:
+				return null;
+		}
 	}
 	
 	
