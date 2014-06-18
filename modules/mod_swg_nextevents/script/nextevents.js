@@ -1,3 +1,5 @@
+(function() {
+
 /**
  * The outer wrapper around the popup
  */
@@ -479,3 +481,5 @@ if (hasLocalStorage())
 }
 var popup = document.id("walk-popup");
 //popup.set("opacity",0);
+
+})();
