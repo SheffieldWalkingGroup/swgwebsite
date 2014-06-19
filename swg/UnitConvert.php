@@ -38,7 +38,7 @@ class UnitConvert
 	 * @param int $inUnit Input units. See constants
 	 * @param int $outUnit Output units. See constants
 	 */
-	public static function Distance($input, $inUnit, $outUnit)
+	public static function distance($input, $inUnit, $outUnit)
 	{
 		if ($inUnit == $outUnit)
 			return $input;
@@ -53,14 +53,14 @@ class UnitConvert
 		return $output;
 	}
 	
-	public static function DisplayDistance($input, $inUnit, $outUnit, $abbrevUnits = true, $abbr = true)
+	public static function displayDistance($input, $inUnit, $outUnit, $abbrevUnits = true, $abbr = true)
 	{
 		if (isset(self::$distance[$outUnit]['format']))
 			$format = self::$distance[$outUnit]['format'];
 		else
 		    $format = ".1f";
 		
-		$output = self::Distance($input, $inUnit, $outUnit);
+		$output = self::distance($input, $inUnit, $outUnit);
 		
 		$unit = self::$distance[$outUnit]['name'];
 		if ($output != 1)
@@ -85,9 +85,6 @@ class UnitConvert
 		{
 			return sprintf('%1$'.$format.' %2$s', $output, $unit); // Note space
 		}
-			
-		
-		
 	}
 
 }

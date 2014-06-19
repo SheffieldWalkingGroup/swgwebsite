@@ -17,43 +17,43 @@ defined( '_JEXEC' ) or die( 'Restricted access' ); ?>
 			<tr>
 				<th scope="row">Walks done</th>
 				<?php foreach ($cols as $period): ?>
-					<td><?php echo $walks[$period]['count'].($walks[$period]['count'] ? " (".UnitConvert::DisplayDistance($walks[$period]['sum_distance'], UnitConvert::Metre, UnitConvert::Mile, false).")" : "");?></td>
+					<td id="stat_walks_<?php echo $period;?>"><?php echo $stats['walks'][$period]['count'].($stats['walks'][$period]['count'] ? " (".$stats['walks'][$period]['sum_distance'].")" : "");?></td>
 				<?php endforeach; ?>
 			</tr>
 			<tr>
-				<th scope="row"><abbr title="Day walks are those starting no later than 14:00 - i.e. not evening walks">All-day walks</abbr></th>
+				<th scope="row"><abbr title="Day walks are those starting no later than 14:00 - i.e. not evening walks. This does include morning or afternoon only walks.">Day walks</abbr></th>
 				<?php foreach ($cols as $period): ?>
-					<td><?php echo $daywalks[$period]['count'].($daywalks[$period]['count'] ? " (".UnitConvert::DisplayDistance($daywalks[$period]['sum_distance'], UnitConvert::Metre, UnitConvert::Mile, false).")" : "");?></td>
+					<td id="stat_daywalks_<?php echo $period;?>"><?php echo $stats['daywalks'][$period]['count'].($stats['daywalks'][$period]['count'] ? " (".$stats['daywalks'][$period]['sum_distance'].")" : "");?></td>
 				<?php endforeach; ?>
 			</tr>
 			<tr>
 				<th scope="row">Average walk</th>
 				<?php foreach ($cols as $period): ?>
-					<td><?php echo UnitConvert::DisplayDistance($walks[$period]['mean_distance'], UnitConvert::Metre, UnitConvert::Mile, false);?></td>
+					<td id="stat_avgwalk_<?php echo $period;?>"><?php echo $stats['walks'][$period]['mean_distance'];?></td>
 				<?php endforeach; ?>
 			</tr>
 			<tr>
 				<th scope="row">Average day walk</th>
 				<?php foreach ($cols as $period): ?>
-					<td><?php echo UnitConvert::DisplayDistance($daywalks[$period]['mean_distance'], UnitConvert::Metre, UnitConvert::Mile, false);?></td>
+					<td id="stat_avgdaywalk_<?php echo $period;?>"><?php echo $stats['daywalks'][$period]['mean_distance']; ?></td>
 				<?php endforeach; ?>
 			</tr>
 			<tr>
 				<th scope="row">Walks led</th>
 				<?php foreach ($cols as $period): ?>
-					<td><?php echo $led[$period]['count']. ($led[$period]['count'] ? " (".$led[$period]['sum_miles']." miles)" : "");?></td>
+					<td id="stat_walksled_<?php echo $period;?>"><?php echo $stats['led'][$period]['count']. ($stats['led'][$period]['count'] ? " (".$stats['led'][$period]['sum_distance'].")" : "");?></td>
 				<?php endforeach; ?>
 			</tr>
 			<tr>
 				<th scope="row">Socials attended</th>
 				<?php foreach ($cols as $period): ?>
-					<td><?php echo $socials[$period]['count'];?></td>
+					<td id="stat_socials_<?php echo $period;?>"><?php echo $stats['socials'][$period]['count'];?></td>
 				<?php endforeach ?>
 			</tr>
 			<tr>
 				<th scope="row">Weekends visited</th>
 				<?php foreach ($cols as $period): ?>
-					<td><?php echo $weekend[$period]['count'];?></td>
+					<td id="stat_weekends_<?php echo $period;?>"><?php echo $stats['weekends'][$period]['count'];?></td>
 				<?php endforeach; ?>
 			</tr>
 			

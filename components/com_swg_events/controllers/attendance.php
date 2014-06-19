@@ -80,7 +80,16 @@ class SWG_EventsControllerAttendance extends JControllerAdmin
 // 		if (strtolower(JRequest::getString("format")) == "json")
 		if (JRequest::getBool("json"))
 		{
-			echo json_encode(JRequest::getBool("set"));
+			$result = array(
+				'status' => JRequest::getBool("set"),
+			);
+			if (JRequest::getBool("stats"))
+			{
+				// TODO: Uncouple
+				include_once(JPATH_SITE."/modules/mod_swg_userstats/helper.php");
+				$result['stats'] = ModSWG_UserStatsHelper::getStats($user, UnitConvert::Mile);
+			}
+			echo json_encode($result);
 			exit();
 		}
 		else

@@ -446,7 +446,7 @@ class Route extends SWGBaseModel implements Iterator {
 		if (strftime("%F", $start->time) != strftime("%F", $w->start))
 			return false;
 		
-		$plannedDistance = UnitConvert::Distance($w->miles, UnitConvert::Mile, UnitConvert::Metre);
+		$plannedDistance = UnitConvert::distance($w->miles, UnitConvert::Mile, UnitConvert::Metre);
 		if ($this->distance < $plannedDistance * 0.5 || $this->distance > $plannedDistance * 2)
 			return false;
 		

@@ -29,7 +29,7 @@ JHtml::_('behavior.tooltip');
 <?php endif; ?>
 	
 	<?php if ($this->gotTrack):?>
-		<p>Uploaded a track with <?php echo $this->track->numWaypoints();?> waypoints (<?php echo UnitConvert::DisplayDistance($this->track->getDistance(), UnitConvert::Metre, UnitConvert::Mile) ?>).
+		<p>Uploaded a track with <?php echo $this->track->numWaypoints();?> waypoints (<?php echo UnitConvert::displayDistance($this->track->getDistance(), UnitConvert::Metre, UnitConvert::Mile) ?>).
 		Please check the route on the map, and click Save if it's OK.
 			<input name="submit" type="submit" class="submit" value="Save" />
 		</p>

@@ -13,9 +13,9 @@
 		<?php 
 			if ($event instanceof Weekend)
 			// Display start and end dates for weekends. Only display month for start if the weekend straddles a month boundary
-			echo date("l jS".($this->notSameMonth($event->start, $event->endDate)?" F":""), $event->start); 
+				echo date("l jS".($this->notSameMonth($event->start, $event->endDate)?" F":""), $event->start); 
 			else
-			echo date("l jS F".($this->notThisYear($event->start)?" Y":""),$event->start); // Just start date for other things
+				echo date("l jS F".($this->notThisYear($event->start)?" Y":""),$event->start); // Just start date for other things
 		?>
 		</time>
 		<?php if ($event instanceof Weekend):?>
@@ -38,7 +38,7 @@
 						$inDist = $event->distance;
 						$inUnit = UnitConvert::Metre;
 					}
-					echo UnitConvert::DisplayDistance($inDist,$inUnit, UnitConvert::Mile)."<span class='unit2'>, ".UnitConvert::DisplayDistance($inDist, $inUnit, UnitConvert::Kilometre)."</span>";
+					echo UnitConvert::displayDistance($inDist,$inUnit, UnitConvert::Mile)."<span class='unit2'>, ".UnitConvert::displayDistance($inDist, $inUnit, UnitConvert::Kilometre)."</span>";
 					?>)
 			</p>
 			<time datetime="<?php echo date("H:iO", $event->estimateFinishTime());?>" class="dtend date"></time>

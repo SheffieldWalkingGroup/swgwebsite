@@ -354,7 +354,7 @@ var Event = new Class({
 				var attendParams = "evttype="+type+"&evtid="+self.id+"&set="+(attended ? 1 : 0);
 				var request = new Request.JSON({
 					// TODO: Should be format=json
-					url: "?task=attendance.attend&"+attendParams+"&json=1",
+					url: "?task=attendance.attend&"+attendParams+"&json=1&stats=1",
 					onSuccess: function(data)
 					{
 						self.attended = attended;
@@ -410,7 +410,7 @@ var Event = new Class({
 						}
 						
 						// Fire an event on the document element so any modules that show this info can update
-						document.fireEvent("attendanceChange", self);
+						document.fireEvent("attendanceChange", data);
 					}
 				});
 				// TODO: Show animation while waiting for response
