@@ -7,9 +7,11 @@
 			
 			<field
 				name="joindate"
-				type="calendar"
+				type="yearmonth"
 				description="Approximate date you joined SWG"
 				label="Join date"
+				startYear="2002"
+				stopRelYear="0"
 			/>
 			
 
