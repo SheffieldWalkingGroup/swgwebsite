@@ -17,6 +17,10 @@
 				<option value="0">No</option>
 				<option value="1">Yes</option>
 			</field>
+			<field name="includeDummy" type="radio" label="Include dummy events" description="Show dummy events that match the real events shown" default="0">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</field>
 			<field name="startDateType" type="list" label="Earliest date" default="1" description="Display events on or after this day">
 				<option value="0">The beginning</option>
 				<option value="1">Yesterday</option>
@@ -45,6 +49,10 @@
 			<field name="order" type="radio" label="Ordering" default="0">
 				<option value="0">Oldest first</option>
 				<option value="1">Newest first</option>
+			</field>
+			<field name="MarkNoWalkDays" type="radio" label="Mark programme dates with no walks" default="0" description="Where a date is in the programme but has no walks, display a message inviting people to lead a walk">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
 			</field>
 			<field name="protocolReminders" type="textarea" label="Protocol reminders" description="One reminder on each line. These will be displayed between events." rows="10" cols="60" filter="raw" />
 			

@@ -78,22 +78,22 @@ abstract class EventFactory
 	 * The ID field on the main table
 	 * @var string
 	 */
-	protected $idField;
+	protected $idField = "id";
 	/**
 	 * Field containing the start date
 	 * @var string
 	 */
-	protected $startDateField;
+	protected $startDateField = "start";
 	/**
 	 * Field containing the start time
 	 * @var string
 	 */
-	protected $startTimeField;
+	protected $startTimeField = "start";
 	/**
 	 * Field marking if the event is ready to publish
 	 * @var string
 	 */
-	protected $readyToPublishField;
+	protected $readyToPublishField = "okToPublish";
 	
 	/**
 	 * Cache of events we've already loaded, with the ID as the key
@@ -106,6 +106,12 @@ abstract class EventFactory
 	 * @var int
 	 */
 	protected $eventTypeConst;
+	
+	/**
+	 * Does this event type use the shared events table as well as its own?
+	 * @var bool
+	 */
+	protected $useEventsTable = false;
 	
 	/**
 	 * Create a new factory with default settings
@@ -147,7 +153,14 @@ abstract class EventFactory
 	{
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
-		$query->select("{$this->table}.*");
+		if ($this->useEventsTable)
+		{
+			$query->select("events.*, {$this->table}.*");
+		}
+		else
+		{
+			$query->select("{$this->table}.*");
+		}
 		
 		if ($this->includeAttendees)
 		{
@@ -207,7 +220,13 @@ abstract class EventFactory
 	 */
 	protected function applyFilters(JDatabaseQuery &$query)
 	{
-		$query->from($this->table);
+		if ($this->useEventsTable)
+		{
+			$query->from("events");
+			$query->leftJoin($this->table." USING (".$this->idField.")");
+		}
+		else
+			$query->from($this->table);
 		
 		$query->where(array(
 			$this->startDateField." >= '".Event::timeToDate($this->startDate)."'",

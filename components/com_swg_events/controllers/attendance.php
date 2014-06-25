@@ -144,17 +144,17 @@ class SWG_EventsControllerAttendance extends JControllerAdmin
 		$eventURI = new JURI("index.php?option=com_swg_events&view=eventlisting"); // TODO: Individual event links
 		switch(JRequest::getInt("evttype"))
 		{
-			case SWG::EventType_Walk:
+			case Event::TypeWalk:
 				// TODO: Did this person lead the walk?
 				$action = "do";
 				$type = "walk";
 				break;
-			case SWG::EventType_Social:
+			case Event::TypeSocial:
 				$action = "go_to";
 				$type = "social";
 				$url = "http://samples.ogp.me/205234152933611";
 				break;
-			case SWG::EventType_Weekend:
+			case Event::TypeWeekend:
 				$action = "go_to";
 				$type = "weekend_away";
 				break;

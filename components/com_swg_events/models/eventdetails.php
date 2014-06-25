@@ -87,11 +87,11 @@ class SWG_EventsModelEventDetails extends JModelItem
 	  // If we haven't already loaded the events, do so
 	  if (!$this->loadedEvents) {
 	    if (JRequest::getBool("includeWalks"))
-	      $this->loadEvents(SWG::EventType_Walk);
+	      $this->loadEvents(Event::TypeWalk);
 	    if (JRequest::getBool("includeSocials"))
-	      $this->loadEvents(SWG::EventType_Social);
+	      $this->loadEvents(Event::TypeSocial);
 	    if (JRequest::getBool("includeWeekends"))
-	      $this->loadEvents(SWG::EventType_Weekend);
+	      $this->loadEvents(Event::TypeWeekend);
 	    $this->loadedEvents = true;
 	  }
 	  
@@ -268,12 +268,12 @@ class SWG_EventsModelEventDetails extends JModelItem
 		$factory->reset();
 		
 		// Set specific factory parameters
-		if ($eventType == SWG::EventType_Social)
+		if ($eventType == Event::TypeSocial)
 		{
 			$factory->getNormal = true;
 			$factory->getNewMember = true;
 		}
-		if ($eventType == SWG::EventType_Walk)
+		if ($eventType == Event::TypeWalk)
 		{
 			if (JRequest::getInt("walkProgramme") != 0)
 			{
@@ -313,15 +313,15 @@ class SWG_EventsModelEventDetails extends JModelItem
 		// Get events from factories
 		switch ($eventType)
 		{
-			case SWG::EventType_Walk:
+			case Event::TypeWalk:
 				$this->numWalks = $factory->numEvents();
 				$this->walks = $factory->get();
 				break;
-			case SWG::EventType_Social:
+			case Event::TypeSocial:
 				$this->numSocials = $factory->numEvents();
 				$this->socials = $factory->get();
 				break;
-			case SWG::EventType_Weekend:
+			case Event::TypeWeekend:
 				$this->numWeekends = $factory->numEvents();
 				$this->weekends = $factory->get();
 				break;

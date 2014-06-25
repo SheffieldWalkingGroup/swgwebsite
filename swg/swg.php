@@ -2,20 +2,18 @@
 JLoader::register('SocialFactory', JPATH_BASE."/swg/Factories/SocialFactory.php");
 JLoader::register('WalkInstanceFactory', JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
 JLoader::register('WeekendFactory', JPATH_BASE."/swg/Factories/WeekendFactory.php");
+JLoader::register('DummyEventFactory', JPATH_BASE."/swg/Factories/DummyEventFactory.php");
 JLoader::register('UnitConvert', JPATH_BASE."/swg/UnitConvert.php");
 JLoader::register('UserException', JPATH_BASE."/swg/Exceptions/UserException.php");
 JLoader::register('Leader', JPATH_BASE."/swg/Models/Leader.php");
 JLoader::register('Facebook', JPATH_BASE."/libraries/facebook/facebook.php");
+JLoader::register('Event', JPATH_BASE."/swg/Models/Event.php");
 /**
  * A collection of general functions and constants
  * @author peter
  *
  */
 class SWG {
-	const EventType_Walk = 1;
-	const EventType_Social = 2;
-	const EventType_Weekend = 3;
-	const EventType_NewMemberSocial = 21;
 	
 	public static $fbconf = array(
 		'appId'	=> 204618129661880,
@@ -25,6 +23,7 @@ class SWG {
 	private static $factoryWalkInstance;
 	private static $factorySocial;
 	private static $factoryWeekend;
+	private static $factoryDummy;
 	
 	/**
 	 * Returns the WalkInstance factory
@@ -60,6 +59,17 @@ class SWG {
 	}
 	
 	/**
+	 * Returns the Dummy event factory
+	 * @return DummyEventFactory
+	 */
+	public static function dummyFactory()
+	{
+		if (!isset(self::$factoryDummy))
+			self::$factoryDummy = new DummyEventFactory();
+		return self::$factoryDummy;
+	}
+	
+	/**
 	 * Returns a factory for an unknown event type
 	 * @param int $evtType Event type to return a factory for. See EventType_* constants
 	 * @return EventFactory
@@ -68,12 +78,14 @@ class SWG {
 	{
 		switch($evtType)
 		{
-			case self::EventType_Walk:
+			case Event::TypeWalk:
 				return self::walkInstanceFactory();
-			case self::EventType_Social:
+			case Event::TypeSocial:
 				return self::socialFactory();
-			case self::EventType_Weekend:
+			case Event::TypeWeekend:
 				return self::weekendFactory();
+			case Event::TypeDummy:
+				return self::dummyFactory();
 		}
 	}
 	
@@ -81,13 +93,13 @@ class SWG {
 	{
 		switch ($typeID)
 		{
-		case self::EventType_Walk:
+		case Event::TypeWalk:
 			return "walk";
-		case self::EventType_Social:
+		case Event::TypeSocial:
 			return "social";
-		case self::EventType_Weekend:
+		case Event::TypeWeekend:
 			return "weekend";
-		case self::EventType_NewMemberSocial:
+		case Event::TypeNewMemberSocial:
 			return "new member social";
 		}
 	}

@@ -29,9 +29,26 @@ abstract class Event extends SWGBaseModel {
 	const TypeWalk = 1;
 	const TypeSocial = 2;
 	const TypeWeekend = 3;
-
+	const TypeDummy = -1;
+	
+	const TypeNewMemberSocial = 21;
+	
+	// Standard mappings for events table. Events that don't use this should overwrite, events that do should extend/merge.
+	public $dbmappings = array(
+		'id'			=> 'id',
+		'name'			=> 'name',
+		'start'			=> 'start',
+		'description'	=> 'description',
+		'okToPublish'	=> 'okToPublish',
+	);
+	
 	public function __construct() {
 		$this->alterations = new EventAlterations();
+		
+		if (isset($this->dbMappingsExt))
+		{
+			$this->dbmappings = array_merge($this->dbmappings, $this->dbMappingsExt);
+		}
 	}
 	
 	public function fromDatabase(array $dbArr)
@@ -257,6 +274,11 @@ abstract class Event extends SWGBaseModel {
 			$idField = "ID";
 		}
 		else
+		{
+			$table = "events";
+			$query->leftJoin(strtolower(get_class($this)." USING (id)"));
+			$query->set("type = ".$this->getType());
+		}
 		throw new Exception("Don't know how to save this");
 		
 		// Update or insert?
@@ -307,6 +329,27 @@ class EventAlterations extends SWGBaseModel {
 	protected $placeTime = false;
 	protected $organiser = false;
 	protected $date = false;
+	
+	/**
+	 * Returns the boolean fields as a bitwise field (binary values only).
+	 * Fields are returned in the order:
+	 * 1. Details
+	 * 2. Cancelled
+	 * 3. PlaceTime
+	 * 4. Organiser
+	 * 5. Date
+	 */
+	public function getBitwise()
+	{
+		$valArr = array(
+			(int)$this->details,
+			(int)$this->cancelled,
+			(int)$this->placeTime,
+			(int)$this->organiser,
+			(int)$this->date,
+		);
+		return implode("", $valArr);
+	}
 
 	public function __construct() {
 		$this->version = 1;

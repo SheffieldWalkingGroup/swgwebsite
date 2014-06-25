@@ -29,15 +29,22 @@ class SWG_EventsModelEventlisting extends JModelItem
 	private $numSocials;
 	private $weekends;
 	private $numWeekends;
+	private $dummy;
+	private $numDummy;
 	
 	private $startDate;
 	private $endDate;
+	private $walkProgramme;
 	
 	function __construct()
 	{
-		$walks = array();
-		$socials = array();
-		$weekends = array();
+		$this->walks = array();
+		$this->socials = array();
+		$this->weekends = array();
+		
+		$this->startDate = null;
+		$this->endDate = null;
+		$this->walkProgramme = null;
 		
 		parent::__construct();
 	}
@@ -54,11 +61,11 @@ class SWG_EventsModelEventlisting extends JModelItem
 		// Filter reminders to those for events on this page, e.g. only show walk reminders if there are walks on the page
 		$types = array();
 		if (JRequest::getBool("includeWalks"))
-			$types[] = "eventtype = ".SWG::EventType_Walk;
+			$types[] = "eventtype = ".Event::TypeWalk;
 		if (JRequest::getBool("includeSocials"))
-			$types[] = "eventtype = ".SWG::EventType_Social;
+			$types[] = "eventtype = ".Event::TypeSocial;
 		if (JRequest::getBool("includeWeekends"))
-			$types[] = "eventtype = ".SWG::EventType_Weekend;
+			$types[] = "eventtype = ".Event::TypeWeekend;
 		$query->where($types, "OR");
 		
 		$query->order(array("Ordering ASC", "RAND()"));
@@ -96,11 +103,11 @@ class SWG_EventsModelEventlisting extends JModelItem
 		// If we haven't already loaded the events, do so
 		if (!$this->loadedEvents) {
 			if (JRequest::getBool("includeWalks"))
-				$this->loadEvents(SWG::EventType_Walk);
+				$this->loadEvents(Event::TypeWalk);
 			if (JRequest::getBool("includeSocials"))
-				$this->loadEvents(SWG::EventType_Social);
+				$this->loadEvents(Event::TypeSocial);
 			if (JRequest::getBool("includeWeekends"))
-				$this->loadEvents(SWG::EventType_Weekend);
+				$this->loadEvents(Event::TypeWeekend);
 			$this->loadedEvents = true;
 		}
 		
@@ -117,23 +124,15 @@ class SWG_EventsModelEventlisting extends JModelItem
 		// If we haven't already loaded the events, do so
 		if (!$this->loadedEvents) {
 			if (JRequest::getBool("includeWalks"))
-				$this->loadEvents(SWG::EventType_Walk);
+				$this->loadEvents(Event::TypeWalk);
 			if (JRequest::getBool("includeSocials"))
-				$this->loadEvents(SWG::EventType_Social);
+				$this->loadEvents(Event::TypeSocial);
 			if (JRequest::getBool("includeWeekends"))
-				$this->loadEvents(SWG::EventType_Weekend);
+				$this->loadEvents(Event::TypeWeekend);
+			if (JRequest::getBool("includeDummy"))
+				$this->loadEvents(Event::TypeDummy);
 			$this->loadedEvents = true;
 		}
-		
-		/*
-		* TODO: Find dates with no walks (if enabled):
-		* 1. Get the start date of the current page
-		* 2. Get all dates in the walks programme table. If this page is only showing a specific programme, only get those dates. Don't include dates from a special programme unless we're showing that programme.
-		* 3. Get the date of each walk. Cross off that date from the list of dates
-		* 4. Add your walk here messages
-		* 5. Explain to committee why manually created messages are BAD
-		* 6. Clean up all manually created messages
-		*/
 		
 		/* 
 		* Go through all lists in date order (oldest first).
@@ -144,7 +143,7 @@ class SWG_EventsModelEventlisting extends JModelItem
 		* We maintain a set of dates of the next event seen,
 		* so can skip dates with no events.
 		*/
-		if (count($this->walks) == 0 && count($this->socials) == 0 && count($this->weekends) == 0)
+		if (count($this->walks) == 0 && count($this->socials) == 0 && count($this->weekends) == 0 && count($this->dummy) == 0)
 			// no point in continuing
 			return array();
 	  
@@ -152,11 +151,12 @@ class SWG_EventsModelEventlisting extends JModelItem
 		$walkPointer = 0;
 		$socialPointer = 0;
 		$weekendPointer = 0;
+		$dummyPointer = 0;
 		
 		$nextEvent = null;
 		$events = array();
 		do {
-			$nextEvent = $this->nextEvent($nextEvent, $walkPointer, $socialPointer, $weekendPointer, (JRequest::getBool("order")));
+			$nextEvent = $this->nextEvent($nextEvent, $walkPointer, $socialPointer, $weekendPointer, $dummyPointer, (JRequest::getBool("order")));
 			
 			// Increment the pointer for this event type
 			// TODO: Pointer could be an array with event type as keys
@@ -172,6 +172,10 @@ class SWG_EventsModelEventlisting extends JModelItem
 			{
 				$weekendPointer++;
 			}
+			else if ($nextEvent instanceof DummyEvent)
+			{
+				$dummyPointer++;
+			}
 			else 
 				// Unknown event - probably run out: stop looping and don't add it to the list
 				break;
@@ -182,7 +186,8 @@ class SWG_EventsModelEventlisting extends JModelItem
 			count($events) < 100 && (
 			(count($this->walks) > $walkPointer) || 
 			(count($this->socials) > $socialPointer) || 
-			(count($this->weekends) > $weekendPointer)
+			(count($this->weekends) > $weekendPointer) ||
+			(count($this->dummy) > $dummyPointer)
 		));
 		
 		return $events;
@@ -195,64 +200,50 @@ class SWG_EventsModelEventlisting extends JModelItem
 	 * @param int $minSocial Earliest possible social to consider (pointer to class-level array). Not required, but makes this function much faster
 	 * @param int $minWeekend Earliest possible weekend to consider (pointer to class-level array). Not required, but makes this function much faster
 	 */
-	private function nextEvent(Event $prevEvent=null, $minWalk=0, $minSocial=0, $minWeekend=0, $reverse=false)
+	private function nextEvent(Event $prevEvent=null, $minWalk=0, $minSocial=0, $minWeekend=0, $minDummy=0, $reverse=false)
 	{
 		// Get the first possible event of each type. Start at $minXX, ignoring any events that are the same as the one passed in, or with an earlier start time
 		$nextWalk = $this->nextEventByType($prevEvent, $this->walks, $minWalk,$reverse);
 		$nextSocial = $this->nextEventByType($prevEvent, $this->socials, $minSocial,$reverse);
 		$nextWeekend = $this->nextEventByType($prevEvent, $this->weekends, $minWeekend,$reverse);
+		$nextDummy = $this->nextEventByType($prevEvent, $this->dummy, $minDummy,$reverse);
 		
 		// Now find whether a walk, a social or a weekend is the next event
 		// If two are equal, put walks first, then socials, then weekends.
 		// Two events of the same type will go in the order they are in the database
 		// First, try to match all three
-		if (isset($nextWalk,$nextSocial,$nextWeekend))
-		{
-			if ($reverse)
-				$start = max($nextWalk->start, $nextSocial->start, $nextWeekend->start);
-			else
-				$start = min($nextWalk->start, $nextSocial->start, $nextWeekend->start);
-		}
-		// Now, match any two
-		elseif (isset($nextWalk, $nextSocial))
-		{
-			if ($reverse)
-				$start = max($nextWalk->start, $nextSocial->start);
-			else
-				$start = min($nextWalk->start, $nextSocial->start);
-		}
-		else if (isset($nextWalk, $nextWeekend))
-		{
-			if ($reverse)
-				$start = max($nextWalk->start, $nextWeekend->start);
-			else
-				$start = min($nextWalk->start, $nextWeekend->start);
-		}
-		else if (isset($nextSocial, $nextWeekend))
-		{
-			if ($reverse)
-				$start = max($nextSocial->start, $nextWeekend->start);
-			else
-				$start = min($nextSocial->start, $nextWeekend->start);
-		}
-		// We only have one - return that straight away without bothering to go to the next step
-		else if (isset($nextWalk))
-			return $nextWalk;
-		else if (isset($nextSocial))
-			return $nextSocial;
-		else if (isset($nextWeekend))
-			return $nextWeekend;
-		// Nothing...
+		if ($reverse)
+			$walkStart = $socialStart = $weekendStart = $dummyStart = 0;
 		else
+			$walkStart = $socialStart = $weekendStart = $dummyStart = Event::DateEnd;
+		
+		if (isset($nextWalk))
+			$walkStart = $nextWalk->start;
+		if (isset($nextSocial))
+			$socialStart = $nextSocial->start;
+		if (isset($nextWeekend))
+			$weekendStart = $nextWeekend->start;
+		if (isset($nextDummy))
+			$dummyStart = $nextDummy->start;
+		
+		if ($reverse)
+			$start = max($walkStart, $socialStart, $weekendStart, $dummyStart);
+		else
+			$start = min($walkStart, $socialStart, $weekendStart, $dummyStart);
+			
+		if ($start == Event::DateEnd || $start == 0)
 			return null;
 		
-		// If we get here, we found multiple possible events. Check which one it was and return it
-		if (isset($nextWalk) && $nextWalk->start == $start)
+		// Now return the first matching event. If multiple events, the order is:
+		// 1. Walks 2. Socials 3. Weekends 4. Dummy
+		if ($walkStart == $start)
 			return $nextWalk;
-		else if (isset($nextSocial) && $nextSocial->start == $start)
+		else if ($socialStart == $start)
 			return $nextSocial;
-		else if (isset($nextWeekend))
+		else if ($weekendStart == $start)
 			return $nextWeekend;
+		else if ($dummyStart == $start)
+			return $nextDummy;
 		else
 			return null;
 	}
@@ -308,12 +299,12 @@ class SWG_EventsModelEventlisting extends JModelItem
 		$factory->reset();
 		
 		// Set specific factory parameters
-		if ($eventType == SWG::EventType_Social)
+		if ($eventType == Event::TypeSocial)
 		{
 			$factory->getNormal = true;
 			$factory->getNewMember = true;
 		}
-		if ($eventType == SWG::EventType_Walk)
+		else if ($eventType == Event::TypeWalk)
 		{
 			if (JRequest::getInt("walkProgramme") != 0)
 			{
@@ -321,20 +312,27 @@ class SWG_EventsModelEventlisting extends JModelItem
 				{
 					case 1:
 						// Current published
-						$factory->walkProgramme = WalkProgramme::getCurrentProgrammeID();
+						$this->walkProgramme = WalkProgramme::getCurrentProgrammeID();
 						break;
 					case 2:
-						$factory->walkProgramme = WalkProgramme::getNextProgrammeID();
+						$this->walkProgramme = WalkProgramme::getNextProgrammeID();
 						break;
 					case 3:
 						// Specify
-						$factory->walkProgramme = JRequest::getInt("walkProgrammeSpecify");
+						$this->walkProgramme = JRequest::getInt("walkProgrammeSpecify");
 						break;
 				}
 			}
 		}
+		else if ($eventType == Event::TypeDummy)
+		{
+			$factory->getWithWalks = JRequest::getBool("includeWalks");
+			$factory->getWithSocials = JRequest::getBool("includeSocials");
+			$factory->getWithWeekends = JRequest::getBool("includeWeekends");
+		}
 		
 		// Set standard/shared factory parameters
+		$factory->walkProgramme = $this->walkProgramme;
 		$factory->startDate = $this->startDate;
 		$factory->endDate = $this->endDate;
 		$factory->limit = 100;
@@ -353,17 +351,21 @@ class SWG_EventsModelEventlisting extends JModelItem
 		// Get events from factories
 		switch ($eventType)
 		{
-			case SWG::EventType_Walk:
+			case Event::TypeWalk:
 				$this->numWalks = $factory->numEvents();
 				$this->walks = $factory->get();
 				break;
-			case SWG::EventType_Social:
+			case Event::TypeSocial:
 				$this->numSocials = $factory->numEvents();
 				$this->socials = $factory->get();
 				break;
-			case SWG::EventType_Weekend:
+			case Event::TypeWeekend:
 				$this->numWeekends = $factory->numEvents();
 				$this->weekends = $factory->get();
+				break;
+			case Event::TypeDummy:
+				$this->numDummy = $factory->numEvents();
+				$this->dummy = $factory->get();
 				break;
 		}
 	}
