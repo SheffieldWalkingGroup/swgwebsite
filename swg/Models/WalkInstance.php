@@ -367,14 +367,11 @@ public function toDatabase(JDatabaseQuery &$query)
 		switch ($name)
 		{
 			// Strings - just save them (TODO: Safety checks?)
-			case "name":
 			case "startPlaceName":
 			case "endPlaceName":
-			case "description":
 				$this->$name = $value;
 				break;
 			// Integer
-			case "start":
 			case "headCount":
 			case "distance":
 				$this->$name = (int)$value;

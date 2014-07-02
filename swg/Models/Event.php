@@ -13,7 +13,7 @@ abstract class Event extends SWGBaseModel {
 	protected $id;
 	protected $name;
 	protected $start;
-	private $description;
+	protected $description;
 	protected $okToPublish;
 	protected $alterations; 
 	protected $numAttendees;
