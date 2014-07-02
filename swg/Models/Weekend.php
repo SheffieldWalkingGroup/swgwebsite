@@ -58,6 +58,8 @@ public function fromDatabase(array $dbArr)
 	
 	if (!empty($dbArr['latitude']) && !empty($dbArr['longitude']))
 		$this->latLng = new LatLng($dbArr['latitude'], $dbArr['longitude']);
+	else if ($dbArr['latitude'] == "" && $dbArr['longitude'] == "")
+		$this->latLng = null;
 	
 	// Set up the alterations
 	$this->alterations->setVersion($dbArr['version']);
@@ -130,7 +132,7 @@ public function toDatabase(JDatabaseQuery &$query)
 			$values['enddate'] = strftime("%Y-%m-%d", $this->endDate);
 		
 		if (!empty($this->latLng))
-			$values['latLng'] = array('lat'=>$this->latLng->lat, 'lng'=>$this->latLng->lng);
+			$values['latLng'] = $this->latLng->lat.",".$this->latLng->lng;
 		
 		return $values;
 	}
@@ -195,6 +197,20 @@ public function toDatabase(JDatabaseQuery &$query)
 			case "latLng":
 				if ($value instanceof LatLng)
 					$this->$name = $value;
+				else if (is_string($value))
+				{
+					// Is it in JSON?
+					if (substr($value, 0, 2) == "[{")
+					{
+						$value = json_decode($value);
+						$value = $value[0];
+						$this->$name = new LatLng($value->lat, $value->lon);
+					}
+					else
+					{
+						$this->$name = SWG::parseLatLongTuple($this->value);
+					}
+				}
 				else if (is_array($value))
 				{
 					// Convert to LatLng

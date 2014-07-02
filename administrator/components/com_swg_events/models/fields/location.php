@@ -84,8 +84,8 @@ class JFormFieldLocation extends JFormField
 			else if (isset($this->element['start']))
 				$this->start = SWG::parseLatLongTuple($this->element['start']);
 			
-			if (isset($this->element['zoom']) && is_numeric($this->element['zoom']->data()) && (int)$this->element['zoom']->data() > 0)
-				$this->zoom = (int)$this->element['zoom']->data();
+			if (isset($this->element['zoom']) && is_numeric($this->element['zoom']) && (int)$this->element['zoom'] > 0)
+				$this->zoom = (int)$this->element['zoom'];
 			
 			if (isset($this->value['location']))
 			{
