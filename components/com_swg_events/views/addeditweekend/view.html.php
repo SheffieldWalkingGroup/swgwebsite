@@ -39,15 +39,6 @@ class SWG_EventsViewAddEditWeekend extends JViewLegacy
 	
 	// Add form validation
 	JHTML::_('behavior.formvalidation');
-	$document->addScriptDeclaration(<<<VAL
-window.addEvent('domready', function(){
-    document.formvalidator.setHandler('submit', function (value) {
-        alert("WOO");
-    });
-});
-VAL
-);
-	
 
 	// Check for errors.
 	if (count($errors = $this->get('Errors'))) 
