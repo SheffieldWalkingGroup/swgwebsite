@@ -77,7 +77,7 @@ class JFormFieldFacebookLogin extends JFormField
 		    // Not logged in - display a login link
 			$uri = JURI::current();
 			$loginUrl = $this->fb->getLoginUrl(array(
-				'redirect_uri'	=> "http://127.0.0.1/login/profile?layout=edit", // TODO: Needs to be an IP for development
+				'redirect_uri'	=> "http://aquinas.dphin.co.uk/login/profile?layout=edit", // TODO: Needs to be an IP for development
 			));
 			
 			return "<a href='".$loginUrl."'>Connect your Facebook account</a>";
