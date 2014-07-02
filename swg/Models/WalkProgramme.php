@@ -296,4 +296,23 @@ class WalkProgramme extends SWGBaseModel
 		$db->setQuery($query);
 		return $db->loadResult();
 	}
+	
+	public static function getProgrammeDates($includeSpecial = false, $start = null, $end = null)
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select("WalkDate");
+		$query->from("walksprogramme");
+		$query->innerJoin("walkprogrammedates ON ProgrammeID = SequenceID");
+		if (!$includeSpecial)
+			$query->where("special = 0");
+		if (!empty($start))
+			$query->where("WalkDate >= '".Event::timeToDate($start)."'");
+		if (!empty($end))
+			$query->where("WalkDate <= '".Event::timeToDate($end)."'");
+		$db->setQuery($query);
+		$db->query();
+		
+		return $db->loadColumn(0);
+	}
 }
