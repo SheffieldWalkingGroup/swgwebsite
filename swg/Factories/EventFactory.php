@@ -190,6 +190,7 @@ abstract class EventFactory
 		
 		// Build an array of events
 		$events = array();
+
 		while (count($data) > 0 && count($events) != $this->limit)
 		{
 			$event = $this->newEvent();

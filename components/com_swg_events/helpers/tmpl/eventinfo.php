@@ -222,7 +222,7 @@
 			</div>
 		<?php endif; ?>
 		<div class="description<?php if ($event->alterations->details) echo " altered\" title=\"Details altered"; ?>">
-			<p><?php echo nl2br($event->description); ?></p>
+			<?php echo $event->description; ?>
 			<?php if ($event instanceof WalkInstance):?>
 				<p class="icons">
 				<?php if ($event->isLinear):?>

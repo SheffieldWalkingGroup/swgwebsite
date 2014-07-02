@@ -13,7 +13,7 @@ abstract class Event extends SWGBaseModel {
 	protected $id;
 	protected $name;
 	protected $start;
-	protected $description;
+	private $description;
 	protected $okToPublish;
 	protected $alterations; 
 	protected $numAttendees;
@@ -66,8 +66,14 @@ abstract class Event extends SWGBaseModel {
 	public function __set($name, $value) {
 		switch ($name)
 		{
-			case "name":
 			case "description":
+				// If the description is plain text, wrap it in <p>s and parse with nl2br
+				if (strpos($value, "<p") !== 0)
+				{
+					$value = "<p>".nl2br($value)."</p>";
+				}
+				// Fall through
+			case "name":
 				$this->$name = $value;
 				break;
 			case "start":
@@ -279,7 +285,6 @@ abstract class Event extends SWGBaseModel {
 			$query->leftJoin(strtolower(get_class($this)." USING (id)"));
 			$query->set("type = ".$this->getType());
 		}
-		throw new Exception("Don't know how to save this");
 		
 		// Update or insert?
 		if (!isset($this->id))

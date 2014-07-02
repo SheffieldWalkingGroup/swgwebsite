@@ -775,6 +775,19 @@ div.slideshow {
 	opacity:0.9;
 }
 
+.event .boxout {
+	border:1px solid #555;
+	box-shadow:2px 2px 10px #222;
+	padding:8px;
+	border-radius:2px;
+}
+
+.walksunday .boxout { background-color:#6B8EAC; }
+.walksaturday .boxout {	background-color:#8DAB6A; }
+.walkweekday .boxout { background-color:#ab6a8d; }
+.weekend .boxout { background-color:#F6F5D4; }
+.social .boxout { background-color:#FF9555; }
+
 /* Gradient backgrounds & headings */
 
 nav .moduletable h3,

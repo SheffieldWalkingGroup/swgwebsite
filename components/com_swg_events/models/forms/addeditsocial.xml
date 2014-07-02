@@ -27,7 +27,7 @@
 			<field name="bookingsInfo" type="text" label="Booking/contact info"  maxlength="200" size="57"/>
 			<field name="location" type="textarea" label="Address (displayed on the site)" rows="4" cols="40"/>
 			<field name="latLng" type="Location" label="Location" description="Click on the map to set the location" />
-			<field name="description" type="textarea" label="Description" required="required" rows="6" cols="60" />
+			<field name="description" type="editor" editor="swg_tinymce_events" label="Description" required="required" />
 			<field name="okToPublish" type="checkbox" label="Ready to publish" value="1" default="0" />
 		</fieldset>
 		
