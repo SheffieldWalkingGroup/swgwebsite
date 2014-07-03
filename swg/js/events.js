@@ -659,7 +659,7 @@ function displayEvent(event, container, newMembers) {
 	this.eventBody = new Element("div", {"class":"eventbody"});
 	container.adopt(this.eventBody);
 	
-	var description = new Element("div", {"class":"description","html":"<p>"+event.description+"</p>"});
+	var description = new Element("div", {"class":"description","html":event.description});
 	this.eventBody.adopt(description);
 	if (event.alterations.details)
 		description.addClass("altered");
