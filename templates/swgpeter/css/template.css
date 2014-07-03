@@ -775,11 +775,15 @@ div.slideshow {
 	opacity:0.9;
 }
 
-.event .boxout {
+.event .boxout, .popup .boxout {
 	border:1px solid #555;
-	box-shadow:2px 2px 10px #222;
+	box-shadow:2px 2px 8px #222;
 	padding:8px;
 	border-radius:3px;
+}
+
+.popup .boxout {
+	margin:0 10px;
 }
 
 .walksunday .boxout { background-color:#6B8EAC; }
