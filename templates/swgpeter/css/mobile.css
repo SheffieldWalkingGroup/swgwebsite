@@ -252,8 +252,8 @@ h1
 {
 	background:linear-gradient(90deg, rgba(155, 182, 124, 0), #9BB67C 12.5%, #9BB67C 87.5%, rgba(155, 182, 124, 0)) repeat scroll 0 0 rgba(0, 0, 0, 0);
 	margin:0;
-	padding:6px;
-	font-size:1.07em;
+	padding:6px 0;
+	font-size:1.1em;
 	text-align:center;
 	border-color:#555;
 	border-style:solid;
