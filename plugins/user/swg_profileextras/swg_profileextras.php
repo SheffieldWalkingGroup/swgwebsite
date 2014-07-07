@@ -215,11 +215,11 @@ class plgUserSWG_ProfileExtras extends JPlugin
 				}
 				
 				// Joomla won't give us access to the FB token via the form field, so set that from the session
-				$fb = new Facebook(SWG::$fbconf);
+				/*$fb = new Facebook(SWG::$fbconf);
 				if ($fb->getUser())
 				{
 					$tuples[] = '('.$userId.', '.$db->quote('swg_extras.fbtoken').', '.$db->quote($fb->getAccessToken()).', '.$order++.')';
-				}
+				}*/
 				
 				$db->setQuery('INSERT INTO #__user_profiles VALUES '.implode(', ', $tuples));
 

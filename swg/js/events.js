@@ -373,12 +373,12 @@ var Event = new Class({
 							});
 							
 							var optionsList = new Element("ul", {'class' : 'diary-added-options'});
-							var postToFB = new Element("li");
+							/*var postToFB = new Element("li");
 							var postToFBLink = new Element("a", {
 								'href' : "?task=attendance.facebook&"+attendParams+"&json=1",
 								'html' : "<img src='/images/icons/facebook_100.png' width='100' height='100' alt='' /><br />Post to Facebook"
 							});
-							postToFB.adopt(postToFBLink);
+							postToFB.adopt(postToFBLink);*/
 							var sharePhotos = new Element("li");
 							var sharePhotosLink = new Element("a", {
 								'href' : "/photos/upload-photos",
@@ -386,7 +386,7 @@ var Event = new Class({
 							});
 							sharePhotos.adopt(sharePhotosLink);
 							
-							optionsList.adopt(postToFB, sharePhotos);
+							optionsList.adopt(/*postToFB, */sharePhotos);
 							
 							if (type == 1) // Event::Type_Walk
 							{

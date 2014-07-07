@@ -130,7 +130,7 @@ class SWG {
 	 * The resulting SDK object will be stored in the session.
 	 * @return Facebook|bool Returns false if user has no access token
 	 */
-	public static function getFacebook()
+	/*public static function getFacebook()
 	{
 		// Check if there's already a Facebook object in the session
 		$session = JFactory::getSession();
@@ -162,7 +162,7 @@ class SWG {
 			}
 		}
 		return $session->get("facebook");
-	}
+	}*/
 	
 	/**
 	 * Converts a time in server local time to UTC

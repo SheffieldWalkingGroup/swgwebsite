@@ -45,13 +45,13 @@
 			<field name="notes" type="textarea" label="Walk leading preferences" rows="10" cols="50" description="Notes (walk preferences, willingness to backmark, etc)"/>
 			<field name="dogfriendly" type="checkbox" label="Dogs welcome on my walks" value="1" default="1"/>
 		</fieldset>
-		<fieldset name="facebook" label="Facebook">
+		<!--<fieldset name="facebook" label="Facebook">
 			<field name="fb_key" type="FacebookLogin" label="Facebook account" description="WEGARE" />
 			<field name="fb_eventpost" type="radio" default="0" label="Post events to facebook" description="Post the events you go to on Facebook">
 				<option value="-1">Never</option>
 				<option value="0">Ask each time</option>
 				<option value="1">Automatically</option>
 			</field>
-		</fieldset>
+		</fieldset> -->
 	</fields>
 </form>

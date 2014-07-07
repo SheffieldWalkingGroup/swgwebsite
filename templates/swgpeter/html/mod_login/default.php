@@ -51,9 +51,9 @@ JHtml::_('behavior.keepalive');
 		<?php endif; ?>
 		<input type="submit" name="Submit" class="button" value="<?php echo JText::_('JLOGIN') ?>" />
 	</p>
-	<p class="fblogin">
+	/*<p class="fblogin">
 		<a href="https://www.facebook.com/dialog/oauth?client_id=204618129661880&amp;redirect_uri=<?php echo /*JURI::base();*/"http://www.sheffieldwalkinggroup.org.uk/index.php";?>%3Foption=com_swg_fblogin" target="_blank">Facebook login</a>
-	</p>
+	</p>*/
 	<input type="hidden" name="option" value="com_users" />
 	<input type="hidden" name="task" value="user.login" />
 	<input type="hidden" name="return" value="<?php echo $return; ?>" />
