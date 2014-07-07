@@ -13,9 +13,9 @@ if ($this->showAnyAddLinks()):?>
 <?php endif;
 foreach ($this->events as $event):?>
 	<?php 
-		if ($event->getType() != Event::TypeDummy)
+		/*if ($event->getType() != Event::TypeDummy)
 			$detailLink = "/event?type=".$event->type."&amp;id=".$event->id;
-		else
+		else*/
 			$detailLink = null;
 		include JPATH_SITE."/components/com_swg_events/helpers/tmpl/eventinfo.php";
 		// Display any relevant protocol reminders after each event
