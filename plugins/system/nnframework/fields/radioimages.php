@@ -4,20 +4,20 @@
  * Displays a list of radio items and the images you can chose from
  *
  * @package         NoNumber Framework
- * @version         12.9.7
+ * @version         14.2.6
  *
  * @author          Peter van Westen <peter@nonumber.nl>
  * @link            http://www.nonumber.nl
- * @copyright       Copyright © 2012 NoNumber All Rights Reserved
+ * @copyright       Copyright © 2014 NoNumber All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// No direct access
 defined('_JEXEC') or die;
 
 class JFormFieldNN_RadioImages extends JFormField
 {
 	public $type = 'RadioImages';
+	private $params = null;
 
 	protected function getInput()
 	{
@@ -27,37 +27,45 @@ class JFormFieldNN_RadioImages extends JFormField
 		jimport('joomla.filesystem.file');
 
 		// path to images directory
-		$path = JPATH_ROOT . '/' . $this->def('directory');
-		$filter = $this->def('filter');
-		$exclude = $this->def('exclude');
-		$stripExt = $this->def('stripext');
+		$path = JPATH_ROOT . '/' . $this->get('directory');
+		$filter = $this->get('filter');
+		$exclude = $this->get('exclude');
+		$stripExt = $this->get('stripext');
 		$files = JFolder::files($path, $filter);
-		$rowcount = $this->def('rowcount');
+		$rowcount = $this->get('rowcount');
 
 		$options = array();
 
-		if (!$this->def('hide_none')) {
+		if (!$this->get('hide_none'))
+		{
 			$options[] = JHtml::_('select.option', '-1', JText::_('Do not use') . '<br />');
 		}
 
-		if (!$this->def('hide_default')) {
+		if (!$this->get('hide_default'))
+		{
 			$options[] = JHtml::_('select.option', '', JText::_('Use default') . '<br />');
 		}
 
-		if (is_array($files)) {
+		if (is_array($files))
+		{
 			$count = 0;
-			foreach ($files as $file) {
-				if ($exclude) {
-					if (preg_match(chr(1) . $exclude . chr(1), $file)) {
+			foreach ($files as $file)
+			{
+				if ($exclude)
+				{
+					if (preg_match(chr(1) . $exclude . chr(1), $file))
+					{
 						continue;
 					}
 				}
 				$count++;
-				if ($stripExt) {
+				if ($stripExt)
+				{
 					$file = JFile::stripExt($file);
 				}
-				$image = '<img src="../' . $this->def('directory') . '/' . $file . '" style="padding-right: 10px;" title="' . $file . '" alt="' . $file . '" />';
-				if ($rowcount && $count >= $rowcount) {
+				$image = '<img src="../' . $this->get('directory') . '/' . $file . '" style="padding-right: 10px;" title="' . $file . '" alt="' . $file . '" />';
+				if ($rowcount && $count >= $rowcount)
+				{
 					$image .= '<br />';
 					$count = 0;
 				}
@@ -77,7 +85,7 @@ class JFormFieldNN_RadioImages extends JFormField
 		return $list;
 	}
 
-	private function def($val, $default = '')
+	private function get($val, $default = '')
 	{
 		return (isset($this->params[$val]) && (string) $this->params[$val] != '') ? (string) $this->params[$val] : $default;
 	}

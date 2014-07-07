@@ -28,6 +28,16 @@ class Route extends SWGBaseModel implements Iterator {
 	* @var int
 	*/
 	const Visibility_Members = 30; // This should be the default
+	
+	/**
+	 * A planned route, entered before the walk
+	 */
+	const Type_Planned = 10;
+	
+	/**
+	 * A logged route recorded on the actual walk
+	 */
+	const Type_Logged = 20;
 
 
 	/**
@@ -46,7 +56,7 @@ class Route extends SWGBaseModel implements Iterator {
 		
 	/**
 	* Waypoints of this route
-	* @var Waypoint
+	* @var Waypoint[]
 	*/
 	private $wayPoints = array();
 	/**
@@ -73,13 +83,16 @@ class Route extends SWGBaseModel implements Iterator {
 	private $uploadedDateTime;
 	
 	private $visibility;
+	
+	private $type;
 
 	// For iterator use
 	private $pointer;
 
-	function __construct(Walkable &$w)
+	function __construct(Walkable &$w=null)
 	{
-		$this->walk =& $w;
+		if (isset($w))
+			$this->walk =& $w;
 		$this->pointer = 0;
 	}
 	
@@ -95,6 +108,10 @@ class Route extends SWGBaseModel implements Iterator {
 		else if ($name == "uploadedBy" || $name == "uploadedDateTime")
 		{
 			$this->$name = (int)$value;
+		}
+		else if ($name == "type" && ($value == self::Type_Logged || $value == self::Type_Planned))
+		{
+			$this->type = $value;
 		}
 	}
 	
@@ -134,7 +151,7 @@ class Route extends SWGBaseModel implements Iterator {
 	* @param Waypoint $wp Waypoint to set
 	* TODO: Need to recalculate route
 	*/
-	public function setWaypoint($index, Waypoint &$wp)
+	public function setWaypoint($index, Waypoint $wp)
 	{
 		if (is_int($index))
 		{
@@ -319,10 +336,14 @@ class Route extends SWGBaseModel implements Iterator {
 	}
 
 	/**
-	* Save this route to the database
+	* Save this route to the database.
+	* @throws BadMethodCallException If the route has no Walk or WalkInstance set
 	*/
 	public function save()
 	{
+		if (!isset($this->walk))
+			throw new BadMethodCallException("Cannot save route without setting the walk first");
+		
 		$db =& JFactory::getDBO();
 		// Commit the whole route as one transaction
 		$db->transactionStart();
@@ -337,6 +358,8 @@ class Route extends SWGBaseModel implements Iterator {
 		$query->set("ascent = ".$this->ascent);
 		if (isset($this->visibility))
 			$query->set("visibility = ".$this->visibility);
+		if (isset($this->type))
+			$query->set("type = ".$this->type);
 		
 		// Connect to a walk or a walkinstance
 		if ($this->walk instanceof Walk)
@@ -404,6 +427,63 @@ class Route extends SWGBaseModel implements Iterator {
 		// Commit the transaction TODO - if it's OK
 		$db->transactionCommit();
 	}
+	
+	/**
+	 * Checks if the route given is valid for a particular WalkInstance
+	 * * The date must be the same
+	 * * The start place must be within 1km of the planned start
+	 * * The end place must be within 1km of the planned end
+	 * * The length must be between 0.5 and 2 times the planned length
+	 * (there is no check of start *time*)
+	 * @param WalkInstance $w Walk to check against
+	 * @return bool True if route matches walk
+	 */
+	public function checkAgainstWalk(WalkInstance $w)
+	{
+		$start = $this->getWaypoint(0);
+		$end = $this->getWaypoint($this->numWaypoints()-1);
+		
+		if (strftime("%F", $start->time) != strftime("%F", $w->start))
+			return false;
+		
+		$plannedDistance = UnitConvert::distance($w->miles, UnitConvert::Mile, UnitConvert::Metre);
+		if ($this->distance < $plannedDistance * 0.5 || $this->distance > $plannedDistance * 2)
+			return false;
+		
+		$plannedStart = new Waypoint();
+		$plannedStart->latLng = $w->startLatLng;
+		if ($start->distanceTo($plannedStart) > 1000)
+			return false;
+		
+		$plannedEnd = new Waypoint();
+		$plannedEnd->latLng = $w->endLatLng;
+		if ($end->distanceTo($plannedEnd) > 1000)
+			return false;
+		
+		return true;
+	}
+	
+	/**
+	 * Finds a walk that matches this one
+	 * Loads all walks on the same date as the track, then checks them with checkAgainstWalk.
+	 * Returns the first matching walk.
+	 * @return WalkInstance Matching walk, or null if no match
+	 */
+	public function findMatchingWalk()
+	{
+		$wiFactory = SWG::walkInstanceFactory();
+		$wiFactory->reset();
+		$wiFactory->startDate = $this->getWaypoint(0)->time;
+		$wiFactory->endDate = $this->getWaypoint(0)->time;
+		$walks = $wiFactory->get();
+		foreach ($walks as $walk)
+		{
+			if ($this->checkAgainstWalk($walk))
+				return $walk;
+		}
+		return null;
+		
+	}
 
 	/**
 	* Loads a route from the database from its ID
@@ -427,6 +507,8 @@ class Route extends SWGBaseModel implements Iterator {
 			return null;
 		$dbArr = $db->loadAssoc();
 		
+		$wiFactory = SWG::walkInstanceFactory();
+		
 		// If we've been given a Walkable, make sure it matches the one on the route
 		// It's OK to load a route for a WalkInstance on a Walk, and vice-versa
 		if ($w != null)
@@ -438,18 +520,19 @@ class Route extends SWGBaseModel implements Iterator {
 					// Try to load a matching walkInstance
 					if (!empty($dbArr['walkinstanceid']))
 					{
-						$wi = WalkInstance::getSingle($dbArr['walkinstanceid']);
-						if ($wi->walk != $w->id)
+						$wi = $wiFactory->getSingle($dbArr['walkinstanceid']);
+						if ($wi->walkid != $w->id)
 						{
-							throw new InvalidArgumentException("Loaded route is for WalkInstance ".$wi->id.", Walk ".$wi->walk." (does not match ".$w->id.")");
+							throw new InvalidArgumentException("Loaded route is for WalkInstance ".$wi->id.", Walk ".$wi->walkid." (does not match Walk ".$w->id.")");
 						}
 					}
-					throw new InvalidArgumentException("Loaded route is for Walk ".$dbArr['walkid']." (does not match ".$w->id.")");
+					else
+						throw new InvalidArgumentException("Loaded route is for Walk ".$dbArr['walkid']." (does not match Walk ".$w->id.")");
 				}
 			}
 			else
 			{
-				if ($dbArr['walkinstanceid'] != $w->id && $dbArr['walkid'] != $w->walk)
+				if ($dbArr['walkinstanceid'] != $w->id && $dbArr['walkid'] != $w->walkid)
 				{
 					throw new InvalidArgumentException("Loaded route is not for given WalkInstance");
 				}
@@ -466,7 +549,7 @@ class Route extends SWGBaseModel implements Iterator {
 		else
 		{
 			// A WalkInstance
-			$w = WalkInstance::getSingle($dbArr['walkinstanceid']);
+			$w = $wiFactory->getSingle($dbArr['walkinstanceid']);
 		}
 		}
 		
@@ -482,6 +565,7 @@ class Route extends SWGBaseModel implements Iterator {
 		$rt->uploadedBy = $dbArr['uploadedby']; // TODO: Load the actual user? Also, uploadedby should be a Joomla user, not a Leader
 		$rt->uploadedDateTime = strtotime($dbArr['uploadeddatetime']);
 		$rt->visibility = (int)$dbArr['visibility'];
+		$rt->type = (int)$dbArr['type'];
 		
 		// Set all the waypoints
 		$query = $db->getQuery(true);
@@ -508,53 +592,80 @@ class Route extends SWGBaseModel implements Iterator {
 	}
 
 	/**
-	* Loads routes matching a Walk or WalkInstance
+	* Loads routes matching a Walk or WalkInstance.
+	* 
+	* Only one Type_Planned route will be returned. If possible, this will be for the Walkable passed in.
+	* Otherwise, a route planned for the base Walk or the most recently-uploaded route for any instance is used.
+	* All Type_Logged routes for any matching Walkable will be returned.
+	*
 	* @param Walkable $w Walk or WalkInstance to find routes for
-	* @param boolean $allowRelated If true, routes for all instances and the walk itself will be found 
+	* @param boolean $allowRelated If true, routes for related instances and the walk itself will be found - if $w is a Walk, that Walk and all instances are returned. If $w is a WalkInstance that instance and the parent Walk are returned.
+	* @param int $type Type of route to fetch - see Route::Type_Planned and Route::Type_Logged
 	* @param int $limit Limit the number of routes to find. Default is no limit (0)
 	* @return Array Array of routes for this Walk or WalkInstance
 	*/
-	public static function loadForWalkable(Walkable $w, $allowRelated=false, $limit=0)
+	public static function loadForWalkable(Walkable $w, $allowRelated=false, $type=null, $limit=0)
 	{
 		$db =& JFactory::getDBO();
 		$query = $db->getQuery(true);
-		$query->select("routeid");
+		$query->select("routeid, type");
 		$query->from("routes");
 		
 		// What walks/instances are allowed?
 		if ($w instanceof Walk)
 		{
-			$query->where(array("walkid = ".$w->id), "OR");
+			$qryWalkID = array("walkid = ".$w->id);
 			if ($allowRelated)
 			{
 				foreach ($w->getInstances() as $wi)
 				{
-				$query->where(array("walkinstanceid = ".$wi->id));
+					$qryWalkID[] = "walkinstanceid = ".$wi->id;
 				}
 			}
+			$query->where("(".implode(" OR ", $qryWalkID).")");
+			$query->order("walkid IS NOT NULL"); // Put the Walk first
 		}
 		else
 		{
-			$query->where(array("walkinstanceid = ".$w->id), "OR");
+			$qryWalkInstance = array("walkinstanceid = ".$w->id);
 			if ($allowRelated)
 			{
-				$query->where(array("walkid = ".$w->walk));
+				$qryWalkInstance[] = "walkid = ".$w->walkid;
 			}
+			$query->where("(".implode(" OR ", $qryWalkInstance).")");
+			$query->order("walkinstanceid IS NOT NULL"); // Put the WalkInstance first
 		}
 		
+		if (isset($type))
+		{
+			$query->where("type = ".(int)$type);
+		}
+		
+		$query->order("uploadeddatetime DESC"); // Most recent first
+		
 		if (!empty($limit))
-		$query->setLimit($limit,0);
+			$query->setLimit($limit,0);
 		
 		$db->setQuery($query);
 		$db->query();
 		
 		$routes = array();
-		$dbArr = $db->loadAssocList("routeid","routeid");
+		$dbArr = $db->loadAssocList("routeid");
+		$foundPlanned = false;
 		if (!empty($dbArr))
 		{
-			foreach ($dbArr as $routeid)
+			foreach ($dbArr as $row)
 			{
-				$routes[] = self::loadSingle($routeid, $w);
+				// Only want the first planned route that comes out
+				if ($row['type'] == 10)
+				{
+					if ($foundPlanned)
+						continue;
+					
+					$foundPlanned = true;
+				}
+				
+				$routes[] = self::loadSingle($row['routeid'], $w);
 			}
 		}
 		
@@ -595,6 +706,7 @@ class Route extends SWGBaseModel implements Iterator {
 			"ascent"           => $this->ascent,
 			"waypoints"        => array(),
 			"visibility"	   => $this->visibility,
+			"type"			   => $this->type,
 		);
 		
 		// Iterate through waypoints

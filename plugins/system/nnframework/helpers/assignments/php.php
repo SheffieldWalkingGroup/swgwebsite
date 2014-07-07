@@ -3,15 +3,14 @@
  * NoNumber Framework Helper File: Assignments: PHP
  *
  * @package         NoNumber Framework
- * @version         12.9.7
+ * @version         14.2.6
  *
  * @author          Peter van Westen <peter@nonumber.nl>
  * @link            http://www.nonumber.nl
- * @copyright       Copyright © 2012 NoNumber All Rights Reserved
+ * @copyright       Copyright © 2014 NoNumber All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// No direct access
 defined('_JEXEC') or die;
 
 /**
@@ -21,59 +20,78 @@ class NNFrameworkAssignmentsPHP
 {
 	function passPHP(&$parent, &$params, $selection = array(), $assignment = 'all', $article = 0)
 	{
-		if (!is_array($selection)) {
+		if (!is_array($selection))
+		{
 			$selection = array($selection);
 		}
 
 		$pass = 0;
-		foreach ($selection as $php) {
+		foreach ($selection as $php)
+		{
 			// replace \n with newline and other fix stuff
 			$php = str_replace('\|', '|', $php);
 			$php = preg_replace('#(?<!\\\)\\\n#', "\n", $php);
-			$php = str_replace('[:REGEX_ENTER:]', '\n', $php);
+			$php = trim(str_replace('[:REGEX_ENTER:]', '\n', $php));
 
-			if (trim($php) == '') {
+			if ($php == '')
+			{
 				$pass = 1;
 				break;
 			}
 
-			if (!$article && !(strpos($php, '$article') === false) && $parent->params->option == 'com_content' && $parent->params->view == 'article') {
+			if (!$article && !(strpos($php, '$article') === false) && $parent->params->option == 'com_content' && $parent->params->view == 'article')
+			{
 				require_once JPATH_SITE . '/components/com_content/models/article.php';
-				$model = JModel::getInstance('article', 'contentModel');
+				$model = JModelLegacy::getInstance('article', 'contentModel');
 				$article = $model->getItem($parent->params->id);
 			}
-			if (!isset($Itemid)) {
-				$Itemid = JRequest::getInt('Itemid');
+			else
+			{
+				$article = '';
 			}
-			if (!isset($mainframe)) {
-				$mainframe = (strpos($php, '$mainframe') === false) ? '' : JFactory::getApplication();
+			if (!isset($Itemid))
+			{
+				$Itemid = JFactory::getApplication()->input->getInt('Itemid', 0);
 			}
-			if (!isset($app)) {
-				$app = (strpos($php, '$app') === false) ? '' : JFactory::getApplication();
+			if (!isset($mainframe))
+			{
+				$mainframe = JFactory::getApplication();
 			}
-			if (!isset($document)) {
-				$document = (strpos($php, '$document') === false) ? '' : JFactory::getDocument();
+			if (!isset($app))
+			{
+				$app = JFactory::getApplication();
 			}
-			if (!isset($doc)) {
-				$doc = (strpos($php, '$doc') === false) ? '' : JFactory::getDocument();
+			if (!isset($document))
+			{
+				$document = JFactory::getDocument();
 			}
-			if (!isset($database)) {
-				$database = (strpos($php, '$database') === false) ? '' : JFactory::getDBO();
+			if (!isset($doc))
+			{
+				$doc = JFactory::getDocument();
 			}
-			if (!isset($db)) {
-				$db = (strpos($php, '$db') === false) ? '' : JFactory::getDBO();
+			if (!isset($database))
+			{
+				$database = JFactory::getDBO();
 			}
-			if (!isset($user)) {
-				$user = (strpos($php, '$user') === false) ? '' : JFactory::getUser();
+			if (!isset($db))
+			{
+				$db = JFactory::getDBO();
 			}
+			if (!isset($user))
+			{
+				$user = JFactory::getUser();
+			}
+			$php .= ';return 1;';
+			$temp_PHP_func = create_function('&$article, &$Itemid, &$mainframe, &$app, &$document, &$doc, &$database, &$db, &$user', $php);
 
-			$vars = '$article,$Itemid,$mainframe,$app,$document,$doc,$database,$db,$user';
+			// evaluate the script
+			ob_start();
+			$pass = $temp_PHP_func($article, $Itemid, $mainframe, $app, $document, $doc, $database, $db, $user) ? 1 : 0;
+			unset($temp_PHP_func);
+			ob_end_clean();
 
-			$val = '$temp_PHP_Val = create_function( \'' . $vars . '\', $php.\';\' );';
-			$val .= ' $pass = ( $temp_PHP_Val(' . $vars . ') ) ? 1 : 0; unset( $temp_PHP_Val );';
-			@eval($val);
-
-			if ($pass) {
+			if ($pass)
+			{
 				break;
 			}
 		}

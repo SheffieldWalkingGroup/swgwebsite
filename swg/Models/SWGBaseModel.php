@@ -25,6 +25,11 @@ abstract class SWGBaseModel {
 	{
 		foreach ($this->dbmappings as $var => $dbField)
 		{
+			if (!isset($dbArr[$dbField]))
+			{
+				continue;
+			}
+
 			try
 			{
 				$this->__set($var,$dbArr[$dbField]);
@@ -68,5 +73,10 @@ abstract class SWGBaseModel {
 			}
 		}
 		return $properties;
+	}
+	
+	public function __isset($name)
+	{
+		return (isset($this->$name));
 	}
 }

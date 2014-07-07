@@ -38,12 +38,19 @@ private $meetPlaceTime;
 protected $meetPoint;
 
 protected $headCount;
+protected $distance;
 protected $mileometer;
 protected $reviewComments;
 protected $deleted;
 
 protected $hasRoute;
 protected $routeVisibility;
+
+/**
+* Track for this walk
+* @var Route
+*/
+private $track;
 
 /**
 * Array of variable => dbfieldname
@@ -53,32 +60,35 @@ protected $routeVisibility;
 * @var array
 */
 public $dbmappings = array(
-	'name'		=> 'name',
-	'walkid'		=> 'walklibraryid',
-	'distanceGrade'	=> 'distancegrade',
+	'name'				=> 'name',
+	'walkid'			=> 'walklibraryid',
+	'distanceGrade'		=> 'distancegrade',
 	'difficultyGrade'	=> 'difficultygrade',
-	'miles'          => 'miles',
-	'location'       => 'location',
-	'isLinear'       => 'islinear',
-	'startGridRef'   => 'startgridref',
-	'startPlaceName' => 'startplacename',
-	'endGridRef'     => 'endgridref',
-	'endPlaceName'   => 'endplacename',
-	'description'    => 'routedescription',
-	'childFriendly'  => 'childfriendly',
-	'dogFriendly'    => 'dogfriendly',
-	'speedy'		=> 'speedy',
-	'challenge'	=> 'challenge',
+	'miles'				=> 'miles',
+	'location'			=> 'location',
+	'isLinear'			=> 'islinear',
+	'startGridRef'		=> 'startgridref',
+	'startPlaceName'	=> 'startplacename',
+	'endGridRef'		=> 'endgridref',
+	'endPlaceName'		=> 'endplacename',
+	'description'		=> 'routedescription',
+	'childFriendly'		=> 'childfriendly',
+	'dogFriendly'		=> 'dogfriendly',
+	'speedy'			=> 'speedy',
+	'challenge'			=> 'challenge',
 	
-	'leaderId'	=> 'leaderid',
-	'leaderName'	=> 'leadername',
-	'backmarkerId'	=> 'backmarkerid',
-	'backmarkerName'=> 'backmarkername',
-	'meetPointId'	=> 'meetplace',
-	'meetPlaceTime' => 'meetplacetime',
+	'leaderId'			=> 'leaderid',
+	'leaderName'		=> 'leadername',
+	'backmarkerId'		=> 'backmarkerid',
+	'backmarkerName'	=> 'backmarkername',
+	'meetPointId'		=> 'meetplace',
+	'meetPlaceTime' 	=> 'meetplacetime',
 	
-	'okToPublish'	=> 'readytopublish',
-	'routeVisibility'=> 'routevisibility'
+	'okToPublish'		=> 'readytopublish',
+	'routeVisibility'	=> 'routevisibility',
+	
+	'headCount'			=> 'headcount',
+	'distance'			=> 'distance',
 	
 	// TODO: Headcount, mileometer...
 );
@@ -92,6 +102,11 @@ public $loadOnDemand = array(
 );
 
 public $type = "Walk";
+
+	public function getType()
+	{
+		return self::TypeWalk;
+	}
 
 public function fromDatabase(array $dbArr)
 {
@@ -170,6 +185,11 @@ public function toDatabase(JDatabaseQuery &$query)
 		$query->set("backmarkername = '".$query->escape($this->backmarkerName)."'");
 	else
 		$query->set("backmarkername = ''");
+		
+	if (isset($this->distance))
+		$query->set("distance = ".(int)$this->distance);
+	if (isset($this->headCount))
+		$query->set("headcount = ".(int)$this->headCount);
 	
 	$query->set('version = '. (int)$this->alterations->version);
 	$query->set('lastmodified = '. (int)$this->alterations->lastModified);
@@ -199,10 +219,11 @@ public function toDatabase(JDatabaseQuery &$query)
 			'endGridRef'	=> $this->endGridRef,
 			'endPlaceName'	=> $this->endPlaceName,
 			
-			'childfriendly'	=> $this->childFriendly,
-			'dogfriendly'	=> $this->dogFriendly,
+			'childFriendly'	=> $this->childFriendly,
+			'dogFriendly'	=> $this->dogFriendly,
 			'speedy'		=> $this->speedy,
 			'isLinear'		=> $this->isLinear,
+			'challenge'		=> $this->challenge,
 			
 			'leaderid'		=> $this->leaderId,
 			'leadername'	=> $this->leaderName,
@@ -212,12 +233,16 @@ public function toDatabase(JDatabaseQuery &$query)
 			'meetTime' 		=> strftime("%H:%M", $this->start),
 			'meetPlaceTime'	=> $this->__get("meetPoint")->extra,
 			
+			'headCount'		=> $this->headCount,
+			'distance'		=> $this->distance,
+			
 			'alterations_details'=> $this->alterations->details,
 			'alterations_date'=>$this->alterations->placeTime,
 			'alterations_organiser'	=> $this->alterations->organiser,
 			'alterations_placeTime'	=> $this->alterations->date,
 			'alterations_cancelled'		=> $this->alterations->cancelled,
 			
+			'track' => ($this->track instanceof Track ? $this->track->jsonEncode() : false),
 		);
 		
 		if (isset($this->leader) && $this->leader->hasDisplayName)
@@ -228,11 +253,15 @@ public function toDatabase(JDatabaseQuery &$query)
 		// Try to load routes
 		if (isset($this->id))
 		{
-			$routes = Route::loadForWalkable($this, false, 1);
+			$routes = Route::loadForWalkable($this, false, Route::Type_Planned, 1);
 			if (!empty($routes))
 				$values['routeid'] = $routes[0]->id;
-		}
 			
+			$tracks = Route::loadForWalkable($this, false, Route::Type_Logged, 1);
+			if (!empty($tracks))
+				$values['trackid'] = $tracks[0]->id;
+		}
+		
 		return $values;
 			
 	}
@@ -257,400 +286,358 @@ public function toDatabase(JDatabaseQuery &$query)
 		if ($this->routeVisibility < Route::Visibility_Members)
 			return false;
 			
-		$route = Route::loadForWalkable($this);
+		$route = Route::loadForWalkable($this, false, Route::Type_Planned);
 		return (isset($route));
 	}
 
-public function __get($name)
-{
-	// Load connected objects from the database as needed
-	switch($name)
+	public function __get($name)
 	{
-		case "meetPoint":
-			$this->meetPoint = new WalkMeetingPoint($this->meetPointId, $this->start, $this->meetPlaceTime);
-			break;
-		case "leader":
-			$this->leader = Leader::getLeader($this->leaderId);
-			if (!empty($this->leaderName))
-				$this->leader->setDisplayName($this->leaderName);
-			break;
-		case "backmarker":
-			$this->backmarker = Leader::getLeader($this->backmarkerId);
-			if (!empty($this->backmarkerName))
-				$this->backmarker->setDisplayName($this->backmarkerName);
-			break;
-	}
-	return $this->$name; // TODO: What params should be exposed?
-}
-
-public function __isset($name)
-{
-	switch ($name)
-	{
-		case "meetPoint":
-		case "meetPointId":
-			return (isset($this->meetPoint) || isset($this->meetPointId));
-			break;
-		case "leader":
-		case "leaderId":
-			return (isset($this->leader) || isset($this->leaderId));
-			break;
-		case "backmarker":
-		case "backmarkerId":
-			return (isset($this->backmarker) || isset($this->backmarkerId));
-			break;
-	}
-}
-
-public function __set($name, $value)
-{
-	switch ($name)
-	{
-		// Strings - just save them (TODO: Safety checks?)
-		case "name":
-		case "startPlaceName":
-		case "endPlaceName":
-		case "description":
-			$this->$name = $value;
-			break;
-		// Integer
-		case "start":
-			$this->$name = (int)$value;
-			break;
-		// Booleans
-		case "isLinear":
-		case "dogFriendly":
-		case "childFriendly":
-			$this->$name = (bool)$value;
-			break;
-		// More specific processing
-		case "distanceGrade":
-			$value = strtoupper($value);
-			if (empty($value))
-				$this->$name = null;
-			else if ($value == "A" || $value == "B" || $value == "C")
-				$this->$name = $value;
-			else
-				throw new UnexpectedValueException("Distance grade must be A, B or C");
-			break;
-		case "difficultyGrade":
-			$value = (int)$value;
-			if (empty($value))
-				$this->$name = null;
-			else if ($value == 1 || $value == 2 || $value == 3)
-				$this->$name = $value;
-			else
-				throw new UnexpectedValueException("Difficulty grade must be 1, 2 or 3");
-			break;
-			
-		case "miles":
-			$value = (float)$value;
-			if ($value >= 0)
-			{
-				$this->$name = $value;
-				$this->distanceGrade = $this->getDistanceGrade($value);
-			}
-			else
-				throw new UnexpectedValueException("Distance must be positive"); // TODO: Validate >0 when saving
-			break;
-			
-		// Grid references - start with two letters, then an even number of digits - at least 6
-		case "startGridRef":
-		case "endGridRef":
-			$value = strtoupper(str_replace(" ","",$value));
-			if (empty($value))
-			{
-				$this->$name = null;
-				if ($name == "startGridRef")
-					$this->startLatLng = null;
-				else
-					$this->endLatLng = null;
-			}
-			else if (preg_match("/[A-Z][A-Z]([0-9][0-9]){3,}/", $value))
-			{
-				$this->$name = $value;
-				// Also set the lat/lng
-				$osRef = getOSRefFromSixFigureReference($value);
-				$latLng = $osRef->toLatLng();
-				$latLng->OSGB36ToWGS84();
-				if ($name == "startGridRef")
-					$this->startLatLng = $latLng;
-				else
-					$this->endLatLng = $latLng;
-			}
-			else
-			{
-				throw new UnexpectedValueException("Grid references must be at least 6-figures, with the grid square letters before (e.g. SK123456)");
-			}
-			break;
-			
-		// Connected objects
-		case "leader":
-		case "leaderId":
-			if (empty($value))
-			{
-				$this->leader = null;
-				$this->leaderId = null;
-			}
-			else if ($value instanceof Leader)
-			{
-				$this->leader = $value;
-				$this->leaderId = $value->id;
-			}
-			else if (is_int($value) || ctype_digit($value))
-			{
-				$this->leaderId = (int)$value;
-				$this->leader = null; // Will be loaded when needed
-			}
-			else 
-			{
-				throw new UnexpectedValueException("Leader or Leader ID must be a Leader or an integer");
-			}
-			break;
-		case "backmarker":
-		case "backmarkerId":
-			if (empty($value))
-			{
-				$this->backmarker = null;
-				$this->backmarkerId = null;
-			}
-			if ($value instanceof Leader)
-			{
-				$this->backmarker = $value;
-				$this->backmarkerId = $value->id;
-			}
-			else if (is_int($value) || ctype_digit($value))
-			{
-				$this->backmarkerId = (int)$value;
-				$this->backmarker = null; // Will be loaded when needed
-			}
-			else 
-			{
-				throw new UnexpectedValueException("Backmarker or backmarker ID must be a Leader or an integer");
-			}
-			break;
-		case "meetPoint":
-		case "meetPointId":
-			if (empty($value))
-			{
-				$this->meetPoint = null;
-				$this->meetPointId = null;
-			}
-			elseif ($value instanceof WalkMeetingPoint)
-			{
-				$this->meetPoint = $value;
-				$this->meetPointId = $value->id;
-			}
-			else if (is_int($value) || ctype_digit($value))
-			{
-				$this->meetPointId = (int)$value;
-				$this->meetPoint = null;
-			}
-			else
-			{
-				throw new UnexpectedValueException("Meetpoint or MeetPointID must be a WalkMeetingPoint or an integer");
-			}
-			if (isset($this->meetPoint) && !empty($this->meetPlaceTime))
-			{
-				$this->meetPoint->setExtra($this->meetPlaceTime);
-			}
-			break;
-		case "walkid":
-			$this->walkid = (int)$value;
-			break;
-		case "meetPlaceTime":
-			$this->meetPlaceTime = $value;
-			if (isset($this->meetPoint))
-				$this->meetPoint->setExtra($value);
-			break;
-			
-		// Checks TODO 
-		case "location":
-		case "suggestedBy":
-		case "status":
-		case "specialTBC":
-			$this->$name = $value;
-			break;
-		case "routeVisibility":
-			$this->$name = (int)$value;
-			break;
-			
-		default:
-			// All others - fall through to Event
-			parent::__set($name, $value);
-	}
-}
-
-/**
-* Calculate the distance grade of a walk
-* @param float $miles Number of miles
-*/
-private function getDistanceGrade($miles)
-{
-	if ($miles <= 8)
-		return "A";
-	else if ($miles <= 12)
-		return "B";
-	else
-		return "C";
-}
-
-/**
-* Gets a limited number of events, starting today and going forwards
-* Partly for backwards-compatibility, but also to improve readability
-* @param int $numEvents Maximum number of events to get
-*/
-public static function getNext($numEvents) {
-	return self::get(self::DateToday, self::DateEnd, $numEvents);
-}
-
-	public static function numEvents($startDate=self::DateToday, $endDate=self::DateEnd, $showUnpublished=false)
-	{
-		// Build a query to get future socials
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select("count(1) as count");
-		$query->from("walkprogrammewalks");
-		// TODO: This is a stored proc currently - can we use this?
-		$where = array(
-			"WalkDate >= '".self::timeToDate($startDate)."'",
-			"WalkDate <= '".self::timeToDate($endDate)."'",
-			"NOT deleted",
-		);
-		$query->where($where);
-		if (!$showUnpublished)
+		// Load connected objects from the database as needed
+		switch($name)
 		{
-			$query->where("readytopublish");
+			case "meetPoint":
+				$this->meetPoint = new WalkMeetingPoint($this->meetPointId, $this->start, $this->meetPlaceTime);
+				break;
+			case "leader":
+				$this->leader = Leader::getLeader($this->leaderId);
+				if (!empty($this->leaderName))
+					$this->leader->setDisplayName($this->leaderName);
+				break;
+			case "backmarker":
+				$this->backmarker = Leader::getLeader($this->backmarkerId);
+				if (!empty($this->backmarkerName))
+					$this->backmarker->setDisplayName($this->backmarkerName);
+				break;
+			case "walk":
+				return Walk::getSingle($this->walkid);
+			case "track":
+				// Load the track if we don't have it already
+				// TODO: Only try once, and catch exceptions
+				if (!isset($this->track))
+					$this->loadTrack();
+				return $this->track;
+			case "distance":
+				// If we don't have a (real) distance set, convert the (estimated) miles into metres and give that
+				break;
+			
+			// If the walk is circular, return the equivalent start point
+			case "endPlaceName":
+			case "endLatLng":
+			case "endGridRef":
+				if ($this->isLinear)
+					return $this->$name;
+				else
+				{
+				    $var = "start".substr($name, 3);
+				    return $this->$var;
+				}
+				
+				
 		}
-		$db->setQuery($query);
-		return (int)$db->loadResult();
+		return $this->$name; // TODO: What params should be exposed?
 	}
 
-/**
-* Gets the next few scheduled walks
-* @param int $startDate Get events on or after this date. Unix time, also accepts day constants (see Event.php)
-* @param int $endDate Get events on or before this date. Unix time, also accepts day constants (see Event.php)
-* @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
-* @param bool $showUnpublished Show unpublished events
-* @return array Array of WalkInstances
-*/
-public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $offset=null, $reverse=false, $showUnpublished = false) {
-	// Build a query to get future walks that haven't been deleted.
-	// We do want cancelled walks - users should be notified about these.
-	$db = JFactory::getDBO();
-	$query = $db->getQuery(true);
-	$query->select("*");
-	$query->from("walkprogrammewalks");
-
-	// TODO: This is a stored proc currently - can we use this?
-	$query->where(array(
-		"WalkDate >= '".self::timeToDate($startDate)."'",
-		"WalkDate <= '".self::timeToDate($endDate)."'",
-		"NOT deleted",
-	));
-	if (!$showUnpublished)
+	public function __isset($name)
 	{
-		$query->where("readytopublish");
-	}
-	if ($reverse)
-		$query->order(array("WalkDate DESC", "meettime DESC"));
-	else
-		$query->order(array("WalkDate ASC", "meettime ASC"));
-	$db->setQuery($query, $offset, $numToGet);
-	$walkData = $db->loadAssocList();
-
-	// Build an array of WalkInstances
-	$walks = array();
-	while (count($walkData) > 0 && count($walks) != $numToGet) {
-	$walk = new WalkInstance();
-	$walk->fromDatabase(array_shift($walkData));
-	$walks[] = $walk;
-	}
-
-	return $walks;
-}
-
-public function getEventType() {
-	return "walk";
-}
-
-public function getWalkDay() {
-	if (date("N",$this->start) < 6)
-	return "Weekday";
-	else
-	return date("l",$this->start);
-}
-
-/**
-* Estimate the finish time as:
-*   1 hour after the start time (unless the meet point is the walk start)
-*   + 0.5 hours per mile
-*   TODO: Rounded up to the nearest hour
-*/
-public function estimateFinishTime() {
-	$finish = $this->start;
-	if (!$this->__get("meetPoint")->isAtWalkStart())
-	$finish += 3600; // Add 1 hour travelling time
-	$hoursWalking = 0.5*$this->miles;
-	return ($finish + 3600*$hoursWalking);
-}
-
-public static function getSingle($id) {
-	$db = JFactory::getDBO();
-	$query = $db->getQuery(true);
-	$query->select("*");
-	$query->from("walkprogrammewalks");
-
-	$query->where(array("SequenceID = ".intval($id)));
-	$db->setQuery($query);
-	$res = $db->query();
-	if ($db->getNumRows($res) == 1)
-	{
-		$wi = new WalkInstance();
-		$wi->fromDatabase($db->loadAssoc());
-		return $wi;
-	}
-	else
-		return null;
-
-}
-/**
- * Creates a new walk instance from a walk, pre-filling fields as
- * The following fields are used:
- *   * walkid
- *   * name
- *   * description
- *   * location
- *   * (start|end)(PlaceName|GridRef)
- *   * isLinear
- *   * miles
- *   * (difficulty|distance)Grade
- *   * childFriendly
- * Other values are left blank, 
- * but dogFriendly will be true if the leader AND walk are dog friendly (false otherwise)
- * @param Walk $walk The walk we're creating a WalkInstance for
- * @return WalkInstance the generated walk instance
- */
-public static function createFromWalk(Walk $walk) {
-	$wi = new WalkInstance();
-	$wi->walkid = $walk->id;
-	
-	// Most properties have the same names. Copy them over.
-	// Because we don't allow full read-write access to the walk's properties, 
-	// we get the list of usable properties from dbmappings.
-	foreach ($walk->dbmappings as $key => $v)
-	{
-		$value = $walk->$key;
-		if (property_exists($wi,$key))
+		switch ($name)
 		{
-			$wi->$key = $value;
+			case "meetPoint":
+			case "meetPointId":
+				return (isset($this->meetPoint) || (isset($this->meetPointId) && $this->meetPointId != 0));
+				break;
+			case "leader":
+			case "leaderId":
+				return (isset($this->leader) || (isset($this->leaderId) && $this->leaderId != 0));
+				break;
+			case "backmarker":
+			case "backmarkerId":
+				return (isset($this->backmarker) || (isset($this->backmarkerId) && $this->backmarkerId != 0));
+				break;
+			case "track":
+				return (isset($this->track));
+				break;
+			default:
+				return (isset($this->$name));
+			
+		}
+	}
+
+	public function __set($name, $value)
+	{
+		switch ($name)
+		{
+			// Strings - just save them (TODO: Safety checks?)
+			case "startPlaceName":
+			case "endPlaceName":
+				$this->$name = $value;
+				break;
+			// Integer
+			case "headCount":
+			case "distance":
+				$this->$name = (int)$value;
+				break;
+			// Booleans
+			case "isLinear":
+			case "dogFriendly":
+			case "childFriendly":
+			case "speedy":
+			case "challenge":
+				$this->$name = (bool)$value;
+				break;
+			// More specific processing
+			case "distanceGrade":
+				$value = strtoupper($value);
+				if (empty($value))
+					$this->$name = null;
+				else if ($value == "A" || $value == "B" || $value == "C")
+					$this->$name = $value;
+				else
+					throw new UnexpectedValueException("Distance grade must be A, B or C");
+				break;
+			case "difficultyGrade":
+				$value = (int)$value;
+				if (empty($value))
+					$this->$name = null;
+				else if ($value == 1 || $value == 2 || $value == 3)
+					$this->$name = $value;
+				else
+					throw new UnexpectedValueException("Difficulty grade must be 1, 2 or 3");
+				break;
+				
+			case "miles":
+				$value = (float)$value;
+				if ($value >= 0)
+				{
+					$this->$name = $value;
+					$this->distanceGrade = $this->getDistanceGrade($value);
+				}
+				else
+					throw new UnexpectedValueException("Distance must be positive"); // TODO: Validate >0 when saving
+				break;
+				
+			// Grid references - start with two letters, then an even number of digits - at least 6
+			case "startGridRef":
+			case "endGridRef":
+				$value = strtoupper(str_replace(" ","",$value));
+				if (empty($value))
+				{
+					$this->$name = null;
+					if ($name == "startGridRef")
+						$this->startLatLng = null;
+					else
+						$this->endLatLng = null;
+				}
+				else if (preg_match("/[A-Z][A-Z]([0-9][0-9]){3,}/", $value))
+				{
+					$this->$name = $value;
+					// Also set the lat/lng
+					$osRef = getOSRefFromSixFigureReference($value);
+					$latLng = $osRef->toLatLng();
+					$latLng->OSGB36ToWGS84();
+					if ($name == "startGridRef")
+						$this->startLatLng = $latLng;
+					else
+						$this->endLatLng = $latLng;
+				}
+				else
+				{
+					throw new UnexpectedValueException("Grid references must be at least 6-figures, with the grid square letters before (e.g. SK123456)");
+				}
+				break;
+				
+			// Connected objects
+			case "leader":
+			case "leaderId":
+				if (empty($value))
+				{
+					$this->leader = null;
+					$this->leaderId = null;
+				}
+				else if ($value instanceof Leader)
+				{
+					$this->leader = $value;
+					$this->leaderId = $value->id;
+				}
+				else if (is_int($value) || ctype_digit($value))
+				{
+					$this->leaderId = (int)$value;
+					$this->leader = null; // Will be loaded when needed
+				}
+				else 
+				{
+					throw new UnexpectedValueException("Leader or Leader ID must be a Leader or an integer");
+				}
+				break;
+			case "backmarker":
+			case "backmarkerId":
+				if (empty($value))
+				{
+					$this->backmarker = null;
+					$this->backmarkerId = null;
+				}
+				if ($value instanceof Leader)
+				{
+					$this->backmarker = $value;
+					$this->backmarkerId = $value->id;
+				}
+				else if (is_int($value) || ctype_digit($value))
+				{
+					$this->backmarkerId = (int)$value;
+					$this->backmarker = null; // Will be loaded when needed
+				}
+				else 
+				{
+					throw new UnexpectedValueException("Backmarker or backmarker ID must be a Leader or an integer");
+				}
+				break;
+			case "meetPoint":
+			case "meetPointId":
+				if (empty($value))
+				{
+					$this->meetPoint = null;
+					$this->meetPointId = null;
+				}
+				elseif ($value instanceof WalkMeetingPoint)
+				{
+					$this->meetPoint = $value;
+					$this->meetPointId = $value->id;
+				}
+				else if (is_int($value) || ctype_digit($value))
+				{
+					$this->meetPointId = (int)$value;
+					$this->meetPoint = null;
+				}
+				else
+				{
+					throw new UnexpectedValueException("Meetpoint or MeetPointID must be a WalkMeetingPoint or an integer");
+				}
+				if (isset($this->meetPoint) && !empty($this->meetPlaceTime))
+				{
+					$this->meetPoint->setExtra($this->meetPlaceTime);
+				}
+				break;
+			case "walkid":
+				$this->walkid = (int)$value;
+				break;
+			case "meetPlaceTime":
+				$this->meetPlaceTime = $value;
+				if (isset($this->meetPoint))
+					$this->meetPoint->setExtra($value);
+				break;
+				
+			// Checks TODO 
+			case "location":
+			case "suggestedBy":
+			case "status":
+			case "specialTBC":
+				$this->$name = $value;
+				break;
+			case "routeVisibility":
+				$this->$name = (int)$value;
+				break;
+				
+			default:
+				// All others - fall through to Event
+				parent::__set($name, $value);
 		}
 	}
 	
-	return $wi;
-}
+	/**
+	* Loads the track for this walk (if any)
+	*/
+	public function loadTrack()
+	{
+		// Load the route if we don't have it already
+		// TODO: Only try once, and catch exceptions
+		if (!isset($this->track))
+		{
+			$rt = Route::loadForWalkable($this,false,Route::Type_Logged,1);
+			if (!empty($rt))
+				$this->track = $rt[0];
+		}
+	}
+	
+	/**
+	* Assigns a track to this walks
+	* TODO: Store the recorded length
+	* TODO: Verify the track matches this walk (probably a separate function)
+	* @param Route $r
+	*/
+	public function setTrack(Route &$r)
+	{
+		$this->track =& $r;
+	}
+	
+	/**
+	* Unset an existing track
+	*/
+	public function unsetTrack()
+	{
+		$this->track = null;
+	}
 
-public function hasMap() {
-	return true;
-}
+	/**
+	* Calculate the distance grade of a walk
+	* @param float $miles Number of miles
+	*/
+	private function getDistanceGrade($miles)
+	{
+		if ($miles <= 8)
+			return "A";
+		else if ($miles <= 12)
+			return "B";
+		else
+			return "C";
+	}
+
+	public function getEventType() {
+		return "walk";
+	}
+
+	public function getWalkDay() {
+		if (date("N",$this->start) < 6)
+			return "Weekday";
+		else
+			return date("l",$this->start);
+	}
+
+	/**
+	* Estimate the finish time as:
+	*   1 hour after the start time (unless the meet point is the walk start)
+	*   + 0.5 hours per mile
+	*   TODO: Rounded up to the nearest hour
+	*/
+	public function estimateFinishTime() {
+		$finish = $this->start;
+		if (!$this->__get("meetPoint")->isAtWalkStart())
+		$finish += 3600; // Add 1 hour travelling time
+		$hoursWalking = 0.5*$this->miles;
+		return ($finish + 3600*$hoursWalking);
+	}
+
+	public function hasMap() {
+		return true;
+	}
+	
+	public function getOrganiser()
+	{
+		return $this->__get("leader")->getJoomlaUser();
+	}
+	
+	public function getOrganiserWord()
+	{
+		return "leader";
+	}
+	
+	public function isOrganiser($user)
+	{
+		if ($user instanceof Leader)
+		{
+			return ($user->id == $this->leaderId);
+		}
+		else if ($user instanceof JUser)
+		{
+			return ($this->__get("leader")->joomlaUserID == $user->id);
+		}
+	}
 }

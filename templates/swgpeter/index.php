@@ -1,20 +1,25 @@
 <?php 
   defined( '_JEXEC' ) or die( 'Restricted access' );
   $currentPage = JFactory::getApplication()->getMenu()->getActive();
-  
-  JHTML::_('behavior.mootools');
+
+  JHTML::_('behavior.framework', true);
   $document = &JFactory::getDocument();
   $document->addScript('/templates/swgpeter/script/template.js');
+  JLoader::register('SWG', JPATH_SITE."/swg/swg.php");
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" class="<?php echo $currentPage->alias; ?>"
    xml:lang="<?php echo $this->language; ?>" lang="<?php echo $this->language; ?>" >
     <head>
         <jdoc:include type="head" />
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+        <meta name="format-detection" content="telephone=no">
         <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/system/css/system.css" type="text/css" />
         <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/system/css/general.css" type="text/css" />
-        <link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/<?php echo $this->template; ?>/css/template.css" type="text/css" />
-        <meta name="viewport" content="width=1016">
+        <style type="text/css">
+			@import url("<?php echo $this->baseurl;?>/templates/<?php echo $this->template;?>/css/template.css");
+			@import url("<?php echo $this->baseurl;?>/templates/<?php echo $this->template;?>/css/mobile.css") screen and (max-device-width:600px);
+        </style>
         <!--[if lt IE 9]>
             <script>
                 document.createElement('header');
@@ -27,10 +32,15 @@
        <!-- TODO: Try to move the h1 tag to the top of the HTML. May require some absolute positioning, esp. of the right panel -->
         <div class="wrapper">
             <nav>
-                <a href="/"><img src="/images/SWG_logo_2009_small.png" width="190" height="58" alt="SWG Logo" /></a>
-                <jdoc:include type="modules" name="left" style="xhtml" />
+                <a href="/" class="logo"><img src="/images/SWG_logo_2009_small.png" width="190" height="58" alt="SWG Logo" /></a>
+                <a href="#menu" class="mobile menu-button">Menu</a>
+                <div class="menu-wrap">
+					<div class="mobile menu-tab-join"></div>
+					<jdoc:include type="modules" name="left" style="xhtml" />
+				</div>
             </nav>
             <div class="main <?php echo $currentPage->alias; ?>">
+				<h1 class="mobile mobile-header">Sheffield Walking Group</h1>
                 
                 <jdoc:include type="modules" name="top" style="xhtml" />
                 
@@ -43,7 +53,7 @@
 		<div class="precontent">
 		  <jdoc:include type="modules" name="precontent" style="xhtml" />
 		</div>
-                
+                <jdoc:include type="message" />
                 <jdoc:include type="component" />
                 
                 <div class="postcontent">

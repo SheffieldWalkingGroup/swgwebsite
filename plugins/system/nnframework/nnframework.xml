@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<install type="plugin" group="system" version="1.6">
+<extension version="3.0" type="plugin" group="system" method="upgrade">
 	<name>PLG_SYSTEM_NNFRAMEWORK</name>
 	<description>PLG_SYSTEM_NNFRAMEWORK_DESC</description>
-	<version>12.9.7</version>
-	<creationDate>September 2012</creationDate>
+	<version>14.2.6</version>
+	<creationDate>February 2014</creationDate>
 	<author>NoNumber (Peter van Westen)</author>
 	<authorEmail>peter@nonumber.nl</authorEmail>
 	<authorUrl>http://www.nonumber.nl</authorUrl>
-	<copyright>Copyright © 2012 NoNumber All Rights Reserved</copyright>
+	<copyright>Copyright © 2014 NoNumber All Rights Reserved</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 
 	<!-- Files -->
@@ -15,21 +15,22 @@
 		<filename plugin="nnframework">nnframework.php</filename>
 		<filename>helper.php</filename>
 		<filename>index.html</filename>
-		<folder>css</folder>
 		<folder>fields</folder>
 		<folder>helpers</folder>
-		<folder>images</folder>
-		<folder>js</folder>
 	</files>
 
 	<!-- Parameters -->
 	<config>
 		<fields name="params" addfieldpath="/plugins/system/nnframework/fields">
-			<fieldset name="basic">
+			<fieldset name="description">
 				<field name="@header" type="nn_header"
 					label="NONUMBER_FRAMEWORK"
-					description="NONUMBER_FRAMEWORK_DESC" />
+					description="NONUMBER_FRAMEWORK_DESC"
+					xml="/plugins/system/nnframework/nnframework.xml" />
+			</fieldset>
+			<fieldset name="basic">
+				<field name="max_list_count" type="text" size="10" class="input-mini" default="2500" label="NN_MAX_LIST_COUNT" description="NN_MAX_LIST_COUNT" />
 			</fieldset>
 		</fields>
 	</config>
-</install>
+</extension>

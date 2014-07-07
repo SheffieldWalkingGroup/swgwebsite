@@ -3,19 +3,11 @@
  * @package     Joomla.Platform
  * @subpackage  Cache
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
 defined('JPATH_PLATFORM') or die;
-
-//Register the storage class with the loader
-JLoader::register('JCacheStorage', dirname(__FILE__) . '/storage.php');
-
-//Register the controller class with the loader
-JLoader::register('JCacheController', dirname(__FILE__) . '/controller.php');
-
-// Almost everything must be public here to allow overloading.
 
 /**
  * Joomla! Cache base object
@@ -24,7 +16,7 @@ JLoader::register('JCacheController', dirname(__FILE__) . '/controller.php');
  * @subpackage  Cache
  * @since       11.1
  */
-class JCache extends JObject
+class JCache
 {
 	/**
 	 * @var    object  Storage handler
@@ -99,27 +91,40 @@ class JCache extends JObject
 	 */
 	public static function getStores()
 	{
-		jimport('joomla.filesystem.folder');
-		$handlers = JFolder::files(dirname(__FILE__) . '/storage', '.php');
+		$handlers = array();
 
-		$names = array();
-		foreach ($handlers as $handler)
+		// Get an iterator and loop trough the driver classes.
+		$iterator = new DirectoryIterator(__DIR__ . '/storage');
+
+		/* @type  $file  DirectoryIterator */
+		foreach ($iterator as $file)
 		{
-			$name = substr($handler, 0, strrpos($handler, '.'));
-			$class = 'JCacheStorage' . $name;
+			$fileName = $file->getFilename();
 
-			if (!class_exists($class))
+			// Only load for php files.
+			if (!$file->isFile() || $file->getExtension() != 'php' || $fileName == 'helper.php')
 			{
-				include_once dirname(__FILE__) . '/storage/' . $name . '.php';
+				continue;
 			}
 
-			if (call_user_func_array(array(trim($class), 'test'), array()))
+			// Derive the class name from the type.
+			$class = str_ireplace('.php', '', 'JCacheStorage' . ucfirst(trim($fileName)));
+
+			// If the class doesn't exist we have nothing left to do but look at the next type. We did our best.
+			if (!class_exists($class))
 			{
-				$names[] = $name;
+				continue;
+			}
+
+			// Sweet!  Our class exists, so now we just need to know if it passes its test method.
+			if ($class::isSupported())
+			{
+				// Connector names should not have file extensions.
+				$handlers[] = str_ireplace('.php', '', $fileName);
 			}
 		}
 
-		return $names;
+		return $handlers;
 	}
 
 	/**
@@ -314,6 +319,7 @@ class JCache extends JObject
 	{
 		$returning = new stdClass;
 		$returning->locklooped = false;
+
 		// Get the default group
 		$group = ($group) ? $group : $this->_options['defaultgroup'];
 
@@ -398,6 +404,7 @@ class JCache extends JObject
 	public function unlock($id, $group = null)
 	{
 		$unlock = false;
+
 		// Get the default group
 		$group = ($group) ? $group : $this->_options['defaultgroup'];
 
@@ -438,7 +445,6 @@ class JCache extends JObject
 		}
 
 		self::$_handler[$hash] = JCacheStorage::getInstance($this->_options['storage'], $this->_options);
-
 		return self::$_handler[$hash];
 	}
 
@@ -454,7 +460,6 @@ class JCache extends JObject
 	 */
 	public static function getWorkarounds($data, $options = array())
 	{
-		// Initialise variables.
 		$app = JFactory::getApplication();
 		$document = JFactory::getDocument();
 		$body = null;
@@ -488,13 +493,23 @@ class JCache extends JObject
 			}
 		}
 
+		// Set cached headers.
+		if (isset($data['headers']) && $data['headers'])
+		{
+			foreach($data['headers'] as $header)
+			{
+				$app->setHeader($header['name'], $header['value']);
+			}
+		}
+
+		// The following code searches for a token in the cached page and replaces it with the
+		// proper token.
 		if (isset($data['body']))
 		{
-			// The following code searches for a token in the cached page and replaces it with the
-			// proper token.
-			$token = JSession::getFormToken();
-			$search = '#<input type="hidden" name="[0-9a-f]{32}" value="1" />#';
-			$replacement = '<input type="hidden" name="' . $token . '" value="1" />';
+			$token 			= JSession::getFormToken();
+			$search 		= '#<input type="hidden" name="[0-9a-f]{32}" value="1" />#';
+			$replacement 	= '<input type="hidden" name="' . $token . '" value="1" />';
+
 			$data['body'] = preg_replace($search, $replacement, $data['body']);
 			$body = $data['body'];
 		}
@@ -515,11 +530,12 @@ class JCache extends JObject
 	 */
 	public static function setWorkarounds($data, $options = array())
 	{
-		$loptions = array();
-		$loptions['nopathway'] = 0;
-		$loptions['nohead'] = 0;
-		$loptions['nomodules'] = 0;
-		$loptions['modulemode'] = 0;
+		$loptions = array(
+			'nopathway' 	=> 0,
+			'nohead' 		=> 0,
+			'nomodules' 	=> 0,
+			'modulemode' 	=> 0,
+		);
 
 		if (isset($options['nopathway']))
 		{
@@ -541,21 +557,23 @@ class JCache extends JObject
 			$loptions['modulemode'] = $options['modulemode'];
 		}
 
-		// Initialise variables.
 		$app = JFactory::getApplication();
 		$document = JFactory::getDocument();
 
-		// Get the modules buffer before component execution.
-		$buffer1 = $document->getBuffer();
-		if (!is_array($buffer1))
+		if ($loptions['nomodules'] != 1)
 		{
-			$buffer1 = array();
-		}
+			// Get the modules buffer before component execution.
+			$buffer1 = $document->getBuffer();
+			if (!is_array($buffer1))
+			{
+				$buffer1 = array();
+			}
 
-		// Make sure the module buffer is an array.
-		if (!isset($buffer1['module']) || !is_array($buffer1['module']))
-		{
-			$buffer1['module'] = array();
+			// Make sure the module buffer is an array.
+			if (!isset($buffer1['module']) || !is_array($buffer1['module']))
+			{
+				$buffer1['module'] = array();
+			}
 		}
 
 		// View body data
@@ -584,10 +602,28 @@ class JCache extends JObject
 					if (isset($options['headerbefore'][$now]))
 					{
 						// We have to serialize the content of the arrays because the may contain other arrays which is a notice in PHP 5.4 and newer
-						$nowvalue = array_map('serialize', $headnow[$now]);
-						$beforevalue = array_map('serialize', $options['headerbefore'][$now]);
+						$nowvalue 		= array_map('serialize', $headnow[$now]);
+						$beforevalue 	= array_map('serialize', $options['headerbefore'][$now]);
+
 						$newvalue = array_diff_assoc($nowvalue, $beforevalue);
 						$newvalue = array_map('unserialize', $newvalue);
+
+						// Special treatment for script and style declarations.
+						if (($now == 'script' || $now == 'style') && is_array($newvalue) && is_array($options['headerbefore'][$now]))
+						{
+							foreach ($newvalue as $type => $currentScriptStr)
+							{
+								if (isset($options['headerbefore'][$now][strtolower($type)]))
+								{
+									$oldScriptStr = $options['headerbefore'][$now][strtolower($type)];
+									if ($oldScriptStr != $currentScriptStr)
+									{
+										// Save only the appended declaration.
+										$newvalue[strtolower($type)] = JString::substr($currentScriptStr, JString::strlen($oldScriptStr));
+									}
+								}
+							}
+						}
 					}
 					else
 					{
@@ -634,6 +670,12 @@ class JCache extends JObject
 			$cached['module'] = array_diff_assoc($buffer2['module'], $buffer1['module']);
 		}
 
+		// Headers data
+		if (isset($options['headers']) && $options['headers'])
+		{
+			$cached['headers'] = $app->getHeaders();
+		}
+
 		return $cached;
 	}
 
@@ -653,17 +695,7 @@ class JCache extends JObject
 		{
 			$registeredurlparams = $app->registeredurlparams;
 		}
-		else
-		{
-			/*
-			$registeredurlparams = new stdClass;
-			$registeredurlparams->Itemid 	= 'INT';
-			$registeredurlparams->catid 	= 'INT';
-			$registeredurlparams->id 		= 'INT';
-			*/
 
-			return md5(serialize(JRequest::getURI())); // provided for backwards compatibility - THIS IS NOT SAFE!!!!
-		}
 		// Platform defaults
 		$registeredurlparams->format = 'WORD';
 		$registeredurlparams->option = 'WORD';
@@ -676,7 +708,7 @@ class JCache extends JObject
 
 		foreach ($registeredurlparams as $key => $value)
 		{
-			$safeuriaddon->$key = JRequest::getVar($key, null, 'default', $value);
+			$safeuriaddon->$key = $app->input->get($key, null, $value);
 		}
 
 		return md5(serialize($safeuriaddon));

@@ -15,6 +15,7 @@ defined('JPATH_PLATFORM') or die;
  * @package     Joomla.Platform
  * @subpackage  Crypt
  * @since       12.1
+ * @deprecated  4.0 (CMS)
  */
 class JCryptCipherSimple implements JCryptCipher
 {
@@ -37,7 +38,6 @@ class JCryptCipherSimple implements JCryptCipher
 			throw new InvalidArgumentException('Invalid key of type: ' . $key->type . '.  Expected simple.');
 		}
 
-		// Initialise variables.
 		$decrypted = '';
 		$tmp = $key->public;
 
@@ -79,7 +79,6 @@ class JCryptCipherSimple implements JCryptCipher
 			throw new InvalidArgumentException('Invalid key of type: ' . $key->type . '.  Expected simple.');
 		}
 
-		// Initialise variables.
 		$encrypted = '';
 		$tmp = $key->private;
 
@@ -117,33 +116,8 @@ class JCryptCipherSimple implements JCryptCipher
 		$key = new JCryptKey('simple');
 
 		// Just a random key of a given length.
-		$key->private = $this->_getRandomKey();
+		$key->private = JCrypt::genRandomBytes(256);
 		$key->public  = $key->private;
-
-		return $key;
-	}
-
-	/**
-	 * Method to generate a random key of a given length.
-	 *
-	 * @param   integer  $length  The length of the key to generate.
-	 *
-	 * @return  string
-	 *
-	 * @since   12.1
-	 */
-	private function _getRandomKey($length = 256)
-	{
-		// Initialise variables.
-		$key = '';
-		$salt = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-		$saltLength = strlen($salt);
-
-		// Build the random key.
-		for ($i = 0; $i < $length; $i++)
-		{
-			$key .= $salt[mt_rand(0, $saltLength - 1)];
-		}
 
 		return $key;
 	}
@@ -160,7 +134,6 @@ class JCryptCipherSimple implements JCryptCipher
 	 */
 	private function _hexToInt($s, $i)
 	{
-		// Initialise variables.
 		$j = (int) $i * 2;
 		$k = 0;
 		$s1 = (string) $s;
@@ -241,7 +214,6 @@ class JCryptCipherSimple implements JCryptCipher
 	 */
 	private function _hexToIntArray($hex)
 	{
-		// Initialise variables.
 		$array = array();
 
 		$j = (int) strlen($hex) / 2;
@@ -270,6 +242,7 @@ class JCryptCipherSimple implements JCryptCipher
 
 		// Get the first character of the hexadecimal string if there is one.
 		$j = (int) ($i / 16);
+
 		if ($j === 0)
 		{
 			$s = ' ';

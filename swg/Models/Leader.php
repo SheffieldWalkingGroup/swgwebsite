@@ -5,6 +5,7 @@ require_once("SWGBaseModel.php");
 * A walk leader or backmarker
 */
 class Leader extends SWGBaseModel {
+
 protected $id;
 private $username;
 private $password;
@@ -36,6 +37,7 @@ private $dbmappings = array(
 	'dogFriendly'			=> "dogfriendly",
 	'publishInOtherSites'	=> "publishinothersites",
 	'joomlaUserID'			=> "joomlauser",
+	'displayName'			=> "displayname",
 );
 	
 	/**
@@ -43,103 +45,111 @@ private $dbmappings = array(
 	 */
 	const TBC = 46;
 
-function __construct($dbArr = null) {
-	if (isset($dbArr))
+	function __construct($dbArr = null) {
+		if (isset($dbArr))
+		{
+			parent::fromDatabase($dbArr);
+			
+			$this->id = $dbArr['ID'];
+			
+			// Set a default display name
+			if (empty($this->displayName))
+			{
+				$this->displayName = ucwords($this->forename)." ".strtoupper(substr($this->surname,0,1));
+				$this->hasDisplayName = false;
+			}
+			else
+			{
+				$this->hasDisplayName = true;
+			}
+			
+		}
+	}
+
+
+	function __set($name, $value)
 	{
-		$this->id = $dbArr['ID'];
-		$this->surname = $dbArr['Surname'];
-		$this->forename = $dbArr['Forename'];
-		$this->telephone = $dbArr['Telephone'];
-		$this->email = $dbArr['Email'];
-		$this->notes = $dbArr['Notes'];
-		$this->noContactOfficeHours = (bool)$dbArr['nocontactofficehours'];
-		$this->active = (bool)$dbArr['active'];
-		$this->dogFriendly = (bool)$dbArr['dogfriendly'];
-		$this->publishInOtherSites = (bool)$dbArr['publishinothersites'];
-		$this->joomlaUserID = (int)$dbArr['joomlauser'];
-		
-		// Set a default display name
-		// TODO: Could scan for multiple surnames and include all of them
-		if ($this->id == self::TBC)
-			$this->displayName = "TBC";
+		switch ($name)
+		{
+			case "surname":
+			case "forename":
+			case "email":
+			case "notes":
+			case "telephone":
+			case "username":
+			case "password":
+			case "displayName":
+				// Text
+				$this->$name = $value;
+				break;
+			case "joomlaUserID":
+				// Integer
+				$this->$name = (int)$value;
+				break;
+			case "noContactOfficeHours":
+			case "active":
+			case "dogFriendly":
+			case "publishInOtherSites":
+				// Boolean
+				$this->$name = (bool)$value;
+				break;
+		}
+	}
+
+	/**
+	* Customises the leader's display name.
+	* If this isn't set, it defaults to Firstname S (initial)
+	* @param string $displayName
+	*/
+	function setDisplayName($displayName) {
+		$this->displayName = $displayName;
+		$this->hasDisplayName = true;
+	}
+	
+	/**
+	 * Return the Joomla user associated with this leader
+	 * @return JUser
+	 */
+	public function getJoomlaUser()
+	{
+		return JUser::getInstance($this->joomlaUserID);
+	}
+
+	/**
+	* Return the leader associated with a particular Joomla user account
+	* @param int $id Joomla user ID
+	*/
+	public static function fromJoomlaUser($id) {
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select("*");
+		$query->from("walkleaders");
+
+		$query->where(array("joomlauser = ".intval($id)));
+		$db->setQuery($query);
+		$res = $db->query();
+		if ($db->getNumRows($res) == 1)
+			return new Leader($db->loadAssoc());
 		else
-			$this->displayName = ucwords($this->forename)." ".strtoupper(substr($this->surname,0,1));
-		$this->hasDisplayName = false;
+			return null;
 	}
-}
 
-function __set($name, $value)
-{
-	switch ($name)
-	{
-		case "surname":
-		case "forename":
-		case "email":
-		case "notes":
-		case "telephone":
-		case "username":
-		case "password":
-			// Text
-			$this->$name = $value;
-			break;
-		case "joomlaUserID":
-			// Integer
-			$this->$name = (int)$value;
-			break;
-		case "noContactOfficeHours":
-		case "active":
-		case "dogFriendly":
-		case "publishInOtherSites":
-			// Boolean
-			$this->$name = (bool)$value;
-			break;
+	public static function getLeader($id) {
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select("*");
+		$query->from("walkleaders");
+
+		$query->where(array("ID = ".intval($id)));
+		$db->setQuery($query);
+		$res = $db->query();
+		if ($db->getNumRows($res) == 1)
+			return new Leader($db->loadAssoc());
+		else
+			return null;
+
 	}
-}
 
-/**
-* Customises the leader's display name.
-* If this isn't set, it defaults to Firstname S (initial)
-* @param string $displayName
-*/
-function setDisplayName($displayName) {
-	$this->displayName = $displayName;
-	$this->hasDisplayName = true;
-}
-
-/**
- * Return the leader associated with a particular Joomla user account
- * @param int $id Joomla user ID
- */
-public static function getJoomlaUser($id) {
-	$db = JFactory::getDBO();
-	$query = $db->getQuery(true);
-	$query->select("*");
-	$query->from("walkleaders");
-
-	$query->where(array("joomlauser = ".intval($id)));
-	$db->setQuery($query);
-	$res = $db->query();
-	if ($db->getNumRows($res) == 1)
-		return new Leader($db->loadAssoc());
-	else
-		return null;
-}
-
-public static function getLeader($id) {
-	$db = JFactory::getDBO();
-	$query = $db->getQuery(true);
-	$query->select("*");
-	$query->from("walkleaders");
-
-	$query->where(array("ID = ".intval($id)));
-	$db->setQuery($query);
-	$res = $db->query();
-	if ($db->getNumRows($res) == 1)
-		return new Leader($db->loadAssoc());
-	else
-		return new Leader();
-
-}
 
 public function __get($name)
 {

@@ -34,15 +34,15 @@ echo "DESCRIPTION: ". $this->parseText($description)."\r\n";
    
 echo "DTEND:"; 
 if ($event instanceof WalkInstance) {
-	echo strftime("%Y%m%dT%H%M%S", $event->estimateFinishTime())."\r\n";
+	echo strftime("%Y%m%dT%H%M%SZ", swg::localToUTC($event->estimateFinishTime())."\r\n";
 } else if ($event instanceof Weekend) {
 	// End time should be midnight of the day after the last one for an all day event
-	echo strftime("%Y%m%dT%H%M%S", $event->endDate+86400);
+	echo strftime("%Y%m%dT%H%M%SZ", swg::localToUTC($event->endDate+86400));
 } else if ($event instanceof Social) {
 	if (isset($event->end))
-		echo strftime("%Y%m%dT%H%M%S", $event->end);
+		echo strftime("%Y%m%dT%H%M%SZ", swg::localToUTC($event->end));
 	else
-		echo strftime("%Y%m%dT%H%M%S", $event->start + 3600*2); // Default end time - 2 hours after start
+		echo strftime("%Y%m%dT%H%M%SZ", swg::localToUTC($event->start + 3600*2)); // Default end time - 2 hours after start
 }
 echo "\r\n";
 

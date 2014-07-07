@@ -8,7 +8,7 @@ jimport('joomla.application.component.controller');
 /**
  * SWG_Walks Component Controller
  */
-class SWG_WalkLibraryController extends JController
+class SWG_WalkLibraryController extends JControllerLegacy
 {
 	/* Permissions checks */
 	function canAdd()
@@ -32,7 +32,7 @@ class SWG_WalkLibraryController extends JController
 			if (empty($walk))
 				throw new InvalidArgumentException("Invalid walk or ID");
 			
-			return ($walk->suggestedBy == Leader::getJoomlaUser(JFactory::getUser()->id));
+			return ($walk->suggestedBy == Leader::fromJoomlaUser(JFactory::getUser()->id));
 		}
 	}
 	

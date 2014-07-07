@@ -23,6 +23,23 @@ var SWGMap = new Class({
 	styleContext: function(feature) { return feature;},
 	
 	/**
+	 * All events currently shown on the map
+	 */
+	events: new Array(),
+	
+	/**
+	 * The number of events we're currently loading.
+	 * Used to fire a notification when all events have loaded.
+	 */
+	eventsLoading: 0,
+	
+	/**
+	 * Methods to call when the map (and events) has finished loading
+	 * If more events are added, this event will trigger again when they've loaded
+	 */
+	listenersLoaded: {'once':new Array(), 'repeat':new Array()},
+	
+	/**
 	 * Creates a new map in the specified container
 	 * TODO: Allow different maps?
 	 * @param Element container Element containing the map
@@ -195,6 +212,24 @@ var SWGMap = new Class({
 	},
 	
 	/**
+	 * Adds a loaded handler to the map and events
+	 * Loaded handlers are triggered when the map and all queued events have loaded
+	 * If more events are added, the handler will trigger again once those have loaded
+	 * @param func Function to call. No parameters are currently passed.
+	 * @param repeat boolean: True if this handler is to be called every time loading completes, false to call once only (default)
+	 */
+	addLoadedHandler: function(func, repeat)
+	{
+		if (repeat == undefined)
+			repeat = false;
+		
+		if (repeat)
+			this.listenersLoaded.repeat.push(func);
+		else
+			this.listenersLoaded.once.push(func);
+	},
+	
+	/**
 	 * Adds a new walk to the map.
 	 * All that gets shown is the start and end markers.
 	 * Routes are added separately
@@ -204,25 +239,69 @@ var SWGMap = new Class({
 		// Load the walk
 		// TODO: Handle failed loads
 		var walk = new Walk();
+		walk.map = this;
 		walk.load(walkID,this);
+		this.addEvent(walk);
+		return walk;
 	},
 	
 	addWalkInstance: function(wiID)
 	{
 		var wi = new WalkInstance();
+		wi.map = this;
 		wi.load(wiID,this);
+		this.addEvent(wi);
+		return wi;
 	},
 	
 	addSocial: function (socialID)
 	{
 		var social = new Social();
+		social.map = this;
 		social.load(socialID, this);
+		this.addEvent(social);
+		return social;
 	},
 	
 	addWeekend: function (weekendID)
 	{
 		var weekend = new Weekend();
+		weekend.map = this;
 		weekend.load(weekendID, this);
+		this.addEvent(weekend);
+		return weekend;
+	},
+	
+	/**
+	 * @access private
+	 */
+	addEvent: function (event)
+	{
+		this.events.push(event);
+		this.eventsLoading++;
+	},
+	
+	loadedEvent: function(event)
+	{
+		this.eventsLoading--;
+		if (this.eventsLoading == 0)
+		{
+			// Fire off event notifications
+			
+			// Take a copy of the fire once handlers. This allows handlers to add their own listeners
+			var onceListeners = this.listenersLoaded.once.slice(0);
+			this.listenersLoaded.once = []; // Clear trigger-once handlers
+			
+			for (var i=0; i<this.listenersLoaded.repeat.length; i++)
+			{
+				this.listenersLoaded.repeat[i]();
+			}
+			for (i=0; i<onceListeners.length; i++)
+			{
+				onceListeners[i]();
+			}
+			
+		}
 	},
 	
 	/**
@@ -239,9 +318,6 @@ var SWGMap = new Class({
 				'meet':null
 		};
 		
-		// Try to load a route
-		walk.loadRoute(this);
-		
 		// Create markers for start and (possibly) end points
 		// Note: need to transform from WGS1984 to (usually) Spherical Mercator projection
 		var start = new OpenLayers.LonLat(walk.startLatLng.lng,walk.startLatLng.lat).transform(
@@ -254,7 +330,10 @@ var SWGMap = new Class({
 		
 		var startPopup = new OpenLayers.Popup.FramedCloud("StartPopup",
 		    start, null,
-		    "Start: "+walk.startGridRef+"<br>"+walk.startPlaceName+"<br><a href='http://www.streetmap.co.uk/loc/"+walk.startGridRef+"' target='_blank'>View on Ordnance Survey map</a>", null, true
+		    "Start: "+walk.startGridRef+
+		    "<br>"+walk.startPlaceName+
+		    "<br><a href='http://www.streetmap.co.uk/loc/"+walk.startGridRef+"' target='_blank'>View on Ordnance Survey map</a>"
+			, null, true
 		);
 		// Need to centre the map before adding popups
 		// TODO: Temporary - should zoom to bounding box around start & end (or route if available)
@@ -321,10 +400,14 @@ var SWGMap = new Class({
 		this.map.setCenter(start,14);
 		
 		// Do we have a queued move?
+		// TODO: If this is still used, move it to loadedEvent
 		if (this.queuedMove != undefined && this.queuedMove != null)
 		{
 			this.showPoint(this.queuedMove.walkID, this.queuedMove.pointType, this.queuedMove.zoom);
 		}
+		
+		this.loadedEvent(walk);
+		
 	},
 	
 	loadedSocial: function(social)
@@ -367,6 +450,8 @@ var SWGMap = new Class({
 		//{
 //			this.showPoint(this.queuedMove.walkID, this.queuedMove.pointType, this.queuedMove.zoom);
 		//}
+		
+		this.loadedEvent(this.socials[social.id]);
 	},
 	
 	loadedWeekend: function(weekend)
@@ -408,19 +493,27 @@ var SWGMap = new Class({
 		//{
 //			this.showPoint(this.queuedMove.walkID, this.queuedMove.pointType, this.queuedMove.zoom);
 		//}
+		this.loadedEvent(this.weekends[weekend.id]);
 	},
 	
 	
 	/**
 	 * Called when a route has loaded
 	 */
-	loadedRoute: function(route, walk)
+	loadedRoute: function(route, walk, title)
 	{
+		if (title == undefined)
+			title = "Route";
+		
 		var points = new Array();
 		
 		var srcProjection = new OpenLayers.Projection("EPSG:4326");
 		
 		var rt, rtFeature, rtLayer;
+		
+		// Always add the start point to the bounds
+		var startPt = new OpenLayers.Geometry.Point(walk.startLatLng.lng, walk.startLatLng.lat).transform(srcProjection, this.map.getProjectionObject());
+		walk.bounds.extend(startPt);
 		
 		if (route.waypoints.length != 0)
 		{
@@ -432,36 +525,30 @@ var SWGMap = new Class({
 				{
 					var point = new OpenLayers.Geometry.Point(route.waypoints[pt].lng, route.waypoints[pt].lat).transform(srcProjection, this.map.getProjectionObject());
 					points.push(point);
+					walk.bounds.extend(point);
 				}
 			}
 			rt = new OpenLayers.Geometry.LineString(points);
 			
 			rtFeature = new OpenLayers.Feature.Vector(
-					rt, null, {
-						strokeColor:"#FF9555",
-						strokeOpacity:1,
-						strokeWidth:3,
-						pointRadius:3,
-						pointerEvents:"visiblePainted"
-					}
+					rt, null, route.drawSettings()
 			);
 		}
 		else if (walk.isLinear == 1)
 		{
-			// Dotted line for linear walks
-			var startPt = new OpenLayers.Geometry.Point(walk.startLatLng.lng, walk.startLatLng.lat).transform(srcProjection, this.map.getProjectionObject());
 			var endPt   = new OpenLayers.Geometry.Point(walk.endLatLng.lng,   walk.endLatLng.lat  ).transform(srcProjection, this.map.getProjectionObject());
+			walk.bounds.extend(endPt);
 			
+			// Dotted line for linear walks
 			rt = new OpenLayers.Geometry.LineString([startPt, endPt]);
 			
 			rtFeature = new OpenLayers.Feature.Vector(
 					rt, null, {
 						strokeColor:"#FF9555",
 						strokeOpacity:1,
-						strokeWidth:3,
-						pointRadius:3,
+						strokeWidth:5,
 						pointerEvents:"visiblePainted",
-						strokeDashstyle:"dash"
+						strokeDashstyle:"dot"
 					}
 			);
 		}
@@ -469,13 +556,15 @@ var SWGMap = new Class({
 		// If we have some sort of route, add it
 		if (rt != undefined && rt != null)
 		{
-			rtLayer = new OpenLayers.Layer.Vector("Route");
+			rtLayer = new OpenLayers.Layer.Vector(title);
 			this.map.addLayer(rtLayer);
 			rtLayer.addFeatures([rtFeature]);
 			
 			//Move the markers to the top layer
 			this.map.setLayerZIndex(this.locations, this.map.getNumLayers());
 		}
+		
+		this.loadedEvent(this.walks[walk.id]);
 	},
 	
 	/**
@@ -511,6 +600,32 @@ var SWGMap = new Class({
 			this.map.setCenter(walk.meet,zoom)
 		}
 	},
+	
+	/**
+	 * Zoom the map to fit everything currently loaded
+	 * Note that events are not added immediately - if you've added an event to the map, 
+	 */
+	zoomToFit: function()
+	{
+		if (this.events.length == 0)
+			return;
+		
+		// Combine bounding boxes for all current events
+		var bounds = new OpenLayers.Bounds();
+		for (var i=0; i<this.events.length; i++)
+		{
+			bounds.extend(this.events[i].bounds);
+		}
+		
+		// Scale the map if we have points
+		if (bounds.getCenterLonLat().lat != 0) // Unlikely to centre on the equator, but might centre at longitude 0
+		{
+			this.map.zoomToExtent(bounds);
+			if (this.map.zoom > 16)
+				this.map.zoomTo(16); // Don't zoom to closely on single points
+		}
+	},
+	
 	/**
 	 * Destroy the map
 	 */
@@ -521,6 +636,12 @@ var SWGMap = new Class({
 });
 
 var Event = new Class({
+	bounds: null,
+	map:null,
+	initialize: function()
+	{
+		this.bounds = new OpenLayers.Bounds();
+	},
 	parseData: function(data)
 	{
 		for (var i in data)
@@ -528,6 +649,12 @@ var Event = new Class({
 			if (data.hasOwnProperty(i))
 			{
 				this[i] = data[i];
+				
+				// Look out for certain properties that should be added to this event's bounding box
+				if (i.indexOf("latLng") != -1)
+				{
+					this.bounds.extend(this[i]);
+				}
 			}
 		}
 	}
@@ -538,24 +665,16 @@ var Walkable = new Class({
 	initialize: function()
 	{
 		this.route = null;
+		this.parent();
 	},
 	
-	/**
-	 * Loads the route for this walk, and return it to the requestor.
-	 * This is a wrapper, used for the purpose of adding the walk object to the notification to the requestor
-	 * Returns false if no route available.
-	 */
-	loadRoute: function(requestor)
+	loadedRoute: function(route)
 	{
-		this.loadedRoute = function(route)
+		if (this.map != null)
 		{
-			requestor.loadedRoute(route, this);
-		};
-			
-		var route = new Route(this);
-		route.load(this['class'].toLowerCase(),this.id,this);
+			this.map.loadedRoute(route, this, route.title);
+		}
 	}
-	
 })
 
 /**
@@ -651,11 +770,12 @@ var Weekend = new Class({
 });
 
 var Route = new Class({
-	
-	initialize: function(walkable)
+	title:"Route",
+	waypoints:new Array(),
+	initialize: function(title)
 	{
-		if (walkable != undefined)
-			this.walkable = walkable;
+		if (title != undefined)
+			this.title = title;
 		
 		this.waypoints = [];
 	},
@@ -679,14 +799,15 @@ var Route = new Class({
 	/**
 	 * Loads a route by route ID, walk ID, or any other supported search
 	 * @param searchType String What to search by, e.g. "route" or "walk". See parser class for details
+	 * @param routeType int Type of route - 10 is planned, 20 is recorded.
 	 * @param id int ID of route/walk/other to search for
 	 * @param requestor Object Object to notify when a route is loaded. loadedRoute(this) is called. 
 	 */
-	load: function(searchType, id, requestor)
+	load: function(searchType, id, routeType, requestor)
 	{
 		var self=this;
 		var loader = new Request.JSON({
-			url: "/api/route?"+searchType+"id="+id+"&format=json",
+			url: "/api/route?"+searchType+"id="+id+"&type="+routeType+"&format=json",
 			onSuccess: function(data)
 			{
 				self.read(data);
@@ -695,6 +816,25 @@ var Route = new Class({
 			// TODO: onFailure
 		});
 		loader.get();
+	},
+	
+	drawSettings: function()
+	{
+		var settings = {
+			strokeColor:"#FF9555",
+			strokeOpacity:1,
+			strokeWidth:3,
+			pointRadius:3,
+			pointerEvents:"visiblePainted"
+		};
+		
+		if (this.type == 10)
+		{
+			// Planed route
+			settings.strokeDashstyle = "dash";
+		}
+		
+		return settings;
 	}
 });
 

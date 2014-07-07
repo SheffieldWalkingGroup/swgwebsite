@@ -1,30 +1,52 @@
 <?php
 /**
- * @copyright	Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Administrator
+ * @subpackage  com_weblinks
+ *
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access.
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.controlleradmin');
 
 /**
  * Weblinks list controller class.
  *
- * @package		Joomla.Administrator
- * @subpackage	com_weblinks
- * @since		1.6
+ * @package     Joomla.Administrator
+ * @subpackage  com_weblinks
+ * @since       1.6
  */
 class WeblinksControllerWeblinks extends JControllerAdmin
 {
 	/**
-	 * Proxy for getModel.
-	 * @since	1.6
+	 * Proxy for getModel
+	 *
+	 * @param   string  $name    The model name. Optional.
+	 * @param   string  $prefix  The class prefix. Optional.
+	 * @param   array   $config  The array of possible config values. Optional.
+	 *
+	 * @return  object  The model.
+	 *
+	 * @since   1.6
 	 */
 	public function getModel($name = 'Weblink', $prefix = 'WeblinksModel', $config = array('ignore_request' => true))
 	{
 		$model = parent::getModel($name, $prefix, $config);
+
 		return $model;
+	}
+
+	/**
+	 * Method to provide child classes the opportunity to process after the delete task.
+	 *
+	 * @param   JModelLegacy  $model  The model for the component
+	 * @param   mixed         $ids    array of ids deleted.
+	 *
+	 * @return  void
+	 *
+	 * @since   3.1
+	 */
+	protected function postDeleteHook(JModelLegacy $model, $ids = null)
+	{
 	}
 }

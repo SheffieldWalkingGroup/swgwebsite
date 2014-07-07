@@ -1,106 +1,211 @@
 <?php
 /**
- * nnHTML
+ * nnHtml
  * extra JHTML functions
  *
  * @package         NoNumber Framework
- * @version         12.9.7
+ * @version         14.2.6
  *
  * @author          Peter van Westen <peter@nonumber.nl>
  * @link            http://www.nonumber.nl
- * @copyright       Copyright © 2012 NoNumber All Rights Reserved
+ * @copyright       Copyright © 2014 NoNumber All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// No direct access
 defined('_JEXEC') or die;
 
-$document = JFactory::getDocument();
-$scripts = array();
-$scripts[] = "if ( typeof( window['nn_texts'] ) == \"undefined\" ) { nn_texts = new Array(); }";
-$scripts[] = "nn_texts['selectall'] = '" . addslashes(JText::_('NN_SELECT_ALL')) . "';";
-$scripts[] = "nn_texts['unselectall'] = '" . addslashes(JText::_('NN_UNSELECT_ALL')) . "';";
-$scripts[] = "nn_texts['total'] = '" . addslashes(JText::_('NN_TOTAL')) . "';";
-$scripts[] = "nn_texts['selected'] = '" . addslashes(JText::_('NN_SELECTED')) . "';";
-$scripts[] = "nn_texts['unselected'] = '" . addslashes(JText::_('NN_UNSELECTED')) . "';";
-$scripts[] = "nn_texts['maximize'] = '" . addslashes(JText::_('NN_MAXIMIZE')) . "';";
-$scripts[] = "nn_texts['minimize'] = '" . addslashes(JText::_('NN_MINIMIZE')) . "';";
-$document->addScriptDeclaration(implode('', $scripts));
-
 /**
- * nnHTML
+ * nnHtml
  */
-class nnHTML
+class nnHtml
 {
-	public static $_version = '12.9.7';
-
-	static function selectlist(&$options, $name, $value, $id, $size = 0, $multiple = 0, $attribs = '')
+	static function selectlist(&$options, $name, $value, $id, $size = 0, $multiple = 0)
 	{
-		if ($options == -1 || count($options) > 2500) {
-			if (is_array($value)) {
+		if (empty($options))
+		{
+			return '<fieldset class="radio">' . JText::_('NN_NO_ITEMS_FOUND') . '</fieldset>';
+		}
+
+		require_once JPATH_PLUGINS . '/system/nnframework/helpers/parameters.php';
+		$parameters = NNParameters::getInstance();
+		$params = $parameters->getPluginParams('nnframework');
+
+		if (!is_array($value))
+		{
+			$value = explode(',', $value);
+		}
+
+		$count = 0;
+		if ($options != -1)
+		{
+			foreach ($options as $option)
+			{
+				$count++;
+				if (isset($option->links))
+				{
+					$count += count($option->links);
+				}
+				if ($count > $params->max_list_count)
+				{
+					break;
+				}
+			}
+		}
+
+		if ($options == -1 || $count > $params->max_list_count)
+		{
+			if (is_array($value))
+			{
 				$value = implode(',', $value);
 			}
-			if (!$value) {
+			if (!$value)
+			{
 				$input = '<textarea name="' . $name . '" id="' . $id . '" cols="40" rows="5" />' . $value . '</textarea>';
-			} else {
+			}
+			else
+			{
 				$input = '<input type="text" name="' . $name . '" id="' . $id . '" value="' . $value . '" size="60" />';
 			}
 			return '<fieldset class="radio"><label for="' . $id . '">' . JText::_('NN_ITEM_IDS') . ':</label>' . $input . '</fieldset>';
 		}
 
-		if (empty($options)) {
-			return '<fieldset class="radio">' . JText::_('NN_NO_ITEMS_FOUND') . '</fieldset>';
+		$size = $size ? $size : 300;
+
+		if (!$multiple)
+		{
+			$html = JHtml::_('select.genericlist', $options, $name, 'class="inputbox"', 'value', 'text', $value);
+			return preg_replace('#>\[\[\:(.*?)\:\]\]#si', ' style="\1">', $html);
 		}
 
-		if (!$size) {
-			$size = ((count($options) > 10) ? 10 : count($options));
-		}
-		$attribs .= ' size="' . $size . '"';
-		if ($multiple) {
-			if (!is_array($value)) {
-				$value = explode(',', $value);
+		JHtml::stylesheet('nnframework/multiselect.min.css', false, true);
+		JHtml::script('nnframework/multiselect.min.js', false, true);
+
+		$html = array();
+
+		$html[] = '<div class="well well-small nn_multiselect" id="' . $id . '">';
+		$html[] = '
+			<div class="form-inline nn_multiselect-controls">
+				<span class="small">' . JText::_('JSELECT') . ':
+					<a class="nn_multiselect-checkall" href="javascript://">' . JText::_('JALL') . '</a>,
+					<a class="nn_multiselect-uncheckall" href="javascript://">' . JText::_('JNONE') . '</a>,
+					<a class="nn_multiselect-toggleall" href="javascript://">' . JText::_('NN_TOGGLE') . '</a>
+				</span>
+				<span class="width-20">|</span>
+				<span class="small">' . JText::_('NN_EXPAND') . ':
+					<a class="nn_multiselect-expandall" href="javascript://">' . JText::_('JALL') . '</a>,
+					<a class="nn_multiselect-collapseall" href="javascript://">' . JText::_('JNONE') . '</a>
+				</span>
+				<span class="width-20">|</span>
+				<span class="small">' . JText::_('JSHOW') . ':
+					<a class="nn_multiselect-showall" href="javascript://">' . JText::_('JALL') . '</a>,
+					<a class="nn_multiselect-showselected" href="javascript://">' . JText::_('NN_SELECTED') . '</a>
+				</span>
+				<span class="nn_multiselect-maxmin">
+				<span class="width-20">|</span>
+				<span class="small">
+					<a class="nn_multiselect-maximize" href="javascript://">' . JText::_('NN_MAXIMIZE') . '</a>
+					<a class="nn_multiselect-minimize" style="display:none;" href="javascript://">' . JText::_('NN_MINIMIZE') . '</a>
+				</span>
+				</span>
+				<input type="text" name=""nn_multiselect-filter" class="nn_multiselect-filter input-medium search-query pull-right" size="16"
+					autocomplete="off" placeholder="' . JText::_('JSEARCH_FILTER') . '" aria-invalid="false" tabindex="-1">
+			</div>
+
+			<div class="clearfix"></div>
+
+			<hr class="hr-condensed" />';
+
+		$o = array();
+		foreach ($options as $option)
+		{
+			$option->level = isset($option->level) ? $option->level : 0;
+			$o[] = $option;
+			if (isset($option->links))
+			{
+				foreach ($option->links as $link)
+				{
+					$link->level = $option->level + (isset($link->level) ? $link->level : 1);
+					$o[] = $link;
+				}
 			}
-			$attribs .= ' multiple="multiple"';
-			if (substr($name, -2) != '[]') {
-				$name .= '[]';
+		}
+
+		$html[] = '<ul class="nn_multiselect-ul" style="max-height:' . (int) $size . 'px;overflow-x: hidden;">';
+		$prevlevel = 0;
+
+		foreach ($o as $i => $option)
+		{
+			if ($prevlevel < $option->level)
+			{
+				$html[] = '<ul class="nn_multiselect-sub">';
 			}
-		}
-
-		foreach ($options as $i => $option) {
-			$option = (object) $option;
-			if (isset($option->text)) {
-				$option->text = str_replace(array('&nbsp;', '&#160;'), '___', $option->text);
-				$options[$i] = $option;
+			else if ($prevlevel > $option->level)
+			{
+				$html[] = str_repeat('</li></ul>', $prevlevel - $option->level);
 			}
-		}
+			else if ($i)
+			{
+				$html[] = '</li>';
+			}
 
-		$class = 'inputbox';
-		if ($multiple) {
-			$class .= ' nn_multiselect';
-		}
+			$labelclass = trim('pull-left ' . (isset($option->labelclass) ? $option->labelclass : ''));
 
-		$html = JHtml::_('select.genericlist', $options, $name, 'class="' . trim($class) . '" ' . trim($attribs), 'value', 'text', $value, $id);
-		$html = str_replace('___', '&nbsp;', $html);
+			$html[] = '<li>';
 
-		$links = array();
-		if ($multiple) {
-			$document = JFactory::getDocument();
-			$document->addScript(JURI::root(true) . '/plugins/system/nnframework/fields/multiselect/script.js?v=' . self::$_version);
-			$document->addStyleSheet(JURI::root(true) . '/plugins/system/nnframework/fields/multiselect/style.css?v=' . self::$_version);
-		} else if ($size && count($options) > $size) {
-			$links[] = '<a href="javascript://" onclick="nnScripts.toggleSelectListSize(\'' . $id . '\');" id="toggle_' . $id . '">'
-				. '<span class="show">' . JText::_('NN_MAXIMIZE') . '</span>'
-				. '<span class="hide" style="display:none";>' . JText::_('NN_MINIMIZE') . '</span>'
-				. '</a>';
-		}
-		if (!empty($links)) {
-			JHtml::_('behavior.mootools');
-			$document = JFactory::getDocument();
-			$document->addScript(JURI::root(true) . '/plugins/system/nnframework/js/script.js?v=' . self::$_version);
-			$html = implode(' - ', $links) . '<br />' . $html;
-		}
+			$item = '<div class="' . trim('nn_multiselect-item pull-left ' . (isset($option->class) ? $option->class : '')) . '">';
+			if (isset($option->title))
+			{
+				$labelclass .= ' nav-header';
+			}
 
-		$html = '<fieldset class="radio" id="' . $id . '_fieldset">' . $html . '</fieldset>';
+			if (isset($option->title) && (!isset($option->value) || !$option->value))
+			{
+				$item .= '<label class="' . $labelclass . '">' . $option->title . '</label>';
+			}
+			else
+			{
+				$selected = in_array($option->value, $value) ? ' checked="checked"' : '';
+				$disabled = (isset($option->disable) && $option->disable) ? ' readonly="readonly" style="visibility:hidden"' : '';
+
+				$item .= '<input type="checkbox" class="pull-left" name="' . $name . '" id="' . $id . $option->value . '" value="' . $option->value . '"' . $selected . $disabled . ' />
+					<label for="' . $id . $option->value . '" class="' . $labelclass . '">' . $option->text . '</label>';
+			}
+			$item .= '</div>';
+			$html[] = $item;
+
+			if (!isset($o[$i + 1]))
+			{
+				$html[] = str_repeat('</li></ul>', $option->level);
+			}
+			$prevlevel = $option->level;
+		}
+		$html[] = '</ul>';
+		$html[] = '
+			<div style="display:none;" class="nn_multiselect-menu-block">
+				<div class="pull-left nav-hover nn_multiselect-menu">
+					<div class="btn-group">
+						<a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-micro">
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li class="nav-header">' . JText::_('COM_MODULES_SUBITEMS') . '</li>
+							<li class="divider"></li>
+							<li class=""><a class="checkall" href="javascript://"><span class="icon-checkbox"></span> ' . JText::_('JSELECT') . '</a>
+							</li>
+							<li><a class="uncheckall" href="javascript://"><span class="icon-checkbox-unchecked"></span> ' . JText::_('COM_MODULES_DESELECT') . '</a>
+							</li>
+							<div class="nn_multiselect-menu-expand">
+								<li class="divider"></li>
+								<li><a class="expandall" href="javascript://"><span class="icon-plus"></span> ' . JText::_('NN_EXPAND') . '</a></li>
+								<li><a class="collapseall" href="javascript://"><span class="icon-minus"></span> ' . JText::_('NN_COLLAPSE') . '</a></li>
+							</div>
+						</ul>
+					</div>
+				</div>
+			</div>';
+		$html[] = '</div>';
+
+		$html = implode('', $html);
 
 		return preg_replace('#>\[\[\:(.*?)\:\]\]#si', ' style="\1">', $html);
 	}

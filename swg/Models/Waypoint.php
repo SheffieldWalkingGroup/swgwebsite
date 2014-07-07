@@ -58,9 +58,9 @@ class Waypoint extends SWGBaseModel
 				break;
 			case "time":
 				if (is_numeric($value))
-				$this->time = (int)$value;
+					$this->time = (int)$value;
 				else if (strtotime($value))
-				$this->time = strtotime($value);
+					$this->time = strtotime($value);
 				break;
 		}
 	}
@@ -87,7 +87,6 @@ class Waypoint extends SWGBaseModel
 	* * pub, suburb
 	* * cafe, suburb
 	* (Note: Suburb is usually the village name, e.g. Tideswell CP)
-	* TODO: Remove "CP" and similar
 	* TODO: Maybe display location type, e.g. pub, car park...
 	*/
 	public function reverseGeocode()

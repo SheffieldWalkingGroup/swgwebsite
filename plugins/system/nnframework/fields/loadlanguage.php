@@ -4,68 +4,47 @@
  * Loads the English language file as fallback
  *
  * @package         NoNumber Framework
- * @version         12.9.7
+ * @version         14.2.6
  *
  * @author          Peter van Westen <peter@nonumber.nl>
  * @link            http://www.nonumber.nl
- * @copyright       Copyright © 2012 NoNumber All Rights Reserved
+ * @copyright       Copyright © 2014 NoNumber All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// No direct access
 defined('_JEXEC') or die;
 
 class JFormFieldNN_LoadLanguage extends JFormField
 {
 	public $type = 'LoadLanguage';
-	private $_version = '12.9.7';
+	private $params = null;
 
 	protected function getLabel()
 	{
-		return;
+		return '';
 	}
 
 	protected function getInput()
 	{
 		$this->params = $this->element->attributes();
 
-		JHtml::_('behavior.mootools');
-		$document = JFactory::getDocument();
-		$document->addScript(JURI::root(true) . '/plugins/system/nnframework/js/script.js?v=' . $this->_version);
+		$extension = $this->get('extension');
+		$admin = $this->get('admin', 1);
 
-		$extension = $this->def('extension');
-		$admin = $this->def('admin', 1);
+		self::loadLanguage($extension, $admin);
 
-		$path = $admin ? JPATH_ADMINISTRATOR : JPATH_SITE;
-		// load the admin language file
-		$lang = JFactory::getLanguage();
-		if ($lang->getTag() != 'en-GB') {
-			// Loads English language file as fallback (for undefined stuff in other language file)
-			$lang->load($extension, $path, 'en-GB');
-		}
-		$lang->load($extension, $path, null, 1);
-
-		return;
+		return '';
 	}
 
 	function loadLanguage($extension, $admin = 1)
 	{
-		if ($extension) {
-			if ($admin) {
-				$path = JPATH_ADMINISTRATOR;
-			} else {
-				$path = JPATH_SITE;
-			}
-			$lang = JFactory::getLanguage();
-			if ($lang->getTag() != 'en-GB') {
-				// Loads English language file as fallback (for undefined stuff in other language file)
-				$lang->load($extension, $path, 'en-GB');
-			}
-			$lang->load($extension, $path, null, 1);
+		if ($extension)
+		{
+			JFactory::getLanguage()->load($extension, $admin ? JPATH_ADMINISTRATOR : JPATH_SITE);
 		}
 	}
 
-	private function def($val, $default = '')
+	private function get($val, $default = '')
 	{
 		return (isset($this->params[$val]) && (string) $this->params[$val] != '') ? (string) $this->params[$val] : $default;
 	}

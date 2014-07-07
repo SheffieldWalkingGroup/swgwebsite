@@ -6,7 +6,7 @@
 				<option value="">-- Select --</option>
 			</field>
 			<field name="name" type="text" label="Name in programme" size="60" maxlength="80" />
-			<field name="description" type="textarea" rows="6" cols="60" />
+			<field name="description" type="editor" editor="swg_tinymce_events" label="Description" required="required" />
 			<field name="date" type="calendar" label="Date" default="NOW" />
 			<field name="okToPublish" type="checkbox" value="1" default="0" label="OK to publish" />
 		</fieldset>
@@ -50,9 +50,7 @@
 			<field name="leader" type="sql" label="Leader" query="SELECT ID, CONCAT(Forename,' ',Surname) as name FROM walkleaders Where ID != 46 ORDER BY Forename ASC, Surname ASC" key_field="ID" value_field="name" default="">
 				<option value="">-- Select --</option>
 			</field>
-			<field name="leaderDisplayName" type="text" label="Leader name (published)" size="60" maxlength="50" />
 			<field name="backmarker" type="sql" label="Backmarker" query="SELECT ID, CONCAT(Forename,' ',Surname) as name FROM walkleaders ORDER BY Forename ASC, Surname ASC" key_field="ID" value_field="name" default="46" />
-			<field name="backmarkerDisplayName" type="text" label="Leader name (published)" size="60" maxlength="50" />
 		</fieldset>
 		
 		<fieldset name="alterations" label="Alterations">

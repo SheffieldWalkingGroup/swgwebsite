@@ -1,25 +1,26 @@
 <?php
 /**
- * @package		Joomla.Administrator
- * @subpackage	com_modules
- * @copyright	Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Administrator
+ * @subpackage  com_modules
+ *
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-JHtml::_('behavior.tooltip');
 
-$function	= JRequest::getCmd('function', 'jSelectPosition');
-$lang		= JFactory::getLanguage();
-$ordering	= $this->escape($this->state->get('list.ordering'));
-$direction	= $this->escape($this->state->get('list.direction'));
-$clientId	= $this->state->get('filter.client_id');
-$state		= $this->state->get('filter.state');
-$template	= $this->state->get('filter.template');
-$type		= $this->state->get('filter.type');
+JHtml::_('formbehavior.chosen', 'select');
+
+$function  = JFactory::getApplication()->input->getCmd('function', 'jSelectPosition');
+$lang      = JFactory::getLanguage();
+$ordering  = $this->escape($this->state->get('list.ordering'));
+$direction = $this->escape($this->state->get('list.direction'));
+$clientId  = $this->state->get('filter.client_id');
+$state     = $this->state->get('filter.state');
+$template  = $this->state->get('filter.template');
+$type      = $this->state->get('filter.type');
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_modules&view=positions&layout=modal&tmpl=component&function='.$function.'&client_id=' .$clientId);?>" method="post" name="adminForm" id="adminForm">
 	<fieldset class="filter clearfix">
@@ -36,17 +37,17 @@ $type		= $this->state->get('filter.type');
 		</div>
 
 		<div class="right">
-			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
+			<select name="filter_state" onchange="this.form.submit()">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('modules.templateStates'), 'value', 'text', $state, true);?>
 			</select>
 
-			<select name="filter_type" class="inputbox" onchange="this.form.submit()">
+			<select name="filter_type" onchange="this.form.submit()">
 				<option value=""><?php echo JText::_('COM_MODULES_OPTION_SELECT_TYPE');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('modules.types'), 'value', 'text', $type, true);?>
 			</select>
 
-			<select name="filter_template" class="inputbox" onchange="this.form.submit()">
+			<select name="filter_template" onchange="this.form.submit()">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_TEMPLATE');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('modules.templates', $clientId), 'value', 'text', $template, true);?>
 			</select>
@@ -72,8 +73,8 @@ $type		= $this->state->get('filter.type');
 			</tr>
 		</tfoot>
 		<tbody>
-		<?php $i=1; foreach ($this->items as $value=>$templates) : ?>
-			<tr class="row<?php echo $i=1-$i;?>">
+		<?php $i = 1; foreach ($this->items as $value => $templates) : ?>
+			<tr class="row<?php echo $i = 1 - $i;?>">
 				<td>
 					<a class="pointer" onclick="if (window.parent) window.parent.<?php echo $function;?>('<?php echo $value; ?>');"><?php echo $this->escape($value); ?></a>
 				</td>

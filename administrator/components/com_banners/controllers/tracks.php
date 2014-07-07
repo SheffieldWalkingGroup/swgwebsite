@@ -1,7 +1,10 @@
 <?php
 /**
- * @copyright	Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     Joomla.Administrator
+ * @subpackage  com_banners
+ *
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
@@ -9,15 +12,16 @@ defined('_JEXEC') or die;
 /**
  * Tracks list controller class.
  *
- * @package		Joomla.Administrator
- * @subpackage	com_banners
- * @since		1.6
+ * @package     Joomla.Administrator
+ * @subpackage  com_banners
+ * @since       1.6
  */
 class BannersControllerTracks extends JControllerLegacy
 {
 	/**
-	 * @var		string	The context for persistent state.
-	 * @since	1.6
+	 * @var     string  The prefix to use with controller messages.
+	 *
+	 * @since   1.6
 	 */
 	protected $context = 'com_banners.tracks';
 
@@ -35,14 +39,16 @@ class BannersControllerTracks extends JControllerLegacy
 	public function getModel($name = 'Tracks', $prefix = 'BannersModel', $config = array('ignore_request' => true))
 	{
 		$model = parent::getModel($name, $prefix, $config);
+
 		return $model;
 	}
 
 	/**
 	 * Method to remove a record.
 	 *
-	 * @return	void
-	 * @since	1.6
+	 * @return  void
+	 *
+	 * @since   1.6
 	 */
 	public function delete()
 	{
@@ -55,29 +61,33 @@ class BannersControllerTracks extends JControllerLegacy
 		// Load the filter state.
 		$app = JFactory::getApplication();
 
-		$type = $app->getUserState($this->context.'.filter.type');
+		$type = $app->getUserState($this->context . '.filter.type');
 		$model->setState('filter.type', $type);
 
-		$begin = $app->getUserState($this->context.'.filter.begin');
+		$begin = $app->getUserState($this->context . '.filter.begin');
 		$model->setState('filter.begin', $begin);
 
-		$end = $app->getUserState($this->context.'.filter.end');
+		$end = $app->getUserState($this->context . '.filter.end');
 		$model->setState('filter.end', $end);
 
-		$categoryId = $app->getUserState($this->context.'.filter.category_id');
+		$categoryId = $app->getUserState($this->context . '.filter.category_id');
 		$model->setState('filter.category_id', $categoryId);
 
-		$clientId = $app->getUserState($this->context.'.filter.client_id');
+		$clientId = $app->getUserState($this->context . '.filter.client_id');
 		$model->setState('filter.client_id', $clientId);
 
 		$model->setState('list.limit', 0);
 		$model->setState('list.start', 0);
 
 		$count = $model->getTotal();
+
 		// Remove the items.
-		if (!$model->delete()) {
+		if (!$model->delete())
+		{
 			JError::raiseWarning(500, $model->getError());
-		} else {
+		}
+		else
+		{
 			$this->setMessage(JText::plural('COM_BANNERS_TRACKS_N_ITEMS_DELETED', $count));
 		}
 

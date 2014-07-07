@@ -1,103 +1,171 @@
 <?php
 /**
+ * @package     Joomla.Plugin
+ * @subpackage  User.contactcreator
  *
- * Contact Creator
- * A tool to automatically create and synchronise contacts with a user
- * @copyright	Copyright (C) 2005 - 2009 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access.
 defined('_JEXEC') or die;
 
 /**
  * Class for Contact Creator
- * @package		Joomla.Plugin
- * @subpackage	User.contactcreator
- * @version		1.6
+ *
+ * A tool to automatically create and synchronise contacts with a user
+ *
+ * @package     Joomla.Plugin
+ * @subpackage  User.contactcreator
+ * @since       1.6
  */
-class plgUserContactCreator extends JPlugin
+class PlgUserContactCreator extends JPlugin
 {
 	/**
-	 * Constructor
+	 * Load the language file on instantiation.
 	 *
-	 * @access      protected
-	 * @param       object  $subject The object to observe
-	 * @param       array   $config  An array that holds the plugin configuration
-	 * @since       1.5
+	 * @var    boolean
+	 * @since  3.1
 	 */
-	public function __construct(& $subject, $config)
+	protected $autoloadLanguage = true;
+
+	/**
+	 * Utility method to act on a user after it has been saved.
+	 *
+	 * This method creates a contact for the saved user
+	 *
+	 * @param   array    $user     Holds the new user data.
+	 * @param   boolean  $isnew    True if a new user is stored.
+	 * @param   boolean  $success  True if user was succesfully stored in the database.
+	 * @param   string   $msg      Message.
+	 *
+	 * @return  void
+	 *
+	 * @since   1.6
+	 */
+	public function onUserAfterSave($user, $isnew, $success, $msg)
 	{
-		parent::__construct($subject, $config);
-		$this->loadLanguage();
-	}
-
-	function onUserAfterSave($user, $isnew, $success, $msg)
-	{
-		if(!$success) {
-			return false; // if the user wasn't stored we don't resync
-		}
-
-		if(!$isnew) {
-			return false; // if the user isn't new we don't sync
-		}
-
-		// ensure the user id is really an int
-		$user_id = (int)$user['id'];
-
-		if (empty($user_id)) {
-			die('invalid userid');
-			return false; // if the user id appears invalid then bail out just in case
-		}
-
-		$category = $this->params->get('category', 0);
-		if (empty($category)) {
-			JError::raiseWarning(41, JText::_('PLG_CONTACTCREATOR_ERR_NO_CATEGORY'));
-			return false; // bail out if we don't have a category
-		}
-
-		$dbo = JFactory::getDBO();
-		// grab the contact ID for this user; note $user_id is cleaned above
-		$dbo->setQuery('SELECT id FROM #__contact_details WHERE user_id = '. $user_id );
-		$id = $dbo->loadResult();
-
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_contact/tables');
-		$contact = JTable::getInstance('contact', 'ContactTable');
-
-		if (!$contact) {
+		// If the user wasn't stored we don't resync
+		if (!$success)
+		{
 			return false;
 		}
 
-		if ($id) {
-			$contact->load($id);
-		}
-		elseif($this->params->get('autopublish', 0)) {
-			$contact->published = 1;
-		}
-
-		$contact->name = $user['name'];
-		$contact->user_id = $user_id;
-		$contact->email_to = $user['email'];
-		$contact->catid = $category;
-		$contact->language = '*';
-
-		$autowebpage = $this->params->get('autowebpage', '');
-
-		if (!empty($autowebpage)) {
-			// search terms
-			$search_array = array('[name]', '[username]', '[userid]', '[email]');
-			// replacement terms, urlencoded
-			$replace_array = array_map('urlencode', array($user['name'], $user['username'], $user['id'], $user['email']));
-			// now replace it in together
-			$contact->webpage = str_replace($search_array, $replace_array, $autowebpage);
+		// If the user isn't new we don't sync
+		if (!$isnew)
+		{
+			return false;
 		}
 
-		if ($contact->check()) {
-			$result = $contact->store();
+		// Ensure the user id is really an int
+		$user_id = (int) $user['id'];
+
+		// If the user id appears invalid then bail out just in case
+		if (empty($user_id))
+		{
+			return false;
 		}
 
-		if (!(isset($result)) || !$result) {
-			JError::raiseError(42, JText::sprintf('PLG_CONTACTCREATOR_ERR_FAILED_UPDATE', $contact->getError()));
+		$categoryId = $this->params->get('category', 0);
+
+		if (empty($categoryId))
+		{
+			JError::raiseWarning('', JText::_('PLG_CONTACTCREATOR_ERR_NO_CATEGORY'));
+
+			return false;
 		}
+
+		if ($contact = $this->getContactTable())
+		{
+			/**
+			 * Try to pre-load a contact for this user. Apparently only possible if other plugin creates it
+			 * Note: $user_id is cleaned above
+			 */
+			if (!$contact->load(array('user_id' => (int) $user_id)))
+			{
+				$contact->published = $this->params->get('autopublish', 0);
+			}
+
+			$contact->name		= $user['name'];
+			$contact->user_id	= $user_id;
+			$contact->email_to	= $user['email'];
+			$contact->catid		= $categoryId;
+			$contact->access	= (int) JFactory::getConfig()->get('access');
+			$contact->language	= '*';
+			$contact->generateAlias();
+
+			// Check if the contact already exists to generate new name & alias if required
+			if ($contact->id == 0)
+			{
+				list($name, $alias) = $this->generateAliasAndName($contact->alias, $contact->name, $categoryId);
+
+				$contact->name  = $name;
+				$contact->alias = $alias;
+			}
+
+			$autowebpage = $this->params->get('autowebpage', '');
+
+			if (!empty($autowebpage))
+			{
+				// Search terms
+				$search_array = array('[name]', '[username]', '[userid]', '[email]');
+
+				// Replacement terms, urlencoded
+				$replace_array = array_map('urlencode', array($user['name'], $user['username'], $user['id'], $user['email']));
+
+				// Now replace it in together
+				$contact->webpage = str_replace($search_array, $replace_array, $autowebpage);
+			}
+
+			if ($contact->check() && $contact->store())
+			{
+				return true;
+			}
+		}
+
+		JError::raiseWarning('', JText::_('PLG_CONTACTCREATOR_ERR_FAILED_CREATING_CONTACT'));
+
+		return false;
+	}
+
+	/**
+	 * Method to change the name & alias if alias is already in use
+	 *
+	 * @param   string   $alias       The alias.
+	 * @param   string   $name        The name.
+	 * @param   integer  $categoryId  Category identifier
+	 *
+	 * @return  array  Contains the modified title and alias.
+	 *
+	 * @since   3.2.3
+	 */
+	protected function generateAliasAndName($alias, $name, $categoryId)
+	{
+		$table = $this->getContactTable();
+
+		while ($table->load(array('alias' => $alias, 'catid' => $categoryId)))
+		{
+			if ($name == $table->name)
+			{
+				$name = JString::increment($name);
+			}
+
+			$alias = JString::increment($alias, 'dash');
+		}
+
+		return array($name, $alias);
+	}
+
+	/**
+	 * Get an instance of the contact table
+	 *
+	 * @return  ContactTableContact
+	 *
+	 * @since   3.2.3
+	 */
+	protected function getContactTable()
+	{
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_contact/tables');
+
+		return JTable::getInstance('contact', 'ContactTable');
 	}
 }

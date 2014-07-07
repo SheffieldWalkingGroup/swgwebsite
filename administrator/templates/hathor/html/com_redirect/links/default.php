@@ -1,18 +1,17 @@
 <?php
 /**
- * @package		Joomla.Administrator
- * @subpackage	Templates.hathor
- * @copyright	Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @since		1.6
+ * @package     Joomla.Administrator
+ * @subpackage  Template.hathor
+ *
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access.
 defined('_JEXEC') or die;
 
 // Include the component HTML helpers.
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-JHtml::_('behavior.tooltip');
+
 JHtml::_('behavior.multiselect');
 
 $user		= JFactory::getUser();
@@ -21,6 +20,14 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_redirect&view=links'); ?>" method="post" name="adminForm" id="adminForm">
+<?php if (!empty( $this->sidebar)) : ?>
+	<div id="j-sidebar-container" class="span2">
+		<?php echo $this->sidebar; ?>
+	</div>
+	<div id="j-main-container" class="span10">
+<?php else : ?>
+	<div id="j-main-container">
+<?php endif;?>
 	<fieldset id="filter-bar">
 	<legend class="element-invisible"><?php echo JText::_('JSEARCH_FILTER_LABEL'); ?></legend>
 		<div class="filter-search">
@@ -34,7 +41,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 			<label class="selectlabel" for="filter_published">
 				<?php echo JText::_('JOPTION_SELECT_PUBLISHED'); ?>
 			</label>
-			<select name="filter_state" class="inputbox" id="filter_published">
+			<select name="filter_state" id="filter_published">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
 				<?php echo JHtml::_('select.options', RedirectHelper::publishedOptions(), 'value', 'text', $this->state->get('filter.state'), true);?>
 			</select>
@@ -63,6 +70,9 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 				<th class="width-10">
 					<?php echo JHtml::_('grid.sort', 'COM_REDIRECT_HEADING_CREATED_DATE', 'a.created_date', $listDirn, $listOrder); ?>
 				</th>
+				<th width="1%" class="nowrap">
+					<?php echo JHtml::_('grid.sort', 'COM_REDIRECT_HEADING_HITS', 'a.hits', $listDirn, $listOrder); ?>
+				</th>
 				<th class="nowrap state-col">
 					<?php echo JHtml::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
 				</th>
@@ -74,9 +84,9 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 
 		<tbody>
 		<?php foreach ($this->items as $i => $item) :
-			$canCreate	= $user->authorise('core.create',		'com_redirect');
-			$canEdit	= $user->authorise('core.edit',			'com_redirect');
-			$canChange	= $user->authorise('core.edit.state',	'com_redirect');
+			$canCreate = $user->authorise('core.create',     'com_redirect');
+			$canEdit   = $user->authorise('core.edit',       'com_redirect');
+			$canChange = $user->authorise('core.edit.state', 'com_redirect');
 			?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center">
@@ -85,19 +95,22 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 				<td>
 					<?php if ($canEdit) : ?>
 						<a href="<?php echo JRoute::_('index.php?option=com_redirect&task=link.edit&id='.$item->id);?>" title="<?php echo $this->escape($item->old_url); ?>">
-							<?php echo $this->escape(str_replace(JURI::root(), '', $item->old_url)); ?></a>
+							<?php echo $this->escape(str_replace(JUri::root(), '', rawurldecode($item->old_url))); ?></a>
 					<?php else : ?>
-							<?php echo $this->escape(str_replace(JURI::root(), '', $item->old_url)); ?>
+							<?php echo $this->escape(str_replace(JUri::root(), '', rawurldecode($item->old_url))); ?>
 					<?php endif; ?>
 				</td>
 				<td>
-					<?php echo $this->escape($item->new_url); ?>
+					<?php echo $this->escape(rawurldecode($item->new_url)); ?>
 				</td>
 				<td>
 					<?php echo $this->escape($item->referer); ?>
 				</td>
 				<td class="center">
 					<?php echo JHtml::_('date', $item->created_date, JText::_('DATE_FORMAT_LC4')); ?>
+				</td>
+				<td class="center">
+					<?php echo (int) $item->hits; ?>
 				</td>
 				<td class="center">
 					<?php echo JHtml::_('redirect.published', $item->published, $i); ?>
@@ -129,4 +142,5 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 	<?php echo JHtml::_('form.token'); ?>
+</div>
 </form>

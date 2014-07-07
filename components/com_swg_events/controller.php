@@ -7,7 +7,7 @@ jimport('joomla.application.component.controller');
 /**
  * SWG_Events Component Controller
  */
-class SWG_EventsController extends JController
+class SWG_EventsController extends JControllerLegacy
 {
 	public static function canAddWalk()
 	{
@@ -18,7 +18,8 @@ class SWG_EventsController extends JController
 		if (JFactory::getUser()->authorise("walk.editall", "com_swg_events"))
 			return true;
 		
-		$walk = WalkInstance::objectOrID($walkOrID);
+		$f = SWG::walkInstanceFactory();
+		$walk = $f->getSingle($walkOrID);
 		
 		return (
 			isset($walk) && 
@@ -48,6 +49,11 @@ class SWG_EventsController extends JController
 	{
 		// TODO: Some should be able to edit own weekends
 		return JFactory::getUser()->authorise("weekend.editall","com_swg_events");
+	}
+	
+	public static function canRecordAttendance()
+	{
+		return JFactory::getUser()->authorise("common.recordattendance", "com_swg_events");
 	}
 	
 	public static function canEdit($event)

@@ -26,8 +26,8 @@ if (isset($routeid))
 // Get a route for a walkinstance (this means getting the walk)
 if (isset($walkinstanceid))
 {
-	include_once(JPATH_BASE."/swg/Models/WalkInstance.php");
-	$wi = WalkInstance::getSingle($walkinstanceid);
+	$f = SWG::walkInstanceFactory();
+	$wi = $f->getSingle($walkinstanceid);
 	$walkid = $wi->walkid;
 }
 // Get the route for a particular walk if walkid is set
@@ -35,7 +35,7 @@ if (!empty($walkid))
 {
 	include_once(JPATH_BASE."/swg/Models/Walk.php");
 	$walk = Walk::getSingle($walkid);
-	$routes = Route::loadForWalkable($walk,false,1);
+	$routes = Route::loadForWalkable($walk,false,Route::Type_Planned, 1); // TODO: Support logged routes
 	if (!empty($routes))
 	{
 		// Check the leader has allowed walk downloads

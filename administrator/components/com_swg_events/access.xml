@@ -13,14 +13,23 @@
 		<action name="walk.editall" title="Edit all walks" description="Edit all scheduled walks" />
 		<action name="walk.delete" title="Unschedule walks" description="Remove walks from the schedule" />
 	
+		<action name="social.viewpublic" title="View socials" description="View scheduled socials" />
+		<action name="social.viewall" title="View all socials" description="View scheduled socials, including unpublished" /> 
 		<action name="social.add" title="Add socials" description="Add socials" />
-		<action name="social.edit" title="Edit socials" description="Edit own socials" />
-		<action name="social.editall" title="Edit socials" description="Edit all socials" />
+		<action name="social.edit" title="Edit own socials" description="Edit own socials" />
+		<action name="social.editall" title="Edit all socials" description="Edit all socials" />
 		<action name="social.delete" title="Delete socials" description="Delete socials" />
 	
+		<action name="weekend.viewpublic" title="View weekends" description="View scheduled weekends" />
+		<action name="weekend.viewall" title="View all weekends" description="View scheduled weekends, including unpublished" /> 
 		<action name="weekend.add" title="Add weekends" description="Add weekends" />
-		<action name="weekend.edit" title="Edit weekends" description="Edit own weekends" />
-		<action name="weekend.editall" title="Edit weekends" description="Edit all weekends" />
+		<action name="weekend.edit" title="Edit own weekends" description="Edit own weekends" />
+		<action name="weekend.editall" title="Edit all weekends" description="Edit all weekends" />
 		<action name="weekend.delete" title="Delete weekends" description="Delete weekends" />
+		
+		<action name="common.viewattendance" title="View attendance" description="See who has logged attendance at an event" />
+		<action name="common.viewattendancecount" title="View attendance count" description="See the number of people who logged attendance at an event" />
+		<action name="common.recordattendance" title="Record attendance" description="Record their own attendance at an event" />
+		<action name="common.maintainattendance" title="Maintain attendance" description="Manage other members' attendance records" />
 	</section>
 </access>

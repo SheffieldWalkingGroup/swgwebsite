@@ -8,7 +8,7 @@ JHtml::_('behavior.tooltip');
 ?>
 <h3><?php if ($this->editing):?>Edit<?php else:?>Add<?php endif;?> walk</h3>
 <?php if ($this->showForm): ?>
-	<form name="addeditwalk" action="<?php echo JRoute::_('index.php')?>" method="post" id="addeditwalk" name="addeditwalk" enctype="multipart/form-data">
+	<form name="addeditwalk" action="<?php echo JRoute::_('index.php')?>" method="post" id="addeditwalk" enctype="multipart/form-data">
 		<input type="hidden" name="view" value="addeditwalk">
 		<input type="hidden" name="option" value="com_swg_walklibrary">
 		<input type="hidden" name="task" value="addeditwalk.submit">

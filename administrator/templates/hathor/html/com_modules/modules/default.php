@@ -1,19 +1,19 @@
 <?php
 /**
- * @package		Joomla.Administrator
- * @subpackage	Templates.hathor
- * @copyright	Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
- * @since		1.6
+ * @package     Joomla.Administrator
+ * @subpackage  Template.hathor
+ *
+ * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access.
 defined('_JEXEC') or die;
 
 // Include the component HTML helpers.
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-JHtml::_('behavior.tooltip');
+
 JHtml::_('behavior.multiselect');
+JHtml::_('behavior.modal');
 
 $client 	= $this->state->get('filter.client_id') ? 'administrator' : 'site';
 $user 		= JFactory::getUser();
@@ -23,6 +23,14 @@ $canOrder	= $user->authorise('core.edit.state', 'com_modules');
 $saveOrder	= $listOrder == 'ordering';
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_modules'); ?>" method="post" name="adminForm" id="adminForm">
+<?php if (!empty( $this->sidebar)) : ?>
+	<div id="j-sidebar-container" class="span2">
+		<?php echo $this->sidebar; ?>
+	</div>
+	<div id="j-main-container" class="span10">
+<?php else : ?>
+	<div id="j-main-container">
+<?php endif;?>
 	<fieldset id="filter-bar">
 	<legend class="element-invisible"><?php echo JText::_('JSEARCH_FILTER_LABEL'); ?></legend>
 		<div class="filter-search">
@@ -36,14 +44,14 @@ $saveOrder	= $listOrder == 'ordering';
 			<label class="selectlabel" for="filter_client_id">
 				<?php echo JText::_('JGLOBAL_FILTER_CLIENT'); ?>
 			</label>
-			<select name="filter_client_id" class="inputbox" id="filter_client_id">
+			<select name="filter_client_id" id="filter_client_id">
 				<?php echo JHtml::_('select.options', ModulesHelper::getClientOptions(), 'value', 'text', $this->state->get('filter.client_id'));?>
 			</select>
 
             <label class="selectlabel" for="filter_state">
 				<?php echo JText::_('JOPTION_SELECT_PUBLISHED'); ?>
 			</label>
-			<select name="filter_state" class="inputbox" id="filter_state">
+			<select name="filter_state" id="filter_state">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
 				<?php echo JHtml::_('select.options', ModulesHelper::getStateOptions(), 'value', 'text', $this->state->get('filter.state'));?>
 			</select>
@@ -51,7 +59,7 @@ $saveOrder	= $listOrder == 'ordering';
             <label class="selectlabel" for="filter_position">
 				<?php echo JText::_('COM_MODULES_OPTION_SELECT_POSITION'); ?>
 			</label>
-			<select name="filter_position" class="inputbox" id="filter_position">
+			<select name="filter_position" id="filter_position">
 				<option value=""><?php echo JText::_('COM_MODULES_OPTION_SELECT_POSITION');?></option>
 				<?php echo JHtml::_('select.options', ModulesHelper::getPositions($this->state->get('filter.client_id')), 'value', 'text', $this->state->get('filter.position'));?>
 			</select>
@@ -59,7 +67,7 @@ $saveOrder	= $listOrder == 'ordering';
 			<label class="selectlabel" for="filter_module">
 				<?php echo JText::_('COM_MODULES_OPTION_SELECT_MODULE'); ?>
 			</label>
-			<select name="filter_module" class="inputbox" id="filter_module">
+			<select name="filter_module" id="filter_module">
 				<option value=""><?php echo JText::_('COM_MODULES_OPTION_SELECT_MODULE');?></option>
 				<?php echo JHtml::_('select.options', ModulesHelper::getModules($this->state->get('filter.client_id')), 'value', 'text', $this->state->get('filter.module'));?>
 			</select>
@@ -67,7 +75,7 @@ $saveOrder	= $listOrder == 'ordering';
 			<label class="selectlabel" for="filter_access">
 				<?php echo JText::_('JOPTION_SELECT_ACCESS'); ?>
 			</label>
-			<select name="filter_access" class="inputbox" id="filter_access">
+			<select name="filter_access" id="filter_access">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_ACCESS');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
 			</select>
@@ -75,7 +83,7 @@ $saveOrder	= $listOrder == 'ordering';
 			<label class="selectlabel" for="filter_language">
 				<?php echo JText::_('JOPTION_SELECT_LANGUAGE'); ?>
 			</label>
-			<select name="filter_language" class="inputbox" id="filter_language">
+			<select name="filter_language" id="filter_language">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_LANGUAGE');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('contentlanguage.existing', true, true), 'value', 'text', $this->state->get('filter.language'));?>
 			</select>
@@ -100,19 +108,19 @@ $saveOrder	= $listOrder == 'ordering';
 					<?php echo JHtml::_('grid.sort', 'JSTATUS', 'published', $listDirn, $listOrder); ?>
 				</th>
 				<th class="width-20">
-					<?php echo JHtml::_('grid.sort',  'COM_MODULES_HEADING_POSITION', 'position', $listDirn, $listOrder); ?>
+					<?php echo JHtml::_('grid.sort', 'COM_MODULES_HEADING_POSITION', 'position', $listDirn, $listOrder); ?>
 				</th>
                 <th class="nowrap ordering-col">
 					<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_ORDERING', 'ordering', $listDirn, $listOrder); ?>
 					<?php if ($canOrder && $saveOrder) :?>
-						<?php echo JHtml::_('grid.order',  $this->items, 'filesave.png', 'modules.saveorder'); ?>
+						<?php echo JHtml::_('grid.order', $this->items, 'filesave.png', 'modules.saveorder'); ?>
 					<?php endif; ?>
 				</th>
 				<th class="width-10">
 					<?php echo JHtml::_('grid.sort', 'COM_MODULES_HEADING_MODULE', 'name', $listDirn, $listOrder); ?>
 				</th>
                 	<th class="width-10">
-					<?php echo JHtml::_('grid.sort',  'COM_MODULES_HEADING_PAGES', 'pages', $listDirn, $listOrder); ?>
+					<?php echo JHtml::_('grid.sort', 'COM_MODULES_HEADING_PAGES', 'pages', $listDirn, $listOrder); ?>
 				</th>
 				<th class="title access-col">
 					<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access', $listDirn, $listOrder); ?>
@@ -121,18 +129,18 @@ $saveOrder	= $listOrder == 'ordering';
 					<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_LANGUAGE', 'language_title', $listDirn, $listOrder); ?>
 				</th>
 				<th class="nowrap id-col">
-					<?php echo JHtml::_('grid.sort',  'JGRID_HEADING_ID', 'id', $listDirn, $listOrder); ?>
+					<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_ID', 'id', $listDirn, $listOrder); ?>
 				</th>
 			</tr>
 		</thead>
 
 		<tbody>
 		<?php foreach ($this->items as $i => $item) :
-			$ordering	= ($listOrder == 'ordering');
-			$canCreate	= $user->authorise('core.create',		'com_modules');
-			$canEdit	= $user->authorise('core.edit',			'com_modules');
-			$canCheckin	= $user->authorise('core.manage',		'com_checkin') || $item->checked_out==$user->get('id') || $item->checked_out==0;
-			$canChange	= $user->authorise('core.edit.state',	'com_modules') && $canCheckin;
+			$ordering  = ($listOrder == 'ordering');
+			$canCreate  = $user->authorise('core.create',     'com_modules');
+			$canEdit    = $user->authorise('core.edit',       'com_modules');
+			$canCheckin = $user->authorise('core.manage',     'com_checkin') || $item->checked_out == $user->get('id') || $item->checked_out == 0;
+			$canChange  = $user->authorise('core.edit.state', 'com_modules') && $canCheckin;
 		?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center">
@@ -163,11 +171,11 @@ $saveOrder	= $listOrder == 'ordering';
 					<?php if ($canChange) : ?>
 						<?php if ($saveOrder) :?>
 							<?php if ($listDirn == 'asc') : ?>
-								<span><?php echo $this->pagination->orderUpIcon($i, (@$this->items[$i-1]->position == $item->position), 'modules.orderup', 'JLIB_HTML_MOVE_UP', $ordering); ?></span>
-								<span><?php echo $this->pagination->orderDownIcon($i, $this->pagination->total, (@$this->items[$i+1]->position == $item->position), 'modules.orderdown', 'JLIB_HTML_MOVE_DOWN', $ordering); ?></span>
+								<span><?php echo $this->pagination->orderUpIcon($i, (@$this->items[$i - 1]->position == $item->position), 'modules.orderup', 'JLIB_HTML_MOVE_UP', $ordering); ?></span>
+								<span><?php echo $this->pagination->orderDownIcon($i, $this->pagination->total, (@$this->items[$i + 1]->position == $item->position), 'modules.orderdown', 'JLIB_HTML_MOVE_DOWN', $ordering); ?></span>
 							<?php elseif ($listDirn == 'desc') : ?>
-								<span><?php echo $this->pagination->orderUpIcon($i, (@$this->items[$i-1]->position == $item->position), 'modules.orderdown', 'JLIB_HTML_MOVE_UP', $ordering); ?></span>
-								<span><?php echo $this->pagination->orderDownIcon($i, $this->pagination->total, (@$this->items[$i+1]->position == $item->position), 'modules.orderup', 'JLIB_HTML_MOVE_DOWN', $ordering); ?></span>
+								<span><?php echo $this->pagination->orderUpIcon($i, (@$this->items[$i - 1]->position == $item->position), 'modules.orderdown', 'JLIB_HTML_MOVE_UP', $ordering); ?></span>
+								<span><?php echo $this->pagination->orderDownIcon($i, $this->pagination->total, (@$this->items[$i + 1]->position == $item->position), 'modules.orderup', 'JLIB_HTML_MOVE_DOWN', $ordering); ?></span>
 							<?php endif; ?>
 						<?php endif; ?>
 						<?php $disabled = $saveOrder ?  '' : 'disabled="disabled"'; ?>
@@ -187,9 +195,9 @@ $saveOrder	= $listOrder == 'ordering';
 					<?php echo $this->escape($item->access_level); ?>
 				</td>
 				<td class="center">
-					<?php if ($item->language==''):?>
+					<?php if ($item->language == ''):?>
 						<?php echo JText::_('JDEFAULT'); ?>
-					<?php elseif ($item->language=='*'):?>
+					<?php elseif ($item->language == '*'):?>
 						<?php echo JText::alt('JALL', 'language'); ?>
 					<?php else:?>
 						<?php echo $item->language_title ? $this->escape($item->language_title) : JText::_('JUNDEFINED'); ?>
@@ -204,7 +212,7 @@ $saveOrder	= $listOrder == 'ordering';
 	</table>
 
 	<?php //Load the batch processing form.is user is allowed ?>
-	<?php if($user->authorize('core.create', 'com_modules') || $user->authorize('core.edit', 'com_modules')) : ?>
+	<?php if ($user->authorise('core.create', 'com_modules') || $user->authorise('core.edit', 'com_modules')) : ?>
 		<?php echo $this->loadTemplate('batch'); ?>
 	<?php endif;?>
 
@@ -215,4 +223,5 @@ $saveOrder	= $listOrder == 'ordering';
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 	<?php echo JHtml::_('form.token'); ?>
+</div>
 </form>

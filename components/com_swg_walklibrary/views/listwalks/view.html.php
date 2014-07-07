@@ -8,18 +8,18 @@ jimport('joomla.application.component.view');
 /**
  * HTML Event listing class for the SWG Events component
  */
-class SWG_WalkLibraryViewListWalks extends JView
+class SWG_WalkLibraryViewListWalks extends JViewLegacy
 {
 	private $showList = false;
 	private $showSearch = true;
 	private $noWalksMsg;
 
-	// Overwriting JView display method
+	// Overwriting JViewLegacy display method
 	function display($tpl = null) 
 	{
 		// Assign data to the view
 		$this->walks = $this->get('Walks');
-		$this->controller = JController::getInstance('SWG_WalkLibrary');
+		$this->controller = JControllerLegacy::getInstance('SWG_WalkLibrary');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) 
@@ -40,7 +40,7 @@ class SWG_WalkLibraryViewListWalks extends JView
 			case 1:
 				// Get this leader's record
 				// TODO: Integrate with Joomla users
-				$leader = Leader::getJoomlaUser(JFactory::getUser()->id);
+				$leader = Leader::fromJoomlaUser(JFactory::getUser()->id);
 				if ($leader == null)
 				{
 					$this->pageTitle = "Walks you've suggested";

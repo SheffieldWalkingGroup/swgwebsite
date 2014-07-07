@@ -1,10 +1,10 @@
 /*
-// "Simple Picture Slideshow" Plugin for Joomla 2.5 - Version 1.5.5
+// "Simple Picture Slideshow" Plugin for Joomla 3.1 - Version 1.5.8
 // License: GNU General Public License version 2 or later; see LICENSE.txt
 // Author: Andreas Berger - andreas_berger@bretteleben.de
-// Copyright (C) 2012 Andreas Berger - http://www.bretteleben.de. All rights reserved.
+// Copyright (C) 2013 Andreas Berger - http://www.bretteleben.de. All rights reserved.
 // Project page and Demo at http://www.bretteleben.de
-// ***Last update: 2012-03-19***
+// ***Last update: 2013-08-23***
 */
 
 function besps_slideshow(besps_slideid,besps_ftim,besps_stim,besps_steps,besps_startwhen,besps_emax,besps_caps,besps_preload){
@@ -185,7 +185,7 @@ this.be_daisychain=function(sl){
 			for (j=0;j<preload.length;j++){
 				arrdelta=(emax-preload.length+j)*1;
 				tempsrc=parr[arrdelta].getElementsByTagName("img")[0].src.toString();
-				parr[arrdelta].getElementsByTagName("img")[0].src=tempsrc.replace(/\/plugins\/content\/plugin_besps\/besps.png$/g, preload[j]);
+				parr[arrdelta].getElementsByTagName("img")[0].src=tempsrc.replace(/\/plugins\/content\/simplepictureslideshow\/files\/besps.png$/g, preload[j]);
 			}
 		}
 	}

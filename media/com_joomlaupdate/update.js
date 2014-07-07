@@ -8,7 +8,7 @@ var joomlaupdate_progress_bar = null;
 
 /**
  * An extremely simple error handler, dumping error messages to screen
- * 
+ *
  * @param error The error message string
  */
 function dummy_error_handler(error)
@@ -18,7 +18,7 @@ function dummy_error_handler(error)
 
 /**
  * Performs an AJAX request and returns the parsed JSON output.
- * 
+ *
  * @param data An object with the query data, e.g. a serialized form
  * @param successCallback A function accepting a single object parameter, called on success
  * @param errorCallback A function accepting a single string parameter, called on failure
@@ -26,7 +26,7 @@ function dummy_error_handler(error)
 function doAjax(data, successCallback, errorCallback)
 {
 	var json = JSON.stringify(data);
-	if( joomlaupdate_password.length > 0 )
+	if ( joomlaupdate_password.length > 0 )
 	{
 		json = AesCtr.encrypt( json, joomlaupdate_password, 128 );
 	}
@@ -43,10 +43,10 @@ function doAjax(data, successCallback, errorCallback)
 
 			// Get rid of junk before the data
 			var valid_pos = msg.indexOf('###');
-			if( valid_pos == -1 ) {
+			if ( valid_pos == -1 ) {
 				// Valid data not found in the response
 				msg = 'Invalid AJAX data:\n' + msg;
-				if(joomlaupdate_error_callback != null)
+				if (joomlaupdate_error_callback != null)
 				{
 					joomlaupdate_error_callback(msg);
 				}
@@ -66,7 +66,7 @@ function doAjax(data, successCallback, errorCallback)
 			var valid_pos = message.lastIndexOf('###');
 			message = message.substr(0, valid_pos); // Remove triple hash in the end
 			// Decrypt if required
-			if( joomlaupdate_password.length > 0 )
+			if ( joomlaupdate_password.length > 0 )
 			{
 				try {
 					var data = JSON.parse(message);
@@ -79,7 +79,7 @@ function doAjax(data, successCallback, errorCallback)
 				var data = JSON.parse(message);
 			} catch(err) {
 				var msg = err.message + "\n<br/>\n<pre>\n" + message + "\n</pre>";
-				if(joomlaupdate_error_callback != null)
+				if (joomlaupdate_error_callback != null)
 				{
 					joomlaupdate_error_callback(msg);
 				}
@@ -91,7 +91,7 @@ function doAjax(data, successCallback, errorCallback)
 		},
 		onFailure: function(req) {
 			var message = 'AJAX Loading Error: '+req.statusText;
-			if(joomlaupdate_error_callback != null)
+			if (joomlaupdate_error_callback != null)
 			{
 				joomlaupdate_error_callback(msg);
 			}
@@ -146,16 +146,16 @@ function startUpdate()
  */
 function processUpdateStep(data)
 {
-	if(data.status == false)
+	if (data.status == false)
 	{
-		if(joomlaupdate_error_callback != null)
+		if (joomlaupdate_error_callback != null)
 		{
 			joomlaupdate_error_callback(data.message);
 		}
 	}
 	else
 	{
-		if(data.done)
+		if (data.done)
 		{
 			joomlaupdate_factory = data.factory;
 			window.location = joomlaupdate_return_url;
@@ -165,11 +165,11 @@ function processUpdateStep(data)
 			// Add data to variables
 			joomlaupdate_stat_inbytes += data.bytesIn;
 			joomlaupdate_stat_percent = (joomlaupdate_stat_inbytes * 100) / joomlaupdate_totalsize;
-			
+
 			// Create progress bar once
-			if (joomlaupdate_progress_bar == null) 
+			if (joomlaupdate_progress_bar == null)
 			{
-				joomlaupdate_progress_bar = new Fx.ProgressBar(document.id('progress'));
+				joomlaupdate_progress_bar = new Fx.ProgressBar(document.getElementById('progress'));
 			}
 			joomlaupdate_progress_bar.set(joomlaupdate_stat_percent);
 			joomlaupdate_stat_outbytes += data.bytesOut;
@@ -179,7 +179,7 @@ function processUpdateStep(data)
 			document.getElementById('extpercent').innerHTML = new Number(joomlaupdate_stat_percent).formatPercentage(1);
 			document.getElementById('extbytesin').innerHTML = new Number(joomlaupdate_stat_inbytes).format();
 			document.getElementById('extbytesout').innerHTML = new Number(joomlaupdate_stat_outbytes).format();
-			document.getElementById('extfiles').innerHTML = new Number(joomlaupdate_stat_files).format(); 
+			document.getElementById('extfiles').innerHTML = new Number(joomlaupdate_stat_files).format();
 
 			// Do AJAX post
 			post = {
@@ -193,9 +193,9 @@ function processUpdateStep(data)
 	}
 }
 
-window.addEvent('domready', function() {
+jQuery(function($) {
 	pingUpdate();
-	var el = $$('div.joomlaupdate_spinner');
-	el.set('spinner', {class: 'joomlaupdate_spinner'});
-	el.spin();
+	var $el = $('div.joomlaupdate_spinner');
+	$el.attr('spinner', {class: 'joomlaupdate_spinner'});
+	$el.get(0).spin();
 });

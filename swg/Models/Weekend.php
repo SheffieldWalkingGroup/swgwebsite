@@ -36,6 +36,10 @@ public $dbmappings = array(
 );
 
 public $type = "Weekend";
+	public function getType()
+	{
+		return self::TypeWeekend;
+	}
 
 public function fromDatabase(array $dbArr)
 {
@@ -54,6 +58,8 @@ public function fromDatabase(array $dbArr)
 	
 	if (!empty($dbArr['latitude']) && !empty($dbArr['longitude']))
 		$this->latLng = new LatLng($dbArr['latitude'], $dbArr['longitude']);
+	else if ($dbArr['latitude'] == "" && $dbArr['longitude'] == "")
+		$this->latLng = null;
 	
 	// Set up the alterations
 	$this->alterations->setVersion($dbArr['version']);
@@ -126,7 +132,7 @@ public function toDatabase(JDatabaseQuery &$query)
 			$values['enddate'] = strftime("%Y-%m-%d", $this->endDate);
 		
 		if (!empty($this->latLng))
-			$values['latLng'] = array('lat'=>$this->latLng->lat, 'lng'=>$this->latLng->lng);
+			$values['latLng'] = $this->latLng->lat.",".$this->latLng->lng;
 		
 		return $values;
 	}
@@ -139,10 +145,10 @@ public function toDatabase(JDatabaseQuery &$query)
 		return (!empty($this->name) && !empty($this->description) && !empty($this->start) && !empty($this->endDate) && !empty($this->placeName) && !empty($this->area));
 	}
 
-public function __get($name)
-{
-	return $this->$name; // TODO: What params should be exposed?
-}
+	public function __get($name)
+	{
+		return $this->$name; // TODO: What params should be exposed?
+	}
 
 	public function __set($name, $value)
 	{
@@ -191,6 +197,20 @@ public function __get($name)
 			case "latLng":
 				if ($value instanceof LatLng)
 					$this->$name = $value;
+				else if (is_string($value))
+				{
+					// Is it in JSON?
+					if (substr($value, 0, 2) == "[{")
+					{
+						$value = json_decode($value);
+						$value = $value[0];
+						$this->$name = new LatLng($value->lat, $value->lon);
+					}
+					else
+					{
+						$this->$name = SWG::parseLatLongTuple($this->value);
+					}
+				}
 				else if (is_array($value))
 				{
 					// Convert to LatLng
@@ -207,97 +227,24 @@ public function __get($name)
 					}
 				}
 				break;
+			default:
+				// All others - fall through to Event
+				parent::__set($name, $value);
 			
 		}
 	}
 
-/**
-* Gets a limited number of events, starting today and going forwards
-* Partly for backwards-compatibility, but also to improve readability
-* @param int $numEvents Maximum number of events to get
-*/
-public static function getNext($numEvents) {
-	return self::get(self::DateToday, self::DateEnd, $numEvents);
-}
-
-	public static function numEvents($startDate=self::DateToday, $endDate=self::DateEnd, $getNormal=true, $getNewMember=true)
-	{
-		// Build a query to get future socials
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select("count(1) as count");
-		$query->from("weekendsaway");
-		// TODO: This is a stored proc currently - can we use this?
-		$where = array(
-			"enddate >= '".self::timeToDate($startDate)."'",
-			"startdate <= '".self::timeToDate($endDate)."'",
-			"oktopublish",
-		);
-		$query->where($where);
-		$db->setQuery($query);
-		return $db->loadResult();
-	}
-
-/**
-* Gets the next few scheduled weekends
-* @param int $iNumToGet Maximum number of events to fetch. Default is no limit.
-* @return array Array of Weekends
-*/
-public static function get($startDate=self::DateToday, $endDate=self::DateEnd, $numToGet = -1, $offset=0, $reverse=false, $showUnpublished=false) {
-	// Build a query to get future weekends
-	$db = JFactory::getDBO();
-	$query = $db->getQuery(true);
-	$query->select("*");
-	$query->from("weekendsaway");
-	// TODO: This is a stored proc currently - can we use this?
-	$query->where(array(
-		"enddate >= '".self::timeToDate($startDate)."'",
-		"startdate <= '".self::timeToDate($endDate)."'",
-	));
-	if (!$showUnpublished)
-	{
-		$query->where("oktopublish");
-	}
-	if ($reverse)
-		$query->order(array("startdate DESC"));
-	else
-		$query->order(array("startdate ASC"));
-	$db->setQuery($query, $offset, $numToGet);
-	$weekendData = $db->loadAssocList();
-
-	// Build an array of Weekends
-	// TODO: Set actual SQL limit
-	$weekends = array();
-	while (count($weekendData) > 0 && count($weekends) != $numToGet) {
-	$weekend = new Weekend();
-	$weekend->fromDatabase(array_shift($weekendData));
-	$weekends[] = $weekend;
-	}
-
-	return $weekends;
-}
-
-public static function getSingle($id) {
-	$db = JFactory::getDBO();
-	$query = $db->getQuery(true);
-	$query->select("*");
-	$query->from("weekendsaway");
-	
-	$query->where(array("ID = ".intval($id)));
-	$db->setQuery($query);
-	$res = $db->query();
-	if ($db->getNumRows($res) == 1)
-	{
-	$we = new Weekend();
-	$we->fromDatabase($db->loadAssoc());
-	return $we;
-	}
-	else
-	return null;
-	
-}
-
 	public function hasMap() {
 		return (!empty($this->latLng));
-	}	
+	}
+	
+	public function getOrganiser()
+	{
+		return null; // not implemented yet
+	}
+	
+	public function isOrganiser($user)
+	{
+		return false; // not implemented yet
+	}
 }
