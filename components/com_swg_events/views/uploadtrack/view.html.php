@@ -9,7 +9,7 @@ jimport('joomla.form.form');
 /**
  * Upload a GPX track of a WalkInstance
  */
-class SWG_EventsViewUploadTrack extends JView
+class SWG_EventsViewUploadTrack extends JViewLegacy
 {
   function display($tpl = null)
   {
@@ -34,7 +34,6 @@ class SWG_EventsViewUploadTrack extends JView
 	// Prepare any error messages
 	// TODO: Find how Joomla handles error messages (and make them look nicer) - maybe just throw exceptions out and have an exception handler that displays a popup
 	$errors = $this->getErrors();
-var_dump($errors);
 	$errJS = "";
 	if (!empty($errors))
 	{

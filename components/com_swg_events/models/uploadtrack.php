@@ -53,12 +53,12 @@ class SWG_EventsModelUploadTrack extends JModelForm
 		// TODO: Check user has permission to view this walk
 		if (isset($this->wi))
 			return $this->wi;
-		
+			
 		$wiFact = SWG::walkInstanceFactory();
 		
 		// Do we have a walk from the form?
 		// Get the data from the form POST
-		$formWI = JRequest::getInt('wi', array(), 'post', 'array');
+		$formWI = JRequest::getInt('wi', 	0, 'post', 'array');
 		if (!empty($formWI))
 		{
 		    $this->wi = $wiFact->getSingle($formWI);
@@ -84,7 +84,7 @@ class SWG_EventsModelUploadTrack extends JModelForm
 	 */
 	public function getCachedTrack()
 	{
-		$formWI = JRequest::getInt('wi', array(), 'post', 'array');
+		$formWI = JRequest::getInt('wi', 0, 'post', 'array');
 		if (!empty($formWI))
 		{
 			$route = unserialize(JFactory::getApplication()->getUserState("uploadedroute"));

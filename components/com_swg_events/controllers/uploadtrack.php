@@ -56,14 +56,14 @@ class SWG_EventsControllerUploadTrack extends JControllerForm
 				if ($wi != null)
 				{
 					// Check that this route matches the walk
-					if ($route->checkAgainstWalk($model->getWalkInstance()))
+					if ($route->checkAgainstWalk($model->getWalkInstance(), $message, $details))
 					{
 						// Store this route for later requests
 						JFactory::getApplication()->setUserState("uploadedroute", serialize($route));
 					}
 					else
 					{
-						throw new UserException("Can't upload this track", 0, "This track doesn't match that walk", "Check that the track you've uploaded doesn't contain anything other than the walk.");
+						throw new UserException("Can't upload this track", 0, "This track doesn't match that walk", $message.": ".$details);
 					}
 				}
 				else

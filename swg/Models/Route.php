@@ -438,28 +438,43 @@ class Route extends SWGBaseModel implements Iterator {
 	 * @param WalkInstance $w Walk to check against
 	 * @return bool True if route matches walk
 	 */
-	public function checkAgainstWalk(WalkInstance $w)
+	public function checkAgainstWalk(WalkInstance $w, &$reason = "", &$reasonDetail = "")
 	{
 		$start = $this->getWaypoint(0);
 		$end = $this->getWaypoint($this->numWaypoints()-1);
 		
 		if (strftime("%F", $start->time) != strftime("%F", $w->start))
+		{
+			$reason = "Route was recorded on a different day from the walk";
+			$reasonDetail = "Timestamp of route is ".strftime("%d-%m-%Y", $start->time).", walk was on ".strftime("%d-%m-%Y", $w->start);
 			return false;
+		}
 		
 		$plannedDistance = UnitConvert::distance($w->miles, UnitConvert::Mile, UnitConvert::Metre);
 		if ($this->distance < $plannedDistance * 0.5 || $this->distance > $plannedDistance * 2)
+		{
+			$reason = "Route distance doesn't match the walk";
+			$reasonDetail = "Route distance is ".$this->distance."m, planned walk distance was ".$plannedDistance."m";
 			return false;
+		}
 		
 		$plannedStart = new Waypoint();
 		$plannedStart->latLng = $w->startLatLng;
 		if ($start->distanceTo($plannedStart) > 1000)
+		{
+			$reason = "Start location doesn't match planned walk";
+			$reasonDetail = "Start location of recorded track is ".$start->osRef->toSixFigureString().", should be ".$w->startGridRef;
 			return false;
+		}
 		
 		$plannedEnd = new Waypoint();
 		$plannedEnd->latLng = $w->endLatLng;
 		if ($end->distanceTo($plannedEnd) > 1000)
+		{
+			$reason = "End location doesn't match planned walk";
+			$reasonDetail = "End location of recorded track is ".$end->osRef->toSixFigureString().", should be ".$w->endGridRef;
 			return false;
-		
+		}
 		return true;
 	}
 	
