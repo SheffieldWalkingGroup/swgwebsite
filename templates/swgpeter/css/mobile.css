@@ -22,7 +22,7 @@ body .wrapper
 nav
 {
 	margin:0 10px;
-	padding:10px 0;
+	padding:10px 0 0;
 	position:fixed;
 	top:0;
 	left:0;
@@ -35,8 +35,8 @@ nav
 
 .logo img
 {
-	width:157px;
-	height:48px;
+	width:151px;
+	height:46px;
 }
 
 .moduletable_menu h3,
@@ -95,7 +95,7 @@ nav .menu li.current>a
 {
 	display:none;
 	position:absolute;
-	top:45px;
+	top:40px;
 	right:0px;
 	left:0px;
 }
@@ -109,15 +109,12 @@ nav.open .menu-wrap
 body .menu-button
 {
 	display:inline;
-	font-size:3.4em;
-	text-indent:-4000px;
-	overflow:hidden;
+	font-size:3.0em;
 	color:#000;
-	padding:0;
-	float:right;
-	width:42px;
-	height:48px;
-	text-align:center;
+	padding:0 2px 0 1.0em;
+/* 	float:right; */
+/* 	width:auto; */
+/* 	text-align:center; */
 	background-color:#fff;
 	border:1px solid #555;
 	position:absolute;
@@ -130,8 +127,8 @@ body .menu-button
 {
 	content: "";
 	position: absolute;
-	top: 0.3em;
-	left:0.1em;
+	bottom: 0.3em;
+	left:0.15em;
 	margin:auto;
 	width: 0.8em;
 	height: 0.145em;
@@ -150,7 +147,7 @@ nav .menu-tab-join
 {
 	display:inline;
 	content:"";
-	width:48px;
+	width:0;
 	border-right:1px solid #555;
 	height:6px;
 	position:absolute;
@@ -162,10 +159,10 @@ nav .menu-tab-join
 
 nav .menu-tab-join:after
 {
-	width:50%;
+	width:10px;
 	height:5px;
 	position:absolute;
-	right:40px;
+	left:-4px;
 	top:0px;
 	content:"";
 	z-index:2;
@@ -273,7 +270,7 @@ h1
 
 div.main
 {
-	margin: 55px 0 0 0;
+	margin: 50px 0 0 0;
 }
 
 .event

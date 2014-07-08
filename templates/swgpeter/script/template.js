@@ -148,6 +148,11 @@ var Mobile = new Class({
 		//besps_1_0.b_stop();
 		this.nav = document.body.getElement("nav");
 		this.menuButton = this.nav.getElement(".menu-button");
+		
+		// Resize the menu tab join to fit the menu button (size may differ due to fonts)
+		var menuButtonWidth = this.menuButton.offsetWidth;
+		this.nav.getElement(".menu-tab-join").style.width = menuButtonWidth + 5 + "px";
+		
 		this.menu = this.nav.getElement("ul.nav");
 		// Temporarily open the menu to get its size
 		this.nav.setStyle("visibility", "hidden");
