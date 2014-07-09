@@ -192,7 +192,7 @@
 						<?php endif; ?>
 					<?php endif; ?>
 					<?php if ($this->eventInPast($event)): $attended = $event->wasAttendedBy(Jfactory::getUser()->id); ?>
-						<?php if ($event->numAttendees > 0):  // TODO: Potential warnings if value is unset? TODO: Add attendees & tickbox to past events on bottomless page?>
+						<?php if (SWG_EventsController::canSeeAttendanceCount() && $event->numAttendees > 0): // TODO: Add attendees & tickbox to past events on bottomless page?> ?>
 							<p><?php echo $event->numAttendees;if ($event->numAttendees == 1):?> person<?php else:?> people<?php endif;?> did this</p>
 						<?php endif; if (SWG_EventsController::canRecordAttendance()): ?>
 							<p>
