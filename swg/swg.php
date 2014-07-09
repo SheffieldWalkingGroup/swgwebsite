@@ -1,13 +1,13 @@
 <?php
-JLoader::register('SocialFactory', JPATH_BASE."/swg/Factories/SocialFactory.php");
-JLoader::register('WalkInstanceFactory', JPATH_BASE."/swg/Factories/WalkInstanceFactory.php");
-JLoader::register('WeekendFactory', JPATH_BASE."/swg/Factories/WeekendFactory.php");
-JLoader::register('DummyEventFactory', JPATH_BASE."/swg/Factories/DummyEventFactory.php");
-JLoader::register('UnitConvert', JPATH_BASE."/swg/UnitConvert.php");
-JLoader::register('UserException', JPATH_BASE."/swg/Exceptions/UserException.php");
-JLoader::register('Leader', JPATH_BASE."/swg/Models/Leader.php");
-JLoader::register('Facebook', JPATH_BASE."/libraries/facebook/facebook.php");
-JLoader::register('Event', JPATH_BASE."/swg/Models/Event.php");
+JLoader::register('SocialFactory', JPATH_SITE."/swg/Factories/SocialFactory.php");
+JLoader::register('WalkInstanceFactory', JPATH_SITE."/swg/Factories/WalkInstanceFactory.php");
+JLoader::register('WeekendFactory', JPATH_SITE."/swg/Factories/WeekendFactory.php");
+JLoader::register('DummyEventFactory', JPATH_SITE."/swg/Factories/DummyEventFactory.php");
+JLoader::register('UnitConvert', JPATH_SITE."/swg/UnitConvert.php");
+JLoader::register('UserException', JPATH_SITE."/swg/Exceptions/UserException.php");
+JLoader::register('Leader', JPATH_SITE."/swg/Models/Leader.php");
+JLoader::register('Facebook', JPATH_SITE."/libraries/facebook/facebook.php");
+JLoader::register('Event', JPATH_SITE."/swg/Models/Event.php");
 /**
  * A collection of general functions and constants
  * @author peter

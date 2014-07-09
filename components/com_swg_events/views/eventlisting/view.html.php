@@ -100,4 +100,19 @@ MAP
 		return $link;
 	}
 	
+	function showAddDummy()
+	{
+		return (JRequest::getBool("showEditOptions") && $this->addEditDummyURL() &&  SWG_EventsController::canAddDummy());
+	}
+	
+	function addEditDummyURL()
+	{
+		$itemid = JRequest::getInt('addEditDummyPage');
+		if (empty($itemid))
+			return false;
+		$item = JFactory::getApplication()->getMenu()->getItem($itemid);
+		$link = new JURI($item->route);
+		return $link;
+	}
+	
 }

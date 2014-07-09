@@ -27,6 +27,9 @@
 		<action name="weekend.editall" title="Edit all weekends" description="Edit all weekends" />
 		<action name="weekend.delete" title="Delete weekends" description="Delete weekends" />
 		
+		<action name="dummy.add" title="Add dummy events" description="Add dummy events" />
+		<action name="dummy.editall" title="Edit dummy events" description="Edit dummy events" />
+		
 		<action name="common.viewattendance" title="View attendance" description="See who has logged attendance at an event" />
 		<action name="common.viewattendancecount" title="View attendance count" description="See the number of people who logged attendance at an event" />
 		<action name="common.recordattendance" title="Record attendance" description="Record their own attendance at an event" />

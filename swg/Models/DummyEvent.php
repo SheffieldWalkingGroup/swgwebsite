@@ -51,14 +51,6 @@ class DummyEvent extends Event
 		return $this->$name; // TODO: What params should be exposed?
 	}
 	
-	public function toDatabase(JDatabaseQuery &$query)
-	{
-		parent::toDatabase($query);
-		
-		// Handle bitwise mappings. TODO: This should be moved into a base class when it's used elsewhere.
-		$query->set("alterations = b'".$this->alterations->getBitwise()."'");
-	}
-	
 	public function fromDatabase(array $dbArr)
 	{
 		// Date format conversion
@@ -67,7 +59,6 @@ class DummyEvent extends Event
 		
 		parent::fromDatabase($dbArr);
 		
-		// Handle bitwise mappings. TODO: This should be moved into a base class when it's used elsewhere.
 		
 	}
 	

@@ -51,6 +51,16 @@ class SWG_EventsController extends JControllerLegacy
 		return JFactory::getUser()->authorise("weekend.editall","com_swg_events");
 	}
 	
+	public static function canSeeAttendanceCount()
+	{
+		return JFactory::getUser()->authorise("common.viewattendancecount", "com_swg_events");
+	}
+	
+	public static function canSeeAttendance()
+	{
+		return JFactory::getUser()->authorise("common.viewattendance", "com_swg_events");
+	}
+	
 	public static function canRecordAttendance()
 	{
 		return JFactory::getUser()->authorise("common.recordattendance", "com_swg_events");
@@ -64,7 +74,19 @@ class SWG_EventsController extends JControllerLegacy
 			return self::canEditSocial($event);
 		else if ($event instanceof Weekend)
 			return self::canEditWeekend($event);
+		else if ($event instanceof DummyEvent)
+			return self::canEditDummy($event);
 		else
 			return false;
+	}
+	
+	public static function canAddDummy()
+	{
+		return JFactory::getUser()->authorise("dummy.add","com_swg_events");
+	}
+	
+	public static function canEditDummy()
+	{
+		return JFactory::getUser()->authorise("dummy.editall","com_swg_events");
 	}
 }

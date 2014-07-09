@@ -296,6 +296,7 @@ abstract class Event extends SWGBaseModel {
 			$query->where($idField." = ".(int)$this->id);
 			$query->update($table);
 		}
+		
 		$db->setQuery($query);
 		$db->query();
 		
@@ -303,6 +304,24 @@ abstract class Event extends SWGBaseModel {
 		{
 			// Get the ID from the database
 			$this->id = $db->insertid();
+			$new = true;
+		}
+		else 
+		{
+			$new = false;
+		}
+		
+		
+		// Handle joined tables
+		// TODO: Don't explicitly reference event Types, better handling without calling toDatabase twice
+		if ($this instanceof DummyEvent)
+		{
+			$query = $db->getQuery(true);
+			$query->replace(strtolower(get_class($this)));
+			$query->set("id = ".$this->id);
+			$this->toDatabase($query);
+			$db->setQuery($query);
+			$db->query();
 		}
 		
 		// TODO: Handle failure
