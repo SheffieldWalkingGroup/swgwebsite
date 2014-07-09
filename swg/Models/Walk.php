@@ -142,7 +142,6 @@ public function valuesToForm()
 		{
 			$this->loadRoute();
 		}
-		
 		return $this->$name; // TODO: What params should be exposed?
 	}
 
@@ -238,7 +237,7 @@ public function valuesToForm()
 				return (isset($this->route));
 				break;
 			default:
-				return parent::__isset($this->$name);
+				return parent::__isset($name);
 				break;
 		}
 	}
