@@ -359,10 +359,10 @@ function postDisplay(container, event)
 	container.adopt(footer);
 	
 	if (event.hasMap)
-		showMap(container);
+		showMap(container, event);
 }
 
-function showMap(popup) {
+function showMap(popup, currentEvent) {
 	
 	// TODO: Reference everthing from popup
 	if (map == null)
