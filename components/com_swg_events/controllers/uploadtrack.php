@@ -109,8 +109,18 @@ class SWG_EventsControllerUploadTrack extends JControllerForm
 			    throw new Exception("There was an error while saving your track. You can try again in a while, or email us if that doesn't work.");
 			}
 			
-			// TODO: Redirect to correct place - "My diary"?
-			JFactory::getApplication()->redirect("/whats-on/previous-events#walk_".$this->wi->id);
+			// Redirect to the specified page after saving
+			$itemid = JRequest::getInt('returnPage');
+			if (empty($itemid))
+				return false;
+			$item = JFactory::getApplication()->getMenu()->getItem($itemid);
+			$link = new JURI("/".$item->route);
+			
+			// Jump to the event?
+			if (JRequest::getBool('jumpToEvent'))
+				$link->setFragment("walk_".$wi->id);
+			
+			JFactory::getApplication()->redirect($link, "Track saved");
 			
 		}
 	}
