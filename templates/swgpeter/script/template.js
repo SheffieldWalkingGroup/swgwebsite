@@ -193,30 +193,33 @@ var Mobile = new Class({
 		});
 		
 		// Resize the banner image
-		var banner = document.body.getElement(".random-image img");
-		if (banner != null)
+		window.setTimeout(function()
 		{
-			banner.setStyle("height", banner.offsetWidth * 0.3368);
-		}
-		// Resize the slideshow images
-		var slideshowDivs = document.body.getElements(".home .slideshow div");
-		if (slideshowDivs.length != 0)
-		{
-			var height = slideshowDivs[0].offsetWidth * (2/3);
-			for (var i=0;i<slideshowDivs.length;i++)
+			var banner = document.body.getElement(".random-image img");
+			if (banner != null)
 			{
-				if (!slideshowDivs[i].hasClass("bs_inside"))
-					slideshowDivs[i].setStyle("height", height);
+				banner.setStyle("height", banner.offsetWidth * 0.3368);
 			}
+			// Resize the slideshow images
+			var slideshowDivs = document.body.getElements(".home .slideshow div");
+			if (slideshowDivs.length != 0)
+			{
+				var height = Math.round(slideshowDivs[0].offsetWidth * (2/3));
+				for (var i=0;i<slideshowDivs.length;i++)
+				{
+					if (!slideshowDivs[i].hasClass("bs_inside"))
+						slideshowDivs[i].setStyle("height", height);
+				}
+				
+				var slideshowImgs = document.body.getElements(".slideshow .besps_slides img");
+				for (var i=0; i<slideshowImgs.length; i++)
+				{
+					slideshowImgs[i].setStyle("width", slideshowDivs[0].width);
+					slideshowImgs[i].setStyle("height", height);
+				}
+			}
+		}, 0);
 			
-			var slideshowImgs = document.body.getElements(".slideshow .besps_slides img");
-			for (var i=0; i<slideshowImgs.length; i++)
-			{
-				slideshowImgs[i].setStyle("width", slideshowDivs[0].width);
-				slideshowImgs[i].setStyle("height", height);
-			}
-		}
-		
 		// Make any suitable text boxes expandable
 		var textBoxHeadings = document.body.getElements(".moduletable h3:first-of-type");
 		for (var i=0; i<textBoxHeadings.length; i++)
