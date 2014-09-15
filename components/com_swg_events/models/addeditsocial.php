@@ -57,6 +57,12 @@ class SWG_EventsModelAddEditSocial extends JModelForm
 			}
 		}
 		
+		// Empty checkboxes...
+		if (empty($formData['showNormal']))
+			$this->social->showNormal = false;
+		if (empty($formData['showNewMember']))
+			$this->social->showNewMember = false;
+		
 		// Time fields need to be built up (they combine date & time internally)
 		if (!empty($formData['date']))
 		{
