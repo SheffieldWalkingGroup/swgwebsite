@@ -263,6 +263,11 @@ h1
 	margin-top:0;
 }
 
+.moduletable.mobile
+{
+	display:block !important;
+}
+
 .closable
 {
 	overflow:hidden;
