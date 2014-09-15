@@ -27,8 +27,8 @@ class SWG_EventsViewScheduleWalk extends JViewLegacy
 			// Set the existing leader & backmarker
 			if (!empty($this->wi['leaderid']))
 				$this->form->setValue("leader", null, $this->wi['leaderid']);
-			if (!empty($this->wi['backmarkerId']))
-				$this->form->setValue("backmarker", "leadership", $this->wi['backmarkerid']);
+			if (!empty($this->wi['backmarkerid']))
+				$this->form->setValue("backmarker", null, $this->wi['backmarkerid']);
 		}
 		
 		// Check the current user can edit this walk (or add a new one)
