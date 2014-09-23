@@ -96,7 +96,7 @@ class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
 			if (isset($inParams['option']))
 			$params['option'] = $inParams['option'];
 			
-			JFactory::getApplication()->redirect($urlBase."?".implode("&amp;", $params));
+			JFactory::getApplication()->redirect($urlBase."?".implode("&", $params));
 
 			return true;
 		}
