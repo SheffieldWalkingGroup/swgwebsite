@@ -7,7 +7,7 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-defined('_JEXEC') or die;
+defined('JPATH_PLATFORM') or die;
 
 /**
  * Helper for standard content style extensions.
@@ -116,7 +116,12 @@ class JHelperContent
 			$assetName = $component;
 		}
 
-		$actions = JAccess::getActionsFromFile($path, "/access/section[@name='component']/");
+		if (empty($section))
+		{
+			$section = 'component';
+		}
+
+		$actions = JAccess::getActionsFromFile($path, "/access/section[@name='" . $section . "']/");
 
 		foreach ($actions as $action)
 		{
