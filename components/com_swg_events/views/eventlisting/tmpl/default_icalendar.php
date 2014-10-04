@@ -34,7 +34,7 @@ echo "DESCRIPTION: ". $this->parseText($description)."\r\n";
    
 echo "DTEND:"; 
 if ($event instanceof WalkInstance) {
-	echo strftime("%Y%m%dT%H%M%SZ", swg::localToUTC($event->estimateFinishTime())."\r\n";
+	echo strftime("%Y%m%dT%H%M%SZ", swg::localToUTC($event->estimateFinishTime()))."\r\n";
 } else if ($event instanceof Weekend) {
 	// End time should be midnight of the day after the last one for an all day event
 	echo strftime("%Y%m%dT%H%M%SZ", swg::localToUTC($event->endDate+86400));
