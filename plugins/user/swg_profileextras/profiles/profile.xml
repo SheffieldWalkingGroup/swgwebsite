@@ -29,7 +29,7 @@
 			<field
 				name="leaderid"
 				type="sql"
-					query="SELECT ID, CONCAT_WS(' ',Forename,Surname) AS name FROM walkleaders WHERE ID != 46 ORDER BY Forename ASC, Surname ASC"
+					query="SELECT ID, CONCAT_WS(' ',Forename,Surname) AS name FROM walkleaders ORDER BY Forename ASC, Surname ASC"
 				key_field="ID" value_field="name"
 				description="Manually connect this user to a specific leader account"
 				label="Leader account"
