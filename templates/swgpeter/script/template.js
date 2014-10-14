@@ -200,7 +200,6 @@ var Mobile = new Class({
 			var resizeBanner = function(banner)
 			{
 				var bannerWidth = banner.offsetWidth;
-				subHead.innerHTML = "Ready on open, "+bannerWidth+"px x "+(0.3368 * bannerWidth)+"px";
 				banner.setStyle("height", 0.3368 * bannerWidth);
 			};
 			if (banner.complete)
