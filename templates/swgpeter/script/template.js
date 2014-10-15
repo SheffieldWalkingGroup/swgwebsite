@@ -217,22 +217,39 @@ var Mobile = new Class({
 		}
 		// Resize the slideshow images
 		var slideshowDivs = document.body.getElements(".home .slideshow div");
-		if (slideshowDivs.length != 0)
+		var firstSlide = slideshowDivs[0].getElement("img");
+		// Have to wait until the first image had loaded to set the page layout, but the div will have the correct width
+		var resizeSlides = function(slideshowDivs)
 		{
-			// TODO: Implement same fix as for banner images
-			var height = slideshowDivs[0].offsetWidth * (2/3);
-			for (var i=0;i<slideshowDivs.length;i++)
+			if (slideshowDivs.length != 0)
 			{
-				if (!slideshowDivs[i].hasClass("bs_inside"))
-					slideshowDivs[i].setStyle("height", height);
+				// TODO: Implement same fix as for banner images
+				var slideshowWidth = slideshowDivs[0].offsetWidth, slideshowHeight = slideshowDivs[0].offsetWidth * (2/3);
+				for (var i=0;i<slideshowDivs.length;i++)
+				{
+					if (!slideshowDivs[i].hasClass("bs_inside"))
+						slideshowDivs[i].setStyle("height", slideshowHeight);
+				}
+				
+				var slideshowImgs = document.body.getElements(".slideshow .besps_slides img");
+				for (var i=0; i<slideshowImgs.length; i++)
+				{
+					slideshowImgs[i].setStyle("width", slideshowWidth);
+					slideshowImgs[i].setStyle("height", slideshowHeight);
+				}
 			}
-			
-			var slideshowImgs = document.body.getElements(".slideshow .besps_slides img");
-			for (var i=0; i<slideshowImgs.length; i++)
+		}
+		
+		if (firstSlide.complete)
+		{
+			resizeSlides.delay(0,this,[slideshowDivs]); // Array parameter must be wrapped in an array - MooTools limitation
+		}
+		else
+		{
+			firstSlide.addEvent("load", function()
 			{
-				slideshowImgs[i].setStyle("width", slideshowDivs[0].width);
-				slideshowImgs[i].setStyle("height", height);
-			}
+				resizeSlides(slideshowDivs);
+			});
 		}
 		
 		// Make any suitable text boxes expandable
@@ -266,15 +283,6 @@ var Mobile = new Class({
 		{
 			self.eventHooks.call(self, event, container);
 		});
-		
-	},
-	
-	/**
-	 * Reshape banners and slideshows to fit the narrower screens
-	 * Banners are resized in width by CSS, this applies to height
-	 */
-	reshapeBanners: function()
-	{
 		
 	},
 	
