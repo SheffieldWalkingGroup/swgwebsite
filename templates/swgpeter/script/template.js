@@ -263,7 +263,7 @@ var Mobile = new Class({
 				// Wrap the contents
 				var content = new Element("div");
 				var toAdopt = [];
-				for (var i=0; i<box.childNodes.length; i++)
+				for (var j=0; j<box.childNodes.length; j++)
 				{
 					if (box.childNodes[i] != heading)
 					{
