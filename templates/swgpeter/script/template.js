@@ -196,25 +196,60 @@ var Mobile = new Class({
 		var banner = document.body.getElement(".random-image img");
 		if (banner != null)
 		{
-			banner.setStyle("height", banner.offsetWidth * 0.3368);
+			var subHead = banner.parentNode.getElement("h2");
+			var resizeBanner = function(banner)
+			{
+				var bannerWidth = banner.offsetWidth;
+				banner.setStyle("height", 0.3368 * bannerWidth);
+			};
+			if (banner.complete)
+			{
+				// Make sure the existing scripts have finished
+				resizeBanner.delay(0,this,banner);
+			}
+			else
+			{
+				banner.addEvent("load", function()
+				{
+					resizeBanner(banner);
+				});
+			}
 		}
 		// Resize the slideshow images
 		var slideshowDivs = document.body.getElements(".home .slideshow div");
-		if (slideshowDivs.length != 0)
+		var firstSlide = slideshowDivs[0].getElement("img");
+		// Have to wait until the first image had loaded to set the page layout, but the div will have the correct width
+		var resizeSlides = function(slideshowDivs)
 		{
-			var height = slideshowDivs[0].offsetWidth * (2/3);
-			for (var i=0;i<slideshowDivs.length;i++)
+			if (slideshowDivs.length != 0)
 			{
-				if (!slideshowDivs[i].hasClass("bs_inside"))
-					slideshowDivs[i].setStyle("height", height);
+				// TODO: Implement same fix as for banner images
+				var slideshowWidth = slideshowDivs[0].offsetWidth, slideshowHeight = slideshowDivs[0].offsetWidth * (2/3);
+				for (var i=0;i<slideshowDivs.length;i++)
+				{
+					if (!slideshowDivs[i].hasClass("bs_inside"))
+						slideshowDivs[i].setStyle("height", slideshowHeight);
+				}
+				
+				var slideshowImgs = document.body.getElements(".slideshow .besps_slides img");
+				for (var i=0; i<slideshowImgs.length; i++)
+				{
+					slideshowImgs[i].setStyle("width", slideshowWidth);
+					slideshowImgs[i].setStyle("height", slideshowHeight);
+				}
 			}
-			
-			var slideshowImgs = document.body.getElements(".slideshow .besps_slides img");
-			for (var i=0; i<slideshowImgs.length; i++)
+		}
+		
+		if (firstSlide.complete)
+		{
+			resizeSlides.delay(0,this,[slideshowDivs]); // Array parameter must be wrapped in an array - MooTools limitation
+		}
+		else
+		{
+			firstSlide.addEvent("load", function()
 			{
-				slideshowImgs[i].setStyle("width", slideshowDivs[0].width);
-				slideshowImgs[i].setStyle("height", height);
-			}
+				resizeSlides(slideshowDivs);
+			});
 		}
 		
 		// Make any suitable text boxes expandable
@@ -224,7 +259,21 @@ var Mobile = new Class({
 			var heading = textBoxHeadings[i];
 			var box = heading.getParent(".moduletable");
 			if (!box.hasClass("keep-open"))
-				this.setupFolding(box, heading);
+			{
+				// Wrap the contents
+				var content = new Element("div");
+				var toAdopt = [];
+				for (var i=0; i<box.childNodes.length; i++)
+				{
+					if (box.childNodes[i] != heading)
+					{
+						toAdopt.push(box.childNodes[i]);
+					}
+				}
+				box.adopt(content);
+				content.adopt(toAdopt);
+				this.setupFolding(box, heading, content);
+			}
 		}
 		
 		// Modify events
@@ -237,30 +286,55 @@ var Mobile = new Class({
 		
 	},
 	
-	setupFolding: function(box, heading) 
+	/**
+	 * Set up folding for a content box.
+	 * The box will show only the heading by default, and users can tap it to display the content
+	 * 
+	 * @param HTMLElement box An element wrapping the entire box
+	 * @param HTMLElement heading The heading element, stays visible and can be tapped to open
+	 * @param HTMLElement content An element wrapping the content
+	 */
+	setupFolding: function(box, heading, content)
 	{
 		box.addClass("closable");
 			
-		box.store("openheight", box.offsetHeight);
-		box.store("closedheight", heading.offsetHeight);
-		box.store("open", false);
-		box.set("tween", {duration:"short"});
+		content.style.height = 0;
+		content.style.paddingBottom = 0;
 		
-		box.style.height = heading.offsetHeight+"px";
-		
-		heading.store("target", box);
+		heading.store("target", content);
 		heading.addEvent("click", function(ev)
 		{
-			var box = heading.retrieve("target");
-			if (box.hasClass("open"))
+			var content = heading.retrieve("target");
+			if (content.hasClass("open"))
 			{
-				box.removeClass("open");
-				box.tween("height", box.retrieve("closedheight"));
+				var closing = new Fx.Morph(content, {
+					duration: "short"
+				});
+				content.removeClass("open");
+				
+				closing.start({
+					"height" : 0,
+					"padding-bottom" : 0,
+				});
 			}
 			else
 			{
-				box.addClass("open");
-				box.tween("height", box.retrieve("openheight"));
+				// Get the correct height of the content: sometimes getting the height at page load doesn't give the correct value
+				content.style.visibility = "hidden";
+				content.style.height = "auto";
+				var targetHeight = content.offsetHeight;
+				content.style.height = "0";
+				content.style.visibility = "visible";
+				
+				var opening = new Fx.Morph(content, {
+					duration: "short"
+				});
+				opening.start({
+					"height": targetHeight,
+					"padding-bottom": "10px"
+				});
+				
+				content.addClass("open");
 			}
 		});
 	},
@@ -342,7 +416,7 @@ var Mobile = new Class({
 		else
 		{
 			// Set up folding
-			this.setupFolding(container, container.getElement(".eventheader"));
+			this.setupFolding(container, container.getElement(".eventheader"), container.getElement(".eventbody"));
 		}
 		
 		// Remove the link in the header

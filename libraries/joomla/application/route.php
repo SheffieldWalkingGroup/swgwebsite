@@ -32,6 +32,7 @@ class JRoute
 	 * @param   string   $url    Absolute or Relative URI to Joomla resource.
 	 * @param   boolean  $xhtml  Replace & by &amp; for XML compilance.
 	 * @param   integer  $ssl    Secure state for the resolved URI.
+	 *                             0: (default) No change, use the protocol currently used in the request
 	 *                             1: Make URI secure using global secure site URI.
 	 *                             2: Make URI unsecure using the global unsecure site URI.
 	 *
@@ -44,7 +45,8 @@ class JRoute
 		if (!self::$_router)
 		{
 			// Get the router.
-			self::$_router = JFactory::getApplication()->getRouter();
+			$app = JFactory::getApplication();
+			self::$_router = $app::getRouter();
 
 			// Make sure that we have our router
 			if (!self::$_router)
@@ -81,7 +83,7 @@ class JRoute
 			}
 
 			// Determine which scheme we want.
-			$uri->setScheme(($ssl === 1 || $uri->isSSL()) ? 'https' : 'http');
+			$uri->setScheme(((int) $ssl === 1 || $uri->isSSL()) ? 'https' : 'http');
 			$uri->setHost($host_port[0]);
 			$uri->setPort($host_port[1]);
 			$scheme = array_merge($scheme, array('host', 'port', 'scheme'));

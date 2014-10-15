@@ -357,6 +357,8 @@ public static function getWalksBySuggester(Leader $suggester)
 		$walk->fromDatabase(array_shift($walkData));
 		$walks[] = $walk;
 	}
+	
+	return $walks;
 }
 
 	// TODO: Move to WalkFactory

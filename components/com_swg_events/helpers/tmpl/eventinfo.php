@@ -147,8 +147,8 @@
 					<?php endif;?>
 					
 					<?php if ($event->bookingsInfo != ""): ?>
-						<p class="socialbooking">
-							<p class="socialbooking<?php if ($event->alterations->organiser) echo " altered\" title=\"Organiser altered"; ?>">
+						<p class="socialbooking<?php if ($event->alterations->organiser) echo " altered\" title=\"Organiser altered"; ?>">
+							<span>Contact: </span><?php echo nl2br($event->bookingsInfo);?>
 						</p>
 					<?php endif; ?>
 				<?php endif; ?>
