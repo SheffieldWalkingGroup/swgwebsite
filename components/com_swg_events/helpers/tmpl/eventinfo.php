@@ -38,7 +38,7 @@
 						$inDist = $event->distance;
 						$inUnit = UnitConvert::Metre;
 					}
-					echo UnitConvert::displayDistance($inDist,$inUnit, UnitConvert::Mile)."<span class='unit2'>, ".UnitConvert::displayDistance($inDist, $inUnit, UnitConvert::Kilometre)."</span>";
+					echo str_replace(".0","",UnitConvert::displayDistance($inDist,$inUnit, UnitConvert::Mile))."<span class='unit2'>, ".UnitConvert::displayDistance($inDist, $inUnit, UnitConvert::Kilometre)."</span>";
 					?>)
 			</p>
 			<time datetime="<?php echo date("H:iO", $event->estimateFinishTime());?>" class="dtend date"></time>
