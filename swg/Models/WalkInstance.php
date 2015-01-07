@@ -148,6 +148,7 @@ public function toDatabase(JDatabaseQuery &$query)
 		$query->set("meettime = '". $query->escape(strftime("%H:%M",$this->start))."'");
 	}
 	
+	/* Commented out by Tom G - columns become duplicated for unknown reasons
 	if (!empty($this->meetPoint))
 	{
 		$query->set("meetplace = ". (int)$this->meetPoint->id);
@@ -168,6 +169,7 @@ public function toDatabase(JDatabaseQuery &$query)
 		$query->set("leaderid = ". (int)$this->leaderId);
 	else
 		$query->set("leaderid = ".Leader::TBC); // TBC
+	*/
 	if (isset($this->leader) && $this->leader->hasDisplayName)
 		$query->set("leadername = '". $query->escape($this->leader->displayName)."'");
 	elseif (isset($this->leaderName))
@@ -175,10 +177,12 @@ public function toDatabase(JDatabaseQuery &$query)
 	else
 		$query->set("leadername = ''");
 		
+	/* Commented out by Tom G - columns become duplicated for unknown reasons
 	if (!empty($this->backmarkerId))
 		$query->set("backmarkerid = ". (int)$this->backmarkerId);
 	else
 		$query->set("backmarkerid = ".Leader::TBC); // TBC
+	*/
 	if (isset($this->backmarker) && $this->backmarker->hasDisplayName)
 		$query->set("backmarkername = '". $query->escape($this->backmarker->displayName)."'");
 	elseif (isset($this->backmarkerName))
