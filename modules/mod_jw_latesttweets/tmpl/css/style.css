@@ -1,0 +1,28 @@
+/**
+ * @version		2.3
+ * @package		Latest Tweets (module) for Joomla! 2.5 & 3.x
+ * @author		JoomlaWorks - http://www.joomlaworks.net
+ * @copyright	Copyright (c) 2006 - 2015 JoomlaWorks Ltd. All rights reserved.
+ * @license		GNU/GPL license: http://www.gnu.org/copyleft/gpl.html
+ */
+
+/* Container */
+div.ltBlock {clear:both;}
+
+/* List */
+div.ltBlock ul.ltBlockList {padding:0;margin:0;list-style:none;}
+
+div.ltBlock ul.ltBlockList li.ltBlockListLoader {background:url(../images/loadingIcon.gif) no-repeat 50% 50%;width:100%;height:100px;margin:auto;}
+div.ltBlock ul.ltBlockList li.ltBlockListLoader span {display:none;}
+
+div.ltBlock ul.ltBlockList li {padding:4px;border-bottom:1px dotted #ccc;}
+	.ltOdd {background:#fff;}
+	.ltEven {background:#fffff0;}
+	div.ltBlock ul.ltBlockList li	img.ltUserAvatar {float:left;width:32px;height:32px;margin:0 4px 0 0;padding:0;}
+	span.ltUserStatus {}
+	a.ltStatusTimestamp {font-size:10px;}
+
+/* "Follow us" link */
+div.ltFollowUsLink {clear:both;padding:4px;}
+div.ltFollowUsLink a {display:block;text-align:right;text-decoration:none;}
+div.ltFollowUsLink a span {background:url(../images/twitter_16x16_8bit.png) no-repeat left center;padding:2px 0 2px 20px;}

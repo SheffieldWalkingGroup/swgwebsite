@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="2.5" method="upgrade">
+	<name>Latest Tweets (by JoomlaWorks)</name>
+	<author>JoomlaWorks</author>
+	<authorEmail>please-use-the-contact-form@joomlaworks.net</authorEmail>
+	<authorUrl>www.joomlaworks.net</authorUrl>
+	<copyright>Copyright (c) 2006 - 2015 JoomlaWorks Ltd. All rights reserved.</copyright>
+	<creationDate>April 20th, 2015</creationDate>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<version>2.3</version>
+	<description>MOD_JW_LT_XML_DESC</description>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field name="moduleclass_sfx" type="text" default="" label="MOD_JW_LT_MODULE_CLASS_SUFFIX" description="MOD_JW_LT_MODULE_CLASS_SUFFIX_DESC" />
+				<field name="ltCSSStyling" type="radio" default="1" label="MOD_JW_LT_USE_BUILT_IN_CSS_STYLING" description="MOD_JW_LT_DISABLE_IF_YOU_ARE_ADDING_CSS_STYLING_THROUGH_YOUR_TEMPLATE_OR_IF_YOU_WANNA_HAVE_DIFFERENT_STYLING_PER_MODULE_INSTANCE">
+					<option value="0">MOD_JW_LT_NO</option>
+					<option value="1">MOD_JW_LT_YES</option>
+				</field>
+				<field name="ltTimeout" type="text" default="2" label="MOD_JW_LT_PRELOADER_TIMEOUT_IN_SECONDS" description="MOD_JW_LT_THE_TIME_THE_PRELOADER_WILL_DISPLAY_BEFORE_SHOWING_THE_TWEETS_LIST" />
+				<field name="ltUsername" type="text" default="" label="MOD_JW_LT_TWITTER_USERNAME" description="MOD_JW_LT_YOUR_TWITTER_USERNAME" />
+				<field name="ltKey" type="text" default="" label="MOD_JW_LT_TWITTER_KEY" description="MOD_JW_LT_TWITTER_KEY_DESC" />
+				<field name="ltCount" type="text" default="5" label="MOD_JW_LT_TWEETS_COUNT" description="MOD_JW_LT_THE_NUMBER_OF_TWEETS_TO_FETCH_EVERY_TIME" />
+			</fieldset>
+			<fieldset name="advanced">
+				<field name="cache" type="list" default="1" label="MOD_JW_LT_CACHING" description="MOD_JW_LT_CACHING_DESC">
+					<option value="1">MOD_JW_LT_USE_GLOBAL</option>
+					<option value="0">MOD_JW_LT_NO_CACHING</option>
+				</field>
+				<field name="cache_time" type="text" default="900" label="MOD_JW_LT_CACHE_TIME" description="MOD_JW_LT_CACHE_TIME_DESC" />
+			</fieldset>
+		</fields>
+	</config>
+	<files>
+		<filename module="mod_jw_latesttweets">mod_jw_latesttweets.php</filename>
+		<folder>includes</folder>
+		<folder>tmpl</folder>
+	</files>
+	<languages>
+		<language tag="en-GB">language/en-GB/en-GB.mod_jw_latesttweets.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.mod_jw_latesttweets.sys.ini</language>
+	</languages>
+	<updateservers>
+		<server type="extension" priority="1" name="Latest Tweets">http://cdn.joomlaworks.org/updates/latesttweets.xml</server>
+	</updateservers>
+</extension>
