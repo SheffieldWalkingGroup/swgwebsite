@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.4.0" client="site" method="upgrade">
+    <name>SWG Slideshow</name>
+    <author>Peter Copeland</author>
+	<authorEmail>tech@sheffieldwalkinggroup.org.uk</authorEmail>
+	<authorUrl>http://www.sheffieldwalkinggroup.org.uk</authorUrl>
+    <version>0.0.1</version>
+    <description>A slideshow displaying random photos from the current season</description>
+    <files>
+        <filename>mod_swg_slideshow.xml</filename>
+        <filename module="mod_swg_slideshow">mod_swg_slideshow.php</filename>
+        <filename>index.html</filename>
+        <filename>helper.php</filename>
+        <filename>tmpl/default.php</filename>
+        <filename>tmpl/index.html</filename>
+    </files>
+    <config>
+    </config>
+</extension>
