@@ -197,7 +197,7 @@ public function toDatabase(JDatabaseQuery &$query)
 			case "latLng":
 				if ($value instanceof LatLng)
 					$this->$name = $value;
-				else if (is_string($value))
+				else if (is_string($value) && trim($value, "[]") != "")
 				{
 					// Is it in JSON?
 					if (substr($value, 0, 2) == "[{")
@@ -208,7 +208,7 @@ public function toDatabase(JDatabaseQuery &$query)
 					}
 					else
 					{
-						$this->$name = SWG::parseLatLongTuple($this->value);
+						$this->$name = SWG::parseLatLongTuple($value);
 					}
 				}
 				else if (is_array($value))

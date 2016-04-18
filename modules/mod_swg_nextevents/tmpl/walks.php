@@ -1,6 +1,6 @@
 
 <?php if (!empty($module->title)) echo "<h3><a href='".$listPage."'>".$module->title."</a></h3>"; ?>
-<div class="events box walks">
+<div class="events walks">
   <ul>
     <?php foreach ($events as $event):?>
       <li id="walk_<?php echo $event->id; ?>" class="<?php if ($event->alterations->cancelled) echo "cancelled"; else if ($event->alterations->anyAlterations()) echo " altered";?>">
