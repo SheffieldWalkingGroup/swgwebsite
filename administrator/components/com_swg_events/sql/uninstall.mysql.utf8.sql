@@ -1,1 +1,0 @@
-DROP TABLE IF EXISTS `#__swg_events_protocolreminders`;

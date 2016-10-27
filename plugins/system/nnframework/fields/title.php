@@ -1,2 +1,0 @@
-<?php
-/* NO LONGER USED */
