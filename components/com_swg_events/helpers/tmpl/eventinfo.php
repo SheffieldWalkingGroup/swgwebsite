@@ -168,9 +168,9 @@
 							<span>Bookings open:</span> <?php echo $event->bookingsOpen; ?>
 						</p>
 					<?php endif;?>
-					<p class="paymentdue">
+					<!--  <p class="paymentdue">
 						<span>Payment due:</span> <?php echo date("l jS F".($this->notThisYear($event->paymentDue)?" Y":""),$event->paymentDue); ?>
-					</p>
+					</p>-->
 				<?php endif;endif; ?>
 				<?php if (!$event->alterations->cancelled): // Can't click links when cancelled ?>
 					<div class="controls">

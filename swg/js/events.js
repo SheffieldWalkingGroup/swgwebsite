@@ -813,13 +813,13 @@ function displayEvent(event, container, newMembers) {
 					"html":"<span>Contact:</span> "+event.contact
 				});
 			}
-			var paymentDue = new Element("p",{
-				"class":"paymentdue",
-				"html":"<span>Payment due:</span> "+displayDate(new Date(event.paymentDue*1000))
-			});
+			//var paymentDue = new Element("p",{
+			//	"class":"paymentdue",
+			//	"html":"<span>Payment due:</span> "+displayDate(new Date(event.paymentDue*1000))
+			//});
 			if (event.alterations.organiser)
 				contact.addClass("altered");
-			eventInfo.adopt(moreInfo,places,bookingsOpen,contact,paymentDue);
+			eventInfo.adopt(moreInfo,places,bookingsOpen,contact/*,paymentDue*/);
 			break;
 		case "social":
 			if (event.bookingsInfo)
