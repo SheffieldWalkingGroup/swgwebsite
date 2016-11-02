@@ -13,7 +13,7 @@ JLoader::register('FinderHelperRoute', JPATH_SITE . '/components/com_finder/help
 JLoader::register('FinderHelperLanguage', JPATH_ADMINISTRATOR . '/components/com_finder/helpers/language.php');
 
 // Include the helper.
-JLoader::register('ModFinderHelper', __DIR__ . '/helper.php');
+require_once __DIR__ . '/helper.php';
 
 if (!defined('FINDER_PATH_INDEXER'))
 {
@@ -47,10 +47,10 @@ $route = FinderHelperRoute::getSearchRoute($params->get('searchfilter', null));
 // Load component language file.
 FinderHelperLanguage::loadComponentLanguage();
 
-// Load plugin language files.
+// Load plug-in language files.
 FinderHelperLanguage::loadPluginLanguage();
 
 // Get Smart Search query object.
-$query = ModFinderHelper::getQuery($params);
+$query = modFinderHelper::getQuery($params);
 
 require JModuleHelper::getLayoutPath('mod_finder', $params->get('layout', 'default'));

@@ -65,14 +65,6 @@ abstract class JLoader
 	protected static $namespaces = array();
 
 	/**
-	 * Holds a reference for all deprecated aliases (mainly for use by a logging platform).
-	 *
-	 * @var    array
-	 * @since  3.6.3
-	 */
-	protected static $deprecatedAliases = array();
-
-	/**
 	 * Method to discover classes of a given type in a given path.
 	 *
 	 * @param   string   $classPrefix  The class name prefix to use for discovery.
@@ -135,18 +127,6 @@ abstract class JLoader
 	public static function getClassList()
 	{
 		return self::$classes;
-	}
-
-	/**
-	 * Method to get the list of deprecated class aliases.
-	 *
-	 * @return  array  An associative array with deprecated class alias data.
-	 *
-	 * @since   3.6.3
-	 */
-	public static function getDeprecatedAliases()
-	{
-		return self::$deprecatedAliases;
 	}
 
 	/**
@@ -336,15 +316,14 @@ abstract class JLoader
 	 * Offers the ability for "just in time" usage of `class_alias()`.
 	 * You cannot overwrite an existing alias.
 	 *
-	 * @param   string          $alias     The alias name to register.
-	 * @param   string          $original  The original class to alias.
-	 * @param   string|boolean  $version   The version in which the alias will no longer be present.
+	 * @param   string  $alias     The alias name to register.
+	 * @param   string  $original  The original class to alias.
 	 *
 	 * @return  boolean  True if registration was successful. False if the alias already exists.
 	 *
 	 * @since   3.2
 	 */
-	public static function registerAlias($alias, $original, $version = false)
+	public static function registerAlias($alias, $original)
 	{
 		if (!isset(self::$classAliases[$alias]))
 		{
@@ -363,12 +342,6 @@ abstract class JLoader
 			else
 			{
 				self::$classAliasesInverse[$original][] = $alias;
-			}
-
-			// If given a version, log this alias as deprecated
-			if ($version)
-			{
-				self::$deprecatedAliases[] = array('old' => $alias, 'new' => $original, 'version' => $version);
 			}
 
 			return true;

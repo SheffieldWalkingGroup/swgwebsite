@@ -26,14 +26,6 @@ defined('_JEXEC') or die;
 class PlgSystemUpdatenotification extends JPlugin
 {
 	/**
-	 * Load plugin language files automatically
-	 *
-	 * @var    boolean
-	 * @since  3.6.3
-	 */
-	protected $autoloadLanguage = true;
-
-	/**
 	 * The update check and notification email code is triggered after the page has fully rendered.
 	 *
 	 * @return  void
@@ -48,7 +40,7 @@ class PlgSystemUpdatenotification extends JPlugin
 
 		/** @var \Joomla\Registry\Registry $params */
 		$params        = $component->params;
-		$cache_timeout = (int) $params->get('cachetimeout', 6);
+		$cache_timeout = $params->get('cachetimeout', 6, 'int');
 		$cache_timeout = 3600 * $cache_timeout;
 
 		// Do we need to run? Compare the last run timestamp stored in the plugin's options with the current
@@ -128,8 +120,8 @@ class PlgSystemUpdatenotification extends JPlugin
 			return;
 		}
 
-		// Unfortunately Joomla! MVC doesn't allow us to autoload classes
-		JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_installer/models', 'InstallerModel');
+		// Unfortunately Joomla! MVC doesn't allow us to autoload classes, hence the need for an ugly require_once
+		require_once JPATH_ADMINISTRATOR . '/components/com_installer/models/update.php';
 
 		// Get the update model and retrieve the Joomla! core updates
 		$model = JModelLegacy::getInstance('Update', 'InstallerModel');
@@ -160,7 +152,7 @@ class PlgSystemUpdatenotification extends JPlugin
 
 		/**
 		 * Some third party security solutions require a secret query parameter to allow log in to the administrator
-		 * backend of the site. The link generated above will be invalid and could probably block the user out of their
+		 * back-end of the site. The link generated above will be invalid and could probably block the user out of their
 		 * site, confusing them (they can't understand the third party security solution is not part of Joomla! proper).
 		 * So, we're calling the onBuildAdministratorLoginURL system plugin event to let these third party solutions
 		 * add any necessary secret query parameters to the URL. The plugins are supposed to have a method with the
@@ -266,7 +258,7 @@ class PlgSystemUpdatenotification extends JPlugin
 	private function getSuperUsers($email = null)
 	{
 		// Get a reference to the database object
-		$db = JFactory::getDbo();
+		$db = JFactory::getDBO();
 
 		// Convert the email list to an array
 		if (!empty($email))
@@ -292,9 +284,14 @@ class PlgSystemUpdatenotification extends JPlugin
 
 		try
 		{
-			$assets = JTable::getInstance('Asset', 'JTable');
-			$rootId = $assets->getRootId();
-			$rules = JAccess::getAssetRules($rootId)->getData();
+			$query = $db->getQuery(true)
+						->select($db->qn('rules'))
+						->from($db->qn('#__assets'))
+						->where($db->qn('parent_id') . ' = ' . $db->q(0));
+			$db->setQuery($query, 0, 1);
+			$rulesJSON = $db->loadResult();
+			$rules     = json_decode($rulesJSON, true);
+
 			$rawGroups = $rules['core.admin'];
 			$groups    = array();
 

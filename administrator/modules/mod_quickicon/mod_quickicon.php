@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('ModQuickIconHelper', __DIR__ . '/helper.php');
+require_once __DIR__ . '/helper.php';
 
 $buttons = ModQuickIconHelper::getButtons($params);
 

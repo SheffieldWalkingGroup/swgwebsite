@@ -53,7 +53,6 @@ class ConfigViewApplicationHtml extends ConfigViewCmsHtml
 		{
 			$form->bind($data);
 		}
-
 		// Get the params for com_users.
 		$usersParams = JComponentHelper::getParams('com_users');
 

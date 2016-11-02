@@ -56,16 +56,16 @@ JFactory::getDocument()->addScriptDeclaration('
 		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'details', JText::_('COM_BANNERS_BANNER_DETAILS')); ?>
 		<div class="row-fluid">
 			<div class="span9">
-				<?php echo $this->form->renderField('type'); ?>
+				<?php echo $this->form->getControlGroup('type'); ?>
 				<div id="image">
-					<?php echo $this->form->renderFieldset('image'); ?>
+					<?php echo $this->form->getControlGroups('image'); ?>
 				</div>
 				<div id="custom">
-					<?php echo $this->form->renderField('custombannercode'); ?>
+					<?php echo $this->form->getControlGroup('custombannercode'); ?>
 				</div>
 				<?php
-				echo $this->form->renderField('clickurl');
-				echo $this->form->renderField('description');
+				echo $this->form->getControlGroup('clickurl');
+				echo $this->form->getControlGroup('description');
 				?>
 			</div>
 			<div class="span3">
@@ -75,7 +75,7 @@ JFactory::getDocument()->addScriptDeclaration('
 		<?php echo JHtml::_('bootstrap.endTab'); ?>
 
 		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'otherparams', JText::_('COM_BANNERS_GROUP_LABEL_BANNER_DETAILS')); ?>
-		<?php echo $this->form->renderFieldset('otherparams'); ?>
+		<?php echo $this->form->getControlGroups('otherparams'); ?>
 		<?php echo JHtml::_('bootstrap.endTab'); ?>
 
 		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'publishing', JText::_('JGLOBAL_FIELDSET_PUBLISHING')); ?>
@@ -84,7 +84,7 @@ JFactory::getDocument()->addScriptDeclaration('
 				<?php echo JLayoutHelper::render('joomla.edit.publishingdata', $this); ?>
 			</div>
 			<div class="span6">
-				<?php echo $this->form->renderFieldset('metadata'); ?>
+				<?php echo $this->form->getControlGroups('metadata'); ?>
 			</div>
 		</div>
 		<?php echo JHtml::_('bootstrap.endTab'); ?>

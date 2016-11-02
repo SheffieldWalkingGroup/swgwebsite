@@ -66,7 +66,7 @@ class ContentModelArticle extends JModelItem
 	 *
 	 * @param   integer  $pk  The id of the article.
 	 *
-	 * @return  object|boolean|JException  Menu item data object on success, boolean false or JException instance on error
+	 * @return  mixed  Menu item data object on success, false on failure.
 	 */
 	public function getItem($pk = null)
 	{

@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+JLoader::register('JHtmlUsers', JPATH_COMPONENT . '/helpers/html/users.php');
 JHtml::register('users.spacer', array('JHtmlUsers', 'spacer'));
 
 $fieldsets = $this->form->getFieldsets();

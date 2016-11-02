@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<form name="addeditwalk">
+		<field name="id" type="hidden" />
+		<fieldset name="basic" addfieldpath="/administrator/components/com_swg_events/models/fields">
+			<field name="name" type="text" label="Title" maxlength="100" required="required" size="57" />
+			<field name="showNormal" type="checkbox" label="Social is for current members" value="1" checked="checked" default="0" />
+			<field name="showNewMember" type="checkbox" label="This is a new members' social (e.g. pub meets)" value="1" default="0" />
+			<field name="date" type="calendar" label="Date" required="required" />
+			<field name="starttime" type="text" label="Start time (hh:mm)" />
+			<field name="endtime" type="text" label="End time (if known)" />
+			<field name="newMemberStart" type="text" label="Start time - new members" />
+			<field name="newMemberEnd" type="text" label="End time - new members" />
+			
+		</fieldset>
+		
+		<fieldset name="time">
+			
+		</fieldset>
+		
+		<fieldset name="timenewmembers">
+			
+		</fieldset>
+		
+		
+		<fieldset name="details">
+			<field name="cost" type="text" label="Cost" maxlength="200" size="57"/>
+			<field name="bookingsInfo" type="text" label="Booking/contact info"  maxlength="200" size="57"/>
+			<field name="location" type="textarea" label="Address (displayed on the site)" rows="4" cols="40"/>
+			<field name="latLng" type="Location" label="Location" description="Click on the map to set the location" />
+			<field name="description" type="editor" editor="swg_tinymce_events" label="Description" required="required" />
+			<field name="okToPublish" type="checkbox" label="Ready to publish" value="1" default="0" />
+		</fieldset>
+		
+		<fieldset name="alterations" label="Alterations">
+			<field name="alterations_details" type="checkbox" label="Details altered" value="1" default="0" />
+			<field name="alterations_cancelled" type="checkbox" label="Cancelled" value="1" default="0" />
+			<field name="alterations_placeTime" type="checkbox" label="Place/time altered" value="1" default="0" />
+			<field name="alterations_organiser" type="checkbox" label="Organiser altered" value="1" default="0" />
+			<field name="alterations_date" type="checkbox" label="Date altered" value="1" default="0" />
+		</fieldset>
+		
+		
+	</form>

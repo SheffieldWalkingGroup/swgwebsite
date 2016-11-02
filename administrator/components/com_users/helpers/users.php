@@ -130,12 +130,31 @@ class UsersHelper
 	 */
 	public static function getGroups()
 	{
-		$options = JHelperUsergroups::getInstance()->getAll();
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true)
+			->select('a.id AS value')
+			->select('a.title AS text')
+			->select('COUNT(DISTINCT b.id) AS level')
+			->from('#__usergroups as a')
+			->join('LEFT', '#__usergroups  AS b ON a.lft > b.lft AND a.rgt < b.rgt')
+			->group('a.id, a.title, a.lft, a.rgt')
+			->order('a.lft ASC');
+		$db->setQuery($query);
+
+		try
+		{
+			$options = $db->loadObjectList();
+		}
+		catch (RuntimeException $e)
+		{
+			JError::raiseNotice(500, $e->getMessage());
+
+			return null;
+		}
 
 		foreach ($options as &$option)
 		{
-			$option->value = $option->id;
-			$option->text = str_repeat('- ', $option->level) . $option->title;
+			$option->text = str_repeat('- ', $option->level) . $option->text;
 		}
 
 		return $options;
@@ -174,6 +193,12 @@ class UsersHelper
 	 */
 	public static function getTwoFactorMethods()
 	{
+		// Load the Joomla! RAD layer
+		if (!defined('FOF_INCLUDED'))
+		{
+			include_once JPATH_LIBRARIES . '/fof/include.php';
+		}
+
 		FOFPlatform::getInstance()->importPlugin('twofactorauth');
 		$identities = FOFPlatform::getInstance()->runPlugins('onUserTwofactorIdentify', array());
 

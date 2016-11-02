@@ -106,11 +106,7 @@ class JTableUsergroup extends JTable
 		$db->setQuery('UPDATE ' . $this->_tbl . ' SET lft=' . (int) $left . ', rgt=' . (int) $right . ' WHERE id=' . (int) $parent_id);
 
 		// If there is an update failure, return false to break out of the recursion
-		try
-		{
-			$db->execute();
-		}
-		catch (JDatabaseExceptionExecuting $e)
+		if (!$db->execute())
 		{
 			return false;
 		}

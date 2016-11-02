@@ -206,12 +206,7 @@ class TagsViewTag extends JViewLegacy
 		// we need to get it from the menu item itself
 		$menu = $menus->getActive();
 
-		if ($this->tags_title)
-		{
-			$this->params->def('page_heading', $this->tags_title);
-			$title = $this->tags_title;
-		}
-		elseif ($menu)
+		if ($menu)
 		{
 			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
 			$title = $this->params->get('page_title', $menu->title);
@@ -220,6 +215,11 @@ class TagsViewTag extends JViewLegacy
 			{
 				$this->params->set('page_subheading', $menu->title);
 			}
+		}
+		else
+		{
+			$this->params->def('page_heading', $this->tags_title);
+			$title = $this->tags_title;
 		}
 
 		if (empty($title))

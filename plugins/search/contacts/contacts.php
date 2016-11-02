@@ -57,7 +57,7 @@ class PlgSearchContacts extends JPlugin
 	 */
 	public function onContentSearch($text, $phrase = '', $ordering = '', $areas = null)
 	{
-		JLoader::register('ContactHelperRoute', JPATH_SITE . '/components/com_contact/helpers/route.php');
+		require_once JPATH_SITE . '/components/com_contact/helpers/route.php';
 
 		$db     = JFactory::getDbo();
 		$app    = JFactory::getApplication();

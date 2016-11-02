@@ -20,13 +20,13 @@ if (!$user->authorise('core.manage', 'com_media') && (!$asset or (!$user->author
 	&& count($user->getAuthorisedCategories($asset, 'core.create')) == 0)
 	&& !($user->id == $author && $user->authorise('core.edit.own', $asset))))
 {
-	throw new JAccessExceptionNotallowed(JText::_('JERROR_ALERTNOAUTHOR'), 403);
+	return JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
 }
 
 $params = JComponentHelper::getParams('com_media');
 
 // Load the helper class
-JLoader::register('MediaHelper', JPATH_ADMINISTRATOR . '/components/com_media/helpers/media.php');
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/media.php';
 
 // Set the path definitions
 $popup_upload = $input->get('pop_up', null);

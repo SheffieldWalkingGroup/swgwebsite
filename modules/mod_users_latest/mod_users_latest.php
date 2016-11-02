@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 // Include the latest functions only once
-JLoader::register('ModUsersLatestHelper', __DIR__ . '/helper.php');
+require_once __DIR__ . '/helper.php';
 
 $shownumber      = $params->get('shownumber', 5);
 $names           = ModUsersLatestHelper::getUsers($params);

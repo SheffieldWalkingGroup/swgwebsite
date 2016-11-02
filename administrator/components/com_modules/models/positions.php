@@ -49,7 +49,7 @@ class ModulesModelPositions extends JModelList
 	 *
 	 * @since   1.6
 	 */
-	protected function populateState($ordering = 'value', $direction = 'asc')
+	protected function populateState($ordering = null, $direction = null)
 	{
 		$app = JFactory::getApplication('administrator');
 
@@ -76,7 +76,7 @@ class ModulesModelPositions extends JModelList
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState($ordering, $direction);
+		parent::populateState('value', 'asc');
 	}
 
 	/**

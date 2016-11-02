@@ -18,8 +18,7 @@ defined('JPATH_PLATFORM') or die;
  *
  * @documentation https://developer.github.com/v3/repos/downloads
  *
- * @since       11.3
- * @deprecated  4.0  Use the `joomla/github` package via Composer instead
+ * @since  11.3
  */
 class JGithubPackageRepositoriesDownloads extends JGithubPackage
 {
@@ -89,7 +88,7 @@ class JGithubPackageRepositoriesDownloads extends JGithubPackage
 
 		$data = array(
 			'name' => $name,
-			'size' => $size,
+			'size' => $size
 		);
 
 		if ($description)
@@ -165,7 +164,7 @@ class JGithubPackageRepositoriesDownloads extends JGithubPackage
 			'Policy'                => $policy,
 			'Signature'             => $signature,
 			'Content-Type'          => $content_type,
-			'file'                  => $file,
+			'file'                  => $file
 		);
 
 		// Send the request.

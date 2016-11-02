@@ -9,8 +9,6 @@
 
 defined('JPATH_PLATFORM') or die;
 
-use Joomla\Utilities\ArrayHelper;
-
 /**
  * Utility class for creating HTML select lists
  *
@@ -25,20 +23,9 @@ abstract class JHtmlSelect
 	 * @since   1.5
 	 */
 	protected static $optionDefaults = array(
-		'option' => array(
-			'option.attr' => null,
-			'option.disable' => 'disable',
-			'option.id' => null,
-			'option.key' => 'value',
-			'option.key.toHtml' => true,
-			'option.label' => null,
-			'option.label.toHtml' => true,
-			'option.text' => 'text',
-			'option.text.toHtml' => true,
-			'option.class' => 'class',
-			'option.onclick' => 'onclick',
-		),
-	);
+		'option' => array('option.attr' => null, 'option.disable' => 'disable', 'option.id' => null, 'option.key' => 'value',
+			'option.key.toHtml' => true, 'option.label' => null, 'option.label.toHtml' => true, 'option.text' => 'text',
+			'option.text.toHtml' => true, 'option.class' => 'class', 'option.onclick' => 'onclick'));
 
 	/**
 	 * Generates a yes/no radio list.
@@ -117,7 +104,7 @@ abstract class JHtmlSelect
 		{
 			if (is_array($options['list.attr']))
 			{
-				$attribs = ArrayHelper::toString($options['list.attr']);
+				$attribs = JArrayHelper::toString($options['list.attr']);
 			}
 			else
 			{
@@ -242,7 +229,7 @@ abstract class JHtmlSelect
 		{
 			if (is_array($options['list.attr']))
 			{
-				$attribs = ArrayHelper::toString($options['list.attr']);
+				$attribs = JArrayHelper::toString($options['list.attr']);
 			}
 			else
 			{
@@ -460,15 +447,8 @@ abstract class JHtmlSelect
 	 */
 	public static function option($value, $text = '', $optKey = 'value', $optText = 'text', $disable = false)
 	{
-		$options = array(
-			'attr' => null,
-			'disable' => false,
-			'option.attr' => null,
-			'option.disable' => 'disable',
-			'option.key' => 'value',
-			'option.label' => null,
-			'option.text' => 'text',
-		);
+		$options = array('attr' => null, 'disable' => false, 'option.attr' => null, 'option.disable' => 'disable', 'option.key' => 'value',
+			'option.label' => null, 'option.text' => 'text');
 
 		if (is_array($optKey))
 		{
@@ -703,7 +683,7 @@ abstract class JHtmlSelect
 
 				if (is_array($attr))
 				{
-					$attr = ArrayHelper::toString($attr);
+					$attr = JArrayHelper::toString($attr);
 				}
 				else
 				{
@@ -768,7 +748,7 @@ abstract class JHtmlSelect
 
 		if (is_array($attribs))
 		{
-			$attribs = ArrayHelper::toString($attribs);
+			$attribs = JArrayHelper::toString($attribs);
 		}
 
 		$id_text = $idtag ? $idtag : $name;

@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_COMPONENT . '/models/category.php';
+
 /**
  * HTML Contact View class for the Contact component
  *
@@ -48,14 +50,6 @@ class ContactViewContact extends JViewLegacy
 	 * @deprecated  4.0  Variable not used
 	 */
 	protected $return_page;
-
-	/**
-	 * Should we show a captcha form for the submission of the contact request?
-	 *
-	 * @var   bool
-	 * @since 3.6.3
-	 */
-	protected $captchaEnabled = false;
 
 	/**
 	 * Execute and display a template script.
@@ -296,19 +290,8 @@ class ContactViewContact extends JViewLegacy
 
 		$model = $this->getModel();
 		$model->hit();
-
-		$captchaSet = $params->get('captcha', JFactory::getApplication()->get('captcha', '0'));
-
-		foreach (JPluginHelper::getPlugin('captcha') as $plugin)
-		{
-			if ($captchaSet === $plugin->name)
-			{
-				$this->captchaEnabled = true;
-				break;
-			}
-		}
-
 		$this->_prepareDocument();
+
 		return parent::display($tpl);
 	}
 

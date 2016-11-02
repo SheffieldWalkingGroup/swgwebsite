@@ -9,16 +9,16 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('ContentHelperRoute', JPATH_SITE . '/components/com_content/helpers/route.php');
+require_once JPATH_SITE . '/components/com_content/helpers/route.php';
 
 JModelLegacy::addIncludePath(JPATH_SITE . '/components/com_content/models', 'ContentModel');
-
-use Joomla\Utilities\ArrayHelper;
 
 /**
  * Helper for mod_articles_latest
  *
- * @since  1.6
+ * @package     Joomla.Site
+ * @subpackage  mod_articles_latest
+ * @since       1.6
  */
 abstract class ModArticlesLatestHelper
 {
@@ -103,8 +103,7 @@ abstract class ModArticlesLatestHelper
 			'p_dsc' => 'a.publish_up',
 			'random' => $db->getQuery(true)->Rand(),
 		);
-
-		$ordering = ArrayHelper::getValue($order_map, $params->get('ordering'), 'a.publish_up');
+		$ordering = JArrayHelper::getValue($order_map, $params->get('ordering'), 'a.publish_up');
 		$dir      = 'DESC';
 
 		$model->setState('list.ordering', $ordering);

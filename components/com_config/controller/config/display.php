@@ -35,15 +35,15 @@ class ConfigControllerConfigDisplay extends ConfigControllerDisplay
 		$viewFormat   = $document->getType();
 		$layoutName   = $this->input->getWord('layout', 'default');
 
-		// Access backend com_config
+		// Access back-end com_config
 		JLoader::registerPrefix(ucfirst($viewName), JPATH_ADMINISTRATOR . '/components/com_config');
 		$displayClass = new ConfigControllerApplicationDisplay;
 
-		// Set backend required params
+		// Set back-end required params
 		$document->setType('json');
 		$app->input->set('view', 'application');
 
-		// Execute backend controller
+		// Execute back-end controller
 		$serviceData = json_decode($displayClass->execute(), true);
 
 		// Reset params back after requesting from service

@@ -14,8 +14,7 @@ defined('JPATH_PLATFORM') or die;
  *
  * @documentation https://developer.github.com/v3/gists/comments/
  *
- * @since       3.3 (CMS)
- * @deprecated  4.0  Use the `joomla/github` package via Composer instead
+ * @since  3.3 (CMS)
  */
 class JGithubPackageGistsComments extends JGithubPackage
 {
@@ -102,7 +101,7 @@ class JGithubPackageGistsComments extends JGithubPackage
 		// Build the request data.
 		$data = json_encode(
 			array(
-				'body' => $body,
+				'body' => $body
 			)
 		);
 

@@ -102,10 +102,8 @@
   }
 
   CodeMirror.defineOption("matchBrackets", false, function(cm, val, old) {
-    if (old && old != CodeMirror.Init) {
+    if (old && old != CodeMirror.Init)
       cm.off("cursorActivity", doMatchBrackets);
-      if (currentlyHighlighted) {currentlyHighlighted(); currentlyHighlighted = null;}
-    }
     if (val) {
       cm.state.matchBrackets = typeof val == "object" ? val : {};
       cm.on("cursorActivity", doMatchBrackets);

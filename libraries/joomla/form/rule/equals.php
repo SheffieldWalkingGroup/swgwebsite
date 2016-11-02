@@ -57,14 +57,12 @@ class JFormRuleEquals extends JFormRule
 			throw new InvalidArgumentException(sprintf('The value for $input must not be null in %s', get_class($this)));
 		}
 
-		$test = $input->get($field);
-
-		if (isset($group) && $group !== '')
+		// Test the two values against each other.
+		if ($value == $input->get($field))
 		{
-			$test = $input->get($group . '.' . $field);
+			return true;
 		}
 
-		// Test the two values against each other.
-		return $value == $test;
+		return false;
 	}
 }

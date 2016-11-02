@@ -9,8 +9,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\Utilities\ArrayHelper;
-
 /**
  * Tags Component Tag Model
  *
@@ -177,7 +175,9 @@ class TagsModelTag extends JModelList
 		$this->setState('params', $params);
 
 		// Load state from the request.
-		$ids = ArrayHelper::toInteger($app->input->get('id', array(), 'array'));
+		$ids = $app->input->get('id', array(), 'array');
+
+		JArrayHelper::toInteger($ids);
 
 		$pkString = implode(',', $ids);
 
@@ -193,7 +193,7 @@ class TagsModelTag extends JModelList
 
 			// Sanitise
 			$typesr = explode(',', $typesr);
-			$typesr = ArrayHelper::toInteger($typesr);
+			JArrayHelper::toInteger($typesr);
 
 			$this->setState('tag.typesr', $typesr);
 		}
@@ -290,7 +290,7 @@ class TagsModelTag extends JModelList
 
 					// Convert the JTable to a clean JObject.
 					$properties = $table->getProperties(1);
-					$this->item[] = ArrayHelper::toObject($properties, 'JObject');
+					$this->item[] = JArrayHelper::toObject($properties, 'JObject');
 				}
 				catch (RuntimeException $e)
 				{

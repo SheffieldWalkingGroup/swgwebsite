@@ -180,31 +180,27 @@ class JApplicationCms extends JApplicationWeb
 		{
 			$query->clear();
 
-			$time = $session->isNew() ? time() : $session->get('session.timer.start');
+			if ($session->isNew())
+			{
+				$query->insert($db->quoteName('#__session'))
+					->columns($db->quoteName('session_id') . ', ' . $db->quoteName('client_id') . ', ' . $db->quoteName('time'))
+					->values($db->quote($session->getId()) . ', ' . (int) $this->getClientId() . ', ' . $db->quote((int) time()));
+				$db->setQuery($query);
+			}
+			else
+			{
+				$query->insert($db->quoteName('#__session'))
+					->columns(
+						$db->quoteName('session_id') . ', ' . $db->quoteName('client_id') . ', ' . $db->quoteName('guest') . ', ' .
+						$db->quoteName('time') . ', ' . $db->quoteName('userid') . ', ' . $db->quoteName('username')
+					)
+					->values(
+						$db->quote($session->getId()) . ', ' . (int) $this->getClientId() . ', ' . (int) $user->get('guest') . ', ' .
+						$db->quote((int) $session->get('session.timer.start')) . ', ' . (int) $user->get('id') . ', ' . $db->quote($user->get('username'))
+					);
 
-			$columns = array(
-				$db->quoteName('session_id'),
-				$db->quoteName('client_id'),
-				$db->quoteName('guest'),
-				$db->quoteName('time'),
-				$db->quoteName('userid'),
-				$db->quoteName('username'),
-			);
-
-			$values = array(
-				$db->quote($session->getId()),
-				(int) $this->getClientId(),
-				(int) $user->guest,
-				$db->quote((int) $time),
-				(int) $user->id,
-				$db->quote($user->username),
-			);
-
-			$query->insert($db->quoteName('#__session'))
-				->columns($columns)
-				->values(implode(', ', $values));
-
-			$db->setQuery($query);
+				$db->setQuery($query);
+			}
 
 			// If the insert failed, exit the application.
 			try
@@ -440,7 +436,7 @@ class JApplicationCms extends JApplicationWeb
 		}
 		catch (Exception $e)
 		{
-			return;
+			return null;
 		}
 
 		return $menu;
@@ -506,7 +502,7 @@ class JApplicationCms extends JApplicationWeb
 		}
 		catch (Exception $e)
 		{
-			return;
+			return null;
 		}
 
 		return $pathway;
@@ -536,7 +532,7 @@ class JApplicationCms extends JApplicationWeb
 		}
 		catch (Exception $e)
 		{
-			return;
+			return null;
 		}
 
 		return $router;
@@ -646,9 +642,6 @@ class JApplicationCms extends JApplicationWeb
 		// Register the language object with JFactory
 		JFactory::$language = $this->getLanguage();
 
-		// Load the library language files
-		$this->loadLibraryLanguage();
-
 		// Set user specific editor.
 		$user = JFactory::getUser();
 		$editor = $user->getParam('editor', $this->get('editor'));
@@ -679,7 +672,7 @@ class JApplicationCms extends JApplicationWeb
 	 */
 	public function isAdmin()
 	{
-		return $this->getClientId() === 1;
+		return ($this->getClientId() === 1);
 	}
 
 	/**
@@ -691,19 +684,7 @@ class JApplicationCms extends JApplicationWeb
 	 */
 	public function isSite()
 	{
-		return $this->getClientId() === 0;
-	}
-
-	/**
-	 * Load the library language files for the application
-	 *
-	 * @return  void
-	 *
-	 * @since   3.6.3
-	 */
-	protected function loadLibraryLanguage()
-	{
-		$this->getLanguage()->load('lib_joomla', JPATH_ADMINISTRATOR);
+		return ($this->getClientId() === 0);
 	}
 
 	/**
@@ -737,7 +718,7 @@ class JApplicationCms extends JApplicationWeb
 		// Initialize the options for JSession.
 		$options = array(
 			'name'   => $name,
-			'expire' => $lifetime,
+			'expire' => $lifetime
 		);
 
 		switch ($this->getClientId())
@@ -761,13 +742,7 @@ class JApplicationCms extends JApplicationWeb
 
 		$this->registerEvent('onAfterSessionStart', array($this, 'afterSessionStart'));
 
-		/*
-		 * Note: The below code CANNOT change from instantiating a session via JFactory until there is a proper dependency injection container supported
-		 * by the application. The current default behaviours result in this method being called each time an application class is instantiated meaning
-		 * each application will attempt to start a new session. https://github.com/joomla/joomla-cms/issues/12108 explains why things will crash and
-		 * burn if you ever attempt to make this change without a proper dependency injection container.
-		 */
-
+		// There's an internal coupling to the session object being present in JFactory, need to deal with this at some point
 		$session = JFactory::getSession($options);
 		$session->initialise($this->input, $this->dispatcher);
 		$session->start();
@@ -820,7 +795,7 @@ class JApplicationCms extends JApplicationWeb
 	 * @param   array  $credentials  Array('username' => string, 'password' => string)
 	 * @param   array  $options      Array('remember' => boolean)
 	 *
-	 * @return  boolean|JException  True on success, false if failed or silent handling is configured, or a JException object on authentication error.
+	 * @return  boolean  True on success.
 	 *
 	 * @since   3.2
 	 */
@@ -842,11 +817,12 @@ class JApplicationCms extends JApplicationWeb
 			 * This permits authentication plugins blocking the user.
 			 */
 			$authorisations = $authenticate->authorise($response, $options);
-			$denied_states = JAuthentication::STATUS_EXPIRED | JAuthentication::STATUS_DENIED;
 
 			foreach ($authorisations as $authorisation)
 			{
-				if ((int) $authorisation->status & $denied_states)
+				$denied_states = array(JAuthentication::STATUS_EXPIRED, JAuthentication::STATUS_DENIED);
+
+				if (in_array($authorisation->status, $denied_states))
 				{
 					// Trigger onUserAuthorisationFailure Event.
 					$this->triggerEvent('onUserAuthorisationFailure', array((array) $authorisation));
@@ -863,11 +839,17 @@ class JApplicationCms extends JApplicationWeb
 						case JAuthentication::STATUS_EXPIRED:
 							return JError::raiseWarning('102002', JText::_('JLIB_LOGIN_EXPIRED'));
 
+							break;
+
 						case JAuthentication::STATUS_DENIED:
 							return JError::raiseWarning('102003', JText::_('JLIB_LOGIN_DENIED'));
 
+							break;
+
 						default:
 							return JError::raiseWarning('102004', JText::_('JLIB_LOGIN_AUTHORISATION'));
+
+							break;
 					}
 				}
 			}
@@ -1145,7 +1127,7 @@ class JApplicationCms extends JApplicationWeb
 			return $registry->set($key, $value);
 		}
 
-		return;
+		return null;
 	}
 
 	/**

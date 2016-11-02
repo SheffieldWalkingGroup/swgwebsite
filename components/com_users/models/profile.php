@@ -43,9 +43,15 @@ class UsersModelProfile extends JModelForm
 
 		parent::__construct($config);
 
+		// Load the Joomla! RAD layer
+		if (!defined('FOF_INCLUDED'))
+		{
+			include_once JPATH_LIBRARIES . '/fof/include.php';
+		}
+
 		// Load the helper and model used for two factor authentication
-		JLoader::register('UsersModelUser', JPATH_ADMINISTRATOR . '/components/com_users/models/user.php');
-		JLoader::register('UsersHelper', JPATH_ADMINISTRATOR . '/components/com_users/helpers/users.php');
+		require_once JPATH_ADMINISTRATOR . '/components/com_users/models/user.php';
+		require_once JPATH_ADMINISTRATOR . '/components/com_users/helpers/users.php';
 	}
 
 	/**

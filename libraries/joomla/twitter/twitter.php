@@ -14,8 +14,7 @@ use Joomla\Registry\Registry;
 /**
  * Joomla Platform class for interacting with a Twitter API instance.
  *
- * @since       12.3
- * @deprecated  4.0  Use the `joomla/twitter` package via Composer instead
+ * @since  12.3
  */
 class JTwitter
 {

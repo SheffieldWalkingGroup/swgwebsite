@@ -10,10 +10,10 @@
 defined('_JEXEC') or die;
 
 // Include the login functions only once
-JLoader::register('ModLoginHelper', __DIR__ . '/helper.php');
+require_once __DIR__ . '/helper.php';
 
 $langs            = ModLoginHelper::getLanguageList();
-$twofactormethods = JAuthenticationHelper::getTwoFactorMethods();
+$twofactormethods = ModLoginHelper::getTwoFactorMethods();
 $return           = ModLoginHelper::getReturnUri();
 
 require JModuleHelper::getLayoutPath('mod_login', $params->get('layout', 'default'));

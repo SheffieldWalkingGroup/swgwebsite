@@ -11,11 +11,12 @@ defined('JPATH_PLATFORM') or die;
 
 use Joomla\Registry\Registry;
 
+jimport('joomla.environment.uri');
+
 /**
  * Google API object class for the Joomla Platform.
  *
- * @since       12.3
- * @deprecated  4.0  Use the `joomla/google` package via Composer instead
+ * @since  12.3
  */
 abstract class JGoogleEmbed
 {

@@ -29,6 +29,8 @@ class PluginsControllerPlugins extends JControllerAdmin
 	 */
 	public function getModel($name = 'Plugin', $prefix = 'PluginsModel', $config = array('ignore_request' => true))
 	{
-		return parent::getModel($name, $prefix, $config);
+		$model = parent::getModel($name, $prefix, $config);
+
+		return $model;
 	}
 }

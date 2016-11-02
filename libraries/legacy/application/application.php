@@ -560,7 +560,7 @@ class JApplication extends JApplicationBase
 			return $registry->set($key, $value);
 		}
 
-		return;
+		return null;
 	}
 
 	/**
@@ -609,7 +609,7 @@ class JApplication extends JApplicationBase
 	 * @param   array  $credentials  Array('username' => string, 'password' => string)
 	 * @param   array  $options      Array('remember' => boolean)
 	 *
-	 * @return  boolean|JException  True on success, false if failed or silent handling is configured, or a JException object on authentication error.
+	 * @return  boolean  True on success.
 	 *
 	 * @since   11.1
 	 * @deprecated  4.0
@@ -823,7 +823,7 @@ class JApplication extends JApplicationBase
 		}
 		catch (Exception $e)
 		{
-			return;
+			return null;
 		}
 
 		return $router;
@@ -870,7 +870,7 @@ class JApplication extends JApplicationBase
 		}
 		catch (Exception $e)
 		{
-			return;
+			return null;
 		}
 
 		return $pathway;
@@ -900,7 +900,7 @@ class JApplication extends JApplicationBase
 		}
 		catch (Exception $e)
 		{
-			return;
+			return null;
 		}
 
 		return $menu;
@@ -1127,7 +1127,7 @@ class JApplication extends JApplicationBase
 	 */
 	public function isAdmin()
 	{
-		return $this->_clientId == 1;
+		return ($this->_clientId == 1);
 	}
 
 	/**
@@ -1140,7 +1140,7 @@ class JApplication extends JApplicationBase
 	 */
 	public function isSite()
 	{
-		return $this->_clientId == 0;
+		return ($this->_clientId == 0);
 	}
 
 	/**
@@ -1168,7 +1168,7 @@ class JApplication extends JApplicationBase
 	 */
 	public function isSSLConnection()
 	{
-		return (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on')) || getenv('SSL_PROTOCOL_VERSION');
+		return ((isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on')) || getenv('SSL_PROTOCOL_VERSION'));
 	}
 
 	/**

@@ -2056,14 +2056,14 @@ abstract class AKAbstractUnarchiver extends AKAbstractPart
 
 	/**
 	 * Concrete classes must use this method to read the file header
-	 * @return bool True if reading the file was successful, false if an error occurred or we reached end of archive
+	 * @return bool True if reading the file was successful, false if an error occured or we reached end of archive
 	 */
 	protected abstract function readFileHeader();
 
 	/**
 	 * Concrete classes must use this method to process file data. It must set $runState to AK_STATE_DATAREAD when
 	 * it's finished processing the file data.
-	 * @return bool True if processing the file data was successful, false if an error occurred
+	 * @return bool True if processing the file data was successful, false if an error occured
 	 */
 	protected abstract function processFileData();
 
@@ -4323,7 +4323,7 @@ class AKUnarchiverJPA extends AKAbstractUnarchiver
 
 	/**
 	 * Concrete classes must use this method to read the file header
-	 * @return bool True if reading the file was successful, false if an error occurred or we reached end of archive
+	 * @return bool True if reading the file was successful, false if an error occured or we reached end of archive
 	 */
 	protected function readFileHeader()
 	{
@@ -4576,7 +4576,7 @@ class AKUnarchiverJPA extends AKAbstractUnarchiver
 	/**
 	 * Concrete classes must use this method to process file data. It must set $runState to AK_STATE_DATAREAD when
 	 * it's finished processing the file data.
-	 * @return bool True if processing the file data was successful, false if an error occurred
+	 * @return bool True if processing the file data was successful, false if an error occured
 	 */
 	protected function processFileData()
 	{
@@ -4632,7 +4632,7 @@ class AKUnarchiverJPA extends AKAbstractUnarchiver
 
 			// Can we write to the file?
 			if( ($outfp === false) && (!$ignore) ) {
-				// An error occurred
+				// An error occured
 				debugMsg('Could not write to output file');
 				$this->setError( AKText::sprintf('COULDNT_WRITE_FILE', $this->fileHeader->realFile) );
 				return false;
@@ -4714,7 +4714,7 @@ class AKUnarchiverJPA extends AKAbstractUnarchiver
 			// Can we write to the file?
 			$ignore = AKFactory::get('kickstart.setup.ignoreerrors', false) || $this->isIgnoredDirectory($this->fileHeader->file);
 			if( ($outfp === false) && (!$ignore) ) {
-				// An error occurred
+				// An error occured
 				debugMsg('Could not write to output file');
 				$this->setError( AKText::sprintf('COULDNT_WRITE_FILE', $this->fileHeader->realFile) );
 				return false;
@@ -4964,7 +4964,7 @@ class AKUnarchiverZIP extends AKUnarchiverJPA
 
 	/**
 	 * Concrete classes must use this method to read the file header
-	 * @return bool True if reading the file was successful, false if an error occurred or we reached end of archive
+	 * @return bool True if reading the file was successful, false if an error occured or we reached end of archive
 	 */
 	protected function readFileHeader()
 	{
@@ -5260,7 +5260,7 @@ class AKUnarchiverJPS extends AKUnarchiverJPA
 
 	/**
 	 * Concrete classes must use this method to read the file header
-	 * @return bool True if reading the file was successful, false if an error occurred or we reached end of archive
+	 * @return bool True if reading the file was successful, false if an error occured or we reached end of archive
 	 */
 	protected function readFileHeader()
 	{
@@ -5485,7 +5485,7 @@ class AKUnarchiverJPS extends AKUnarchiverJPA
 	/**
 	 * Concrete classes must use this method to process file data. It must set $runState to AK_STATE_DATAREAD when
 	 * it's finished processing the file data.
-	 * @return bool True if processing the file data was successful, false if an error occurred
+	 * @return bool True if processing the file data was successful, false if an error occured
 	 */
 	protected function processFileData()
 	{
@@ -5537,7 +5537,7 @@ class AKUnarchiverJPS extends AKUnarchiverJPA
 
 			// Can we write to the file?
 			if( ($outfp === false) && (!$ignore) ) {
-				// An error occurred
+				// An error occured
 				$this->setError( AKText::sprintf('COULDNT_WRITE_FILE', $this->fileHeader->realFile) );
 				return false;
 			}
@@ -5580,7 +5580,7 @@ class AKUnarchiverJPS extends AKUnarchiverJPA
 			// Can we write to the file?
 			$ignore = AKFactory::get('kickstart.setup.ignoreerrors', false) || $this->isIgnoredDirectory($this->fileHeader->file);
 			if( ($outfp === false) && (!$ignore) ) {
-				// An error occurred
+				// An error occured
 				$this->setError( AKText::sprintf('COULDNT_WRITE_FILE', $this->fileHeader->realFile) );
 				return false;
 			}
@@ -6205,10 +6205,10 @@ class AKText extends AKAbstractObject
 		'RESTACLEANUP' => 'Restoration and Clean Up',
 		'BTN_RUNINSTALLER' => 'Run the Installer',
 		'BTN_CLEANUP' => 'Clean Up',
-		'BTN_SITEFE' => 'Visit your site\'s frontend',
-		'BTN_SITEBE' => 'Visit your site\'s backend',
+		'BTN_SITEFE' => 'Visit your site\'s front-end',
+		'BTN_SITEBE' => 'Visit your site\'s back-end',
 		'WARNINGS' => 'Extraction Warnings',
-		'ERROR_OCCURED' => 'An error occurred',
+		'ERROR_OCCURED' => 'An error occured',
 		'STEALTH_MODE' => 'Stealth mode',
 		'STEALTH_URL' => 'HTML file to show to web visitors',
 		'ERR_NOT_A_JPS_FILE' => 'The file is not a JPA archive',

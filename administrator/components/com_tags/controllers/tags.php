@@ -29,7 +29,9 @@ class TagsControllerTags extends JControllerAdmin
 	 */
 	public function getModel($name = 'Tag', $prefix = 'TagsModel', $config = array('ignore_request' => true))
 	{
-		return parent::getModel($name, $prefix, $config);
+		$model = parent::getModel($name, $prefix, $config);
+
+		return $model;
 	}
 
 	/**
@@ -57,7 +59,7 @@ class TagsControllerTags extends JControllerAdmin
 		else
 		{
 			// Rebuild failed.
-			$this->setMessage(JText::_('COM_TAGS_REBUILD_FAILURE'));
+			$this->setMessage(JText::_('COM_TAGSS_REBUILD_FAILURE'));
 
 			return false;
 		}

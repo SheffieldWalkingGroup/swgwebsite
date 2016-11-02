@@ -55,7 +55,7 @@ class ConfigControllerModulesDisplay extends ConfigControllerDisplay
 			$redirect = JUri::base();
 		}
 
-		// Access backend com_module
+		// Access back-end com_module
 		JLoader::register('ModulesController', JPATH_ADMINISTRATOR . '/components/com_modules/controller.php');
 		JLoader::register('ModulesViewModule', JPATH_ADMINISTRATOR . '/components/com_modules/views/module/view.json.php');
 		JLoader::register('ModulesModelModule', JPATH_ADMINISTRATOR . '/components/com_modules/models/module.php');
@@ -65,7 +65,7 @@ class ConfigControllerModulesDisplay extends ConfigControllerDisplay
 		// Get the parameters of the module with Id
 		$document->setType('json');
 
-		// Execute backend controller
+		// Execute back-end controller
 		if (!($serviceData = json_decode($displayClass->display(), true)))
 		{
 			$app->redirect($redirect);

@@ -12,8 +12,7 @@ defined('JPATH_PLATFORM') or die;
 /**
  * GitHub API Commits class for the Joomla Platform.
  *
- * @since       12.1
- * @deprecated  4.0  Use the `joomla/github` package via Composer instead
+ * @since  12.1
  */
 class JGithubCommits extends JGithubObject
 {
@@ -86,7 +85,7 @@ class JGithubCommits extends JGithubObject
 				'commit_id' => $sha,
 				'line' => (int) $line,
 				'path' => $filepath,
-				'position' => (int) $position,
+				'position' => (int) $position
 			)
 		);
 
@@ -157,7 +156,7 @@ class JGithubCommits extends JGithubObject
 
 		$data = json_encode(
 			array(
-				'body' => $comment,
+				'body' => $comment
 			)
 		);
 

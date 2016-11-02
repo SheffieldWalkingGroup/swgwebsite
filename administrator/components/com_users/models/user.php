@@ -38,6 +38,12 @@ class UsersModelUser extends JModelAdmin
 		);
 
 		parent::__construct($config);
+
+		// Load the Joomla! RAD layer
+		if (!defined('FOF_INCLUDED'))
+		{
+			include_once JPATH_LIBRARIES . '/fof/include.php';
+		}
 	}
 
 	/**
@@ -960,50 +966,15 @@ class UsersModelUser extends JModelAdmin
 		}
 
 		// Get the encrypted data
-		list($method, $config) = explode(':', $item->otpKey, 2);
+		list($method, $encryptedConfig) = explode(':', $item->otpKey, 2);
 		$encryptedOtep = $item->otep;
-		
-		// Get the secret key, yes the thing that is saved in the configuration file
-		$key = $this->getOtpConfigEncryptionKey();
-		
-		if (strpos($config, '{') === false)
-		{
-			$openssl         = new FOFEncryptAes($key, 256);
-			$mcrypt          = new FOFEncryptAes($key, 256, 'cbc', null, 'mcrypt');
-			
-			$decryptedConfig = $mcrypt->decryptString($config);
-			
-			if (strpos($decryptedConfig, '{') !== false)
-			{
-				// Data encrypted with mcrypt
-				$decryptedOtep = $mcrypt->decryptString($encryptedOtep);
-				$encryptedOtep = $openssl->encryptString($decryptedOtep);
-			}
-			else
-			{
-				// Config data seems to be save encrypted, this can happen with 3.6.3 and openssl, lets get the data
-				$decryptedConfig = $openssl->decryptString($config);
-			}
-			
-			$otpKey = $method . ':' . $decryptedConfig;
-			
-			$query = $db->getQuery(true)
-				->update($db->qn('#__users'))
-				->set($db->qn('otep') . '=' . $db->q($encryptedOtep))
-				->set($db->qn('otpKey') . '=' . $db->q($otpKey))
-				->where($db->qn('id') . ' = ' . $db->q($user_id));
-			$db->setQuery($query);
-			$db->execute();
-		}
-		else
-		{
-			$decryptedConfig = $config;
-		}
-		
+
 		// Create an encryptor class
+		$key = $this->getOtpConfigEncryptionKey();
 		$aes = new FOFEncryptAes($key, 256);
 
 		// Decrypt the data
+		$decryptedConfig = $aes->decryptString($encryptedConfig);
 		$decryptedOtep = $aes->decryptString($encryptedOtep);
 
 		// Remove the null padding added during encryption
@@ -1043,7 +1014,7 @@ class UsersModelUser extends JModelAdmin
 		// Return the configuration object
 		return $otpConfig;
 	}
-	
+
 	/**
 	 * Sets the one time password (OTP) – a.k.a. two factor authentication –
 	 * configuration for a particular user. The $otpConfig object is the same as
@@ -1075,7 +1046,7 @@ class UsersModelUser extends JModelAdmin
 		{
 			$decryptedConfig = json_encode($otpConfig->config);
 			$decryptedOtep = json_encode($otpConfig->otep);
-			$updates->otpKey = $otpConfig->method . ':' . $decryptedConfig;
+			$updates->otpKey = $otpConfig->method . ':' . $aes->encryptString($decryptedConfig);
 			$updates->otep = $aes->encryptString($decryptedOtep);
 		}
 
@@ -1236,8 +1207,8 @@ class UsersModelUser extends JModelAdmin
 				$warnMessage = $options['warn_irq_msg'];
 			}
 
-			// Warn the user if they are using a secret code but they have not
-			// enabled two factor auth in their account.
+			// Warn the user if he's using a secret code but he has not
+			// enabled two factor auth in his account.
 			if (!empty($secretkey) && $warn)
 			{
 				try
@@ -1259,6 +1230,12 @@ class UsersModelUser extends JModelAdmin
 		$credentials = array(
 			'secretkey' => $secretkey,
 		);
+
+		// Load the Joomla! RAD layer
+		if (!defined('FOF_INCLUDED'))
+		{
+			include_once JPATH_LIBRARIES . '/fof/include.php';
+		}
 
 		// Try to validate the OTP
 		FOFPlatform::getInstance()->importPlugin('twofactorauth');
@@ -1323,7 +1300,7 @@ class UsersModelUser extends JModelAdmin
 			{
 				/**
 				 * Two factor authentication enabled and no OTEPs defined. The
-				 * user has used them all up. Therefore anything they enter is
+				 * user has used them all up. Therefore anything he enters is
 				 * an invalid OTEP.
 				 */
 				return false;

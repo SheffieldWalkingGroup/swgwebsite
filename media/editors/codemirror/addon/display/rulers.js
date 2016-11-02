@@ -11,26 +11,30 @@
 })(function(CodeMirror) {
   "use strict";
 
-  CodeMirror.defineOption("rulers", false, function(cm, val) {
-    if (cm.state.rulerDiv) {
-      cm.display.lineSpace.removeChild(cm.state.rulerDiv)
-      cm.state.rulerDiv = null
-      cm.off("refresh", drawRulers)
+  CodeMirror.defineOption("rulers", false, function(cm, val, old) {
+    if (old && old != CodeMirror.Init) {
+      clearRulers(cm);
+      cm.off("refresh", refreshRulers);
     }
     if (val && val.length) {
-      cm.state.rulerDiv = cm.display.lineSpace.insertBefore(document.createElement("div"), cm.display.cursorDiv)
-      cm.state.rulerDiv.className = "CodeMirror-rulers"
-      drawRulers(cm)
-      cm.on("refresh", drawRulers)
+      setRulers(cm);
+      cm.on("refresh", refreshRulers);
     }
   });
 
-  function drawRulers(cm) {
-    cm.state.rulerDiv.textContent = ""
+  function clearRulers(cm) {
+    for (var i = cm.display.lineSpace.childNodes.length - 1; i >= 0; i--) {
+      var node = cm.display.lineSpace.childNodes[i];
+      if (/(^|\s)CodeMirror-ruler($|\s)/.test(node.className))
+        node.parentNode.removeChild(node);
+    }
+  }
+
+  function setRulers(cm) {
     var val = cm.getOption("rulers");
     var cw = cm.defaultCharWidth();
     var left = cm.charCoords(CodeMirror.Pos(cm.firstLine(), 0), "div").left;
-    cm.state.rulerDiv.style.minHeight = (cm.display.scroller.offsetHeight + 30) + "px";
+    var minH = cm.display.scroller.offsetHeight + 30;
     for (var i = 0; i < val.length; i++) {
       var elt = document.createElement("div");
       elt.className = "CodeMirror-ruler";
@@ -45,7 +49,15 @@
         if (conf.width) elt.style.borderLeftWidth = conf.width;
       }
       elt.style.left = (left + col * cw) + "px";
-      cm.state.rulerDiv.appendChild(elt)
+      elt.style.top = "-50px";
+      elt.style.bottom = "-20px";
+      elt.style.minHeight = minH + "px";
+      cm.display.lineSpace.insertBefore(elt, cm.display.cursorDiv);
     }
+  }
+
+  function refreshRulers(cm) {
+    clearRulers(cm);
+    setRulers(cm);
   }
 });

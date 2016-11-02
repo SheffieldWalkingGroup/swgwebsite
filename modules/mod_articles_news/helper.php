@@ -9,14 +9,17 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('ContentHelperRoute', JPATH_SITE . '/components/com_content/helpers/route.php');
+require_once JPATH_SITE . '/components/com_content/helpers/route.php';
 
 JModelLegacy::addIncludePath(JPATH_SITE . '/components/com_content/models', 'ContentModel');
 
 /**
  * Helper for mod_articles_news
  *
- * @since  1.6
+ * @package     Joomla.Site
+ * @subpackage  mod_articles_news
+ *
+ * @since       1.6
  */
 abstract class ModArticlesNewsHelper
 {
@@ -99,14 +102,11 @@ abstract class ModArticlesNewsHelper
 				$item->introtext = preg_replace('/<img[^>]*>/', '', $item->introtext);
 			}
 
-			$results                 = $app->triggerEvent('onContentAfterTitle', array('com_content.article', &$item, &$params, 1));
+			$results                 = $app->triggerEvent('onContentAfterDisplay', array('com_content.article', &$item, &$params, 1));
 			$item->afterDisplayTitle = trim(implode("\n", $results));
 
 			$results                    = $app->triggerEvent('onContentBeforeDisplay', array('com_content.article', &$item, &$params, 1));
 			$item->beforeDisplayContent = trim(implode("\n", $results));
-
-			$results                 = $app->triggerEvent('onContentAfterDisplay', array('com_content.article', &$item, &$params, 1));
-			$item->afterDisplayContent = trim(implode("\n", $results));
 		}
 
 		return $items;

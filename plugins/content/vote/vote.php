@@ -17,6 +17,14 @@ defined('_JEXEC') or die;
 class PlgContentVote extends JPlugin
 {
 	/**
+	 * Load the language file on instantiation.
+	 *
+	 * @var    boolean
+	 * @since  3.1
+	 */
+	protected $autoloadLanguage = true;
+
+	/**
 	 * Displays the voting area if in an article
 	 *
 	 * @param   string   $context  The context of the content being passed to the plugin
@@ -41,9 +49,6 @@ class PlgContentVote extends JPlugin
 
 		if (!empty($params) && $params->get('show_vote', null))
 		{
-			// Load plugin language files only when needed (ex: they are not needed if show_vote is not active).
-			$this->loadLanguage();
-
 			$rating = (int) @$row->rating;
 
 			$view = JFactory::getApplication()->input->getString('view', '');
@@ -74,8 +79,8 @@ class PlgContentVote extends JPlugin
 
 			if ($view == 'article' && $row->state == 1)
 			{
-				$uri = clone JUri::getInstance();
-				$uri->setVar('hitcount', '0');
+				$uri = JUri::getInstance();
+				$uri->setQuery($uri->getQuery() . '&hitcount=0');
 
 				// Create option list for voting select box
 				$options = array();

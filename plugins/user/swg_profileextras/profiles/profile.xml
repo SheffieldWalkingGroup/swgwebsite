@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fields name="swg_extras" addfieldpath="/plugins/user/swg_profileextras/fields">
+		<fieldset name="swg_extras"
+			label="SWG Extras"
+		>
+			
+			<field
+				name="joindate"
+				type="yearmonth"
+				description="Approximate date you joined SWG"
+				label="Join date"
+				startYear="2002"
+				stopRelYear="0"
+			/>
+			
+
+		</fieldset>
+		<fieldset name="leading" label="Walk leading">
+			<field 
+				name="leadersetup"
+				type="checkbox"
+				label="Leader"
+				value="1"
+				default="0"
+				description="Check this to create a leader account for this user"
+			/>
+			
+			<field
+				name="leaderid"
+				type="sql"
+					query="SELECT ID, CONCAT_WS(' ',Forename,Surname) AS name FROM walkleaders ORDER BY Forename ASC, Surname ASC"
+				key_field="ID" value_field="name"
+				description="Manually connect this user to a specific leader account"
+				label="Leader account"
+				default=""
+			>
+				<option value="">-- Automatic --</option>
+			</field>
+			
+			<field name="programmename" type="text" label="Current name in the programme" description="Your current name, as displayed in the public events programme. Contact the group to have this changed."/>
+			<field name="telephone" type="text" label="Telephone" validate="tel" description="This number will be displayed on the website when you run a walk or other event"/>
+			<field name="nocontactofficehours" type="checkbox" label="No contact during office hours please" value="1" default="0"/>
+			<field name="publishinothersites" type="checkbox" label="Allow my walks to be posted on other sites" value="1" default="1" description="Allow my walks to be posted on other sites (e.g. ramblers)"/>
+			<field name="notes" type="textarea" label="Walk leading preferences" rows="10" cols="50" description="Notes (walk preferences, willingness to backmark, etc)"/>
+			<field name="dogfriendly" type="checkbox" label="Dogs welcome on my walks" value="1" default="1"/>
+		</fieldset>
+		<!--<fieldset name="facebook" label="Facebook">
+			<field name="fb_key" type="FacebookLogin" label="Facebook account" description="WEGARE" />
+			<field name="fb_eventpost" type="radio" default="0" label="Post events to facebook" description="Post the events you go to on Facebook">
+				<option value="-1">Never</option>
+				<option value="0">Ask each time</option>
+				<option value="1">Automatically</option>
+			</field>
+		</fieldset> -->
+	</fields>
+</form>

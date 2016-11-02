@@ -9,8 +9,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\Utilities\ArrayHelper;
-
 /**
  * Content article class.
  *
@@ -70,7 +68,7 @@ class ContentControllerArticle extends JControllerForm
 	protected function allowAdd($data = array())
 	{
 		$user       = JFactory::getUser();
-		$categoryId = ArrayHelper::getValue($data, 'catid', $this->input->getInt('catid'), 'int');
+		$categoryId = JArrayHelper::getValue($data, 'catid', $this->input->getInt('catid'), 'int');
 		$allow      = null;
 
 		if ($categoryId)
@@ -103,36 +101,45 @@ class ContentControllerArticle extends JControllerForm
 	protected function allowEdit($data = array(), $key = 'id')
 	{
 		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
-		$user = JFactory::getUser();
+		$user     = JFactory::getUser();
+		$userId   = $user->get('id');
+		$asset    = 'com_content.article.' . $recordId;
 
-		// Zero record (id:0), return component edit permission by calling parent controller method
-		if (!$recordId)
-		{
-			return parent::allowEdit($data, $key);
-		}
-
-		// Check edit on the record asset (explicit or inherited)
-		if ($user->authorise('core.edit', 'com_content.article.' . $recordId))
+		// Check general edit permission first.
+		if ($user->authorise('core.edit', $asset))
 		{
 			return true;
 		}
 
-		// Check edit own on the record asset (explicit or inherited)
-		if ($user->authorise('core.edit.own', 'com_content.article.' . $recordId))
+		// Fallback on edit.own.
+		// First test if the permission is available.
+		if ($user->authorise('core.edit.own', $asset))
 		{
-			// Existing record already has an owner, get it
-			$record = $this->getModel()->getItem($recordId);
+			// Now test the owner is the user.
+			$ownerId = (int) isset($data['created_by']) ? $data['created_by'] : 0;
 
-			if (empty($record))
+			if (empty($ownerId) && $recordId)
 			{
-				return false;
+				// Need to do a lookup from the model.
+				$record = $this->getModel()->getItem($recordId);
+
+				if (empty($record))
+				{
+					return false;
+				}
+
+				$ownerId = $record->created_by;
 			}
 
-			// Grant if current user is owner of the record
-			return $user->get('id') == $record->created_by;
+			// If the owner matches 'me' then do the test.
+			if ($ownerId == $userId)
+			{
+				return true;
+			}
 		}
 
-		return false;
+		// Since there is no asset tracking, revert to the component permissions.
+		return parent::allowEdit($data, $key);
 	}
 
 	/**
@@ -188,7 +195,9 @@ class ContentControllerArticle extends JControllerForm
 	 */
 	public function getModel($name = 'form', $prefix = '', $config = array('ignore_request' => true))
 	{
-		return parent::getModel($name, $prefix, $config);
+		$model = parent::getModel($name, $prefix, $config);
+
+		return $model;
 	}
 
 	/**

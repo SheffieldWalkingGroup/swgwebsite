@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+JHtml::_('bootstrap.tooltip');
+
 /**
  * FolderInstaller Plugin.
  *

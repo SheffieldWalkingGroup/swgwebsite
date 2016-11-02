@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<form name="addeditwalk">
+		<field name="id" type="hidden" />
+		<fieldset name="publicity">
+			<field name="name" type="text" label="Name for walk" />
+			<field
+				name="description" type="textarea" rows="10" cols="50" 
+				label="Description of walk (suitable for publication in the walks programme)"
+			/>
+			<field 
+				name="suggestedBy" type="sql" label="Suggested by" 
+				query="SELECT ID, CONCAT_WS(' ', Forename, Surname) AS name FROM walkleaders WHERE Surname != 'TBC' ORDER BY Forename ASC, Surname ASC"
+				key_field="ID" value_field="name"
+			/>
+		</fieldset>
+		<fieldset name="gpx">
+			<field name="route" type="file" label="GPX File" />
+			<field name="routeVisibility" type="radio" label="Route visibility" default="30">
+				<option value="1">None: just set the walk length and start point</option>
+				<option value="10">Allow leaders to download the route</option>
+				<option value="20">Show the route on the map</option>
+				<option value="30">Allow any member to download the route</option>
+			</field>
+		</fieldset>
+		<fieldset name="location" addfieldpath="/administrator/components/com_swg_events/models/fields">
+			<field
+				name="location" type="sql" label="General area" 
+				query="SELECT SequenceID, Name from walkareas" 
+				key_field="SequenceID" value_field="Name"
+			/>
+			<field name="startGridRef" type="text" label="Grid reference" />
+			<field name="startPlaceName" type="text" label="Place name" />
+			<field name="transportByCar" type="checkbox" label="Transport by car" value="1" default="0" />
+			<field name="transportPublic" type="checkbox" label="Transport by bus/train/tram" value="1" default="0" />
+			<field name="isLinear" type="radio" label="Shape">
+				<option value="0">Circular</option>
+				<option value="1">Linear</option>
+			</field>
+			<field name="endGridRef" type="text" label="Grid reference" />
+			<field name="endPlaceName" type="text" label="Place name" />
+			<field name="locMap" type="Location" label="Map" gridRefFields="startGridRef,endGridRef" locationNameFields="startPlaceName,endPlaceName" placeMarkerButtons="start_place,end_place" start="53.34, -1.69" zoom="10" multipleLocations="true" />
+		</fieldset>
+		<fieldset name="route">
+			<field name="miles" type="text" label="Estimated distance (miles)" />
+			<field name="difficultyGrade" type="radio" label="Difficulty grade">
+				<option value="1">1 (easy)</option>
+				<option value="2">2 (medium)</option>
+				<option value="3">3 (hard)</option>
+			</field>
+			<field
+				name="information" type="textarea" rows="10" cols="56" 
+				label="Extra info for walk planners/leaders"
+			/>
+			<field name="dogFriendly" type="checkbox" label="Route doesn't forbid dogs" value="1" default="0" />
+			<field name="childFriendly" type="checkbox" label="Route can take infant pushchairs/buggies" value="1" default="0" />
+		</fieldset>
+		
+	</form>

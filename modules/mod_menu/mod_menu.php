@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 // Include the menu functions only once
-JLoader::register('ModMenuHelper', __DIR__ . '/helper.php');
+require_once __DIR__ . '/helper.php';
 
 $list       = ModMenuHelper::getList($params);
 $base       = ModMenuHelper::getBase($params);

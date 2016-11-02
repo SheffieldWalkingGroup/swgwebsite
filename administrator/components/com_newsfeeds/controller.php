@@ -28,7 +28,7 @@ class NewsfeedsController extends JControllerLegacy
 	 */
 	public function display($cachable = false, $urlparams = array())
 	{
-		JLoader::register('NewsfeedsHelper', JPATH_ADMINISTRATOR . '/components/com_newsfeeds/helpers/newsfeeds.php');
+		require_once JPATH_COMPONENT . '/helpers/newsfeeds.php';
 
 		$view   = $this->input->get('view', 'newsfeeds');
 		$layout = $this->input->get('layout', 'default');

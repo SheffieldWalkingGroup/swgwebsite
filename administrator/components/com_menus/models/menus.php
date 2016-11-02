@@ -190,13 +190,13 @@ class MenusModelMenus extends JModelList
 	 *
 	 * @since   1.6
 	 */
-	protected function populateState($ordering = 'a.title', $direction = 'asc')
+	protected function populateState($ordering = null, $direction = null)
 	{
 		$search = $this->getUserStateFromRequest($this->context . '.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
 		// List state information.
-		parent::populateState($ordering, $direction);
+		parent::populateState('a.title', 'asc');
 	}
 
 	/**

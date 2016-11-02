@@ -14,8 +14,7 @@ use Joomla\Registry\Registry;
 /**
  * Google Maps embed class for the Joomla Platform.
  *
- * @since       12.3
- * @deprecated  4.0  Use the `joomla/google` package via Composer instead
+ * @since  12.3
  */
 class JGoogleEmbedMaps extends JGoogleEmbed
 {
@@ -813,7 +812,7 @@ class JGoogleEmbedMaps extends JGoogleEmbed
 				throw new RuntimeException($data['error_message']);
 			}
 
-			return;
+			return null;
 		}
 
 		return $data['results'][0];

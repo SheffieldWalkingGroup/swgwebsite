@@ -12,8 +12,7 @@ defined('JPATH_PLATFORM') or die();
 /**
  * Openstreetmap API Info class for the Joomla Platform
  *
- * @since       13.1
- * @deprecated  4.0  Use the `joomla/openstreetmap` package via Composer instead
+ * @since  13.1
  */
 class JOpenstreetmapInfo extends JOpenstreetmapObject
 {

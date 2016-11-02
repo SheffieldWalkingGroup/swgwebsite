@@ -44,7 +44,7 @@ class JModelList extends JModelLegacy
 	/**
 	 * An internal cache for the last query used.
 	 *
-	 * @var    JDatabaseQuery[]
+	 * @var    JDatabaseQuery
 	 * @since  12.2
 	 */
 	protected $query = array();
@@ -92,7 +92,7 @@ class JModelList extends JModelLegacy
 	{
 		parent::__construct($config);
 
-		// Add the ordering filtering fields whitelist.
+		// Add the ordering filtering fields white list.
 		if (isset($config['filter_fields']))
 		{
 			$this->filter_fields = $config['filter_fields'];
@@ -177,10 +177,12 @@ class JModelList extends JModelLegacy
 			return $this->cache[$store];
 		}
 
+		// Load the list items.
+		$query = $this->_getListQuery();
+
 		try
 		{
-			// Load the list items and add the items to the internal cache.
-			$this->cache[$store] = $this->_getList($this->_getListQuery(), $this->getStart(), $this->getState('list.limit'));
+			$items = $this->_getList($query, $this->getStart(), $this->getState('list.limit'));
 		}
 		catch (RuntimeException $e)
 		{
@@ -189,19 +191,25 @@ class JModelList extends JModelLegacy
 			return false;
 		}
 
+		// Add the items to the internal cache.
+		$this->cache[$store] = $items;
+
 		return $this->cache[$store];
 	}
 
 	/**
 	 * Method to get a JDatabaseQuery object for retrieving the data set from a database.
 	 *
-	 * @return  JDatabaseQuery  A JDatabaseQuery object to retrieve the data set.
+	 * @return  JDatabaseQuery   A JDatabaseQuery object to retrieve the data set.
 	 *
 	 * @since   12.2
 	 */
 	protected function getListQuery()
 	{
-		return $this->getDbo()->getQuery(true);
+		$db = $this->getDbo();
+		$query = $db->getQuery(true);
+
+		return $query;
 	}
 
 	/**
@@ -222,10 +230,12 @@ class JModelList extends JModelLegacy
 			return $this->cache[$store];
 		}
 
+		// Create the pagination object.
 		$limit = (int) $this->getState('list.limit') - (int) $this->getState('list.links');
+		$page = new JPagination($this->getTotal(), $this->getStart(), $limit);
 
-		// Create the pagination object and add the object to the internal cache.
-		$this->cache[$store] = new JPagination($this->getTotal(), $this->getStart(), $limit);
+		// Add the object to the internal cache.
+		$this->cache[$store] = $page;
 
 		return $this->cache[$store];
 	}
@@ -272,10 +282,12 @@ class JModelList extends JModelLegacy
 			return $this->cache[$store];
 		}
 
+		// Load the total.
+		$query = $this->_getListQuery();
+
 		try
 		{
-			// Load the total and add the total to the internal cache.
-			$this->cache[$store] = (int) $this->_getListCount($this->_getListQuery());
+			$total = (int) $this->_getListCount($query);
 		}
 		catch (RuntimeException $e)
 		{
@@ -283,6 +295,9 @@ class JModelList extends JModelLegacy
 
 			return false;
 		}
+
+		// Add the total to the internal cache.
+		$this->cache[$store] = $total;
 
 		return $this->cache[$store];
 	}
@@ -305,12 +320,11 @@ class JModelList extends JModelLegacy
 		}
 
 		$start = $this->getState('list.start');
+		$limit = $this->getState('list.limit');
 
 		if ($start > 0)
 		{
-			$limit = $this->getState('list.limit');
 			$total = $this->getTotal();
-
 			if ($start > $total - $limit)
 			{
 				$start = max(0, (int) (ceil($total / $limit) - 1) * $limit);
@@ -329,7 +343,7 @@ class JModelList extends JModelLegacy
 	 * @param   array    $data      data
 	 * @param   boolean  $loadData  load current data
 	 *
-	 * @return  JForm|boolean  The JForm object or false on error
+	 * @return  JForm/false  the JForm object or false
 	 *
 	 * @since   3.2
 	 */
@@ -366,7 +380,7 @@ class JModelList extends JModelLegacy
 	 * @param   boolean  $clear    Optional argument to force load a new form.
 	 * @param   string   $xpath    An optional xpath to search for the fields.
 	 *
-	 * @return  JForm|boolean  JForm object on success, False on error.
+	 * @return  mixed  JForm object on success, False on error.
 	 *
 	 * @see     JForm
 	 * @since   3.2
@@ -571,7 +585,7 @@ class JModelList extends JModelLegacy
 				$limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->get('list_limit'), 'uint');
 				$this->setState('list.limit', $limit);
 
-				// Check if the ordering field is in the whitelist, otherwise use the incoming value.
+				// Check if the ordering field is in the white list, otherwise use the incoming value.
 				$value = $app->getUserStateFromRequest($this->context . '.ordercol', 'filter_order', $ordering);
 
 				if (!in_array($value, $this->filter_fields))
@@ -669,7 +683,7 @@ class JModelList extends JModelLegacy
 	 * @param   string   $type       Filter for the variable, for valid values see {@link JFilterInput::clean()}. Optional.
 	 * @param   boolean  $resetPage  If true, the limitstart in request is set to zero
 	 *
-	 * @return  mixed  The request user state.
+	 * @return  The request user state.
 	 *
 	 * @since   12.2
 	 */
@@ -717,7 +731,7 @@ class JModelList extends JModelLegacy
 	 * @param   string  $search          The search string
 	 * @param   string  $regexDelimiter  The regex delimiter to use for the quoting
 	 *
-	 * @return  string  Search string escaped for regex
+	 * @return string Search string escaped for regex
 	 */
 	protected function refineSearchStringToRegex($search, $regexDelimiter = '/')
 	{
@@ -730,7 +744,6 @@ class JModelList extends JModelLegacy
 				unset($searchArr[$key]);
 				continue;
 			}
-
 			$searchArr[$key] = str_replace(' ', '.*', preg_quote(trim($searchString), $regexDelimiter));
 		}
 

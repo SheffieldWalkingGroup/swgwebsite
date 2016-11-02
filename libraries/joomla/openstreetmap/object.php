@@ -14,8 +14,7 @@ use Joomla\Registry\Registry;
 /**
  * Openstreetmap API object class for the Joomla Platform
  *
- * @since       13.1
- * @deprecated  4.0  Use the `joomla/openstreetmap` package via Composer instead
+ * @since  13.1
  */
 abstract class JOpenstreetmapObject
 {

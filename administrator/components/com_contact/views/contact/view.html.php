@@ -106,19 +106,20 @@ class ContactViewContact extends JViewLegacy
 		}
 		else
 		{
-			// Since it's an existing record, check the edit permission, or fall back to edit own if the owner.
-			$itemEditable = $canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by == $userId);
-
-			// Can't save the record if it's checked out and editable
-			if (!$checkedOut && $itemEditable)
+			// Can't save the record if it's checked out.
+			if (!$checkedOut)
 			{
-				JToolbarHelper::apply('contact.apply');
-				JToolbarHelper::save('contact.save');
-
-				// We can save this record, but check the create permission to see if we can return to make a new one.
-				if ($canDo->get('core.create'))
+				// Since it's an existing record, check the edit permission, or fall back to edit own if the owner.
+				if ($canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by == $userId))
 				{
-					JToolbarHelper::save2new('contact.save2new');
+					JToolbarHelper::apply('contact.apply');
+					JToolbarHelper::save('contact.save');
+
+					// We can save this record, but check the create permission to see if we can return to make a new one.
+					if ($canDo->get('core.create'))
+					{
+						JToolbarHelper::save2new('contact.save2new');
+					}
 				}
 			}
 
@@ -128,7 +129,7 @@ class ContactViewContact extends JViewLegacy
 				JToolbarHelper::save2copy('contact.save2copy');
 			}
 
-			if ($this->state->params->get('save_history', 0) && $itemEditable)
+			if ($this->state->params->get('save_history', 0) && $user->authorise('core.edit'))
 			{
 				JToolbarHelper::versions('com_contact.contact', $this->item->id);
 			}

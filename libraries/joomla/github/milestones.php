@@ -12,8 +12,7 @@ defined('JPATH_PLATFORM') or die;
 /**
  * GitHub API Milestones class for the Joomla Platform.
  *
- * @since       12.3
- * @deprecated  4.0  Use the `joomla/github` package via Composer instead
+ * @since  12.3
  */
 class JGithubMilestones extends JGithubObject
 {
@@ -112,7 +111,7 @@ class JGithubMilestones extends JGithubObject
 
 		// Build the request data.
 		$data = array(
-			'title' => $title,
+			'title' => $title
 		);
 
 		if (!is_null($state))

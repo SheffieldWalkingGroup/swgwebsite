@@ -121,18 +121,12 @@ class JFormFieldSubform extends JFormField
 				break;
 
 			case 'max':
-				if ($value)
-				{
-					$this->max = max(1, (int) $value);
-				}
+				$this->max = max(1, (int) $value);
 				break;
 
 			case 'groupByFieldset':
-				if ($value !== null)
-				{
-					$value = (string) $value;
-					$this->groupByFieldset = !($value === 'false' || $value === 'off' || $value === '0');
-				}
+				$value = (string) $value;
+				$this->groupByFieldset = !($value === 'false' || $value === 'off' || $value === '0');
 				break;
 
 			case 'layout':

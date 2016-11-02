@@ -33,7 +33,7 @@ abstract class JHtmlDate
 		if (is_null($time))
 		{
 			// Get now
-			$time = new JDate('now');
+			$time = JFactory::getDate('now');
 		}
 
 		// Get the difference in seconds between now and the time

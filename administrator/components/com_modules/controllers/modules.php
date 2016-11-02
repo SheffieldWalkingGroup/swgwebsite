@@ -63,6 +63,8 @@ class ModulesControllerModules extends JControllerAdmin
 	 */
 	public function getModel($name = 'Module', $prefix = 'ModulesModel', $config = array('ignore_request' => true))
 	{
-		return parent::getModel($name, $prefix, $config);
+		$model = parent::getModel($name, $prefix, $config);
+
+		return $model;
 	}
 }

@@ -147,7 +147,7 @@ class LanguagesModelOverrides extends JModelList
 	 *
 	 * @since   2.5
 	 */
-	protected function populateState($ordering = 'key', $direction = 'asc')
+	protected function populateState($ordering = null, $direction = null)
 	{
 		$app = JFactory::getApplication();
 
@@ -181,7 +181,7 @@ class LanguagesModelOverrides extends JModelList
 		$app->setUserState('com_languages.overrides.filter.language', $language);
 
 		// List state information
-		parent::populateState($ordering, $direction);
+		parent::populateState('key', 'asc');
 	}
 
 	/**
@@ -232,7 +232,7 @@ class LanguagesModelOverrides extends JModelList
 	 *
 	 * @param   array  $cids  Array of keys to delete.
 	 *
-	 * @return  integer Number of successfully deleted overrides, boolean false if an error occurred.
+	 * @return  integer Number of successfully deleted overrides, boolean false if an error occured.
 	 *
 	 * @since		2.5
 	 */
@@ -247,7 +247,7 @@ class LanguagesModelOverrides extends JModelList
 		}
 
 		jimport('joomla.filesystem.file');
-		JLoader::register('LanguagesHelper', JPATH_ADMINISTRATOR . '/components/com_languages/helpers/languages.php');
+		require_once JPATH_COMPONENT . '/helpers/languages.php';
 
 		$filterclient = JFactory::getApplication()->getUserState('com_languages.overrides.filter.client');
 		$client = $filterclient == 0 ? 'SITE' : 'ADMINISTRATOR';

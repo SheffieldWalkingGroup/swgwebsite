@@ -108,7 +108,7 @@ class JCaptcha extends JObject
 			{
 				JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 
-				return;
+				return null;
 			}
 		}
 
@@ -116,7 +116,7 @@ class JCaptcha extends JObject
 	}
 
 	/**
-	 * Fire the onInit event to initialise the captcha plugin.
+	 * Fire the onInit event to initialise the captcha plug-in.
 	 *
 	 * @param   string  $id  The id of the field.
 	 *
@@ -200,7 +200,7 @@ class JCaptcha extends JObject
 	}
 
 	/**
-	 * Load the Captcha plugin.
+	 * Load the Captcha plug-in.
 	 *
 	 * @param   array  $options  Associative array of options.
 	 *

@@ -12,8 +12,7 @@ defined('JPATH_PLATFORM') or die();
 /**
  * Twitter API Help class for the Joomla Platform.
  *
- * @since       12.3
- * @deprecated  4.0  Use the `joomla/twitter` package via Composer instead
+ * @since  12.3
  */
 class JTwitterHelp extends JTwitterObject
 {

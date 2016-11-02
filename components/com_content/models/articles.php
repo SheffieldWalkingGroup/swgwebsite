@@ -10,7 +10,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\Registry\Registry;
-use Joomla\Utilities\ArrayHelper;
 
 /**
  * This models supports retrieving lists of articles.
@@ -233,7 +232,7 @@ class ContentModelArticles extends JModelList
 				$query->where('a.featured = 1');
 			}
 		}
-		elseif ($orderby_sec == 'front' || $this->getState('list.ordering') == 'fp.ordering')
+		elseif ($orderby_sec == 'front')
 		{
 			$query->join('LEFT', '#__content_frontpage AS fp ON fp.content_id = a.id');
 		}
@@ -302,7 +301,7 @@ class ContentModelArticles extends JModelList
 		}
 		elseif (is_array($published))
 		{
-			$published = ArrayHelper::toInteger($published);
+			JArrayHelper::toInteger($published);
 			$published = implode(',', $published);
 
 			// Use article state if badcats.id is null, otherwise, force 0 for unpublished
@@ -339,7 +338,7 @@ class ContentModelArticles extends JModelList
 		}
 		elseif (is_array($articleId))
 		{
-			$articleId = ArrayHelper::toInteger($articleId);
+			JArrayHelper::toInteger($articleId);
 			$articleId = implode(',', $articleId);
 			$type = $this->getState('filter.article_id.include', true) ? 'IN' : 'NOT IN';
 			$query->where('a.id ' . $type . ' (' . $articleId . ')');
@@ -382,7 +381,7 @@ class ContentModelArticles extends JModelList
 		}
 		elseif (is_array($categoryId) && (count($categoryId) > 0))
 		{
-			$categoryId = ArrayHelper::toInteger($categoryId);
+			JArrayHelper::toInteger($categoryId);
 			$categoryId = implode(',', $categoryId);
 
 			if (!empty($categoryId))
@@ -403,7 +402,7 @@ class ContentModelArticles extends JModelList
 		}
 		elseif (is_array($authorId))
 		{
-			$authorId = ArrayHelper::toInteger($authorId);
+			JArrayHelper::toInteger($authorId);
 			$authorId = implode(',', $authorId);
 
 			if ($authorId)
@@ -428,6 +427,8 @@ class ContentModelArticles extends JModelList
 
 			if (!empty($first))
 			{
+				JArrayHelper::toString($authorAlias);
+
 				foreach ($authorAlias as $key => $alias)
 				{
 					$authorAlias[$key] = $db->quote($alias);

@@ -90,34 +90,33 @@ class TagsViewTag extends JViewLegacy
 			JToolbarHelper::apply('tag.apply');
 			JToolbarHelper::save('tag.save');
 			JToolbarHelper::save2new('tag.save2new');
-			JToolbarHelper::cancel('tag.cancel');
 		}
 
 		// If not checked out, can save the item.
-		else
+		elseif (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_user_id == $userId)))
 		{
-			// Since it's an existing record, check the edit permission, or fall back to edit own if the owner.
-			$itemEditable = $canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_user_id == $userId);
+			JToolbarHelper::apply('tag.apply');
+			JToolbarHelper::save('tag.save');
 
-			// Can't save the record if it's checked out and editable
-			if (!$checkedOut && $itemEditable)
-			{
-				JToolbarHelper::apply('tag.apply');
-				JToolbarHelper::save('tag.save');
-	
-				if ($canDo->get('core.create'))
-				{
-					JToolbarHelper::save2new('tag.save2new');
-				}
-			}
-
-			// If an existing item, can save to a copy.
 			if ($canDo->get('core.create'))
 			{
-				JToolbarHelper::save2copy('tag.save2copy');
+				JToolbarHelper::save2new('tag.save2new');
 			}
+		}
 
-			if ($this->state->params->get('save_history', 0) && $itemEditable)
+		// If an existing item, can save to a copy.
+		if (!$isNew && $canDo->get('core.create'))
+		{
+			JToolbarHelper::save2copy('tag.save2copy');
+		}
+
+		if (empty($this->item->id))
+		{
+			JToolbarHelper::cancel('tag.cancel');
+		}
+		else
+		{
+			if ($this->state->params->get('save_history', 0) && $user->authorise('core.edit'))
 			{
 				JToolbarHelper::versions('com_tags.tag', $this->item->id);
 			}

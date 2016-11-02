@@ -34,7 +34,7 @@ class FinderController extends JControllerLegacy
 		$input = JFactory::getApplication()->input;
 		$cachable = true;
 
-		// Load plugin language files.
+		// Load plug-in language files.
 		FinderHelperLanguage::loadPluginLanguage();
 
 		// Set the default view name and format from the Request.

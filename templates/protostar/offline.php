@@ -9,7 +9,9 @@
 
 defined('_JEXEC') or die;
 
-$twofactormethods = JAuthenticationHelper::getTwoFactorMethods();
+require_once JPATH_ADMINISTRATOR . '/components/com_users/helpers/users.php';
+
+$twofactormethods = UsersHelper::getTwoFactorMethods();
 $app              = JFactory::getApplication();
 $doc              = JFactory::getDocument();
 $this->language   = $doc->language;
@@ -67,7 +69,7 @@ $userCss = JPATH_SITE . '/templates/' . $this->template . '/css/user.css';
 
 if (file_exists($userCss) && filesize($userCss) > 0)
 {
-	$doc->addStyleSheetVersion($this->baseurl . '/templates/' . $this->template . '/css/user.css');
+	$doc->addStyleSheetVersion('templates/' . $this->template . '/css/user.css');
 }
 
 // Load optional RTL Bootstrap CSS

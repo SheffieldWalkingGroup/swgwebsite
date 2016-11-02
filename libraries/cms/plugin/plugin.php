@@ -136,16 +136,9 @@ abstract class JPlugin extends JEvent
 			$extension = 'Plg_' . $this->_type . '_' . $this->_name;
 		}
 
-		$extension = strtolower($extension);
-		$lang      = JFactory::getLanguage();
+		$lang = JFactory::getLanguage();
 
-		// If language already loaded, don't load it again.
-		if ($lang->getPaths($extension))
-		{
-			return true;
-		}
-
-		return $lang->load($extension, $basePath, null, false, true)
-			|| $lang->load($extension, JPATH_PLUGINS . '/' . $this->_type . '/' . $this->_name, null, false, true);
+		return $lang->load(strtolower($extension), $basePath, null, false, true)
+			|| $lang->load(strtolower($extension), JPATH_PLUGINS . '/' . $this->_type . '/' . $this->_name, null, false, true);
 	}
 }

@@ -13,7 +13,7 @@ jQuery(document).ready(function() {
 			try {
 				var updateInfoList = jQuery.parseJSON(data);
 			} catch (e) {
-				// An error occurred
+				// An error occured
 				link.html(plg_quickicon_joomlaupdate_text.ERROR);
 			}
 
@@ -39,12 +39,12 @@ jQuery(document).ready(function() {
 					}
 				}
 			} else {
-				// An error occurred
+				// An error occured
 				link.html(plg_quickicon_joomlaupdate_text.ERROR);
 			}
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
-			// An error occurred
+			// An error occured
 			jQuery('#plg_quickicon_joomlaupdate').find('span.j-links-link').html(plg_quickicon_joomlaupdate_text.ERROR);
 		},
 		url: plg_quickicon_joomlaupdate_ajax_url + '&eid=700&cache_timeout=3600'

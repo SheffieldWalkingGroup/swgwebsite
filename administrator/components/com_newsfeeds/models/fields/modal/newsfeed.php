@@ -115,11 +115,6 @@ class JFormFieldModal_Newsfeed extends JFormField
 		{
 			$linkNewsfeeds .= '&amp;forcedLanguage=' . $this->element['language'];
 			$linkNewsfeed  .= '&amp;forcedLanguage=' . $this->element['language'];
-			$modalTitle     = JText::_('COM_NEWSFEEDS_CHANGE_FEED') . ' &#8212; ' . $this->element['label'];
-		}
-		else
-		{
-			$modalTitle     = JText::_('COM_NEWSFEEDS_CHANGE_FEED');
 		}
 
 		$urlSelect = $linkNewsfeeds . '&amp;' . JSession::getFormToken() . '=1';
@@ -161,7 +156,7 @@ class JFormFieldModal_Newsfeed extends JFormField
 			. ' data-toggle="modal"'
 			. ' role="button"'
 			. ' href="#newsfeedSelect' . $this->id . 'Modal"'
-			. ' title="' . JHtml::tooltipText('COM_NEWSFEEDS_CHANGE_FEED') . '">'
+			. ' title="' . JHtml::tooltipText('COM_NEWSFEEDS_CHANGE_FEED_BUTTON') . '">'
 			. '<span class="icon-file"></span> ' . JText::_('JSELECT')
 			. '</a>';
 
@@ -197,14 +192,14 @@ class JFormFieldModal_Newsfeed extends JFormField
 			'bootstrap.renderModal',
 			'newsfeedSelect' . $this->id . 'Modal',
 			array(
-				'title'       => $modalTitle,
+				'title'       => JText::_('COM_NEWSFEEDS_SELECT_A_FEED'),
 				'url'         => $urlSelect,
 				'height'      => '400px',
 				'width'       => '800px',
 				'bodyHeight'  => '70',
 				'modalWidth'  => '80',
-				'footer'      => '<a type="button" class="btn" data-dismiss="modal" aria-hidden="true">'
-						. JText::_("JLIB_HTML_BEHAVIOR_CLOSE") . '</a>',
+				'footer'      => '<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">'
+						. JText::_("JLIB_HTML_BEHAVIOR_CLOSE") . '</button>',
 			)
 		);
 
@@ -222,9 +217,9 @@ class JFormFieldModal_Newsfeed extends JFormField
 				'width'       => '800px',
 				'bodyHeight'  => '70',
 				'modalWidth'  => '80',
-				'footer'      => '<a type="button" class="btn" data-dismiss="modal" aria-hidden="true"'
+				'footer'      => '<button type="button" class="btn" data-dismiss="modal" aria-hidden="true"'
 						. ' onclick="jQuery(\'#newsfeedEdit' . $value . 'Modal iframe\').contents().find(\'#closeBtn\').click();">'
-						. JText::_("JLIB_HTML_BEHAVIOR_CLOSE") . '</a>'
+						. JText::_("JLIB_HTML_BEHAVIOR_CLOSE") . '</button>'
 						. '<button type="button" class="btn btn-primary" aria-hidden="true"'
 						. ' onclick="jQuery(\'#newsfeedEdit' . $value . 'Modal iframe\').contents().find(\'#saveBtn\').click();">'
 						. JText::_("JSAVE") . '</button>'

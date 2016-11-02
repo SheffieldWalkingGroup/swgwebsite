@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<form name="searchwalk">
+		<fieldset name="route">
+			<field name="keywords" label="Search in name/description" type="text" />
+			<field name="location" type="sql" label="Filter by general area" query="SELECT SequenceID, Name from walkareas" key_field="SequenceID" value_field="Name">
+				<option value="0">-- Anywhere --</option>
+			</field>
+			
+			<field name="gradeA1" type="checkbox" label="A1" value="1" default="0" />
+			<field name="gradeA2" type="checkbox" label="A2" value="1" default="0" />
+			<field name="gradeA3" type="checkbox" label="A3" value="1" default="0" />
+			<field name="gradeB1" type="checkbox" label="B1" value="1" default="0" />
+			<field name="gradeB2" type="checkbox" label="B2" value="1" default="0" />
+			<field name="gradeB3" type="checkbox" label="B3" value="1" default="0" />
+			<field name="gradeC1" type="checkbox" label="C1" value="1" default="0" />
+			<field name="gradeC2" type="checkbox" label="C2" value="1" default="0" />
+			<field name="gradeC3" type="checkbox" label="C3" value="1" default="0" />
+			
+		</fieldset>
+		<fieldset name="transport">
+			<field name="transportPublic" type="checkbox" label="Transport by bus/train/tram" value="1" default="0" />
+			<field name="transportCar" type="checkbox" label="Transport by car" value="1" default="0" />
+		</fieldset>
+		<fieldset name="instances">
+			<field 
+				name="leader" 
+				type="sql" 
+				label="Led by" 
+				query="
+					SELECT ID, CONCAT(Forename,' ',Surname) as name 
+					FROM walkleaders 
+					WHERE Surname != 'TBC' 
+					ORDER BY Forename ASC, Surname ASC" 
+				key_field="ID" 
+				value_field="name"
+				default="0" 
+			>
+				<option value="0">-- Anybody --</option>
+			</field>
+		</fieldset>
+	</form>

@@ -9,8 +9,6 @@
 
 defined('JPATH_PLATFORM') or die;
 
-use Joomla\Utilities\ArrayHelper;
-
 /**
  * Tags helper class, provides methods to perform various tasks relevant
  * tagging of content.
@@ -79,7 +77,7 @@ class JHelperTags extends JHelper
 				$db->quoteName('content_item_id'),
 				$db->quoteName('tag_id'),
 				$db->quoteName('tag_date'),
-				$db->quoteName('type_id'),
+				$db->quoteName('type_id')
 			)
 		);
 
@@ -204,18 +202,11 @@ class JHelperTags extends JHelper
 		{
 			// We will use the tags table to store them
 			JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tags/tables');
-			$tagTable  = JTable::getInstance('Tag', 'TagsTable');
-			$newTags   = array();
-			$canCreate = JFactory::getUser()->authorise('core.create', 'com_tags');
+			$tagTable = JTable::getInstance('Tag', 'TagsTable');
+			$newTags = array();
 
 			foreach ($tags as $key => $tag)
 			{
-				// User is not allowed to create tags, so don't create.
-				if (strpos($tag, '#new#') !== false && !$canCreate)
-				{
-					continue;
-				}
-
 				// Remove the #new# prefix that identifies new tags
 				$tagText = str_replace('#new#', '', $tag);
 
@@ -383,7 +374,7 @@ class JHelperTags extends JHelper
 	/**
 	 * Method to get a list of tags for an item, optionally with the tag data.
 	 *
-	 * @param   string   $contentType  Content type alias. Dot separated.
+	 * @param   integer  $contentType  Content type alias. Dot separated.
 	 * @param   integer  $id           Id of the item to retrieve tags for.
 	 * @param   boolean  $getTagData   If true, data from the tags table will be included, defaults to true.
 	 *
@@ -402,7 +393,7 @@ class JHelperTags extends JHelper
 				array(
 					$db->quoteName('m.type_alias') . ' = ' . $db->quote($contentType),
 					$db->quoteName('m.content_item_id') . ' = ' . (int) $id,
-					$db->quoteName('t.published') . ' = 1',
+					$db->quoteName('t.published') . ' = 1'
 				)
 			);
 
@@ -466,7 +457,7 @@ class JHelperTags extends JHelper
 		$ids = (array) $ids;
 		$ids = implode(',', $ids);
 		$ids = explode(',', $ids);
-		$ids = ArrayHelper::toInteger($ids);
+		JArrayHelper::toInteger($ids);
 
 		$db = JFactory::getDbo();
 
@@ -523,7 +514,7 @@ class JHelperTags extends JHelper
 		$tagIds = (array) $tagId;
 		$tagIds = implode(',', $tagIds);
 		$tagIds = explode(',', $tagIds);
-		$tagIds = ArrayHelper::toInteger($tagIds);
+		JArrayHelper::toInteger($tagIds);
 
 		// If we want to include children we have to adjust the list of tags.
 		// We do not search child tags when the match all option is selected.
@@ -542,7 +533,7 @@ class JHelperTags extends JHelper
 
 		// Sanitize filter states
 		$stateFilters = explode(',', $stateFilter);
-		$stateFilters = ArrayHelper::toInteger($stateFilters);
+		JArrayHelper::toInteger($stateFilters);
 
 		// M is the mapping table. C is the core_content table. Ct is the content_types table.
 		$query
@@ -658,7 +649,7 @@ class JHelperTags extends JHelper
 
 		if (is_array($tagIds) && count($tagIds) > 0)
 		{
-			$tagIds = ArrayHelper::toInteger($tagIds);
+			JArrayHelper::toInteger($tagIds);
 
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true)
@@ -759,7 +750,7 @@ class JHelperTags extends JHelper
 			}
 			else
 			{
-				$selectTypes = ArrayHelper::toInteger($selectTypes);
+				JArrayHelper::toInteger($selectTypes);
 
 				$query->where($db->quoteName('type_id') . ' IN (' . implode(',', $selectTypes) . ')');
 			}
@@ -1063,7 +1054,7 @@ class JHelperTags extends JHelper
 
 		if (is_array($tags) && count($tags) > 0)
 		{
-			$tags = ArrayHelper::toInteger($tags);
+			JArrayHelper::toInteger($tags);
 
 			$query->where($db->quoteName('tag_id') . ' IN (' . implode(',', $tags) . ')');
 		}

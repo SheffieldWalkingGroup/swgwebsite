@@ -12,8 +12,7 @@ defined('JPATH_PLATFORM') or die;
 /**
  * GitHub API References class for the Joomla Platform.
  *
- * @since       11.3
- * @deprecated  4.0  Use the `joomla/github` package via Composer instead
+ * @since  11.3
  */
 class JGithubRefs extends JGithubObject
 {
@@ -40,7 +39,7 @@ class JGithubRefs extends JGithubObject
 		$data = json_encode(
 			array(
 				'ref' => $ref,
-				'sha' => $sha,
+				'sha' => $sha
 			)
 		);
 

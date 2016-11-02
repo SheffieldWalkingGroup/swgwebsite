@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 // Include dependencies.
-JLoader::register('ModLatestHelper', __DIR__ . '/helper.php');
+require_once __DIR__ . '/helper.php';
 
 $list = ModLatestHelper::getList($params);
 

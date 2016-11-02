@@ -351,10 +351,8 @@ Joomla.editors.instances = Joomla.editors.instances || {};
 	 *          The original key that was selected
 	 * @param string
 	 *          The original item value that was selected
-	 * @param string
-	 *          The elem where the list will be written
 	 */
-	window.writeDynaList = function ( selectParams, source, key, orig_key, orig_val, element ) {
+	window.writeDynaList = function ( selectParams, source, key, orig_key, orig_val ) {
 		var html = '<select ' + selectParams + '>',
 			hasSelection = key == orig_key,
 			i = 0,
@@ -379,11 +377,7 @@ Joomla.editors.instances = Joomla.editors.instances || {};
 		}
 		html += '</select>';
 
-		if (element) {
-			element.innerHTML = html;
-		} else {
-			document.writeln( html );
-		}
+		document.writeln( html );
 	};
 
 	/**
@@ -441,9 +435,9 @@ Joomla.editors.instances = Joomla.editors.instances || {};
 	 * @param radioObj
 	 * @return
 	 */
-	// return the value of the radio button that is checked
-	// return an empty string if none are checked, or
-	// there are no radio buttons
+		// return the value of the radio button that is checked
+		// return an empty string if none are checked, or
+		// there are no radio buttons
 	window.radioGetCheckedValue = function ( radioObj ) {
 		if ( !radioObj ) { return ''; }
 
@@ -620,7 +614,7 @@ Joomla.editors.instances = Joomla.editors.instances || {};
 			parentElement.appendChild(loadingDiv);
 		}
 		// Show or hide the layer.
-		else
+		else 
 		{
 			if (!document.getElementById('loading-logo'))
 			{

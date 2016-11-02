@@ -151,7 +151,7 @@ class PlgSearchTags extends JPlugin
 
 		if ($rows)
 		{
-			JLoader::register('TagsHelperRoute', JPATH_SITE . '/components/com_tags/helpers/route.php');
+			require_once JPATH_ROOT . '/components/com_tags/helpers/route.php';
 
 			foreach ($rows as $key => $row)
 			{

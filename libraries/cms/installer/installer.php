@@ -373,20 +373,7 @@ class JInstaller extends JAdapter
 					$query->delete($db->quoteName('#__extensions'))
 						->where($db->quoteName('extension_id') . ' = ' . (int) $step['id']);
 					$db->setQuery($query);
-
-					try
-					{
-						$db->execute();
-
-						$stepval = true;
-					}
-					catch (JDatabaseExceptionExecuting $e)
-					{
-						// The database API will have already logged the error it caught, we just need to alert the user to the issue
-						JLog::add(JText::_('JLIB_INSTALLER_ABORT_ERROR_DELETING_EXTENSIONS_RECORD'), JLog::WARNING, 'jerror');
-
-						$stepval = false;
-					}
+					$stepval = $db->execute();
 
 					break;
 
@@ -474,7 +461,7 @@ class JInstaller extends JAdapter
 				'method' => 'install',
 				'type' => $this->manifest->attributes()->type,
 				'manifest' => $this->manifest,
-				'extension' => 0,
+				'extension' => 0
 			)
 		);
 
@@ -532,7 +519,9 @@ class JInstaller extends JAdapter
 
 		// Load the adapter(s) for the install manifest
 		$type   = $this->extension->type;
-		$params = array('extension' => $this->extension, 'route' => 'discover_install');
+		$params = array(
+			'extension' => $this->extension, 'route' => 'discover_install'
+		);
 
 		$adapter = $this->getAdapter($type, $params);
 
@@ -578,7 +567,7 @@ class JInstaller extends JAdapter
 				'method' => 'discover_install',
 				'type' => $this->extension->get('type'),
 				'manifest' => null,
-				'extension' => $this->extension->get('extension_id'),
+				'extension' => $this->extension->get('extension_id')
 			)
 		);
 
@@ -872,13 +861,9 @@ class JInstaller extends JAdapter
 		{
 			$db->setQuery($db->convertUtf8mb4QueryToUtf8($query));
 
-			try
+			if (!$db->execute())
 			{
-				$db->execute();
-			}
-			catch (JDatabaseExceptionExecuting $e)
-			{
-				JLog::add(JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $e->getMessage()), JLog::WARNING, 'jerror');
+				JLog::add(JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)), JLog::WARNING, 'jerror');
 
 				return false;
 			}
@@ -964,13 +949,9 @@ class JInstaller extends JAdapter
 				{
 					$db->setQuery($db->convertUtf8mb4QueryToUtf8($query));
 
-					try
+					if (!$db->execute())
 					{
-						$db->execute();
-					}
-					catch (JDatabaseExceptionExecuting $e)
-					{
-						JLog::add(JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $e->getMessage()), JLog::WARNING, 'jerror');
+						JLog::add(JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)), JLog::WARNING, 'jerror');
 
 						return false;
 					}
@@ -1153,20 +1134,18 @@ class JInstaller extends JAdapter
 							{
 								$db->setQuery($db->convertUtf8mb4QueryToUtf8($query));
 
-								try
+								if (!$db->execute())
 								{
-									$db->execute();
-								}
-								catch (JDatabaseExceptionExecuting $e)
-								{
-									JLog::add(JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $e->getMessage()), JLog::WARNING, 'jerror');
+									JLog::add(JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)), JLog::WARNING, 'jerror');
 
 									return false;
 								}
-
-								$queryString = (string) $query;
-								$queryString = str_replace(array("\r", "\n"), array('', ' '), substr($queryString, 0, 80));
-								JLog::add(JText::sprintf('JLIB_INSTALLER_UPDATE_LOG_QUERY', $file, $queryString), JLog::INFO, 'Update');
+								else
+								{
+									$queryString = (string) $query;
+									$queryString = str_replace(array("\r", "\n"), array('', ' '), substr($queryString, 0, 80));
+									JLog::add(JText::sprintf('JLIB_INSTALLER_UPDATE_LOG_QUERY', $file, $queryString), JLog::INFO, 'Update');
+								}
 
 								$update_count++;
 							}
@@ -1547,7 +1526,7 @@ class JInstaller extends JAdapter
 			if (!count($fieldset->children()))
 			{
 				// Either the tag does not exist or has no children therefore we return zero files processed.
-				return;
+				return null;
 			}
 
 			// Iterating through the fields and collecting the name/default values:
@@ -1963,13 +1942,13 @@ class JInstaller extends JAdapter
 		// If we cannot load the XML file return null
 		if (!$xml)
 		{
-			return;
+			return null;
 		}
 
 		// Check for a valid XML root tag.
 		if ($xml->getName() != 'extension')
 		{
-			return;
+			return null;
 		}
 
 		// Valid manifest file return the object
@@ -2201,8 +2180,8 @@ class JInstaller extends JAdapter
 		// Check if we're a language. If so use metafile.
 		$data['type'] = $xml->getName() == 'metafile' ? 'language' : (string) $xml->attributes()->type;
 
-		$data['creationDate'] = ((string) $xml->creationDate) ? (string) $xml->creationDate : JText::_('JLIB_UNKNOWN');
-		$data['author'] = ((string) $xml->author) ? (string) $xml->author : JText::_('JLIB_UNKNOWN');
+		$data['creationDate'] = ((string) $xml->creationDate) ? (string) $xml->creationDate : JText::_('Unknown');
+		$data['author'] = ((string) $xml->author) ? (string) $xml->author : JText::_('Unknown');
 
 		$data['copyright'] = (string) $xml->copyright;
 		$data['authorEmail'] = (string) $xml->authorEmail;

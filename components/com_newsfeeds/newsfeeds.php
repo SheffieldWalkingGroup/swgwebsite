@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('NewsfeedsHelperRoute', JPATH_COMPONENT . '/helpers/route.php');
+require_once JPATH_COMPONENT . '/helpers/route.php';
 JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR . '/tables');
 
 $controller = JControllerLegacy::getInstance('Newsfeeds');

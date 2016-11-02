@@ -41,13 +41,13 @@ class FinderViewSearch extends JViewLegacy
 		// Get view data.
 		$state = $this->get('State');
 		$query = $this->get('Query');
-		JDEBUG ? JProfiler::getInstance('Application')->mark('afterFinderQuery') : null;
+		JDEBUG ? $GLOBALS['_PROFILER']->mark('afterFinderQuery') : null;
 		$results = $this->get('Results');
-		JDEBUG ? JProfiler::getInstance('Application')->mark('afterFinderResults') : null;
+		JDEBUG ? $GLOBALS['_PROFILER']->mark('afterFinderResults') : null;
 		$total = $this->get('Total');
-		JDEBUG ? JProfiler::getInstance('Application')->mark('afterFinderTotal') : null;
+		JDEBUG ? $GLOBALS['_PROFILER']->mark('afterFinderTotal') : null;
 		$pagination = $this->get('Pagination');
-		JDEBUG ? JProfiler::getInstance('Application')->mark('afterFinderPagination') : null;
+		JDEBUG ? $GLOBALS['_PROFILER']->mark('afterFinderPagination') : null;
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -105,11 +105,11 @@ class FinderViewSearch extends JViewLegacy
 
 		$this->prepareDocument($query);
 
-		JDEBUG ? JProfiler::getInstance('Application')->mark('beforeFinderLayout') : null;
+		JDEBUG ? $GLOBALS['_PROFILER']->mark('beforeFinderLayout') : null;
 
 		parent::display($tpl);
 
-		JDEBUG ? JProfiler::getInstance('Application')->mark('afterFinderLayout') : null;
+		JDEBUG ? $GLOBALS['_PROFILER']->mark('afterFinderLayout') : null;
 	}
 
 	/**

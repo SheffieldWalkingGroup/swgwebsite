@@ -41,7 +41,7 @@ $this->ignore_fieldsets = array('images', 'jbasic', 'jmetadata', 'item_associati
 // In case of modal
 $isModal = $input->get('layout') == 'modal' ? true : false;
 $layout  = $isModal ? 'modal' : 'edit';
-$tmpl    = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=component' : '';
+$tmpl    = $isModal ? '&tmpl=component' : '';
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_newsfeeds&layout=' . $layout . $tmpl . '&id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="newsfeed-form" class="form-validate">
@@ -55,8 +55,8 @@ $tmpl    = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=c
 		<div class="row-fluid">
 			<div class="span9">
 				<div class="form-vertical">
-					<?php echo $this->form->renderField('link'); ?>
-					<?php echo $this->form->renderField('description'); ?>
+					<?php echo $this->form->getControlGroup('link'); ?>
+					<?php echo $this->form->getControlGroup('description'); ?>
 				</div>
 			</div>
 			<div class="span3">
@@ -68,19 +68,13 @@ $tmpl    = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=c
 		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'images', JText::_('JGLOBAL_FIELDSET_IMAGE_OPTIONS')); ?>
 		<div class="row-fluid">
 			<div class="span6">
-					<?php echo $this->form->renderField('images'); ?>
+					<?php echo $this->form->getControlGroup('images'); ?>
 					<?php foreach ($this->form->getGroup('images') as $field) : ?>
-						<?php echo $field->renderField(); ?>
+						<?php echo $field->getControlGroup(); ?>
 					<?php endforeach; ?>
 				</div>
 			</div>
 		<?php echo JHtml::_('bootstrap.endTab'); ?>
-
-		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'attrib-jbasic', JText::_('JGLOBAL_FIELDSET_DISPLAY_OPTIONS')); ?>
-		<?php echo $this->loadTemplate('display'); ?>
-		<?php echo JHtml::_('bootstrap.endTab'); ?>
-
-		<?php echo JLayoutHelper::render('joomla.edit.params', $this); ?>
 
 		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'publishing', JText::_('JGLOBAL_FIELDSET_PUBLISHING')); ?>
 		<div class="row-fluid form-horizontal-desktop">
@@ -92,6 +86,12 @@ $tmpl    = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=c
 			</div>
 		</div>
 		<?php echo JHtml::_('bootstrap.endTab'); ?>
+
+		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'attrib-jbasic', JText::_('JGLOBAL_FIELDSET_DISPLAY_OPTIONS')); ?>
+		<?php echo $this->loadTemplate('display'); ?>
+		<?php echo JHtml::_('bootstrap.endTab'); ?>
+
+		<?php echo JLayoutHelper::render('joomla.edit.params', $this); ?>
 
 		<?php if ( ! $isModal && $assoc) : ?>
 			<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'associations', JText::_('JGLOBAL_FIELDSET_ASSOCIATIONS')); ?>

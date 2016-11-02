@@ -36,8 +36,7 @@ use Joomla\Registry\Registry;
  * @property-read  JGithubHooks       $hooks       Deprecated GitHub API object for hooks.
  * @property-read  JGithubMeta        $meta        Deprecated GitHub API object for meta.
  *
- * @since       11.3
- * @deprecated  4.0  Use the `joomla/github` package via Composer instead
+ * @since  11.3
  */
 class JGithub
 {
@@ -57,19 +56,8 @@ class JGithub
 	 * @var    array  List of known packages.
 	 * @since  3.3 (CMS)
 	 */
-	protected $packages = array(
-		'activity',
-		'authorization',
-		'data',
-		'gists',
-		'gitignore',
-		'issues',
-		'markdown',
-		'orgs',
-		'pulls',
-		'repositories',
-		'users',
-	);
+	protected $packages = array('activity', 'authorization', 'data', 'gists', 'gitignore', 'issues',
+		'markdown', 'orgs', 'pulls', 'repositories', 'users');
 
 	/**
 	 * @var    array  List of known legacy packages.

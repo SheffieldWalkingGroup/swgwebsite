@@ -144,5 +144,4 @@
   }, "xml", "javascript")
 
   CodeMirror.defineMIME("text/jsx", "jsx")
-  CodeMirror.defineMIME("text/typescript-jsx", {name: "jsx", base: {name: "javascript", typescript: true}})
 });

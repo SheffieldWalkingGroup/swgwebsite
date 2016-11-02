@@ -10,7 +10,6 @@
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\Registry\Registry;
-use Joomla\Utilities\ArrayHelper;
 
 /**
  * Extension table
@@ -128,7 +127,7 @@ class JTableExtension extends JTable
 		$k = $this->_tbl_key;
 
 		// Sanitize input.
-		$pks = ArrayHelper::toInteger($pks);
+		JArrayHelper::toInteger($pks);
 		$userId = (int) $userId;
 		$state = (int) $state;
 

@@ -12,8 +12,7 @@ defined('JPATH_PLATFORM') or die;
 /**
  * Google Analytics embed class for the Joomla Platform.
  *
- * @since       12.3
- * @deprecated  4.0  Use the `joomla/google` package via Composer instead
+ * @since  12.3
  */
 class JGoogleEmbedAnalytics extends JGoogleEmbed
 {

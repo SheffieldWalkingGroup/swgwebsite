@@ -29,6 +29,8 @@ abstract class JHtmlFinder
 	 */
 	public static function typeslist()
 	{
+		$lang = JFactory::getLanguage();
+
 		// Load the finder types.
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
@@ -44,18 +46,18 @@ abstract class JHtmlFinder
 		}
 		catch (RuntimeException $e)
 		{
-			return array();
+			return;
 		}
 
 		// Compile the options.
 		$options = array();
 
-		$lang = JFactory::getLanguage();
-
 		foreach ($rows as $row)
 		{
-			$key       = $lang->hasKey(FinderHelperLanguage::branchPlural($row->text)) ? FinderHelperLanguage::branchPlural($row->text) : $row->text;
-			$options[] = JHtml::_('select.option', $row->value, JText::sprintf('COM_FINDER_ITEM_X_ONLY', JText::_($key)));
+			$key = $lang->hasKey(FinderHelperLanguage::branchPlural($row->text))
+					? FinderHelperLanguage::branchPlural($row->text) : $row->text;
+			$string = JText::sprintf('COM_FINDER_ITEM_X_ONLY', JText::_($key));
+			$options[] = JHtml::_('select.option', $row->value, $string);
 		}
 
 		return $options;
@@ -70,6 +72,8 @@ abstract class JHtmlFinder
 	 */
 	public static function mapslist()
 	{
+		$lang = JFactory::getLanguage();
+
 		// Load the finder types.
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
@@ -89,8 +93,6 @@ abstract class JHtmlFinder
 		}
 
 		// Translate.
-		$lang = JFactory::getLanguage();
-
 		foreach ($branches as $branch)
 		{
 			$key = FinderHelperLanguage::branchPlural($branch->text);
@@ -122,9 +124,10 @@ abstract class JHtmlFinder
 	 */
 	public static function statelist()
 	{
-		return array(
-			JHtml::_('select.option', '1', JText::sprintf('COM_FINDER_ITEM_X_ONLY', JText::_('JPUBLISHED'))),
-			JHtml::_('select.option', '0', JText::sprintf('COM_FINDER_ITEM_X_ONLY', JText::_('JUNPUBLISHED')))
-		);
+		$options = array();
+		$options[] = JHtml::_('select.option', '1', JText::sprintf('COM_FINDER_ITEM_X_ONLY', JText::_('JPUBLISHED')));
+		$options[] = JHtml::_('select.option', '0', JText::sprintf('COM_FINDER_ITEM_X_ONLY', JText::_('JUNPUBLISHED')));
+
+		return $options;
 	}
 }

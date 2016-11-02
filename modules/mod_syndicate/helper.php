@@ -9,8 +9,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\Utilities\ArrayHelper;
-
 /**
  * Helper for mod_syndicate
  *
@@ -35,7 +33,7 @@ class ModSyndicateHelper
 
 		foreach ($document->_links as $link => $value)
 		{
-			$value = ArrayHelper::toString($value);
+			$value = JArrayHelper::toString($value);
 
 			if (strpos($value, 'application/' . $params->get('format') . '+xml'))
 			{

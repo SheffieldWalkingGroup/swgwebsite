@@ -35,17 +35,36 @@ class JFormFieldGroupParent extends JFormFieldList
 	 */
 	protected function getOptions()
 	{
-		$options = JHelperUsergroups::getInstance()->getAll();
+		$options = array();
 
+		$db = JFactory::getDbo();
 		$user = JFactory::getUser();
+		$query = $db->getQuery(true)
+			->select('a.id AS value, a.title AS text, COUNT(DISTINCT b.id) AS level')
+			->from('#__usergroups AS a')
+			->join('LEFT', $db->quoteName('#__usergroups') . ' AS b ON a.lft > b.lft AND a.rgt < b.rgt');
 
 		// Prevent parenting to children of this item.
 		if ($id = $this->form->getValue('id'))
 		{
-			unset($options[$id]);
+			$query->join('LEFT', $db->quoteName('#__usergroups') . ' AS p ON p.id = ' . (int) $id)
+				->where('NOT(a.lft >= p.lft AND a.rgt <= p.rgt)');
 		}
 
-		$options = array_values($options);
+		$query->group('a.id, a.title, a.lft, a.rgt')
+			->order('a.lft ASC');
+
+		// Get the options.
+		$db->setQuery($query);
+
+		try
+		{
+			$options = $db->loadObjectList();
+		}
+		catch (RuntimeException $e)
+		{
+			JError::raiseWarning(500, $e->getMessage());
+		}
 
 		// Pad the option text with spaces using depth level as a multiplier.
 		for ($i = 0, $n = count($options); $i < $n; $i++)
@@ -53,8 +72,7 @@ class JFormFieldGroupParent extends JFormFieldList
 			// Show groups only if user is super admin or group is not super admin
 			if ($user->authorise('core.admin') || (!JAccess::checkGroup($options[$i]->value, 'core.admin')))
 			{
-				$options[$i]->value = $options[$i]->id;
-				$options[$i]->text = str_repeat('- ', $options[$i]->level) . $options[$i]->title;
+				$options[$i]->text = str_repeat('- ', $options[$i]->level) . $options[$i]->text;
 			}
 			else
 			{

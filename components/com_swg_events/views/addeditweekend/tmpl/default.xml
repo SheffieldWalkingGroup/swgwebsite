@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+	<layout title="Add/Edit weekend">
+		<message>Sheffield Walking Group</message>
+	</layout>
+	<fields name="request">
+		<fieldset name="request">
+			<field name="returnPage" type="menuitem" label="Return to" description="Go to this page after adding or editing socials" published="1" default="">
+				<option value="">-- None --</option>
+			</field>
+			<field name="jumpToEvent" type="checkbox" label="Jump to event" description="Jump to the added or edited event after saving" value="1" default="0" />
+		</fieldset>
+	</fields>
+	
+</metadata>

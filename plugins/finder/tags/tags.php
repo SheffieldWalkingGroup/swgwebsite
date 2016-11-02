@@ -11,7 +11,8 @@ defined('_JEXEC') or die;
 
 use Joomla\Registry\Registry;
 
-JLoader::register('FinderIndexerAdapter', JPATH_ADMINISTRATOR . '/components/com_finder/helpers/indexer/adapter.php');
+// Load the base adapter.
+require_once JPATH_ADMINISTRATOR . '/components/com_finder/helpers/indexer/adapter.php';
 
 /**
  * Finder adapter for Joomla Tag.
@@ -237,10 +238,10 @@ class PlgFinderTags extends FinderIndexerAdapter
 			$item->title = $title;
 		}
 
-		// Add the meta author.
+		// Add the meta-author.
 		$item->metaauthor = $item->metadata->get('author');
 
-		// Handle the link to the metadata.
+		// Handle the link to the meta-data.
 		$item->addInstruction(FinderIndexer::META_CONTEXT, 'link');
 		$item->addInstruction(FinderIndexer::META_CONTEXT, 'metakey');
 		$item->addInstruction(FinderIndexer::META_CONTEXT, 'metadesc');
@@ -274,7 +275,7 @@ class PlgFinderTags extends FinderIndexerAdapter
 	protected function setup()
 	{
 		// Load dependent classes.
-		JLoader::register('TagsHelperRoute', JPATH_SITE . '/components/com_tags/helpers/route.php');
+		require_once JPATH_SITE . '/components/com_tags/helpers/route.php';
 
 		return true;
 	}

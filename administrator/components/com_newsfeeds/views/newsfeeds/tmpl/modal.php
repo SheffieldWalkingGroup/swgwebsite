@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('NewsfeedsHelperRoute', JPATH_ROOT . '/components/com_newsfeeds/helpers/route.php');
+require_once JPATH_ROOT . '/components/com_newsfeeds/helpers/route.php';
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 

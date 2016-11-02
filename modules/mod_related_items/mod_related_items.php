@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 // Include the related items functions only once
-JLoader::register('ModRelatedItemsHelper', __DIR__ . '/helper.php');
+require_once __DIR__ . '/helper.php';
 
 $cacheparams = new stdClass;
 $cacheparams->cachemode = 'safeuri';

@@ -204,15 +204,15 @@ class FinderTableFilter extends JTable
 	 */
 	public function store($updateNulls = false)
 	{
-		$date = JFactory::getDate()->toSql();
-		$userId = JFactory::getUser()->id;
+		$date = JFactory::getDate();
+		$user = JFactory::getUser();
 
-		$this->modified = $date;
+		$this->modified = $date->toSql();
 
 		if ($this->filter_id)
 		{
 			// Existing item
-			$this->modified_by = $userId;
+			$this->modified_by = $user->get('id');
 		}
 		else
 		{
@@ -220,12 +220,12 @@ class FinderTableFilter extends JTable
 			// so we don't touch it if it is set.
 			if (!(int) $this->created)
 			{
-				$this->created = $date;
+				$this->created = $date->toSql();
 			}
 
 			if (empty($this->created_by))
 			{
-				$this->created_by = $userId;
+				$this->created_by = $user->get('id');
 			}
 		}
 

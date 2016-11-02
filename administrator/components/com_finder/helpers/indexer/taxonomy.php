@@ -47,9 +47,9 @@ class FinderIndexerTaxonomy
 	public static function addBranch($title, $state = 1, $access = 1)
 	{
 		// Check to see if the branch is in the cache.
-		if (isset(static::$branches[$title]))
+		if (isset(self::$branches[$title]))
 		{
-			return static::$branches[$title]->id;
+			return self::$branches[$title]->id;
 		}
 
 		// Check to see if the branch is in the table.
@@ -68,9 +68,9 @@ class FinderIndexerTaxonomy
 		if (!empty($result) && $result->state == $state && $result->access == $access)
 		{
 			// The data matches, add the item to the cache.
-			static::$branches[$title] = $result;
+			self::$branches[$title] = $result;
 
-			return static::$branches[$title]->id;
+			return self::$branches[$title]->id;
 		}
 
 		/*
@@ -100,12 +100,12 @@ class FinderIndexerTaxonomy
 		}
 
 		// Store the branch.
-		static::storeNode($branch);
+		self::storeNode($branch);
 
 		// Add the branch to the cache.
-		static::$branches[$title] = $branch;
+		self::$branches[$title] = $branch;
 
-		return static::$branches[$title]->id;
+		return self::$branches[$title]->id;
 	}
 
 	/**
@@ -124,13 +124,13 @@ class FinderIndexerTaxonomy
 	public static function addNode($branch, $title, $state = 1, $access = 1)
 	{
 		// Check to see if the node is in the cache.
-		if (isset(static::$nodes[$branch][$title]))
+		if (isset(self::$nodes[$branch][$title]))
 		{
-			return static::$nodes[$branch][$title]->id;
+			return self::$nodes[$branch][$title]->id;
 		}
 
 		// Get the branch id, insert it if it does not exist.
-		$branchId = static::addBranch($branch);
+		$branchId = self::addBranch($branch);
 
 		// Check to see if the node is in the table.
 		$db = JFactory::getDbo();
@@ -148,9 +148,9 @@ class FinderIndexerTaxonomy
 		if (!empty($result) && $result->state == $state && $result->access == $access)
 		{
 			// The data matches, add the item to the cache.
-			static::$nodes[$branch][$title] = $result;
+			self::$nodes[$branch][$title] = $result;
 
-			return static::$nodes[$branch][$title]->id;
+			return self::$nodes[$branch][$title]->id;
 		}
 
 		/*
@@ -180,12 +180,12 @@ class FinderIndexerTaxonomy
 		}
 
 		// Store the node.
-		static::storeNode($node);
+		self::storeNode($node);
 
 		// Add the node to the cache.
-		static::$nodes[$branch][$title] = $node;
+		self::$nodes[$branch][$title] = $node;
 
-		return static::$nodes[$branch][$title]->id;
+		return self::$nodes[$branch][$title]->id;
 	}
 
 	/**
@@ -242,7 +242,8 @@ class FinderIndexerTaxonomy
 		$db = JFactory::getDbo();
 
 		// Set user variables
-		$groups = implode(',', JFactory::getUser()->getAuthorisedViewLevels());
+		$user = JFactory::getUser();
+		$groups = implode(',', $user->getAuthorisedViewLevels());
 
 		// Create a query to get the taxonomy branch titles.
 		$query = $db->getQuery(true)
@@ -254,8 +255,9 @@ class FinderIndexerTaxonomy
 
 		// Get the branch titles.
 		$db->setQuery($query);
+		$results = $db->loadColumn();
 
-		return $db->loadColumn();
+		return $results;
 	}
 
 	/**
@@ -274,7 +276,8 @@ class FinderIndexerTaxonomy
 		$db = JFactory::getDbo();
 
 		// Set user variables
-		$groups = implode(',', JFactory::getUser()->getAuthorisedViewLevels());
+		$user = JFactory::getUser();
+		$groups = implode(',', $user->getAuthorisedViewLevels());
 
 		// Create a query to get the node.
 		$query = $db->getQuery(true)
@@ -290,8 +293,9 @@ class FinderIndexerTaxonomy
 
 		// Get the node.
 		$db->setQuery($query, 0, 1);
+		$result = $db->loadObject();
 
-		return $db->loadObject();
+		return $result;
 	}
 
 	/**

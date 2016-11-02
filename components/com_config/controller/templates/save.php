@@ -44,7 +44,7 @@ class ConfigControllerTemplatesSave extends JControllerBase
 
 		$app = JFactory::getApplication();
 
-		// Access backend com_templates
+		// Access back-end com_templates
 		JLoader::register('TemplatesControllerStyle', JPATH_ADMINISTRATOR . '/components/com_templates/controllers/style.php');
 		JLoader::register('TemplatesModelStyle', JPATH_ADMINISTRATOR . '/components/com_templates/models/style.php');
 		JLoader::register('TemplatesTableStyle', JPATH_ADMINISTRATOR . '/components/com_templates/tables/style.php');
@@ -53,11 +53,11 @@ class ConfigControllerTemplatesSave extends JControllerBase
 		// Get a document object
 		$document = JFactory::getDocument();
 
-		// Set backend required params
+		// Set back-end required params
 		$document->setType('json');
 		$this->input->set('id', $app->getTemplate('template')->id);
 
-		// Execute backend controller
+		// Execute back-end controller
 		$return = $controllerClass->save();
 
 		// Reset params back after requesting from service

@@ -255,8 +255,7 @@ hr.hr-condensed {
 	background-color: #f5f5f5;
 }
 .row-striped .row-fluid {
-	width: 100%;
-	box-sizing: border-box;
+	width: 97%;
 }
 .row-striped .row-fluid [class*="span"] {
 	min-height: 10px;
@@ -398,14 +397,6 @@ fieldset.radio.btn-group {
 	width: 1px;
 	overflow: hidden;
 }
-.element-invisible:focus {
-	width: auto;
-	height: auto;
-	overflow: auto;
-	background: #eee;
-	color: #000;
-	padding: 1em;
-}
 .form-vertical .control-label {
 	float: none;
 	width: auto;
@@ -487,9 +478,6 @@ th .tooltip-inner {
 }
 .alert-link {
 	font-weight: bold;
-}
-.alert .alert-link {
-	color: #a47e3c;
 }
 .alert-success .alert-link {
 	color: #356635;

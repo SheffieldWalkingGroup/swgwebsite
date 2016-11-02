@@ -29,24 +29,9 @@ $title = '';
 
 if (!empty($description))
 {
-	if ($text && $text != $description)
-	{
-		JHtml::_('bootstrap.popover');
-		$classes[] = 'hasPopover';
-		$title     = ' title="' . htmlspecialchars(trim($text, ':')) . '"'
-			. ' data-content="'. htmlspecialchars($description) . '"';
-
-		if (JFactory::getLanguage()->isRtl() && !$position)
-		{
-			$position = ' data-placement="left" ';
-		}
-	}
-	else
-	{
-		JHtml::_('bootstrap.tooltip');
-		$classes[] = 'hasTooltip';
-		$title     = ' title="' . JHtml::tooltipText(trim($text, ':'), $description, 0) . '"';
-	}
+	JHtml::_('bootstrap.tooltip');
+	$classes[] = 'hasTooltip';
+	$title     = ' title="' . JHtml::tooltipText(trim($text, ':'), $description, 0) . '"';
 }
 
 if ($required)

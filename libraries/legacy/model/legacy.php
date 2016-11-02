@@ -12,7 +12,8 @@ defined('JPATH_PLATFORM') or die;
 /**
  * Base class for a Joomla Model
  *
- * Acts as a Factory class for application specific objects and provides many supporting API functions.
+ * Acts as a Factory class for application specific objects and
+ * provides many supporting API functions.
  *
  * @since  12.2
  */
@@ -61,8 +62,8 @@ abstract class JModelLegacy extends JObject
 	/**
 	 * The event to trigger when cleaning cache.
 	 *
-	 * @var    string
-	 * @since  12.2
+	 * @var      string
+	 * @since    12.2
 	 */
 	protected $event_clean_cache = null;
 
@@ -167,7 +168,7 @@ abstract class JModelLegacy extends JObject
 	 * @param   string  $prefix  Prefix for the model class name. Optional.
 	 * @param   array   $config  Configuration array for model. Optional.
 	 *
-	 * @return  JModelLegacy|boolean   A JModelLegacy instance or false on failure
+	 * @return  mixed   A model object or false on failure
 	 *
 	 * @since   12.2
 	 */
@@ -186,17 +187,19 @@ abstract class JModelLegacy extends JObject
 				$path = JPath::find(self::addIncludePath(null, ''), self::_createFileName('model', array('name' => $type)));
 			}
 
-			if (!$path)
+			if ($path)
 			{
-				return false;
+				require_once $path;
+
+				if (!class_exists($modelClass))
+				{
+					JLog::add(JText::sprintf('JLIB_APPLICATION_ERROR_MODELCLASS_NOT_FOUND', $modelClass), JLog::WARNING, 'jerror');
+
+					return false;
+				}
 			}
-
-			require_once $path;
-
-			if (!class_exists($modelClass))
+			else
 			{
-				JLog::add(JText::sprintf('JLIB_APPLICATION_ERROR_MODELCLASS_NOT_FOUND', $modelClass), JLog::WARNING, 'jerror');
-
 				return false;
 			}
 		}
@@ -298,16 +301,17 @@ abstract class JModelLegacy extends JObject
 	 * @param   integer  $limitstart  Offset.
 	 * @param   integer  $limit       The number of records.
 	 *
-	 * @return  object[]  An array of results.
+	 * @return  array  An array of results.
 	 *
 	 * @since   12.2
 	 * @throws  RuntimeException
 	 */
 	protected function _getList($query, $limitstart = 0, $limit = 0)
 	{
-		$this->getDbo()->setQuery($query, $limitstart, $limit);
+		$this->_db->setQuery($query, $limitstart, $limit);
+		$result = $this->_db->loadObjectList();
 
-		return $this->getDbo()->loadObjectList();
+		return $result;
 	}
 
 	/**
@@ -332,9 +336,9 @@ abstract class JModelLegacy extends JObject
 			$query = clone $query;
 			$query->clear('select')->clear('order')->clear('limit')->clear('offset')->select('COUNT(*)');
 
-			$this->getDbo()->setQuery($query);
+			$this->_db->setQuery($query);
 
-			return (int) $this->getDbo()->loadResult();
+			return (int) $this->_db->loadResult();
 		}
 
 		// Otherwise fall back to inefficient way of counting all results.
@@ -346,10 +350,10 @@ abstract class JModelLegacy extends JObject
 			$query->clear('limit')->clear('offset');
 		}
 
-		$this->getDbo()->setQuery($query);
-		$this->getDbo()->execute();
+		$this->_db->setQuery($query);
+		$this->_db->execute();
 
-		return (int) $this->getDbo()->getNumRows();
+		return (int) $this->_db->getNumRows();
 	}
 
 	/**
@@ -359,7 +363,7 @@ abstract class JModelLegacy extends JObject
 	 * @param   string  $prefix  The class prefix. Optional.
 	 * @param   array   $config  Configuration settings to pass to JTable::getInstance
 	 *
-	 * @return  JTable|boolean  Table object or boolean false if failed
+	 * @return  mixed  Model object or boolean false if failed
 	 *
 	 * @since   12.2
 	 * @see     JTable::getInstance()
@@ -423,7 +427,7 @@ abstract class JModelLegacy extends JObject
 	 * @param   string  $property  Optional parameter name
 	 * @param   mixed   $default   Optional default value
 	 *
-	 * @return  mixed  The property where specified, the state object where omitted
+	 * @return  object  The property where specified, the state object where omitted
 	 *
 	 * @since   12.2
 	 */
@@ -577,17 +581,16 @@ abstract class JModelLegacy extends JObject
 	protected function cleanCache($group = null, $client_id = 0)
 	{
 		$conf = JFactory::getConfig();
+		$dispatcher = JEventDispatcher::getInstance();
 
 		$options = array(
 			'defaultgroup' => ($group) ? $group : (isset($this->option) ? $this->option : JFactory::getApplication()->input->get('option')),
-			'cachebase' => ($client_id) ? JPATH_ADMINISTRATOR . '/cache' : $conf->get('cache_path', JPATH_SITE . '/cache'),
-		);
+			'cachebase' => ($client_id) ? JPATH_ADMINISTRATOR . '/cache' : $conf->get('cache_path', JPATH_SITE . '/cache'));
 
-		/** @var JCacheControllerCallback $cache */
 		$cache = JCache::getInstance('callback', $options);
 		$cache->clean();
 
 		// Trigger the onContentCleanCache event.
-		JEventDispatcher::getInstance()->trigger($this->event_clean_cache, $options);
+		$dispatcher->trigger($this->event_clean_cache, $options);
 	}
 }

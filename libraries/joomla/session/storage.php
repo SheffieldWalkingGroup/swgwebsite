@@ -19,7 +19,7 @@ defined('JPATH_PLATFORM') or die;
 abstract class JSessionStorage
 {
 	/**
-	 * @var    JSessionStorage[]  JSessionStorage instances container.
+	 * @var    array  JSessionStorage instances container.
 	 * @since  11.3
 	 */
 	protected static $instances = array();
@@ -45,7 +45,6 @@ abstract class JSessionStorage
 	 * @return  JSessionStorage
 	 *
 	 * @since   11.1
-	 * @throws  JSessionExceptionUnsupported
 	 */
 	public static function getInstance($name = 'none', $options = array())
 	{
@@ -62,7 +61,8 @@ abstract class JSessionStorage
 
 				if (!file_exists($path))
 				{
-					throw new JSessionExceptionUnsupported('Unable to load session storage class: ' . $name);
+					// No attempt to die gracefully here, as it tries to close the non-existing session
+					jexit('Unable to load session storage class: ' . $name);
 				}
 
 				require_once $path;
@@ -70,14 +70,16 @@ abstract class JSessionStorage
 				// The class should now be loaded
 				if (!class_exists($class))
 				{
-					throw new JSessionExceptionUnsupported('Unable to load session storage class: ' . $name);
+					// No attempt to die gracefully here, as it tries to close the non-existing session
+					jexit('Unable to load session storage class: ' . $name);
 				}
 			}
 
 			// Validate the session storage is supported on this platform
 			if (!$class::isSupported())
 			{
-				throw new JSessionExceptionUnsupported(sprintf('The %s Session Storage is not supported on this platform.', $name));
+				// No attempt to die gracefully here, as it tries to close the non-existing session
+				jexit(sprintf('The %s Session Storage is not supported on this platform.', $name));
 			}
 
 			self::$instances[$name] = new $class($options);

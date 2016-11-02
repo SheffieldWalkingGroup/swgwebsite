@@ -75,7 +75,7 @@ abstract class FinderIndexer
 	/**
 	 * The indexer state object.
 	 *
-	 * @var    JObject
+	 * @var    object
 	 * @since  2.5
 	 */
 	public static $state;
@@ -83,7 +83,7 @@ abstract class FinderIndexer
 	/**
 	 * The indexer profiler object.
 	 *
-	 * @var    JProfiler
+	 * @var    object
 	 * @since  2.5
 	 */
 	public static $profiler;
@@ -121,9 +121,11 @@ abstract class FinderIndexer
 
 			return new $class;
 		}
-
-		// Throw invalid format exception.
-		throw new RuntimeException(JText::sprintf('COM_FINDER_INDEXER_INVALID_DRIVER', $format));
+		else
+		{
+			// Throw invalid format exception.
+			throw new RuntimeException(JText::sprintf('COM_FINDER_INDEXER_INVALID_DRIVER', $format));
+		}
 	}
 
 	/**
@@ -136,9 +138,9 @@ abstract class FinderIndexer
 	public static function getState()
 	{
 		// First, try to load from the internal state.
-		if (!empty(static::$state))
+		if (!empty(self::$state))
 		{
-			return static::$state;
+			return self::$state;
 		}
 
 		// If we couldn't load from the internal state, try the session.
@@ -175,7 +177,7 @@ abstract class FinderIndexer
 		// Setup the profiler if debugging is enabled.
 		if (JFactory::getApplication()->get('debug'))
 		{
-			static::$profiler = JProfiler::getInstance('FinderIndexer');
+			self::$profiler = JProfiler::getInstance('FinderIndexer');
 		}
 
 		// Setup the stemmer.
@@ -185,9 +187,9 @@ abstract class FinderIndexer
 		}
 
 		// Set the state.
-		static::$state = $data;
+		self::$state = $data;
 
-		return static::$state;
+		return self::$state;
 	}
 
 	/**
@@ -208,10 +210,11 @@ abstract class FinderIndexer
 		}
 
 		// Set the new internal state.
-		static::$state = $data;
+		self::$state = $data;
 
 		// Set the new session state.
-		JFactory::getSession()->set('_finder.state', $data);
+		$session = JFactory::getSession();
+		$session->set('_finder.state', $data);
 
 		return true;
 	}
@@ -229,7 +232,8 @@ abstract class FinderIndexer
 		self::$state = null;
 
 		// Reset the session state to null.
-		JFactory::getSession()->set('_finder.state', null);
+		$session = JFactory::getSession();
+		$session->set('_finder.state', null);
 	}
 
 	/**
@@ -280,14 +284,13 @@ abstract class FinderIndexer
 	protected static function getSignature($item)
 	{
 		// Get the indexer state.
-		$state = static::getState();
+		$state = self::getState();
 
 		// Get the relevant configuration variables.
-		$config = array(
-			$state->weights,
-			$state->options->get('stem', 1),
-			$state->options->get('stemmer', 'porter_en')
-		);
+		$config = array();
+		$config[] = $state->weights;
+		$config[] = $state->options->get('stem', 1);
+		$config[] = $state->options->get('stemmer', 'porter_en');
 
 		return md5(serialize(array($item, $config)));
 	}
@@ -295,8 +298,10 @@ abstract class FinderIndexer
 	/**
 	 * Method to parse input, tokenize it, and then add it to the database.
 	 *
-	 * @param   mixed    $input    String or resource to use as input. A resource input will automatically be chunked to conserve
-	 *                             memory. Strings will be chunked if longer than 2K in size.
+	 * @param   mixed    $input    String or resource to use as input. A resource
+	 *                             input will automatically be chunked to conserve
+	 *                             memory. Strings will be chunked if longer than
+	 *                             2K in size.
 	 * @param   integer  $context  The context of the input. See context constants.
 	 * @param   string   $lang     The language of the input.
 	 * @param   string   $format   The format of the input.
@@ -368,7 +373,7 @@ abstract class FinderIndexer
 					$count += $this->addTokensToDb($tokens, $context);
 
 					// Check if we're approaching the memory limit of the token table.
-					if ($count > static::$state->options->get('memory_table_limit', 30000))
+					if ($count > self::$state->options->get('memory_table_limit', 30000))
 					{
 						$this->toggleTables(false);
 					}
@@ -423,7 +428,7 @@ abstract class FinderIndexer
 					$count += $this->addTokensToDb($tokens, $context);
 
 					// Check if we're approaching the memory limit of the token table.
-					if ($count > static::$state->options->get('memory_table_limit', 30000))
+					if ($count > self::$state->options->get('memory_table_limit', 30000))
 					{
 						$this->toggleTables(false);
 					}

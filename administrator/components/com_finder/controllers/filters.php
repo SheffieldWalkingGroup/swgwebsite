@@ -23,12 +23,14 @@ class FinderControllerFilters extends JControllerAdmin
 	 * @param   string  $prefix  The class prefix. Optional.
 	 * @param   array   $config  Configuration array for model. Optional.
 	 *
-	 * @return  JModelLegacy  The model.
+	 * @return  object  The model.
 	 *
 	 * @since   2.5
 	 */
 	public function getModel($name = 'Filter', $prefix = 'FinderModel', $config = array('ignore_request' => true))
 	{
-		return parent::getModel($name, $prefix, $config);
+		$model = parent::getModel($name, $prefix, $config);
+
+		return $model;
 	}
 }

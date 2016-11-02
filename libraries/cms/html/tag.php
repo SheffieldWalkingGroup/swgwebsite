@@ -9,8 +9,6 @@
 
 defined('JPATH_PLATFORM') or die;
 
-use Joomla\Utilities\ArrayHelper;
-
 /**
  * Utility class for tags
  *
@@ -58,7 +56,7 @@ abstract class JHtmlTag
 				}
 				elseif (is_array($config['filter.published']))
 				{
-					$config['filter.published'] = ArrayHelper::toInteger($config['filter.published']);
+					JArrayHelper::toInteger($config['filter.published']);
 					$query->where('a.published IN (' . implode(',', $config['filter.published']) . ')');
 				}
 			}
@@ -128,7 +126,7 @@ abstract class JHtmlTag
 			}
 			elseif (is_array($config['filter.published']))
 			{
-				$config['filter.published'] = ArrayHelper::toInteger($config['filter.published']);
+				JArrayHelper::toInteger($config['filter.published']);
 				$query->where('a.published IN (' . implode(',', $config['filter.published']) . ')');
 			}
 		}
@@ -161,7 +159,7 @@ abstract class JHtmlTag
 	 *
 	 * @since   3.1
 	 */
-	public static function ajaxfield($selector = '#jform_tags', $allowCustom = true)
+	public static function ajaxfield($selector='#jform_tags', $allowCustom = true)
 	{
 		// Get the component parameters
 		$params = JComponentHelper::getParams("com_tags");
@@ -170,7 +168,7 @@ abstract class JHtmlTag
 		$displayData = array(
 			'minTermLength' => $minTermLength,
 			'selector'      => $selector,
-			'allowCustom'   => JFactory::getUser()->authorise('core.create', 'com_tags') ? $allowCustom : false,
+			'allowCustom'   => $allowCustom
 		);
 
 		JLayoutHelper::render('joomla.html.tag', $displayData);

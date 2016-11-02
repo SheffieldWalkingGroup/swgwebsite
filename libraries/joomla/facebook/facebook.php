@@ -14,8 +14,7 @@ use Joomla\Registry\Registry;
 /**
  * Joomla Platform class for interacting with a Facebook API instance.
  *
- * @since       13.1
- * @deprecated  4.0  Use the `joomla/facebook` package via Composer instead
+ * @since  13.1
  */
 class JFacebook
 {

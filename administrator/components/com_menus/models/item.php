@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\Registry\Registry;
 
 jimport('joomla.filesystem.path');
-JLoader::register('MenusHelper', JPATH_ADMINISTRATOR . '/components/com_menus/helpers/menus.php');
+require_once JPATH_COMPONENT . '/helpers/menus.php';
 
 /**
  * Menu Item Model for Menus.
@@ -593,7 +593,7 @@ class MenusModelItem extends JModelAdmin
 			$filters = JFactory::getApplication()->getUserState('com_menus.items.filter');
 			$data['published'] = (isset($filters['published']) ? $filters['published'] : null);
 			$data['language'] = (isset($filters['language']) ? $filters['language'] : null);
-			$data['access'] = (isset($filters['access']) ? $filters['access'] : JFactory::getConfig()->get('access'));
+			$data['access'] = (isset($filters['access']) ? $filters['access'] : null);
 		}
 
 		if (isset($data['menutype']) && !$this->getState('item.menutypeid'))
@@ -1186,7 +1186,7 @@ class MenusModelItem extends JModelAdmin
 	/**
 	 * Method rebuild the entire nested set tree.
 	 *
-	 * @return  boolean|JException  Boolean true on success, boolean false or JException instance on error
+	 * @return  boolean  False on failure or error, true otherwise.
 	 *
 	 * @since   1.6
 	 */
@@ -1381,7 +1381,7 @@ class MenusModelItem extends JModelAdmin
 		if ($assoc)
 		{
 			// Adding self to the association
-			$associations = isset($data['associations']) ? $data['associations'] : array();
+			$associations = $data['associations'];
 
 			// Unset any invalid associations
 			$associations = Joomla\Utilities\ArrayHelper::toInteger($associations);
@@ -1402,31 +1402,14 @@ class MenusModelItem extends JModelAdmin
 				JError::raiseNotice(403, JText::_('COM_MENUS_ERROR_ALL_LANGUAGE_ASSOCIATED'));
 			}
 
-			// Get associationskey for edited item
-			$db    = $this->getDbo();
+			$associations[$table->language] = $table->id;
+
+			// Deleting old association for these items
+			$db = $this->getDbo();
 			$query = $db->getQuery(true)
-				->select($db->quoteName('key'))
-				->from($db->quoteName('#__associations'))
-				->where($db->quoteName('context') . ' = ' . $db->quote($this->associationsContext))
-				->where($db->quoteName('id') . ' = ' . (int) $table->id);
-			$db->setQuery($query);
-			$old_key = $db->loadResult();
-
-			// Deleting old associations for the associated items
-			$query = $db->getQuery(true)
-				->delete($db->quoteName('#__associations'))
-				->where($db->quoteName('context') . ' = ' . $db->quote($this->associationsContext));
-
-			if ($associations)
-			{
-				$query->where('(' . $db->quoteName('id') . ' IN (' . implode(',', $associations) . ') OR '
-					. $db->quoteName('key') . ' = ' . $db->quote($old_key) . ')');
-			}
-			else
-			{
-				$query->where($db->quoteName('key') . ' = ' . $db->quote($old_key));
-			}
-
+				->delete('#__associations')
+				->where('context=' . $db->quote($this->associationsContext))
+				->where('id IN (' . implode(',', $associations) . ')');
 			$db->setQuery($query);
 
 			try
@@ -1440,13 +1423,7 @@ class MenusModelItem extends JModelAdmin
 				return false;
 			}
 
-			// Adding self to the association
-			if (!$all_language)
-			{
-				$associations[$table->language] = (int) $table->id;
-			}
-
-			if (count($associations) > 1)
+			if (!$all_language && count($associations) > 1)
 			{
 				// Adding new association for these items
 				$key = md5(json_encode($associations));

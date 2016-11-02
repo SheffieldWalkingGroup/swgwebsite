@@ -27,7 +27,7 @@ class FinderIndexerStemmerFr extends FinderIndexerStemmer
 	 * @var    array
 	 * @since  3.0
 	 */
-	private static $stemRules = null;
+	private static $_stemRules = null;
 
 	/**
 	 * Method to stem a token and return the root.
@@ -57,7 +57,7 @@ class FinderIndexerStemmerFr extends FinderIndexerStemmer
 		if (!isset($this->cache[$lang][$token]))
 		{
 			// Stem the token.
-			$result = self::getStem($token);
+			$result = static::_getStem($token);
 
 			// Add the token to the cache.
 			$this->cache[$lang][$token] = $result;
@@ -75,9 +75,9 @@ class FinderIndexerStemmerFr extends FinderIndexerStemmer
 	 */
 	protected static function getStemRules()
 	{
-		if (self::$stemRules)
+		if (static::$_stemRules)
 		{
-			return self::$stemRules;
+			return static::$_stemRules;
 		}
 
 		$vars = array();
@@ -134,9 +134,9 @@ class FinderIndexerStemmerFr extends FinderIndexerStemmer
 			'eya2i.', 'ya1i.', 'yo1i.', 'esu1.', 'ugi1.', 'tt1.', 'end0.'
 		);
 
-		self::$stemRules = $vars;
+		static::$_stemRules = $vars;
 
-		return self::$stemRules;
+		return static::$_stemRules;
 	}
 
 	/**
@@ -151,7 +151,7 @@ class FinderIndexerStemmerFr extends FinderIndexerStemmer
 	 *
 	 * @since   3.0
 	 */
-	private static function getFirstRule($reversed_input, $rule_number)
+	private static function _getFirstRule($reversed_input, $rule_number)
 	{
 		$vars = static::getStemRules();
 
@@ -181,7 +181,7 @@ class FinderIndexerStemmerFr extends FinderIndexerStemmer
 	 *
 	 * @since   3.0
 	 */
-	private static function check($reversed_stem)
+	private static function _check($reversed_stem)
 	{
 		$vars = static::getStemRules();
 
@@ -212,7 +212,7 @@ class FinderIndexerStemmerFr extends FinderIndexerStemmer
 	 *
 	 * @since   3.0
 	 */
-	private static function getStem($input)
+	private static function _getStem($input)
 	{
 		$vars = static::getStemRules();
 
@@ -223,7 +223,7 @@ class FinderIndexerStemmerFr extends FinderIndexerStemmer
 		// This loop goes through the rules' array until it finds an ending one (ending by '.') or the last one ('end0.')
 		while (true)
 		{
-			$rule_number = self::getFirstRule($reversed_input, $rule_number);
+			$rule_number = static::_getFirstRule($reversed_input, $rule_number);
 
 			if ($rule_number == -1)
 			{
@@ -238,7 +238,7 @@ class FinderIndexerStemmerFr extends FinderIndexerStemmer
 			{
 				$reversed_stem = utf8_decode($matches[4]) . substr($reversed_input, $matches[3], strlen($reversed_input) - $matches[3]);
 
-				if (self::check($reversed_stem))
+				if (self::_check($reversed_stem))
 				{
 					$reversed_input = $reversed_stem;
 

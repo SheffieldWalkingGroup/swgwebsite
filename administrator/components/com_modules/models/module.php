@@ -375,7 +375,7 @@ class ModulesModelModule extends JModelAdmin
 	 *
 	 * @param   array  &$pks  An array of primary key IDs.
 	 *
-	 * @return  boolean|JException  Boolean true on success, JException instance on error
+	 * @return  boolean  True if successful.
 	 *
 	 * @since   1.6
 	 * @throws  Exception
@@ -872,7 +872,7 @@ class ModulesModelModule extends JModelAdmin
 	 */
 	public function validate($form, $data, $group = null)
 	{
-		JLoader::register('ContentHelper', JPATH_ADMINISTRATOR . '/components/com_content/helpers/content.php');
+		require_once JPATH_ADMINISTRATOR . '/components/com_content/helpers/content.php';
 
 		return parent::validate($form, $data, $group);
 	}

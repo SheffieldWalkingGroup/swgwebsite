@@ -1,0 +1,23 @@
+/* "Simple Picture Slideshow" Plugin for Joomla 3.1 - Version 1.5.8
+/* License: GNU General Public License version 2 or later; see LICENSE.txt
+/* Author: Andreas Berger - andreas_berger@bretteleben.de
+/* Copyright (C) 2013 Andreas Berger - http://www.bretteleben.de. All rights reserved.
+/* Project page and Demo at http://www.bretteleben.de
+/* ***Last update: 2013-08-23*** */
+.besps_holder {}
+.besps_slides {}
+.besps_slides div {}
+.besps_slides div img {border:none;margin:0;padding:0;}
+.besps_ctrls {}
+.besps_ctrl_left a, .besps_ctrl_right a {}
+.besps_ctrl_left {float:left;margin:0;padding:0;height:16px;}
+.besps_ctrl_right {float:right;margin:0;padding:0;height:16px;}
+.besps_ctrl_left img, .besps_ctrl_right img {margin:0;margin-bottom:-6px;padding:0;border:none;}
+.besps_counter {font-size:12px;font-weight:bold;color:#666;background:transparent;}
+.besps_caps {vertical-align:bottom;line-height:0;font-size:0;margin:0;padding:0;}
+.besps_caps div.bs_inside {visibility:visible;z-index:3;background:#fff;line-height:0;font-size:0;margin:0;padding:0;filter:alpha(opacity=60);opacity:0.60;border:none;}
+.besps_caps div.bs_outside {visibility:visible;z-index:3;border:none;line-height:0;font-size:0;margin:0;padding:0;}
+.besps_slides div a, .besps_slides div a:link, .besps_slides div a:visited, .besps_slides div a:focus, .besps_slides div a:hover, .besps_slides div a:active {text-decoration:none;line-height:12px;font-size:12px;font-weight:bold;color:#000;background:transparent;border:none;}
+.besps_caps div span {line-height:12px;font-size:12px;margin:3px;display:block;font-weight:bold;color:#000;}
+.besps_caps div span + span {font-weight:normal;margin-bottom:5px;line-height:10px;font-size:10px;}
+/* --- END --- */

@@ -156,21 +156,6 @@ class PlgSystemDebug extends JPlugin
 		// Prepare disconnect handler for SQL profiling.
 		$db = JFactory::getDbo();
 		$db->addDisconnectHandler(array($this, 'mysqlDisconnectHandler'));
-
-		// Log deprecated class aliases
-		foreach (JLoader::getDeprecatedAliases() as $deprecation)
-		{
-			JLog::add(
-				sprintf(
-					'%1$s has been aliased to %2$s and the former class name is deprecated. The alias will be removed in %3$s.',
-					$deprecation['old'],
-					$deprecation['new'],
-					$deprecation['version']
-				),
-				JLog::WARNING,
-				'deprecated'
-			);
-		}
 	}
 
 	/**
@@ -351,7 +336,7 @@ class PlgSystemDebug extends JPlugin
 	 * General display method.
 	 *
 	 * @param   string  $item    The item to display.
-	 * @param   array   $errors  Errors occurred during execution.
+	 * @param   array   $errors  Errors occured during execution.
 	 *
 	 * @return  string
 	 *
@@ -375,7 +360,7 @@ class PlgSystemDebug extends JPlugin
 			return __METHOD__ . ' -- Unknown method: ' . $fncName . '<br />';
 		}
 
-		$html = array();
+		$html = '';
 
 		$js = "toggleContainer('dbg_container_" . $item . "');";
 
@@ -533,7 +518,7 @@ class PlgSystemDebug extends JPlugin
 		foreach (JProfiler::getInstance('Application')->getMarks() as $mark)
 		{
 			$totalTime += $mark->time;
-			$totalMem += (float) $mark->memory;
+			$totalMem += $mark->memory;
 			$htmlMark = sprintf(
 				JText::_('PLG_DEBUG_TIME') . ': <span class="label label-time">%.2f&nbsp;ms</span> / <span class="label label-default">%.2f&nbsp;ms</span>'
 				. ' ' . JText::_('PLG_DEBUG_MEMORY') . ': <span class="label label-memory">%0.3f MB</span> / <span class="label label-default">%0.2f MB</span>'
@@ -601,7 +586,7 @@ class PlgSystemDebug extends JPlugin
 			);
 
 			$barsMem[] = (object) array(
-				'width' => round((float) $mark->memory / ($totalMem / 100), 4),
+				'width' => round($mark->memory / ($totalMem / 100), 4),
 				'class' => $barClassMem,
 				'tip' => $mark->tip . ' ' . round($mark->memory, 3) . '  MB',
 			);
@@ -1057,7 +1042,7 @@ class PlgSystemDebug extends JPlugin
 					{
 						if ($dup != $id)
 						{
-							$dups[] = '<a class="alert-link" href="#dbg-query-' . ($dup + 1) . '">#' . ($dup + 1) . '</a>';
+							$dups[] = '<a href="#dbg-query-' . ($dup + 1) . '">#' . ($dup + 1) . '</a>';
 						}
 					}
 
@@ -1122,7 +1107,7 @@ class PlgSystemDebug extends JPlugin
 
 				foreach ($dups as $dup)
 				{
-					$links[] = '<a class="alert-link" href="#dbg-query-' . ($dup + 1) . '">#' . ($dup + 1) . '</a>';
+					$links[] = '<a href="#dbg-query-' . ($dup + 1) . '">#' . ($dup + 1) . '</a>';
 				}
 
 				$html[] = '<div>' . JText::sprintf('PLG_DEBUG_QUERY_DUPLICATES_NUMBER', count($links)) . ': ' . implode('&nbsp; ', $links) . '</div>';
@@ -1299,7 +1284,7 @@ class PlgSystemDebug extends JPlugin
 				}
 				elseif ($k == 'Error')
 				{
-					// An error in the EXPLAIN query occurred, display it instead of the result (means original query had syntax error most probably).
+					// An error in the EXPLAIN query occured, display it instead of the result (means original query had syntax error most probably).
 					$html[] = '<td class="dbg-warning">' . htmlspecialchars($td);
 					$hasWarnings = true;
 				}

@@ -1,0 +1,91 @@
+/* Basic elements & text styles */
+@font-face {
+    font-family: 'Lora';
+    src: url('/templates/swgpeter/fonts/lora/lora-regular-webfont.eot');
+    src: url('/templates/swgpeter/fonts/lora/lora-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/templates/swgpeter/fonts/lora/lora-regular-webfont.woff') format('woff'),
+         url('/templates/swgpeter/fonts/lora/lora-regular-webfont.ttf') format('truetype'),
+         url('/templates/swgpeter/fonts/lora/lora-regular-webfont.svg#LoraRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+h1, h2 {
+    font-family:'Lora',serif;
+    font-weight:normal;
+    color:#0c0c0c;
+    font-style:normal;
+}
+
+h1 {
+    font-size:40px;
+    text-shadow:1px 1px 2px #999;
+}
+
+h2 {
+    font-size:28px;
+    text-shadow:1px 1px 2px #999;
+}
+
+h3 {
+	border-top:1px solid #555;
+    border-bottom:1px solid #555;
+    margin:0 0 5px;
+    padding:3px 10px;
+    font-weight:normal;
+    font-family:sans-serif;
+    font-size:18px;
+	background:linear-gradient( 90deg, rgba(155,182,124,0), rgba(155,182,124,1) 12.5%, rgba(155,182,124,1) 87.5%, rgba(155,182,124,0) );
+}
+
+.boxout {
+	border:1px solid #555;
+	box-shadow:2px 2px 8px #222;
+	padding:8px;
+	border-radius:3px;
+}
+
+a {
+	color:#0042ab;
+	text-decoration:none;
+}
+
+a:hover, a:active {
+	text-decoration:underline;
+}
+
+a img {
+    border:none;
+}
+
+dl {
+	margin:12px 20px;
+	padding:0;
+}
+
+dl dt {
+	font-weight:bold;
+}
+
+dl dd {
+	margin:2px 0 10px 40px;
+	padding:0; 
+}
+
+table
+{
+	border-collapse: collapse;
+}
+
+table td
+{
+	margin:0;
+	padding:5px;
+}
+
+body {
+    font-family:sans-serif;
+    font-size:12px;
+    margin-top:0;
+}

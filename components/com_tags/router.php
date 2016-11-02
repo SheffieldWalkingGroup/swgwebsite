@@ -9,8 +9,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\Utilities\ArrayHelper;
-
 /**
  * Routing class from com_tags
  *
@@ -49,7 +47,7 @@ class TagsRouter extends JComponentRouterBase
 
 		if (is_array($mId))
 		{
-			$mId = ArrayHelper::toInteger($mId);
+			JArrayHelper::toInteger($mId);
 		}
 
 		$view = '';

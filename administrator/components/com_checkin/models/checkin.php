@@ -64,12 +64,12 @@ class CheckinModelCheckin extends JModelList
 	 *
 	 * @since   1.6
 	 */
-	protected function populateState($ordering = 'table', $direction = 'asc')
+	protected function populateState($ordering = null, $direction = null)
 	{
 		$this->setState('filter.search', $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search'));
 
 		// List state information.
-		parent::populateState($ordering, $direction);
+		parent::populateState('table', 'asc');
 	}
 
 	/**
@@ -238,7 +238,6 @@ class CheckinModelCheckin extends JModelList
 
 			// Pagination
 			$limit = (int) $this->getState('list.limit');
-
 			if ($limit !== 0)
 			{
 				$this->items = array_slice($results, $this->getState('list.start'), $limit);

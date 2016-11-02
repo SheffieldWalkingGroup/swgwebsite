@@ -86,7 +86,7 @@ abstract class JHtmlLinks
 	}
 
 	/**
-	 * Method to generate html code for a single link
+	 * Method to generate html code for a list of links
 	 *
 	 * @param   array  $link  link properties
 	 *

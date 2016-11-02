@@ -461,7 +461,7 @@ class JInstallerAdapterLanguage extends JInstallerAdapter
 	 *
 	 * @param   string  $eid  The tag of the language to uninstall
 	 *
-	 * @return  boolean  True on success
+	 * @return  mixed  Return value for uninstall method in component uninstall file
 	 *
 	 * @since   3.1
 	 */
@@ -670,7 +670,6 @@ class JInstallerAdapterLanguage extends JInstallerAdapter
 
 			return false;
 		}
-
 		return $this->parent->extension->get('extension_id');
 	}
 

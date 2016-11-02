@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 
 if (!JFactory::getUser()->authorise('core.manage', 'com_messages'))
 {
-	throw new JAccessExceptionNotallowed(JText::_('JERROR_ALERTNOAUTHOR'), 403);
+	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
 }
 
 $task       = JFactory::getApplication()->input->get('task');

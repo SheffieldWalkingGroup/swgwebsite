@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<form name="addeditwalk">
+		<field name="id" type="hidden" />
+		<fieldset name="basic" label="Basic details">
+			<field name="walkid" type="sql" label="Walk in library" query="SELECT ID, CONCAT(walkname,' (',distancegrade,difficultygrade,')') AS name FROM walks ORDER BY walkname ASC" key_field="ID" value_field="name" default="">
+				<option value="">-- Select --</option>
+			</field>
+			<field name="name" type="text" label="Name in programme" size="60" maxlength="80" />
+			<field name="description" type="editor" editor="swg_tinymce_events" label="Description" required="required" />
+			<field name="date" type="calendar" label="Date" default="NOW" />
+			<field name="okToPublish" type="checkbox" value="1" default="0" label="OK to publish" />
+		</fieldset>
+		
+		<fieldset name="location" addfieldpath="/administrator/components/com_swg_events/models/fields" label="Locations">
+			<field
+				name="location" type="sql" label="General area" 
+				query="SELECT SequenceID, Name from walkareas" 
+				key_field="SequenceID" value_field="Name"
+			/>
+			<field name="startPlaceName" type="text" label="Start place name" />
+			<field name="startGridRef" type="text" label="Start grid reference" />
+			<field name="isLinear" type="radio" label="Shape">
+				<option value="0">Circular</option>
+				<option value="1">Linear</option>
+			</field>
+			<field name="endPlaceName" type="text" label="End place name (if linear)" />
+			<field name="endGridRef" type="text" label="End grid reference (if linear)" />
+			
+			<field name="meetPointId" type="sql" label="Meeting place" query="SELECT SequenceID, LongDesc from startpoints" key_field="SequenceID" value_field="LongDesc">
+				<option value="">-- Select --</option>
+			</field>
+			<field name="meetTime" type="text" label="Meeting time (hh:mm)" />
+			<field name="meetPlaceTime" type="textarea" label="Meeting place and time (if more info needed)" description="Give more details about meeting &amp; transport, e.g. public transport information." rows="3" cols="60" />
+		</fieldset>
+		<fieldset name="route" label="Route">
+			<field name="miles" type="text" label="Estimated distance (miles)" />
+			<field name="difficultyGrade" type="radio" label="Difficulty grade">
+				<option value="1">1 (easy)</option>
+				<option value="2">2 (medium)</option>
+				<option value="3">3 (hard)</option>
+			</field>
+			
+			<field name="dogFriendly" type="checkbox" label="Dogs allowed" value="1" default="0" />
+			<field name="childFriendly" type="checkbox" label="Route can take infant pushchairs/buggies" value="1" default="0" />
+			<field name="speedy" type="checkbox" label="Speedy" value="1" default="0" />
+			<field name="challenge" type="checkbox" label="Challenge" value="1" default="0" />
+		</fieldset>
+		
+		<fieldset name="leadership" label="Leadership">
+			<field name="leader" type="sql" label="Leader" query="SELECT ID, CONCAT(Forename,' ',Surname) as name FROM walkleaders Where ID != 46 ORDER BY Forename ASC, Surname ASC" key_field="ID" value_field="name" default="">
+				<option value="">-- Select --</option>
+			</field>
+			<field name="backmarker" type="sql" label="Backmarker" query="SELECT ID, CONCAT(Forename,' ',Surname) as name FROM walkleaders ORDER BY Forename ASC, Surname ASC" key_field="ID" value_field="name" default="46" />
+		</fieldset>
+		
+		<fieldset name="alterations" label="Alterations">
+			<field name="alterations_details" type="checkbox" label="Details altered" value="1" default="0" />
+			<field name="alterations_cancelled" type="checkbox" label="Cancelled" value="1" default="0" />
+			<field name="alterations_placeTime" type="checkbox" label="Meeting place/time altered" value="1" default="0" />
+			<field name="alterations_organiser" type="checkbox" label="Leader details altered" value="1" default="0" />
+			<field name="alterations_date" type="checkbox" label="Date altered" value="1" default="0" />
+		</fieldset>
+		
+	</form>

@@ -263,8 +263,7 @@ hr.hr-condensed {
 }
 
 .row-striped .row-fluid {
-	width: 100%;
-	box-sizing: border-box; // box-sizing since we don't care about padding
+	width: 97%; // lower than 100% since we have padding
 }
 .row-striped .row-fluid [class*="span"] {
 	min-height: 10px;
@@ -432,16 +431,6 @@ fieldset.radio.btn-group {
 	overflow: hidden;
 }
 
-/* Make Accessible Hidden Elements visible on focus */
-.element-invisible:focus {
-	width:auto;
-	height:auto;
-	overflow:auto;
-	background:#eee;
-	color:#000;
-	padding:1em;
-}
-
 /* Form Vertical Overrides Form Horizontal */
 .form-vertical {
 	.control-label {
@@ -540,10 +529,6 @@ th .tooltip-inner {
 // Add Bootstrap 3 .alert-link
 .alert-link {
   font-weight: bold;
-}
-
-.alert .alert-link {
-  color: darken(@warningText, 10%);
 }
 
 .alert-success .alert-link {

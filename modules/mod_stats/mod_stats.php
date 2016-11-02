@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 // Include the statistics functions only once
-JLoader::register('ModStatsHelper', __DIR__ . '/helper.php');
+require_once __DIR__ . '/helper.php';
 
 $serverinfo      = $params->get('serverinfo');
 $siteinfo        = $params->get('siteinfo');

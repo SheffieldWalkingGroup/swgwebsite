@@ -14,8 +14,7 @@ defined('JPATH_PLATFORM') or die;
  *
  * @documentation https://developer.github.com/v3/repos/hooks
  *
- * @since       12.3
- * @deprecated  4.0  Use the `joomla/github` package via Composer instead
+ * @since  12.3
  */
 class JGithubPackageRepositoriesHooks extends JGithubPackage
 {
@@ -26,19 +25,8 @@ class JGithubPackageRepositoriesHooks extends JGithubPackage
 	 * @since  12.3
 	 */
 	protected $events = array(
-		'push',
-		'issues',
-		'issue_comment',
-		'commit_comment',
-		'pull_request',
-		'gollum',
-		'watch',
-		'download',
-		'fork',
-		'fork_apply',
-		'member',
-		'public',
-		'status',
+		'push', 'issues', 'issue_comment', 'commit_comment', 'pull_request', 'gollum', 'watch', 'download', 'fork', 'fork_apply',
+		'member', 'public', 'status'
 	);
 
 	/**
@@ -161,8 +149,7 @@ class JGithubPackageRepositoriesHooks extends JGithubPackage
 				'events'        => $events,
 				'add_events'    => $addEvents,
 				'remove_events' => $removeEvents,
-				'active'        => $active,
-			)
+				'active'        => $active)
 		);
 
 		return $this->processResponse(

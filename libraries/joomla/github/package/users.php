@@ -14,14 +14,15 @@ defined('JPATH_PLATFORM') or die;
  *
  * @documentation https://developer.github.com/v3/repos/users
  *
- * @since       12.3
- * @deprecated  4.0  Use the `joomla/github` package via Composer instead
+ * @since  12.3
  */
 class JGithubPackageUsers extends JGithubPackage
 {
 	protected $name = 'Users';
 
-	protected $packages = array('emails', 'followers', 'keys');
+	protected $packages = array(
+		'emails', 'followers', 'keys'
+	);
 
 	/**
 	 * Get a single user.
@@ -85,7 +86,7 @@ class JGithubPackageUsers extends JGithubPackage
 			'company'  => $company,
 			'location' => $location,
 			'hireable' => $hireable,
-			'bio'      => $bio,
+			'bio'      => $bio
 		);
 
 		// Build the request path.

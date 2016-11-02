@@ -12,8 +12,7 @@ defined('JPATH_PLATFORM') or die;
 /**
  * GitHub API Activity class for the Joomla Platform.
  *
- * @since       3.3 (CMS)
- * @deprecated  4.0  Use the `joomla/github` package via Composer instead
+ * @since  3.3 (CMS)
  *
  * @documentation  https://developer.github.com/v3/orgs/
  *
@@ -24,7 +23,9 @@ class JGithubPackageOrgs extends JGithubPackage
 {
 	protected $name = 'Orgs';
 
-	protected $packages = array('members', 'teams');
+	protected $packages = array(
+		'members', 'teams'
+	);
 
 	/**
 	 * List User Organizations.

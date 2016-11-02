@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('TemplatesHelper', JPATH_ADMINISTRATOR . '/components/com_templates/helpers/templates.php');
+require_once JPATH_ADMINISTRATOR . '/components/com_templates/helpers/templates.php';
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 $clientId       = $this->item->client_id;

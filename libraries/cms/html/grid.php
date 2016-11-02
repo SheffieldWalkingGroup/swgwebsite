@@ -72,7 +72,7 @@ abstract class JHtmlGrid
 	public static function sort($title, $order, $direction = 'asc', $selected = '', $task = null, $new_direction = 'asc', $tip = '')
 	{
 		JHtml::_('behavior.core');
-		JHtml::_('bootstrap.popover');
+		JHtml::_('bootstrap.tooltip');
 
 		$direction = strtolower($direction);
 		$icon = array('arrow-up-3', 'arrow-down-3');
@@ -88,8 +88,7 @@ abstract class JHtmlGrid
 		}
 
 		$html = '<a href="#" onclick="Joomla.tableOrdering(\'' . $order . '\',\'' . $direction . '\',\'' . $task . '\');return false;"'
-			. ' class="hasPopover" title="' . htmlspecialchars(JText::_($tip ? $tip : $title)) . '"'
-			. ' data-content="' . htmlspecialchars(JText::_('JGLOBAL_CLICK_TO_SORT_THIS_COLUMN')) . '" data-placement="top">';
+			. ' class="hasTooltip" title="' . JHtml::tooltipText(($tip ? $tip : $title), 'JGLOBAL_CLICK_TO_SORT_THIS_COLUMN') . '">';
 
 		if (isset($title['0']) && $title['0'] == '<')
 		{
@@ -255,7 +254,7 @@ abstract class JHtmlGrid
 			array(
 				'list.attr' => 'class="inputbox" size="1" onchange="Joomla.submitform();"',
 				'list.select' => $filter_state,
-				'option.key' => null,
+				'option.key' => null
 			)
 		);
 	}

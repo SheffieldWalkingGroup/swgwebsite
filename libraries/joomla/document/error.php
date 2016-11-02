@@ -17,49 +17,9 @@ defined('JPATH_PLATFORM') or die;
 class JDocumentError extends JDocument
 {
 	/**
-	 * Document base URL
-	 *
-	 * @var    string
-	 * @since  11.1
-	 */
-	public $baseurl = '';
-
-	/**
-	 * Flag if debug mode has been enabled
-	 *
-	 * @var    boolean
-	 * @since  11.1
-	 */
-	public $debug = false;
-
-	/**
 	 * Error Object
 	 *
-	 * @var    Exception|Throwable
-	 * @since  11.1
-	 */
-	public $error;
-
-	/**
-	 * Name of the template
-	 *
-	 * @var    string
-	 * @since  11.1
-	 */
-	public $template = null;
-
-	/**
-	 * File name
-	 *
-	 * @var    array
-	 * @since  11.1
-	 */
-	public $_file = null;
-
-	/**
-	 * Error Object
-	 *
-	 * @var    Exception|Throwable
+	 * @var    object
 	 * @since  11.1
 	 */
 	protected $_error;
@@ -85,7 +45,7 @@ class JDocumentError extends JDocument
 	/**
 	 * Set error object
 	 *
-	 * @param   Exception|Throwable  $error  Error object to set
+	 * @param   object  $error  Error object to set
 	 *
 	 * @return  boolean  True on success
 	 *
@@ -148,16 +108,6 @@ class JDocumentError extends JDocument
 		$this->template = $template;
 		$this->debug = isset($params['debug']) ? $params['debug'] : false;
 		$this->error = $this->_error;
-
-		// Load the language file for the template if able
-		if (JFactory::$language)
-		{
-			$lang = JFactory::getLanguage();
-	
-			// 1.5 or core then 1.6
-			$lang->load('tpl_' . $template, JPATH_BASE, null, false, true)
-				|| $lang->load('tpl_' . $template, $directory . '/' . $template, null, false, true);
-		}
 
 		// Load
 		$data = $this->_loadTemplate($directory . '/' . $template, $file);

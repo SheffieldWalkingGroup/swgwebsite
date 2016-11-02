@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('InstallerModel', __DIR__ . '/extension.php');
+require_once __DIR__ . '/extension.php';
 
 /**
  * Installer Discover Model
@@ -237,11 +237,7 @@ class InstallerModelDiscover extends InstallerModel
 			->where($db->quoteName('state') . ' = -1');
 		$db->setQuery($query);
 
-		try
-		{
-			$db->execute();
-		}
-		catch (JDatabaseExceptionExecuting $e)
+		if (!$db->execute())
 		{
 			$this->_message = JText::_('COM_INSTALLER_MSG_DISCOVER_FAILEDTOPURGEEXTENSIONS');
 

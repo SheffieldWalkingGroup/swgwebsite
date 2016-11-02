@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 // Include the search functions only once
-JLoader::register('ModSearchHelper', __DIR__ . '/helper.php');
+require_once __DIR__ . '/helper.php';
 
 $lang = JFactory::getLanguage();
 $app  = JFactory::getApplication();

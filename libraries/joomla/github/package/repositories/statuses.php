@@ -14,8 +14,7 @@ defined('JPATH_PLATFORM') or die;
  *
  * @documentation https://developer.github.com/v3/repos/statuses
  *
- * @since       12.3
- * @deprecated  4.0  Use the `joomla/github` package via Composer instead
+ * @since  12.3
  */
 class JGithubPackageRepositoriesStatuses extends JGithubPackage
 {
@@ -48,7 +47,7 @@ class JGithubPackageRepositoriesStatuses extends JGithubPackage
 
 		// Build the request data.
 		$data = array(
-			'state' => $state,
+			'state' => $state
 		);
 
 		if (!is_null($targetUrl))

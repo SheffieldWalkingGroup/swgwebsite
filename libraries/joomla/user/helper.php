@@ -9,8 +9,6 @@
 
 defined('JPATH_PLATFORM') or die;
 
-use Joomla\Utilities\ArrayHelper;
-
 /**
  * Authorisation helper class, provides static methods to perform various tasks relevant
  * to the Joomla user and authorisation classes
@@ -155,7 +153,7 @@ abstract class JUserHelper
 		$user = JUser::getInstance((int) $userId);
 
 		// Set the group ids.
-		$groups = ArrayHelper::toInteger($groups);
+		JArrayHelper::toInteger($groups);
 		$user->groups = $groups;
 
 		// Get the titles for the user groups.
@@ -243,7 +241,7 @@ abstract class JUserHelper
 			->from($db->quoteName('#__users'))
 			->where($db->quoteName('activation') . ' = ' . $db->quote($activation))
 			->where($db->quoteName('block') . ' = 1')
-			->where($db->quoteName('lastvisitDate') . ' = ' . $db->quote($db->getNullDate()));
+			->where($db->quoteName('lastvisitDate') . ' = ' . $db->quote('0000-00-00 00:00:00'));
 		$db->setQuery($query);
 		$id = (int) $db->loadResult();
 

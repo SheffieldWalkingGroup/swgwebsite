@@ -71,7 +71,7 @@ abstract class JHtmlAccess
 			array(
 				'list.attr' => $attribs,
 				'list.select' => $selected,
-				'id' => $id,
+				'id' => $id
 			)
 		);
 	}
@@ -92,12 +92,19 @@ abstract class JHtmlAccess
 	 */
 	public static function usergroup($name, $selected, $attribs = '', $allowAll = true, $id = false)
 	{
-		$options = array_values(JHelperUsergroups::getInstance()->getAll());
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true)
+			->select('a.id AS value, a.title AS text, COUNT(DISTINCT b.id) AS level')
+			->from($db->quoteName('#__usergroups') . ' AS a')
+			->join('LEFT', $db->quoteName('#__usergroups') . ' AS b ON a.lft > b.lft AND a.rgt < b.rgt')
+			->group('a.id, a.title, a.lft, a.rgt')
+			->order('a.lft ASC');
+		$db->setQuery($query);
+		$options = $db->loadObjectList();
 
 		for ($i = 0, $n = count($options); $i < $n; $i++)
 		{
-			$options[$i]->value = $options[$i]->id;
-			$options[$i]->text = str_repeat('- ', $options[$i]->level) . $options[$i]->title;
+			$options[$i]->text = str_repeat('- ', $options[$i]->level) . $options[$i]->text;
 		}
 
 		// If all usergroups is allowed, push it into the array.
@@ -110,7 +117,7 @@ abstract class JHtmlAccess
 	}
 
 	/**
-	 * Returns a UL list of user groups with checkboxes
+	 * Returns a UL list of user groups with check boxes
 	 *
 	 * @param   string   $name             The name of the checkbox controls array
 	 * @param   array    $selected         An array of the checked boxes
@@ -128,7 +135,15 @@ abstract class JHtmlAccess
 
 		$isSuperAdmin = JFactory::getUser()->authorise('core.admin');
 
-		$groups = array_values(JHelperUsergroups::getInstance()->getAll());
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true)
+			->select('a.*, COUNT(DISTINCT b.id) AS level')
+			->from($db->quoteName('#__usergroups') . ' AS a')
+			->join('LEFT', $db->quoteName('#__usergroups') . ' AS b ON a.lft > b.lft AND a.rgt < b.rgt')
+			->group('a.id, a.title, a.lft, a.rgt, a.parent_id')
+			->order('a.lft ASC');
+		$db->setQuery($query);
+		$groups = $db->loadObjectList();
 
 		$html = array();
 
@@ -169,7 +184,7 @@ abstract class JHtmlAccess
 	}
 
 	/**
-	 * Returns a UL list of actions with checkboxes
+	 * Returns a UL list of actions with check boxes
 	 *
 	 * @param   string  $name       The name of the checkbox controls array
 	 * @param   array   $selected   An array of the checked boxes
@@ -273,7 +288,7 @@ abstract class JHtmlAccess
 			array(
 				'id' => isset($config['id']) ? $config['id'] : 'assetgroups_' . (++$count),
 				'list.attr' => (is_null($attribs) ? 'class="inputbox" size="3"' : $attribs),
-				'list.select' => (int) $selected,
+				'list.select' => (int) $selected
 			)
 		);
 	}

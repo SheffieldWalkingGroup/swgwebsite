@@ -9,7 +9,7 @@
 
 defined('JPATH_BASE') or die;
 
-JLoader::register('PlgSystemStatsFormFieldBase', __DIR__ . '/base.php');
+require_once __DIR__ . '/base.php';
 
 /**
  * Unique ID Field class for the Stats Plugin.

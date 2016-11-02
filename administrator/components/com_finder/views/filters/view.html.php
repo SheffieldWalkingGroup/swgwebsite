@@ -17,41 +17,6 @@ defined('_JEXEC') or die;
 class FinderViewFilters extends JViewLegacy
 {
 	/**
-	 * An array of items
-	 *
-	 * @var  array
-	 */
-	protected $items;
-
-	/**
-	 * The pagination object
-	 *
-	 * @var  JPagination
-	 */
-	protected $pagination;
-
-	/**
-	 * The HTML markup for the sidebar
-	 *
-	 * @var  string
-	 */
-	protected $sidebar;
-
-	/**
-	 * The model state
-	 *
-	 * @var  object
-	 */
-	protected $state;
-
-	/**
-	 * The total number of items
-	 *
-	 * @var  object
-	 */
-	protected $total;
-
-	/**
 	 * Method to display the view.
 	 *
 	 * @param   string  $tpl  A template file to load. [optional]
@@ -85,8 +50,7 @@ class FinderViewFilters extends JViewLegacy
 		// Configure the toolbar.
 		$this->addToolbar();
 		$this->sidebar = JHtmlSidebar::render();
-
-		return parent::display($tpl);
+		parent::display($tpl);
 	}
 
 	/**

@@ -12,8 +12,7 @@ defined('JPATH_PLATFORM') or die;
 /**
  * GitHub API Account class for the Joomla Platform.
  *
- * @since       12.3
- * @deprecated  4.0  Use the `joomla/github` package via Composer instead
+ * @since  12.3
  */
 class JGithubAccount extends JGithubObject
 {
@@ -142,7 +141,7 @@ class JGithubAccount extends JGithubObject
 			array(
 				$scope => $scopeData,
 				'note' => $note,
-				'note_url' => $url,
+				'note_url' => $url
 			)
 		);
 

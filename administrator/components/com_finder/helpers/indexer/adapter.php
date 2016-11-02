@@ -163,7 +163,7 @@ abstract class FinderIndexerAdapter extends JPlugin
 	 * @return  boolean  True on success.
 	 *
 	 * @since   2.5
-	 * @throws  Exception on error.
+	 * @throws    Exception on error.
 	 */
 	public function onStartIndex()
 	{
@@ -271,7 +271,7 @@ abstract class FinderIndexerAdapter extends JPlugin
 	 * @return  boolean  True on success.
 	 *
 	 * @since   2.5
-	 * @throws  Exception on database error.
+	 * @throws    Exception on database error.
 	 */
 	protected function change($id, $property, $value)
 	{
@@ -527,8 +527,9 @@ abstract class FinderIndexerAdapter extends JPlugin
 
 		// Get the total number of content items to index.
 		$this->db->setQuery($query);
+		$return = (int) $this->db->loadResult();
 
-		return (int) $this->db->loadResult();
+		return $return;
 	}
 
 	/**
@@ -623,7 +624,9 @@ abstract class FinderIndexerAdapter extends JPlugin
 	protected function getListQuery($query = null)
 	{
 		// Check if we can use the supplied SQL query.
-		return $query instanceof JDatabaseQuery ? $query : $this->db->getQuery(true);
+		$query = $query instanceof JDatabaseQuery ? $query : $this->db->getQuery(true);
+
+		return $query;
 	}
 
 	/**
@@ -643,8 +646,9 @@ abstract class FinderIndexerAdapter extends JPlugin
 			->from($this->db->quoteName('#__extensions'))
 			->where($this->db->quoteName('extension_id') . ' = ' . (int) $id);
 		$this->db->setQuery($query);
+		$type = $this->db->loadResult();
 
-		return $this->db->loadResult();
+		return $type;
 	}
 
 	/**
@@ -725,8 +729,9 @@ abstract class FinderIndexerAdapter extends JPlugin
 			->from($this->db->quoteName('#__finder_types'))
 			->where($this->db->quoteName('title') . ' = ' . $this->db->quote($this->type_title));
 		$this->db->setQuery($query);
+		$result = (int) $this->db->loadResult();
 
-		return (int) $this->db->loadResult();
+		return $result;
 	}
 
 	/**

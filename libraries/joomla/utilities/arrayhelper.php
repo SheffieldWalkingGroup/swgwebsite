@@ -64,7 +64,29 @@ abstract class JArrayHelper
 	 */
 	public static function toInteger(&$array, $default = null)
 	{
-		$array = ArrayHelper::toInteger($array, $default);
+		if (is_array($array))
+		{
+			foreach ($array as $i => $v)
+			{
+				$array[$i] = (int) $v;
+			}
+		}
+		else
+		{
+			if ($default === null)
+			{
+				$array = array();
+			}
+			elseif (is_array($default))
+			{
+				self::toInteger($default, null);
+				$array = $default;
+			}
+			else
+			{
+				$array = array((int) $default);
+			}
+		}
 	}
 
 	/**
@@ -305,15 +327,64 @@ abstract class JArrayHelper
 	public static function pivot($source, $key = null)
 	{
 		$result = array();
+		$counter = array();
 
-		if (is_array($source))
+		foreach ($source as $index => $value)
 		{
-			$result = ArrayHelper::pivot($source, $key);
+			// Determine the name of the pivot key, and its value.
+			if (is_array($value))
+			{
+				// If the key does not exist, ignore it.
+				if (!isset($value[$key]))
+				{
+					continue;
+				}
+
+				$resultKey = $value[$key];
+				$resultValue = &$source[$index];
+			}
+			elseif (is_object($value))
+			{
+				// If the key does not exist, ignore it.
+				if (!isset($value->$key))
+				{
+					continue;
+				}
+
+				$resultKey = $value->$key;
+				$resultValue = &$source[$index];
+			}
+			else
+			{
+				// Just a scalar value.
+				$resultKey = $value;
+				$resultValue = $index;
+			}
+
+			// The counter tracks how many times a key has been used.
+			if (empty($counter[$resultKey]))
+			{
+				// The first time around we just assign the value to the key.
+				$result[$resultKey] = $resultValue;
+				$counter[$resultKey] = 1;
+			}
+			elseif ($counter[$resultKey] == 1)
+			{
+				// If there is a second time, we convert the value into an array.
+				$result[$resultKey] = array(
+					$result[$resultKey],
+					$resultValue,
+				);
+				$counter[$resultKey]++;
+			}
+			else
+			{
+				// After the second time, no need to track any more. Just append to the existing array.
+				$result[$resultKey][] = $resultValue;
+			}
 		}
-		else
-		{
-			JLog::add('This method is typehinted to be an array in \Joomla\Utilities\ArrayHelper::pivot.', JLog::WARNING, 'deprecated');
-		}
+
+		unset($counter);
 
 		return $result;
 	}
@@ -429,6 +500,23 @@ abstract class JArrayHelper
 	 */
 	public static function arrayUnique($myArray)
 	{
-		return is_array($myArray) ? ArrayHelper::arrayUnique($myArray) : $myArray;
+		if (!is_array($myArray))
+		{
+			return $myArray;
+		}
+
+		foreach ($myArray as &$myvalue)
+		{
+			$myvalue = serialize($myvalue);
+		}
+
+		$myArray = array_unique($myArray);
+
+		foreach ($myArray as &$myvalue)
+		{
+			$myvalue = unserialize($myvalue);
+		}
+
+		return $myArray;
 	}
 }

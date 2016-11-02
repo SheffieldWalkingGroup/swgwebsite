@@ -2,7 +2,7 @@
 /**
  * @package    FrameworkOnFramework
  * @subpackage controller
- * @copyright   Copyright (C) 2010-2016 Nicholas K. Dionysopoulos / Akeeba Ltd. All rights reserved.
+ * @copyright   Copyright (C) 2010 - 2015 Nicholas K. Dionysopoulos / Akeeba Ltd. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -479,13 +479,6 @@ class FOFController extends FOFUtilsObject
 		foreach ($rMethods as $rMethod)
 		{
 			$mName = $rMethod->getName();
-
-			// If the developer screwed up and declared one of the helper method public do NOT make them available as
-			// tasks.
-			if ((substr($mName, 0, 8) == 'onBefore') || (substr($mName, 0, 7) == 'onAfter') || substr($mName, 0, 1) == '_')
-			{
-				continue;
-			}
 
 			// Add default display method if not explicitly declared.
 			if (!in_array($mName, $xMethods) || in_array($mName, $iMethods))
@@ -1056,9 +1049,8 @@ class FOFController extends FOFUtilsObject
 				$groups = $user->groups;
 			}
 
-			$importantParameters = array();
-
 			// Set up safe URL parameters
+
 			if (!is_array($urlparams))
 			{
 				$urlparams = array(
@@ -1098,9 +1090,6 @@ class FOFController extends FOFUtilsObject
 				{
 					// Add your safe url parameters with variable type as value {@see JFilterInput::clean()}.
 					$registeredurlparams->$key = $value;
-
-					// Add the URL-important parameters into the array
-					$importantParameters[$key] = $this->input->get($key, null, $value);
 				}
 
 				if (version_compare(JVERSION, '3.0', 'ge'))
@@ -1114,7 +1103,7 @@ class FOFController extends FOFUtilsObject
 			}
 
 			// Create the cache ID after setting the registered URL params, as they are used to generate the ID
-			$cacheId = md5(serialize(array(JCache::makeId(), $view->getName(), $this->doTask, $groups, $importantParameters)));
+			$cacheId = md5(serialize(array(JCache::makeId(), $view->getName(), $this->doTask, $groups)));
 
 			// Get the cached view or cache the current view
 			$cache->get($view, 'display', $cacheId);
@@ -1358,7 +1347,7 @@ class FOFController extends FOFUtilsObject
 				$customURL = base64_decode($customURL);
 			}
 
-			$url = !empty($customURL) ? $customURL : 'index.php?option=' . $this->component . '&view=' . $this->view . '&task=edit&id=' . $id . $this->getItemidURLSuffix();
+			$url = !empty($customURL) ? $customURL : 'index.php?option=' . $this->component . '&view=' . $this->view . '&task=edit&id=' . $id  . $this->getItemidURLSuffix();
 			$this->setRedirect($url, JText::_($textkey));
 		}
 

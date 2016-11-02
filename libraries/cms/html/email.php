@@ -24,7 +24,7 @@ abstract class JHtmlEmail
 	 * @param   string   $mail    The -mail address to cloak.
 	 * @param   boolean  $mailto  True if text and mailing address differ
 	 * @param   string   $text    Text for the link
-	 * @param   boolean  $email   True if text is an email address
+	 * @param   boolean  $email   True if text is an e-mail address
 	 *
 	 * @return  string  The cloaked email.
 	 *
@@ -47,12 +47,20 @@ abstract class JHtmlEmail
 		// Convert mail
 		$mail = static::convertEncoding($mail);
 
-		// Random hash
-		$rand = md5($mail . rand(1, 100000));
-
 		// Split email by @ symbol
-		$mail       = explode('@', $mail);
+		$mail = explode('@', $mail);
 		$mail_parts = explode('.', $mail[1]);
+
+		// Random number
+		$rand = rand(1, 100000);
+
+		$replacement = '<span id="cloak' . $rand . '">' . JText::_('JLIB_HTML_CLOAKING') . '</span>' . "<script type='text/javascript'>";
+		$replacement .= "\n //<!--";
+		$replacement .= "\n document.getElementById('cloak$rand').innerHTML = '';";
+		$replacement .= "\n var prefix = '&#109;a' + 'i&#108;' + '&#116;o';";
+		$replacement .= "\n var path = 'hr' + 'ef' + '=';";
+		$replacement .= "\n var addy" . $rand . " = '" . @$mail[0] . "' + '&#64;';";
+		$replacement .= "\n addy" . $rand . " = addy" . $rand . " + '" . implode("' + '&#46;' + '", $mail_parts) . "';";
 
 		if ($mailto)
 		{
@@ -67,42 +75,32 @@ abstract class JHtmlEmail
 					// Split email by @ symbol
 					$text = explode('@', $text);
 					$text_parts = explode('.', $text[1]);
-					$tmpScript = "var addy_text" . $rand . " = '" . @$text[0] . "' + '&#64;' + '" . implode("' + '&#46;' + '", @$text_parts)
+					$replacement .= "\n var addy_text" . $rand . " = '" . @$text[0] . "' + '&#64;' + '" . implode("' + '&#46;' + '", @$text_parts)
 						. "';";
 				}
 				else
 				{
-					$tmpScript = "var addy_text" . $rand . " = '" . $text . "';";
+					$replacement .= "\n var addy_text" . $rand . " = '" . $text . "';";
 				}
 
-				$tmpScript .= "document.getElementById('cloak" . $rand . "').innerHTML += '<a ' + path + '\'' + prefix + ':' + addy"
+				$replacement .= "\n document.getElementById('cloak$rand').innerHTML += '<a ' + path + '\'' + prefix + ':' + addy"
 					. $rand . " + '\'>'+addy_text" . $rand . "+'<\/a>';";
 			}
 			else
 			{
-				$tmpScript = "document.getElementById('cloak" . $rand . "').innerHTML += '<a ' + path + '\'' + prefix + ':' + addy"
+				$replacement .= "\n document.getElementById('cloak$rand').innerHTML += '<a ' + path + '\'' + prefix + ':' + addy"
 					. $rand . " + '\'>' +addy" . $rand . "+'<\/a>';";
 			}
 		}
 		else
 		{
-			$tmpScript = "document.getElementById('cloak" . $rand . "').innerHTML += addy" . $rand . ";";
+			$replacement .= "\n document.getElementById('cloak$rand').innerHTML += addy" . $rand . ";";
 		}
 
-		$inlineScript = '';
-		$script       = "
-				document.getElementById('cloak" . $rand . "').innerHTML = '';
-				var prefix = '&#109;a' + 'i&#108;' + '&#116;o';
-				var path = 'hr' + 'ef' + '=';
-				var addy" . $rand . " = '" . @$mail[0] . "' + '&#64;';
-				addy" . $rand . " = addy" . $rand . " + '" . implode("' + '&#46;' + '", $mail_parts) . "';
-				$tmpScript
-		";
+		$replacement .= "\n //-->";
+		$replacement .= "\n </script>";
 
-		// TODO: Use inline script for now
-		$inlineScript = "<script type='text/javascript'>" . $script . "</script>";
-
-		return '<span id="cloak' . $rand . '">' . JText::_('JLIB_HTML_CLOAKING') . '</span>' . $inlineScript;
+		return $replacement;
 	}
 
 	/**

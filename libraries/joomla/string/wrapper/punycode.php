@@ -83,9 +83,9 @@ class JStringWrapperPunycode
 	/**
 	 * Helper wrapper method for emailToPunycode
 	 *
-	 * @param   string  $email  The UTF-8 email to transform.
+	 * @param   string  $email  The UTF-8 e-mail to transform.
 	 *
-	 * @return string  The punycode email.
+	 * @return string  The punycode e-mail.
 	 *
 	 * @see     JStringPunycode::emailToPunycode()
 	 * @since   3.4
@@ -98,9 +98,9 @@ class JStringWrapperPunycode
 	/**
 	 * Helper wrapper method for emailToUTF8
 	 *
-	 * @param   string  $email  The punycode email to transform.
+	 * @param   string  $email  The punycode e-mail to transform.
 	 *
-	 * @return string  The punycode email.
+	 * @return string  The punycode e-mail.
 	 *
 	 * @see     JStringPunycode::emailToUTF8()
 	 * @since   3.4

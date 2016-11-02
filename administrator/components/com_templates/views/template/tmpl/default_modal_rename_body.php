@@ -8,7 +8,6 @@
  */
 
 defined('_JEXEC') or die;
-
 ?>
 <div id="template-manager-rename" class="form-horizontal">
 	<div class="control-group">
@@ -18,10 +17,7 @@ defined('_JEXEC') or die;
 			</label>
 		</div>
 		<div class="controls">
-			<div class="input-append">
-				<input class="input-xlarge" type="text" name="new_name" required />
-				<span class="add-on">.<?php echo JFile::getExt($this->fileName); ?></span>
-			</div>
+			<input class="input-xlarge" type="text" name="new_name" required />
 		</div>
 	</div>
 </div>

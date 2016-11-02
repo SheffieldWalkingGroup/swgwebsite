@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('ContactHelperRoute', JPATH_COMPONENT . '/helpers/route.php');
+require_once JPATH_COMPONENT . '/helpers/route.php';
 
 $controller = JControllerLegacy::getInstance('Contact');
 $controller->execute(JFactory::getApplication()->input->get('task'));

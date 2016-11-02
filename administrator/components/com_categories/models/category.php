@@ -69,12 +69,15 @@ class CategoriesModelCategory extends JModelAdmin
 	 */
 	protected function canDelete($record)
 	{
-		if (empty($record->id) || $record->published != -2)
+		if (!empty($record->id))
 		{
-			return false;
-		}
+			if ($record->published != -2)
+			{
+				return;
+			}
 
-		return JFactory::getUser()->authorise('core.delete', $record->extension . '.category.' . (int) $record->id);
+			return JFactory::getUser()->authorise('core.delete', $record->extension . '.category.' . (int) $record->id);
+		}
 	}
 
 	/**
@@ -335,10 +338,7 @@ class CategoriesModelCategory extends JModelAdmin
 					)
 				);
 				$data->set('language', $app->input->getString('language', (!empty($filters['language']) ? $filters['language'] : null)));
-				$data->set(
-					'access',
-					$app->input->getInt('access', (!empty($filters['access']) ? $filters['access'] : JFactory::getConfig()->get('access')))
-				);
+				$data->set('access', $app->input->getInt('access', (!empty($filters['access']) ? $filters['access'] : JFactory::getConfig()->get('access'))));
 			}
 		}
 
@@ -572,7 +572,7 @@ class CategoriesModelCategory extends JModelAdmin
 		if ($assoc)
 		{
 			// Adding self to the association
-			$associations = isset($data['associations']) ? $data['associations'] : array();
+			$associations = $data['associations'];
 
 			// Unset any invalid associations
 			$associations = Joomla\Utilities\ArrayHelper::toInteger($associations);
@@ -593,31 +593,14 @@ class CategoriesModelCategory extends JModelAdmin
 				JError::raiseNotice(403, JText::_('COM_CATEGORIES_ERROR_ALL_LANGUAGE_ASSOCIATED'));
 			}
 
-			// Get associationskey for edited item
-			$db    = $this->getDbo();
+			$associations[$table->language] = $table->id;
+
+			// Deleting old association for these items
+			$db = $this->getDbo();
 			$query = $db->getQuery(true)
-				->select($db->quoteName('key'))
-				->from($db->quoteName('#__associations'))
+				->delete('#__associations')
 				->where($db->quoteName('context') . ' = ' . $db->quote($this->associationsContext))
-				->where($db->quoteName('id') . ' = ' . (int) $table->id);
-			$db->setQuery($query);
-			$old_key = $db->loadResult();
-
-			// Deleting old associations for the associated items
-			$query = $db->getQuery(true)
-				->delete($db->quoteName('#__associations'))
-				->where($db->quoteName('context') . ' = ' . $db->quote($this->associationsContext));
-
-			if ($associations)
-			{
-				$query->where('(' . $db->quoteName('id') . ' IN (' . implode(',', $associations) . ') OR '
-					. $db->quoteName('key') . ' = ' . $db->quote($old_key) . ')');
-			}
-			else
-			{
-				$query->where($db->quoteName('key') . ' = ' . $db->quote($old_key));
-			}
-
+				->where($db->quoteName('id') . ' IN (' . implode(',', $associations) . ')');
 			$db->setQuery($query);
 
 			try
@@ -631,13 +614,7 @@ class CategoriesModelCategory extends JModelAdmin
 				return false;
 			}
 
-			// Adding self to the association
-			if (!$all_language)
-			{
-				$associations[$table->language] = (int) $table->id;
-			}
-
-			if (count($associations) > 1)
+			if (!$all_language && count($associations))
 			{
 				// Adding new association for these items
 				$key = md5(json_encode($associations));

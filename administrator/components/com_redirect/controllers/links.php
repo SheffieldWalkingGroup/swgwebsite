@@ -111,7 +111,9 @@ class RedirectControllerLinks extends JControllerAdmin
 	 */
 	public function getModel($name = 'Link', $prefix = 'RedirectModel', $config = array('ignore_request' => true))
 	{
-		return parent::getModel($name, $prefix, $config);
+		$model = parent::getModel($name, $prefix, $config);
+
+		return $model;
 	}
 
 	/**

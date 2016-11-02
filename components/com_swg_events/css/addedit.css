@@ -1,0 +1,25 @@
+/* CSS for admin parts of this module - public parts are governed by the template */
+form fieldset div {
+	clear:both;
+	margin-bottom:2px;
+}
+
+form label {
+	float:left;
+	clear:both;
+	width:200px;
+}
+
+form input.invalid, form textarea.invalid {
+	border:1px solid red;
+}
+
+form .radio>* {
+	float:left;
+	clear:none;
+}
+
+form .radio>label {
+	width:100px;
+	padding-top:6px;
+}

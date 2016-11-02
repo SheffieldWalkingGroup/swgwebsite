@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('UsersController', JPATH_COMPONENT . '/controller.php');
+require_once JPATH_COMPONENT . '/controller.php';
 
 /**
  * Registration controller class for Users.
@@ -64,7 +64,7 @@ class UsersControllerRegistration extends UsersController
 		// Check for errors.
 		if ($return === false)
 		{
-			// Redirect back to the home page.
+			// Redirect back to the homepage.
 			$this->setMessage(JText::sprintf('COM_USERS_REGISTRATION_SAVE_FAILED', $model->getError()), 'warning');
 			$this->setRedirect('index.php');
 

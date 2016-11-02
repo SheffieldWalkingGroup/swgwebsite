@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 // Include the news functions only once
-JLoader::register('ModArticlesNewsHelper', __DIR__ . '/helper.php');
+require_once __DIR__ . '/helper.php';
 
 $list            = ModArticlesNewsHelper::getList($params);
 $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx'), ENT_COMPAT, 'UTF-8');

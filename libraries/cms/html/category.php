@@ -9,8 +9,6 @@
 
 defined('JPATH_PLATFORM') or die;
 
-use Joomla\Utilities\ArrayHelper;
-
 /**
  * Utility class for categories
  *
@@ -62,7 +60,7 @@ abstract class JHtmlCategory
 				}
 				elseif (is_array($config['filter.published']))
 				{
-					$config['filter.published'] = ArrayHelper::toInteger($config['filter.published']);
+					JArrayHelper::toInteger($config['filter.published']);
 					$query->where('a.published IN (' . implode(',', $config['filter.published']) . ')');
 				}
 			}
@@ -82,24 +80,6 @@ abstract class JHtmlCategory
 					}
 
 					$query->where('a.language IN (' . implode(',', $config['filter.language']) . ')');
-				}
-			}
-
-			// Filter on the access
-			if (isset($config['filter.access']))
-			{
-				if (is_string($config['filter.access']))
-				{
-					$query->where('a.access = ' . $db->quote($config['filter.access']));
-				}
-				elseif (is_array($config['filter.access']))
-				{
-					foreach ($config['filter.access'] as &$access)
-					{
-						$access = $db->quote($access);
-					}
-
-					$query->where('a.access IN (' . implode(',', $config['filter.access']) . ')');
 				}
 			}
 
@@ -157,7 +137,7 @@ abstract class JHtmlCategory
 				}
 				elseif (is_array($config['filter.published']))
 				{
-					$config['filter.published'] = ArrayHelper::toInteger($config['filter.published']);
+					JArrayHelper::toInteger($config['filter.published']);
 					$query->where('a.published IN (' . implode(',', $config['filter.published']) . ')');
 				}
 			}

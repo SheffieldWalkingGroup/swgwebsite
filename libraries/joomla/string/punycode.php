@@ -192,12 +192,12 @@ abstract class JStringPunycode
 	}
 
 	/**
-	 * Transforms a UTF-8 email to a Punycode email
+	 * Transforms a UTF-8 e-mail to a Punycode e-mail
 	 * This assumes a valid email address
 	 *
-	 * @param   string  $email  The UTF-8 email to transform
+	 * @param   string  $email  The UTF-8 e-mail to transform
 	 *
-	 * @return  string  The punycode email
+	 * @return  string  The punycode e-mail
 	 *
 	 * @since   3.1.2
 	 */
@@ -227,12 +227,12 @@ abstract class JStringPunycode
 	}
 
 	/**
-	 * Transforms a Punycode email to a UTF-8 email
+	 * Transforms a Punycode e-mail to a UTF-8 e-mail
 	 * This assumes a valid email address
 	 *
-	 * @param   string  $email  The punycode email to transform
+	 * @param   string  $email  The punycode e-mail to transform
 	 *
-	 * @return  string  The punycode email
+	 * @return  string  The punycode e-mail
 	 *
 	 * @since   3.1.2
 	 */

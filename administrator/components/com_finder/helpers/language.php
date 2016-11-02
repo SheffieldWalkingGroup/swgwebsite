@@ -33,8 +33,10 @@ class FinderHelperLanguage
 		{
 			return 'PLG_FINDER_QUERY_FILTER_BRANCH_P_' . $return;
 		}
-
-		return $branchName;
+		else
+		{
+			return $branchName;
+		}
 	}
 
 	/**
@@ -91,11 +93,12 @@ class FinderHelperLanguage
 	 */
 	public static function loadComponentLanguage()
 	{
-		JFactory::getLanguage()->load('com_finder', JPATH_SITE);
+		$lang = JFactory::getLanguage();
+		$lang->load('com_finder', JPATH_SITE);
 	}
 
 	/**
-	 * Method to load Smart Search plugin language files.
+	 * Method to load Smart Search plug-in language files.
 	 *
 	 * @return  void
 	 *
@@ -113,7 +116,7 @@ class FinderHelperLanguage
 
 		$loaded = true;
 
-		// Get array of all the enabled Smart Search plugin names.
+		// Get array of all the enabled Smart Search plug-in names.
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
 			->select('name')
@@ -133,7 +136,7 @@ class FinderHelperLanguage
 		$lang = JFactory::getLanguage();
 		$lang->load('plg_content_finder', JPATH_ADMINISTRATOR);
 
-		// Load language file for each plugin.
+		// Load language file for each plug-in.
 		foreach ($plugins as $plugin)
 		{
 			$lang->load($plugin->name, JPATH_ADMINISTRATOR);

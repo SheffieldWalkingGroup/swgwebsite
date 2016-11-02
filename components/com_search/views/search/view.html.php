@@ -27,7 +27,7 @@ class SearchViewSearch extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		JLoader::register('SearchHelper', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/search.php');
+		require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/search.php';
 
 		$app     = JFactory::getApplication();
 		$uri     = JUri::getInstance();
@@ -140,7 +140,7 @@ class SearchViewSearch extends JViewLegacy
 			$total      = $this->get('total');
 			$pagination = $this->get('pagination');
 
-			JLoader::register('ContentHelperRoute', JPATH_SITE . '/components/com_content/helpers/route.php');
+			require_once JPATH_SITE . '/components/com_content/helpers/route.php';
 
 			for ($i = 0, $count = count($results); $i < $count; $i++)
 			{

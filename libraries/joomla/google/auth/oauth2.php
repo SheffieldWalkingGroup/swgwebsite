@@ -11,11 +11,12 @@ defined('JPATH_PLATFORM') or die;
 
 use Joomla\Registry\Registry;
 
+jimport('joomla.oauth.v2client');
+
 /**
  * Google OAuth authentication class
  *
- * @since       12.3
- * @deprecated  4.0  Use the `joomla/google` package via Composer instead
+ * @since  12.3
  */
 class JGoogleAuthOauth2 extends JGoogleAuth
 {
@@ -105,7 +106,7 @@ class JGoogleAuthOauth2 extends JGoogleAuth
 
 		if (!$this->client->getOption('requestparams'))
 		{
-			$this->client->setOption('requestparams', array());
+			$this->client->setOption('requestparams', Array());
 		}
 
 		$params = $this->client->getOption('requestparams');

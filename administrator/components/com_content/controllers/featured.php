@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('ContentControllerArticles', __DIR__ . '/articles.php');
+require_once __DIR__ . '/articles.php';
 
 /**
  * Featured content controller class.
@@ -90,6 +90,8 @@ class ContentControllerFeatured extends ContentControllerArticles
 	 */
 	public function getModel($name = 'Feature', $prefix = 'ContentModel', $config = array('ignore_request' => true))
 	{
-		return parent::getModel($name, $prefix, $config);
+		$model = parent::getModel($name, $prefix, $config);
+
+		return $model;
 	}
 }

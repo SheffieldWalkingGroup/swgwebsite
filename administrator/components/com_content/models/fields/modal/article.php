@@ -115,11 +115,6 @@ class JFormFieldModal_Article extends JFormField
 		{
 			$linkArticles .= '&amp;forcedLanguage=' . $this->element['language'];
 			$linkArticle  .= '&amp;forcedLanguage=' . $this->element['language'];
-			$modalTitle    = JText::_('COM_CONTENT_CHANGE_ARTICLE') . ' &#8212; ' . $this->element['label'];
-		}
-		else
-		{
-			$modalTitle    = JText::_('COM_CONTENT_CHANGE_ARTICLE');
 		}
 
 		$urlSelect = $linkArticles . '&amp;' . JSession::getFormToken() . '=1';
@@ -197,14 +192,14 @@ class JFormFieldModal_Article extends JFormField
 			'bootstrap.renderModal',
 			'articleSelect' . $this->id . 'Modal',
 			array(
-				'title'       => $modalTitle,
+				'title'       => JText::_('COM_CONTENT_CHANGE_ARTICLE'),
 				'url'         => $urlSelect,
 				'height'      => '400px',
 				'width'       => '800px',
 				'bodyHeight'  => '70',
 				'modalWidth'  => '80',
-				'footer'      => '<a type="button" class="btn" data-dismiss="modal" aria-hidden="true">'
-						. JText::_("JLIB_HTML_BEHAVIOR_CLOSE") . '</a>',
+				'footer'      => '<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">'
+						. JText::_("JLIB_HTML_BEHAVIOR_CLOSE") . '</button>',
 			)
 		);
 
@@ -222,9 +217,9 @@ class JFormFieldModal_Article extends JFormField
 				'width'       => '800px',
 				'bodyHeight'  => '70',
 				'modalWidth'  => '80',
-				'footer'      => '<a type="button" class="btn" data-dismiss="modal" aria-hidden="true"'
+				'footer'      => '<button type="button" class="btn" data-dismiss="modal" aria-hidden="true"'
 						. ' onclick="jQuery(\'#articleEdit' . $value . 'Modal iframe\').contents().find(\'#closeBtn\').click();">'
-						. JText::_("JLIB_HTML_BEHAVIOR_CLOSE") . '</a>'
+						. JText::_("JLIB_HTML_BEHAVIOR_CLOSE") . '</button>'
 						. '<button type="button" class="btn btn-primary" aria-hidden="true"'
 						. ' onclick="jQuery(\'#articleEdit' . $value . 'Modal iframe\').contents().find(\'#saveBtn\').click();">'
 						. JText::_("JSAVE") . '</button>'

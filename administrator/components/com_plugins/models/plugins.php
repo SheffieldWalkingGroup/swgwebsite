@@ -58,7 +58,7 @@ class PluginsModelPlugins extends JModelList
 	 *
 	 * @since   1.6
 	 */
-	protected function populateState($ordering = 'folder', $direction = 'asc')
+	protected function populateState($ordering = null, $direction = null)
 	{
 		// Load the filter state.
 		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search', '', 'string');
@@ -81,7 +81,7 @@ class PluginsModelPlugins extends JModelList
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState($ordering, $direction);
+		parent::populateState('folder', 'asc');
 	}
 
 	/**
@@ -146,8 +146,7 @@ class PluginsModelPlugins extends JModelList
 				}
 			}
 
-			$orderingDirection = strtolower($this->getState('list.direction'));
-			$direction         = ($orderingDirection == 'desc') ? -1 : 1;
+			$direction = ($this->getState('list.direction') == 'desc') ? -1 : 1;
 			JArrayHelper::sortObjects($result, $ordering, $direction, true, true);
 
 			$total = count($result);

@@ -181,7 +181,7 @@ class JTableMenu extends JTableNested
 		else
 		{
 			$itemSearch = array('alias' => $this->alias, 'parent_id' => $this->parent_id, 'client_id' => (int) $this->client_id);
-			$error      = false;
+			$errorType  = '';
 
 			// Check if the alias already exists. For multilingual site.
 			if (JLanguageMultilang::isEnabled())
@@ -191,7 +191,7 @@ class JTableMenu extends JTableNested
 					|| ($table->load(array_replace($itemSearch, array('language' => $this->language))) && ($table->id != $this->id || $this->id == 0))
 					|| ($this->language == '*' && $table->load($itemSearch) && ($table->id != $this->id || $this->id == 0)))
 				{
-					$error = true;
+					$errorType = 'MULTILINGUAL';
 				}
 			}
 			// Check if the alias already exists. For monolingual site.
@@ -200,16 +200,15 @@ class JTableMenu extends JTableNested
 				// If not exists a menu item at the same level with the same alias (in any language).
 				if ($table->load($itemSearch) && ($table->id != $this->id || $this->id == 0))
 				{
-					$error = true;
+					$errorType = 'MONOLINGUAL';
 				}
 			}
 
-			// The alias already exists. Enqueue a error message.
-			if ($error)
+			// The alias already exists. Send an error message.
+			if ($errorType)
 			{
-				$menuTypeTable = JTable::getInstance('MenuType', 'JTable', array('dbo' => $this->getDbo()));
-				$menuTypeTable->load(array('menutype' => $table->menutype));
-				$this->setError(JText::sprintf('JLIB_DATABASE_ERROR_MENU_UNIQUE_ALIAS', $this->alias, $table->title, $menuTypeTable->title));
+				$message = JText::_('JLIB_DATABASE_ERROR_MENU_UNIQUE_ALIAS' . ($this->menutype != $table->menutype ? '_ROOT' : ''));
+				$this->setError($message);
 
 				return false;
 			}
@@ -222,7 +221,7 @@ class JTableMenu extends JTableNested
 					array(
 					'menutype' => $this->menutype,
 					'client_id' => (int) $this->client_id,
-					'home' => '1',
+					'home' => '1'
 					)
 				)
 				&& ($table->language != $this->language))
@@ -271,6 +270,6 @@ class JTableMenu extends JTableNested
 
 		// Use new path for partial rebuild of table
 		// Rebuild will return positive integer on success, false on failure
-		return $this->rebuild($this->{$this->_tbl_key}, $this->lft, $this->level, $newPath) > 0;
+		return ($this->rebuild($this->{$this->_tbl_key}, $this->lft, $this->level, $newPath) > 0);
 	}
 }

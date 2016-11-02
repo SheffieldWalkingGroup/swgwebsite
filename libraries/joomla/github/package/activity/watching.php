@@ -14,8 +14,7 @@ defined('JPATH_PLATFORM') or die;
  *
  * @documentation https://developer.github.com/v3/activity/watching/
  *
- * @since       3.3 (CMS)
- * @deprecated  4.0  Use the `joomla/github` package via Composer instead
+ * @since  3.3 (CMS)
  */
 class JGithubPackageActivityWatching extends JGithubPackage
 {
@@ -101,7 +100,7 @@ class JGithubPackageActivityWatching extends JGithubPackage
 
 		$data = array(
 			'subscribed' => $subscribed,
-			'ignored'    => $ignored,
+			'ignored'    => $ignored
 		);
 
 		return $this->processResponse(

@@ -129,7 +129,7 @@ class CategoriesViewCategory extends JViewLegacy
 		|| $lang->load($component, JPATH_ADMINISTRATOR . '/components/' . $component, null, false, true);
 
 		// Load the category helper.
-		JLoader::register('CategoriesHelper', JPATH_ADMINISTRATOR . '/components/com_categories/helpers/categories.php');
+		require_once JPATH_COMPONENT . '/helpers/categories.php';
 
 		// Get the results for each action.
 		$canDo = $this->canDo;
@@ -142,9 +142,7 @@ class CategoriesViewCategory extends JViewLegacy
 		// Else if the component section string exits, let's use it
 		elseif ($lang->hasKey($component_section_key = $component . ($section ? "_$section" : '')))
 		{
-			$title = JText::sprintf('COM_CATEGORIES_CATEGORY_' . ($isNew ? 'ADD' : 'EDIT')
-					. '_TITLE', $this->escape(JText::_($component_section_key))
-					);
+			$title = JText::sprintf('COM_CATEGORIES_CATEGORY_' . ($isNew ? 'ADD' : 'EDIT') . '_TITLE', $this->escape(JText::_($component_section_key)));
 		}
 		// Else use the base title
 		else
@@ -168,34 +166,33 @@ class CategoriesViewCategory extends JViewLegacy
 			JToolbarHelper::apply('category.apply');
 			JToolbarHelper::save('category.save');
 			JToolbarHelper::save2new('category.save2new');
-			JToolbarHelper::cancel('category.cancel');
 		}
 
 		// If not checked out, can save the item.
-		else
+		elseif (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_user_id == $userId)))
 		{
-			// Since it's an existing record, check the edit permission, or fall back to edit own if the owner.
-			$itemEditable = $canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_user_id == $userId);
+			JToolbarHelper::apply('category.apply');
+			JToolbarHelper::save('category.save');
 
-			// Can't save the record if it's checked out and editable
-			if (!$checkedOut && $itemEditable)
-			{
-				JToolbarHelper::apply('category.apply');
-				JToolbarHelper::save('category.save');
-
-				if ($canDo->get('core.create'))
-				{
-					JToolbarHelper::save2new('category.save2new');
-				}
-			}
-
-			// If an existing item, can save to a copy.
 			if ($canDo->get('core.create'))
 			{
-				JToolbarHelper::save2copy('category.save2copy');
+				JToolbarHelper::save2new('category.save2new');
 			}
+		}
 
-			if ($componentParams->get('save_history', 0) && $itemEditable)
+		// If an existing item, can save to a copy.
+		if (!$isNew && $canDo->get('core.create'))
+		{
+			JToolbarHelper::save2copy('category.save2copy');
+		}
+
+		if (empty($this->item->id))
+		{
+			JToolbarHelper::cancel('category.cancel');
+		}
+		else
+		{
+			if ($componentParams->get('save_history', 0) && $user->authorise('core.edit'))
 			{
 				$typeAlias = $extension . '.category';
 				JToolbarHelper::versions($typeAlias, $this->item->id);
@@ -206,19 +203,13 @@ class CategoriesViewCategory extends JViewLegacy
 
 		JToolbarHelper::divider();
 
-		// Compute the ref_key
-		$ref_key = strtoupper($component . ($section ? "_$section" : '')) . '_CATEGORY_' . ($isNew ? 'ADD' : 'EDIT') . '_HELP_KEY';
-
-		// Check if thr computed ref_key does exist in the component
-		if (!$lang->hasKey($ref_key))
+		// Compute the ref_key if it does exist in the component
+		if (!$lang->hasKey($ref_key = strtoupper($component . ($section ? "_$section" : '')) . '_CATEGORY_' . ($isNew ? 'ADD' : 'EDIT') . '_HELP_KEY'))
 		{
-			$ref_key = 'JHELP_COMPONENTS_'
-						. strtoupper(substr($component, 4) . ($section ? "_$section" : ''))
-						. '_CATEGORY_' . ($isNew ? 'ADD' : 'EDIT');
+			$ref_key = 'JHELP_COMPONENTS_' . strtoupper(substr($component, 4) . ($section ? "_$section" : '')) . '_CATEGORY_' . ($isNew ? 'ADD' : 'EDIT');
 		}
 
-		/*
-		 * Get help for the category/section view for the component by
+		/* Get help for the category/section view for the component by
 		 * -remotely searching in a language defined dedicated URL: *component*_HELP_URL
 		 * -locally  searching in a component help file if helpURL param exists in the component and is set to ''
 		 * -remotely searching in a component URL if helpURL param exists in the component and is NOT set to ''

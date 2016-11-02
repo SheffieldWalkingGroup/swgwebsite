@@ -17,8 +17,7 @@ use Joomla\Registry\Registry;
  * @property-read  JGoogleData    $data    Google API object for data.
  * @property-read  JGoogleEmbed   $embed   Google API object for embed generation.
  *
- * @since       12.3
- * @deprecated  4.0  Use the `joomla/google` package via Composer instead
+ * @since  12.3
  */
 class JGoogle
 {
@@ -98,7 +97,7 @@ class JGoogle
 			case 'Calendar':
 				return new JGoogleDataCalendar($options, $auth);
 			default:
-				return;
+				return null;
 		}
 	}
 
@@ -128,7 +127,7 @@ class JGoogle
 			case 'Analytics':
 				return new JGoogleEmbedAnalytics($options);
 			default:
-				return;
+				return null;
 		}
 	}
 

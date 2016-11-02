@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 // Include the helper functions only once
-JLoader::register('ModArticlesCategoryHelper', __DIR__ . '/helper.php');
+require_once __DIR__ . '/helper.php';
 
 $input = JFactory::getApplication()->input;
 
@@ -49,7 +49,7 @@ switch ($mode)
 		break;
 }
 
-$cacheid = md5(serialize(array ($idbase, $module->module, $module->id)));
+$cacheid = md5(serialize(array ($idbase, $module->module)));
 
 $cacheparams               = new stdClass;
 $cacheparams->cachemode    = 'id';

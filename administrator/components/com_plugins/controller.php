@@ -28,7 +28,7 @@ class PluginsController extends JControllerLegacy
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		JLoader::register('PluginsHelper', JPATH_ADMINISTRATOR . '/components/com_plugins/helpers/plugins.php');
+		require_once JPATH_COMPONENT . '/helpers/plugins.php';
 
 		// Load the submenu.
 		PluginsHelper::addSubmenu($this->input->get('view', 'plugins'));

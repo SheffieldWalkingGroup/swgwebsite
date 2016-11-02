@@ -10,7 +10,6 @@
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\Registry\Registry;
-use Joomla\Utilities\ArrayHelper;
 
 /**
  * Core content table
@@ -95,7 +94,7 @@ class JTableCorecontent extends JTable
 	{
 		if (trim($this->core_title) == '')
 		{
-			$this->setError(JText::_('JLIB_CMS_WARNING_PROVIDE_VALID_NAME'));
+			$this->setError(JText::_('LIB_CMS_WARNING_PROVIDE_VALID_NAME'));
 
 			return false;
 		}
@@ -335,7 +334,7 @@ class JTableCorecontent extends JTable
 		$k = $this->_tbl_key;
 
 		// Sanitize input.
-		$pks = ArrayHelper::toInteger($pks);
+		JArrayHelper::toInteger($pks);
 		$userId = (int) $userId;
 		$state = (int) $state;
 

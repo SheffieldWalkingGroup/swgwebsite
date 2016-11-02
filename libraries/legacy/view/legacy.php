@@ -19,13 +19,6 @@ defined('JPATH_PLATFORM') or die;
 class JViewLegacy extends JObject
 {
 	/**
-	 * The active document object
-	 *
-	 * @var    JDocument
-	 */
-	public $document;
-
-	/**
 	 * The name of the view
 	 *
 	 * @var    array

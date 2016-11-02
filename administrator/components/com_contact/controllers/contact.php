@@ -60,29 +60,21 @@ class ContactControllerContact extends JControllerForm
 	protected function allowEdit($data = array(), $key = 'id')
 	{
 		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
+		$categoryId = 0;
 
-		// Since there is no asset tracking, fallback to the component permissions.
-		if (!$recordId)
+		if ($recordId)
 		{
-			return parent::allowEdit($data, $key);
+			$categoryId = (int) $this->getModel()->getItem($recordId)->catid;
 		}
 
-		// Get the item.
-		$item = $this->getModel()->getItem($recordId);
-
-		// Since there is no item, return false.
-		if (empty($item))
+		if ($categoryId)
 		{
-			return false;
+			// The category has been set. Check the category permissions.
+			return JFactory::getUser()->authorise('core.edit', $this->option . '.category.' . $categoryId);
 		}
 
-		$user = JFactory::getUser();
-
-		// Check if can edit own core.edit.own.
-		$canEditOwn = $user->authorise('core.edit.own', $this->option . '.category.' . (int) $item->catid) && $item->created_by == $user->id;
-
-		// Check the category core.edit permissions.
-		return $canEditOwn || $user->authorise('core.edit', $this->option . '.category.' . (int) $item->catid);
+		// Since there is no asset tracking, revert to the component permissions.
+		return parent::allowEdit($data, $key);
 	}
 
 	/**

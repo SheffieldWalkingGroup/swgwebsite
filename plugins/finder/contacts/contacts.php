@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\Registry\Registry;
 
-JLoader::register('FinderIndexerAdapter', JPATH_ADMINISTRATOR . '/components/com_finder/helpers/indexer/adapter.php');
+require_once JPATH_ADMINISTRATOR . '/components/com_finder/helpers/indexer/adapter.php';
 
 /**
  * Finder adapter for Joomla Contacts.
@@ -278,7 +278,7 @@ class PlgFinderContacts extends FinderIndexerAdapter
 		}
 
 		/*
-		 * Add the metadata processing instructions based on the contact
+		 * Add the meta-data processing instructions based on the contact
 		 * configuration parameters.
 		 */
 		// Handle the contact position.
@@ -329,7 +329,7 @@ class PlgFinderContacts extends FinderIndexerAdapter
 			$item->addInstruction(FinderIndexer::META_CONTEXT, 'fax');
 		}
 
-		// Handle the contact email address.
+		// Handle the contact e-mail address.
 		if ($item->params->get('show_email', true))
 		{
 			$item->addInstruction(FinderIndexer::META_CONTEXT, 'email');
@@ -388,7 +388,7 @@ class PlgFinderContacts extends FinderIndexerAdapter
 	protected function setup()
 	{
 		// Load dependent classes.
-		JLoader::register('ContactHelperRoute', JPATH_SITE . '/components/com_contact/helpers/route.php');
+		require_once JPATH_SITE . '/components/com_contact/helpers/route.php';
 
 		// This is a hack to get around the lack of a route helper.
 		FinderIndexerHelper::getContentPath('index.php?option=com_contact');

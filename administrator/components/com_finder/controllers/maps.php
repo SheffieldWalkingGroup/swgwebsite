@@ -23,12 +23,14 @@ class FinderControllerMaps extends JControllerAdmin
 	 * @param   string  $prefix  The class prefix. Optional.
 	 * @param   array   $config  Configuration array for model. Optional.
 	 *
-	 * @return  JModelLegacy  The model.
+	 * @return  object  The model.
 	 *
 	 * @since   1.6
 	 */
 	public function getModel($name = 'Maps', $prefix = 'FinderModel', $config = array('ignore_request' => true))
 	{
-		return parent::getModel($name, $prefix, $config);
+		$model = parent::getModel($name, $prefix, $config);
+
+		return $model;
 	}
 }

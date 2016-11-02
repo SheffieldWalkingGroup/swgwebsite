@@ -190,15 +190,7 @@ if ($this->params->get('linkColor'))
 				</a>
 			<?php endif; ?>
 
-			<!-- skip to content -->
-			<a class="element-invisible" href="#skiptarget"><?php echo JText::_('TPL_ISIS_SKIP_TO_MAIN_CONTENT'); ?></a>
-
-			<a class="admin-logo <?php echo ($hidden ? 'disabled' : ''); ?>" <?php echo ($hidden ? '' : 'href="' . $this->baseurl . '/index.php"'); ?>>
-				<span class="icon-joomla"></span>
-				<div class="element-invisible">
-					<?php echo JText::_('TPL_ISIS_CONTROL_PANEL'); ?>
-				</div>
-			</a>
+			<a class="admin-logo <?php echo ($hidden ? 'disabled' : ''); ?>" <?php echo ($hidden ? '' : 'href="' . $this->baseurl . '/index.php"'); ?>><span class="icon-joomla"></span></a>
 
 			<a class="brand hidden-desktop hidden-tablet" href="<?php echo $mainPageUri; ?>" title="<?php echo JText::sprintf('TPL_ISIS_PREVIEW', $sitename); ?>" target="_blank"><?php echo JHtml::_('string.truncate', $sitename, 14, false, false); ?>
 				<span class="icon-out-2 small"></span></a>
@@ -208,11 +200,7 @@ if ($this->params->get('linkColor'))
 				<ul class="nav nav-user<?php echo ($this->direction == 'rtl') ? ' pull-left' : ' pull-right'; ?>">
 					<li class="dropdown">
 						<a class="<?php echo ($hidden ? ' disabled' : 'dropdown-toggle'); ?>" data-toggle="<?php echo ($hidden ? '' : 'dropdown'); ?>" <?php echo ($hidden ? '' : 'href="#"'); ?>><span class="icon-user"></span>
-							<span class="caret"></span>
-							<div class="element-invisible">
-								<?php echo JText::_('TPL_ISIS_USERMENU'); ?>
-							</div>
-						</a>
+							<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<?php if (!$hidden) : ?>
 								<li>
@@ -271,8 +259,6 @@ if ($this->params->get('linkColor'))
 				<div id="container-collapse" class="container-collapse"></div>
 				<div class="row-fluid">
 					<div class="span12">
-						<!-- target for skip to content link -->
-						<a id="skiptarget" class="element-invisible"><?php echo JText::_('TPL_ISIS_SKIP_TO_MAIN_CONTENT_HERE'); ?></a>
 						<jdoc:include type="modules" name="toolbar" style="no" />
 					</div>
 				</div>
@@ -280,10 +266,7 @@ if ($this->params->get('linkColor'))
 		</div>
 	</div>
 <?php else : ?>
-	<div style="margin-bottom: 20px">
-		<!-- target for skip to content link -->
-		<a id="skiptarget" class="element-invisible"><?php echo JText::_('TPL_ISIS_SKIP_TO_MAIN_CONTENT_HERE'); ?></a>
-	</div>
+	<div style="margin-bottom: 20px"></div>
 <?php endif; ?>
 <!-- container-fluid -->
 <div class="container-fluid container-main">
