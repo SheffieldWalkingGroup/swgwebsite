@@ -11,3 +11,4 @@ logs/
 .kateproject.d/
 gallery/
 php.ini
+cgi-bin
