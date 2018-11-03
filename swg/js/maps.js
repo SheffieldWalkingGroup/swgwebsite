@@ -62,9 +62,12 @@ var SWGMap = new Class({
 		// Set up Landscape layer
 		this.landscapeMap = new OpenLayers.Layer.OSM(
 				"Landscape",
-				["http://a.tile3.opencyclemap.org/landscape/$\{z}/$\{x}/$\{y}.png",
-			       "http://b.tile3.opencyclemap.org/landscape/$\{z}/$\{x}/$\{y}.png",
-			       "http://c.tile3.opencyclemap.org/landscape/$\{z}/$\{x}/$\{y}.png"],
+				["https://tile.thunderforest.com/landscape/$\{z}/$\{x}/$\{y}.png?apikey=cbeb0b451ba8432e9fa33735b0316f66",
+				//"http://a.tile3.opencyclemap.org/landscape/$\{z}/$\{x}/$\{y}.png",
+			      // "http://b.tile3.opencyclemap.org/landscape/$\{z}/$\{x}/$\{y}.png",
+			       //"http://c.tile3.opencyclemap.org/landscape/$\{z}/$\{x}/$\{y}.png"
+                    
+                ],
 				{sphericalMercator:true}
 		);
 		this.landscapeMap.attribution = attribution;
@@ -72,20 +75,6 @@ var SWGMap = new Class({
 			loadIndicator.dispose();
 		});
 		this.map.addLayer(this.landscapeMap);
-		
-		// Set up OpenCycleMap layer
-		this.cycleMap = new OpenLayers.Layer.OSM(
-				"OpenCycleMap",
-				["http://a.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png",
-			       "http://b.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png",
-			       "http://c.tile.opencyclemap.org/cycle/$\{z}/$\{x}/$\{y}.png"],
-				{sphericalMercator:true}
-		);
-		this.cycleMap.attribution = attribution;
-		this.cycleMap.events.register('loadend',this,function(){
-			loadIndicator.dispose();
-		});
-		this.map.addLayer(this.cycleMap);
 		
 		// Set up street map layer
 		this.streetMap = new OpenLayers.Layer.OSM("Street map");
