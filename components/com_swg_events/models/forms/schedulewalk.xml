@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 	<form name="addeditwalk">
 		<field name="id" type="hidden" />
-		<fieldset name="basic" label="Basic details">
-			<field name="walkid" type="sql" label="Walk in library" query="SELECT ID, CONCAT(walkname,' (',distancegrade,difficultygrade,')') AS name FROM walks ORDER BY walkname ASC" key_field="ID" value_field="name" default="">
+        <fieldset name="walklibrary" label="Walk library">
+            <field name="walkid" type="sql" label="Walk in library" query="SELECT ID, CONCAT(walkname,' (id ',ID,': ',distancegrade,difficultygrade,')') AS name FROM walks ORDER BY walkname ASC" key_field="ID" value_field="name" default="">
 				<option value="">-- Select --</option>
 			</field>
+        </fieldset>
+		<fieldset name="basic" label="Basic details">
 			<field name="name" type="text" label="Name in programme" size="60" maxlength="80" />
 			<field name="description" type="editor" editor="swg_tinymce_events" label="Description" required="required" />
 			<field name="date" type="calendar" label="Date" default="NOW" />
@@ -19,7 +21,7 @@
 			/>
 			<field name="startPlaceName" type="text" label="Start place name" />
 			<field name="startGridRef" type="text" label="Start grid reference" />
-			<field name="isLinear" type="radio" label="Shape">
+			<field name="isLinear" type="radio" label="Shape" default="0">
 				<option value="0">Circular</option>
 				<option value="1">Linear</option>
 			</field>

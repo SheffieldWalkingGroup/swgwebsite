@@ -31,6 +31,22 @@ class SWG_EventsModelScheduleWalk extends JModelForm
 	{
 		return (JRequest::getInt("walkinstanceid",0,"get") != 0);
 	}
+	
+	/**
+	 * Create a new WalkInstance from a walk in the library and set it as the active WalkInstance
+	 *
+	 * @param int $walkid Walk ID to load
+	 *
+	 * @return void
+	 *
+	 * @todo If we're editing an existing WalkInstance, that will be left behind.
+	 */
+	public function createWalkInstanceFromWalk($walkid)
+	{
+        $wiFactory = SWG::walkInstanceFactory();
+       
+        $this->wi = $wiFactory->createFromWalk(Walk::getSingle($walkid));
+    }
 		
 	/**
 	* Update the current walk with passed in form data
@@ -116,7 +132,7 @@ class SWG_EventsModelScheduleWalk extends JModelForm
 			if (JRequest::getInt("walkinstanceid",0,"get"))
 				$this->wi = $factory->getSingle(JRequest::getInt("walkinstanceid",0,"get"));
 			else if (JRequest::getInt("walkid",0,"get"))
-				$this->wi = $factory->createFromWalk($factory->getSingle(JRequest::getInt("walkid",0,"get")));
+				$this->wi = $factory->createFromWalk(Walk::getSingle(JRequest::getInt("walkid",0,"get")));
 			else
 				$this->wi = new WalkInstance();
 		}

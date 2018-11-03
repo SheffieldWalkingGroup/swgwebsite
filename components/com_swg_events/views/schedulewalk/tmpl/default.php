@@ -23,8 +23,18 @@ if ($this->showForm): ?>
 		<input type="hidden" name="jform[alterations_organiser]" value="0">
 		<input type="hidden" name="jform[alterations_date]" value="0">
 		
-		<?php echo JHtml::_('form.token'); echo $this->form->getInput('id'); ?>
-		<?php foreach ($this->form->getFieldsets() as $fieldset): ?>
+		<?php echo JHtml::_('form.token'); echo $this->form->getInput('id');
+		$fieldsets = $this->form->getFieldsets();
+		// Output the walk ID fieldset with a button to load the walk from the library
+		$walkidFieldset = array_shift($fieldsets);
+		?>
+		<fieldset>
+            <legend><?php echo $walkidFieldset->label;?></legend>
+            <?php echo $this->form->getFieldset($walkidFieldset->name)['jform_walkid']->label; echo $this->form->getFieldset($walkidFieldset->name)['jform_walkid']->input; /* Only one field ATM */?>
+            <input type="submit" class="submit" name="loadWalk" value="Load from library" />
+        </fieldset>
+		<!-- TODO: Pop the first fieldset and output its field with a button to load the walk from the library -->
+		<?php foreach ($fieldsets as $fieldset): ?>
 			<fieldset>
 				<legend><?php echo $fieldset->label;?></legend>
 				<?php foreach ($this->form->getFieldset($fieldset->name) as $field):?>
