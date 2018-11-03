@@ -139,9 +139,6 @@ var SWGMap = new Class({
 	{
 		switch(style.toLowerCase())
 		{
-			case "cycle":
-				this.map.setBaseLayer(this.cycleMap);
-				break;
 			case "landscape":
 				this.map.setBaseLayer(this.landscapeMap);
 				break;

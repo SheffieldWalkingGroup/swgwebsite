@@ -113,7 +113,9 @@ class Waypoint extends SWGBaseModel
 			"police",
 			"post_office",
 			"shelter",
-			"toilets"
+			"toilets",
+			"museum",
+			"road"
 		);
 		$return = false; // We return false if no suitable place found
 
