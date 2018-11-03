@@ -127,7 +127,7 @@ class Waypoint extends SWGBaseModel
 			'addressdetails=1',
 		);
 
-		$curl = curl_init("http://nominatim.openstreetmap.org/reverse?".implode("&", $options));
+		$curl = curl_init("https://nominatim.openstreetmap.org/reverse?".implode("&", $options));
 		curl_setopt($curl,CURLOPT_USERAGENT, "Sheffield Walking Group - admin contact tech@sheffieldwalkinggroup.org.uk");
 		curl_setopt($curl,CURLOPT_RETURNTRANSFER, true);
 

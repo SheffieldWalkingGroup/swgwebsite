@@ -32,13 +32,9 @@ JHtml::_('behavior.tooltip');
 		<fieldset>
 			<legend>Route</legend>
 			<p>
-				If you have a GPX route or track for this walk, upload it here. 
-				You can get a GPX route by using various route planning software 
-				or websites (e.g.  <a href="http://bikehike.co.uk/index.php">bikehike.co.uk</a>),
-				or you can get a GPX track by walking the route with a GPS logger
-				and exporting the data to GPX format. 
-				The GPX file is used to fill in some of the values in this form,
-				and if you want you can display it on the route map.
+				If you have a GPX route or track for this walk, upload it here.<br>
+				Lots of route planning software can generate GPX files, including OS Maps with a premium subscription: look for a 'Save' or 'Export' function and make sure you select GPX. You can also get a GPX track by walking the route with a GPS logger that supports it.<br>
+				The GPX file is used to fill in some of the values in this form, and if you want you can display it on the route map.
 			</p>
 			<?php
 				echo $this->form->getLabel('route');

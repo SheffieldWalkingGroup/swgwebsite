@@ -94,6 +94,7 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
 					$route->readGPX($gpx);
 					$route->uploadedBy = JFactory::getUser()->id;
 					$route->uploadedDateTime = time();
+					$route->type = Route::Type_Planned;
 					$this->walk->setRoute($route, true);
 					
 					// Store this route for later requests
@@ -147,6 +148,7 @@ class SWG_WalkLibraryModelAddEditWalk extends JModelForm
 		if (empty($walkid))
 		{
 			$this->walk = new Walk();
+			$this->walk->suggestedBy = Leader::fromJoomlaUser(JFactory::getUser()->id);
 		}
 		else
 		{
