@@ -34,9 +34,10 @@ class SWG_EventsControllerScheduleWalk extends JControllerForm
 
     // Get the data from the form POST
     $data = JRequest::getVar('jform', array(), 'post', 'array');
+    $loadButton = JRequest::getVar('loadWalk', false, 'post');
     
     // Was this a save or a load from walk library?
-    if (!empty(JRequest::getVar('loadWalk', false, 'post'))) {
+    if (!empty($loadButton)) {
         $model->createWalkInstanceFromWalk($data['walkid']);
     } else {
         // Send the data to the model
