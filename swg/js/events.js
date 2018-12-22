@@ -721,7 +721,12 @@ function displayEvent(event, container, newMembers) {
 				eventInfo.adopt(end);
 			}
 			
-			var leaderText = event.leader.displayName;
+			var leaderText;
+			if (event.leader)
+                leaderText = event.leader.displayName;
+            else
+                leaderText = "Don't know...";
+
 			
 			var leader = new Element("p", {
 				"class":"leader",
