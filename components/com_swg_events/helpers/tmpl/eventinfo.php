@@ -7,21 +7,24 @@
 			</p>
 		<?php endif;?>
 	<?php endif; ?>
-	<div class="content <?php echo $event->getEventType(); if ($event instanceof WalkInstance) echo " walk".strtolower($event->getWalkDay()); if ($event->alterations->cancelled) echo " cancelled"; if (!$event->okToPublish) echo " unpublished";?>">
+	<div class="content <?php echo $event->getEventType(); if ($event->isDraft) echo " draft"; if ($event instanceof WalkInstance) echo " walk".strtolower($event->getWalkDay()); if ($event->alterations->cancelled) echo " cancelled"; if (!$event->okToPublish) echo " unpublished";?>">
 	<div class="eventheader">
-		<time datetime="<?php echo date("Y-m-d\TH:iO", $event->start);?>" class="dtstart date<?php if ($event->alterations->date) echo " altered\" title=\"Date altered"; ?>">
-		<?php 
-			if ($event instanceof Weekend)
-			// Display start and end dates for weekends. Only display month for start if the weekend straddles a month boundary
-				echo date("l jS".($this->notSameMonth($event->start, $event->endDate)?" F":""), $event->start); 
-			else
-				echo date("l jS F".($this->notThisYear($event->start)?" Y":""),$event->start); // Just start date for other things
-		?>
-		</time>
-		<?php if ($event instanceof Weekend):?>
-			<span class="date">&nbsp;-&nbsp;</span>
-			<time datetime="<?php echo date("Y-m-d", $event->endDate+86399 /* End at 23:59 */);?>" class="dtend date"><?php echo date("l jS F".($this->notThisYear($event->endDate)?" Y":""), $event->endDate);?></time>
-		<?php elseif ($event instanceof WalkInstance):?>
+        <?php if (!empty($event->start)): ?>
+            <time datetime="<?php echo date("Y-m-d\TH:iO", $event->start);?>" class="dtstart date<?php if ($event->alterations->date) echo " altered\" title=\"Date altered"; ?>">
+            <?php 
+                if ($event instanceof Weekend)
+                // Display start and end dates for weekends. Only display month for start if the weekend straddles a month boundary
+                    echo date("l jS".($this->notSameMonth($event->start, $event->endDate)?" F":""), $event->start); 
+                else
+                    echo date("l jS F".($this->notThisYear($event->start)?" Y":""),$event->start); // Just start date for other things
+            ?>
+            </time>
+            <?php if ($event instanceof Weekend):?>
+                <span class="date">&nbsp;-&nbsp;</span>
+                <time datetime="<?php echo date("Y-m-d", $event->endDate+86399 /* End at 23:59 */);?>" class="dtend date"><?php echo date("l jS F".($this->notThisYear($event->endDate)?" Y":""), $event->endDate);?></time>
+            <?php endif; ?>
+        <?php endif; ?>
+		<?php if ($event instanceof WalkInstance):?>
 			<p class="headerextra">
 				<span class="rating">
 					<?php echo $event->distanceGrade.$event->difficultyGrade;?>
@@ -41,9 +44,13 @@
 					echo str_replace(".0","",UnitConvert::displayDistance($inDist,$inUnit, UnitConvert::Mile))."<span class='unit2'>, ".UnitConvert::displayDistance($inDist, $inUnit, UnitConvert::Kilometre)."</span>";
 					?>)
 			</p>
-			<time datetime="<?php echo date("H:iO", $event->estimateFinishTime());?>" class="dtend date"></time>
+			<?php if (!empty($event->start)): ?>
+                <time datetime="<?php echo date("H:iO", $event->estimateFinishTime());?>" class="dtend date"></time>
+            <?php endif; ?>
 		<?php elseif ($event instanceof Social): ?>
-			<time datetime="<?php echo date("H:iO", $event->end);?>" class="dtend date"></time>
+            <?php if (!empty($event->end)): ?>
+                <time datetime="<?php echo date("H:iO", $event->end);?>" class="dtend date"></time>
+            <?php endif; ?>
 		<?php endif;?>
 		<h3 class="summary"><?php echo (!empty($detailLink) ? "<a href='{$detailLink}'>{$event->name}</a>" : $event->name); ?></h3>
 	</div>

@@ -1,6 +1,6 @@
 <?php
 define("_JEXEC",true);
-define("JPATH_BASE", "/home/peter/swg/website/public_html");
+define("JPATH_BASE", "/home/peter/swg/website/public_html"); // TODO!
 require_once("../swg.php");
 include_once("../Models/Walk.php");
 $walk = new Walk();

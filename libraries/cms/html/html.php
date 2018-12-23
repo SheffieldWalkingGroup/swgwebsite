@@ -990,9 +990,18 @@ abstract class JHtml
 		static::_('behavior.calendar');
 
 		// Only display the triggers once for each control.
+//echo "Maybe adding calendar<br>";
+//echo "<pre>";
+//var_dump($id);
+//print_r($done);
+//echo "</pre>";
 		if (!in_array($id, $done))
 		{
+//echo "Adding calendar<br>";
 			$document = JFactory::getDocument();
+//echo "<pre>";
+//var_dump($document);
+//echo "</pre>";
 			$document
 				->addScriptDeclaration(
 				'jQuery(document).ready(function($) {Calendar.setup({

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form name="proposewalk">
+    <fieldset name="walk" label="Choose a walk to lead">
+        <field name="walkid" type="sql" label="Walk in library" query="SELECT ID, CONCAT(walkname,' (id ',ID,': ',distancegrade,difficultygrade,')') AS name FROM walks ORDER BY walkname ASC" key_field="ID" value_field="name" default="">
+            <option value="">-- Select --</option>
+        </field>
+    </fieldset>
+    <fieldset name="leader" label="Who is leading the walk?">
+        <field name="leader" type="sql" label="Leader" query="SELECT ID, CONCAT(Forename,' ',Surname) AS name FROM walkleaders ORDER BY Forename ASC, Surname ASC" key_field="ID" value_field="name" default="">
+            <option value="">-- Me --</option>
+        </field>
+    </fieldset>
+    <fieldset name="dates" label="When do you want to lead the walk?">
+        <field name="basicavailability" type="checkboxes" label="Do you want to lead at the weekend or in the week?">
+            <option value="weekends" checked="true">Weekends (including bank holidays)</option>
+            <option value="weekdays">Weekdays (normally evening walks)</option>
+        </field>
+        <field name="weekdays" type="checkboxes" label="Which weekdays can you lead (if applicable)?" disabled="true">
+            <option value="mondays" checked="true">Mondays</option>
+            <option value="tuesdays" checked="true">Tuesdays</option>
+            <option value="wednesdays" checked="true">Wednesdays</option>
+            <option value="thursdays" checked="true">Thursdays</option>
+            <option value="fridays" checked="true">Fridays</option>
+        </field>
+        <field name="availability" type="availability" label="Select dates" />
+    </fieldset>
+    <fieldset name="details" label="Walk details">
+        <field name="transport" type="textarea" label="Timing &amp; transport" rows="3" cols="80" description="When &amp; where should we meet to go to your walk? If transport is different on different days, remember to say so. Meeting place should normally be Fitzwilliam Street car park or a public transport hub." hint="9:15, Fitzwilliam Street car park"/>
+        <field name="backmarker" type="sql" label="Do you have a backmarker?" query="SELECT ID, CONCAT(Forename,' ',Surname) AS name FROM walkleaders ORDER BY Forename ASC, Surname ASC" key_field="ID" value_field="name">
+            <option value="">-- No backmarker --</option>
+        </field>
+        <field name="comments" type="textarea" label="Comments" rows="4" cols="80" description="Any other comments, e.g. changes to the route description"/>
+    </fieldset>
+</form>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form name="manageavailability-walk">
+    <field name="walkid" type="sql" label="Walk in library" query="SELECT walks.ID, CONCAT(walkname,' (by ', Forename, ' ', Surname, ', ', miles, ' miles ',distancegrade,difficultygrade,')') AS name FROM walks JOIN walkleaders ON walkleaders.ID = walks.suggestedby ORDER BY walkname ASC" key_field="ID" value_field="name" default=""/>
+    <field name="weekends" type="radio" default="1" label="All weekends &amp; bank holidays" description="Set your availability for all weekends &amp; bank holidays" class="btn-group btn-group-yesno">
+        <option value="1">JYES</option>
+        <option value="2">JNO</option>
+    </field>
+    <field name="mondays" type="radio" default="0" label="All Mondays &amp; bank holidays" description="Set your availability for every Monday (except bank holidays)" class="btn-group btn-group-yesno">
+        <option value="1">JYES</option>
+        <option value="2">JNO</option>
+    </field>
+    <field name="tuesdays" type="radio" default="0" label="All Tuesdays &amp; bank holidays" description="Set your availability for all Tuesday (except bank holidays)" class="btn-group btn-group-yesno">
+        <option value="1">JYES</option>
+        <option value="2">JNO</option>
+    </field>
+    <field name="wednesdays" type="radio" default="0" label="All Wednesdays &amp; bank holidays" description="Set your availability for all Wednesdays (except bank holidays)" class="btn-group btn-group-yesno">
+        <option value="1">JYES</option>
+        <option value="2">JNO</option>
+    </field>
+    <field name="thursdays" type="radio" default="0" label="All Thursdays &amp; bank holidays" description="Set your availability for all Thursdays (except bank holidays)" class="btn-group btn-group-yesno">
+        <option value="1">JYES</option>
+        <option value="2">JNO</option>
+    </field>
+    <field name="fridays" type="radio" default="0" label="All Fridays &amp; bank holidays" description="Set your availability for all Fridays (except bank holidays)" class="btn-group btn-group-yesno">
+        <option value="1">JYES</option>
+        <option value="2">JNO</option>
+    </field>
+    <field name="dates" type="availability" label="Dates for this walk"/>
+    <field name="transport" type="textarea" label="Timing &amp; transport" rows="3" cols="80" description="When &amp; where should we meet to go to your walk? If transport is different on different days, remember to say so. Meeting place should normally be Fitzwilliam Street car park or a public transport hub." hint="9:15, Fitzwilliam Street car park"/>
+    <field name="backmarker" type="sql" label="Backmarker" query="SELECT ID, CONCAT(Forename,' ',Surname) AS name FROM walkleaders ORDER BY Forename ASC, Surname ASC" key_field="ID" value_field="name" default="-- No backmarker --"/>
+</form>

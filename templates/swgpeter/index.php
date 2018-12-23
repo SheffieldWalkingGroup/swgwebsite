@@ -4,7 +4,7 @@
 
   JHTML::_('behavior.framework', true);
   $document = &JFactory::getDocument();
-  $document->addScript('/templates/swgpeter/script/template.js');
+  $document->addScript($this->baseurl . '/templates/swgpeter/script/template.js');
   JLoader::register('SWG', JPATH_SITE."/swg/swg.php");
 ?>
 <!DOCTYPE html>

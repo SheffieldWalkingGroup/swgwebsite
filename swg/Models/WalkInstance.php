@@ -291,7 +291,7 @@ public function toDatabase(JDatabaseQuery &$query)
 			return false;
 			
 		$route = Route::loadForWalkable($this, false, Route::Type_Planned);
-		return (isset($route));
+		return (!empty($route));
 	}
 
 	public function __get($name)

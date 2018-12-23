@@ -20,6 +20,8 @@ abstract class Event extends SWGBaseModel {
 	protected $attendedBy;
 	// True if all attendees have been loaded. We can cache individual attendees without loading them all.
 	private $loadedAttendees = false;
+	
+	protected $isDraft = false;
 
 	const DateToday = -1;
 	const DateYesterday = -2;
@@ -82,6 +84,7 @@ abstract class Event extends SWGBaseModel {
 				break;
 			case "okToPublish":
 			case "attendedby":
+			case "isDraft":
 				$this->$name = (bool)$value;
 				break;
 		}

@@ -6,11 +6,16 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.view');
 
 JLoader::register('Leader', JPATH_BASE."/swg/Models/Weekend.php");
+JLoader::register('Leader', JPATH_BASE."/swg/Models/WalkInstance.php");
+
+include_once(JPATH_SITE."/components/com_swg_events/helpers/views/eventinfo.html.php");
+include_once(JPATH_SITE."/components/com_swg_leaderutils/controller.php");
+
  
 /**
  * HTML View class for the HelloWorld Component
  */
-class SWG_LeaderUtilsViewManageAvailability extends JViewLegacy
+class SWG_LeaderUtilsViewProposeWalk extends SWG_EventsHelperEventInfo
 {
 	/** @var Weekend[] */
 	private $weekends;
@@ -28,11 +33,19 @@ class SWG_LeaderUtilsViewManageAvailability extends JViewLegacy
 	function display($tpl = null)
 	{
 		// Model defaults are the current user and the next unpublished programme. That's what we want, so don't change it
+		$this->controller = JControllerLegacy::getInstance('SWG_LeaderUtils');
 		
 		$this->form = $this->get("form");
 		$this->programme = $this->get("programme");
+		$this->walk = $this->get("walk");
+		
+		$this->walkInstance = $this->get("walkInstance");
 		
 		$this->form->getField('availability')->setProgramme($this->programme);
+		// Set default leader (only relevant if user can select leader)
+		$myLeader = Leader::fromJoomlaUser(JFactory::getUser()->id);
+		var_dump($myLeader);
+		$this->form->setValue("leader", "leader", $myLeader->id);
 		$this->leader = $this->get("leader");
 		
 		// Pre-load the dates of weekends away during this programme (only check start and end dates now, we'll check exact dates when using them)
@@ -132,5 +145,10 @@ class SWG_LeaderUtilsViewManageAvailability extends JViewLegacy
 	function getField($date)
 	{
 		return $this->form->getField("availability_".$date);
+	}
+	
+	public function canChooseLeader()
+	{
+        return $this->get("canChooseLeader");
 	}
 }

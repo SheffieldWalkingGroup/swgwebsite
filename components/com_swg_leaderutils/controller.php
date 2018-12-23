@@ -8,7 +8,15 @@ jimport('joomla.application.component.controller');
 /**
  * SWG Leader Utilities Component Controller
  */
-class SWG_LeaderUtilsController extends JController
+class SWG_LeaderUtilsController extends JControllerLegacy
 {
-	// Currently nothing
+	public static function canAddOtherProposal()
+	{
+		return JFactory::getUser()->authorise("walkproposal.addother","com_swg_leaderutils");
+	}
+	
+	public static function canEditOtherProposal()
+	{
+		return JFactory::getUser()->authorise("walkproposal.editother","com_swg_leaderutils");
+	}
 }

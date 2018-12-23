@@ -207,7 +207,7 @@ class JLogLoggerFormattedtext extends JLogLogger
 
 		if (!JFile::write($this->path, $head))
 		{
-			throw new RuntimeException('Cannot write to log file.');
+			throw new RuntimeException('Cannot write to log file '.$this->path.'.');
 		}
 	}
 

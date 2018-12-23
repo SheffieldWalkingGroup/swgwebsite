@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<access component="com_swg_events">
+	<section name="component">
+		<action name="core.admin" title="JACTION_ADMIN" description="JACTION_ADMIN_COMPONENT_DESC" />
+		<action name="core.manage" title="JACTION_MANAGE" description="JACTION_MANAGE_COMPONENT_DESC" />
+		<action name="core.create" title="JACTION_CREATE" description="JACTION_CREATE_COMPONENT_DESC" />
+		<action name="core.delete" title="JACTION_DELETE" description="JACTION_DELETE_COMPONENT_DESC" />
+		<action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT_COMPONENT_DESC" />
+	
+		<action name="walkproposal.view" title="View walk proposals" description="View proposed walks" />
+        <action name="walkproposal.addown" title="Add own walk proposals" description="Propose a walk to lead themselves" />
+        <action name="walkproposal.editown" title="Edit own walk proposals" description="Edit their own walk proposals" />
+        <action name="walkproposal.addother" title="Add other walk proposals" description="Add a walk proposal for another leader" />
+        <action name="walkproposal.editother" title="Edit other walk proposals" description="Edit walk proposals for other leaders" />
+	</section>
+</access>

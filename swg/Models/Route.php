@@ -621,6 +621,9 @@ class Route extends SWGBaseModel implements Iterator {
 	*/
 	public static function loadForWalkable(Walkable $w, $allowRelated=false, $type=null, $limit=0)
 	{
+        if (!$w->id) {
+            return array();
+        }
 		$db =& JFactory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select("routeid, type");

@@ -293,6 +293,7 @@ class JPath
 			// Get the path to the file
 			$fullname = $path . '/' . $file;
 
+
 			// Is the path based on a stream?
 			if (strpos($path, '://') === false)
 			{

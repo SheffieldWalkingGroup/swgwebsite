@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form name="manageavailability">
+    <fieldset name="yourdates" label="Your dates">
+        <field name="weekends" type="radio" default="1" label="All weekends &amp; bank holidays" description="Set your availability for all weekends &amp; bank holidays" class="btn-group btn-group-yesno">
+            <option value="1">JYES</option>
+            <option value="2">JNO</option>
+        </field>
+        <field name="mondays" type="radio" default="1" label="All Mondays &amp; bank holidays" description="Set your availability for every Monday (except bank holidays)" class="btn-group btn-group-yesno">
+            <option value="1">JYES</option>
+            <option value="2">JNO</option>
+        </field>
+        <field name="tuesdays" type="radio" default="1" label="All Tuesdays &amp; bank holidays" description="Set your availability for all Tuesday (except bank holidays)" class="btn-group btn-group-yesno">
+            <option value="1">JYES</option>
+            <option value="2">JNO</option>
+        </field>
+        <field name="wednesdays" type="radio" default="1" label="All Wednesdays &amp; bank holidays" description="Set your availability for all Wednesdays (except bank holidays)" class="btn-group btn-group-yesno">
+            <option value="1">JYES</option>
+            <option value="2">JNO</option>
+        </field>
+        <field name="thursdays" type="radio" default="1" label="All Thursdays &amp; bank holidays" description="Set your availability for all Thursdays (except bank holidays)" class="btn-group btn-group-yesno">
+            <option value="1">JYES</option>
+            <option value="2">JNO</option>
+        </field>
+        <field name="fridays" type="radio" default="1" label="All Fridays &amp; bank holidays" description="Set your availability for all Fridays (except bank holidays)" class="btn-group btn-group-yesno">
+            <option value="1">JYES</option>
+            <option value="2">JNO</option>
+        </field>
+        <field name="availability" type="availability" label="Your availability"/>
+    </fieldset>
+    
+    <fieldset name="yourwalks" label="Your walks">
+        <!--<field name="walks" type="subform" formsource="manageavailability-walk.xml" multiple="true" label="Your walks" description="Add the walks you want to lead and the dates you can lead them"/>-->
+    </fieldset>
+    
+    <fieldset name="backmarking" label="Backmarking">
+        <field name="backmarking" type="textarea" label="Backmarking preferences" description="Describe your preferences for backmarking, e.g. areas you like, lengths, difficulties, time of day..." rows="4" cols="80"/>
+    </fieldset>
+</form>

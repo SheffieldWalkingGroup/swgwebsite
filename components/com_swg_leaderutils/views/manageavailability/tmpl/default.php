@@ -20,24 +20,43 @@ JHtml::_('behavior.tooltip');
 		
 		<h3><?php echo $this->programme->description; ?></h3>
 		
-		<table>
-			<?php $daysInWeekend = 0; // Days left in current weekend - don't repeat weekend info if this is > 0 ?>
-			<?php foreach ($this->programme->dates as $date): ?>
-				<tr class="<?php echo $this->dayClass($date); ?>">
-					<td>
-						<?php echo $this->getField($date)->input; ?>
-					</td>
-					<td colspan="<?php echo ($this->isWeekendAway($date) ? 1 : 2) ?>">
-						<?php echo $this->getField($date)->label; ?>
-					</td>
-					<?php if ($this->isWeekendAway($date) && $daysInWeekend == 0): ?>
-						<td rowspan="<?php $daysInWeekend = $this->weekendLength($date); echo $daysInWeekend;?>">
-							<?php echo $this->weekendInfo($date); ?>
-						</td>
-					<?php endif; if ($daysInWeekend > 0) $daysInWeekend--; ?>
-				</tr>
+		<fieldset>
+			<legend>When are you available for walk leading?</legend>
+			<h4>Key</h4>
+			<dl class='availabilitykey'>
+                <dt class='no'>&nbsp;</dt>
+                <dd>Not available</dd>
+                <dt class='yes'>&nbsp;</dt>
+                <dd>Available</dd>
+                <dt class='maybe'>&nbsp;</dt>
+                <dd>Available if necessary</dd>
+            </dl>
+			<?php foreach ($this->form->getFieldset('yourdates') as $field): ?>
+				<div>
+					<?php echo $field->label; ?>
+					<?php echo $field->input; ?>
+				</div>
 			<?php endforeach; ?>
-		</table>
-		<input name="submit" type="submit" value="Submit" />
+		</fieldset>
+		<fieldset>
+			<legend>What walks do you want to lead?</legend>
+			<?php foreach ($this->form->getFieldset('yourwalks') as $field): ?>
+				<div>
+					<?php echo $field->label; ?>
+					<?php echo $field->input; ?>
+				</div>
+			<?php endforeach; ?>
+		</fieldset>
+		<fieldset>
+			<legend>Do you want to backmark?</legend>
+			<?php foreach ($this->form->getFieldset('backmarking') as $field): ?>
+				<div>
+					<?php echo $field->label; ?>
+					<?php echo $field->input; ?>
+				</div>
+			<?php endforeach; ?>
+		</fieldset>
+		<input type="submit" class="submit" value="Save" />
+		
 	</form>
 <?php endif; ?>

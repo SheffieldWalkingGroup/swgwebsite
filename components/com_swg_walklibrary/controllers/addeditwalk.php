@@ -2,6 +2,10 @@
 // No direct access.
 defined('_JEXEC') or die;
 
+echo "<pre>";
+echo debug_print_backtrace();
+die("agragr");
+
 // Include dependancy of the main controllerform class
 jimport('joomla.application.component.controllerform');
 
