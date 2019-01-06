@@ -31,6 +31,7 @@ class SWG_WalkLibraryViewWalkDetails extends JViewLegacy
 		// Get some permissions info
 		$this->canAdd = $controller->canAdd();
 		$this->canEdit = $controller->canEdit($this->walk);
+		$this->canLead = $controller->canLead($this->walk);
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) 
@@ -70,6 +71,14 @@ MAP
 	
 	public function urlToEdit(Walk $walk) {
 		return $this->walkURL($walk,"addeditwalk");
+	}
+	public function urlToLead(Walk $walk) {
+        $itemid = JRequest::getInt('leadWalkPage');
+		if (empty($itemid))
+			return false;
+		$item = JFactory::getApplication()->getMenu()->getItem($itemid);
+		$link = new JURI($item->route.'?walkid='.$walk->id);
+		return $link;
 	}
 	
 	private function walkURL(Walk $walk, $view)

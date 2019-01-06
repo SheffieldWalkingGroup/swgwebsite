@@ -99,6 +99,14 @@ class SWG_WalkLibraryViewListWalks extends JViewLegacy
 
 	public function urlToView(Walk $walk) { return $this->walkURL($walk,"walkdetails"); }
 	public function urlToEdit(Walk $walk) { return $this->walkURL($walk,"addeditwalk"); }
+	public function urlToLead(Walk $walk) {
+        $itemid = JRequest::getInt('leadWalkPage');
+		if (empty($itemid))
+			return false;
+		$item = JFactory::getApplication()->getMenu()->getItem($itemid);
+		$link = new JURI($item->route.'?walkid='.$walk->id);
+		return $link;
+	}
 	private function walkURL(Walk $walk, $view)
 	{
 	// Get the current URL. We want to strip off anything in the parameters except a component

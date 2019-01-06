@@ -3,7 +3,9 @@
 defined('_JEXEC') or die('Restricted access');
 ?>
 <h3><?php echo $this->walk->name; ?></h3>
-<p><?php echo $this->walk->description; ?>
+<p><?php echo $this->walk->description; ?></p>
+<?php if ($this->canEdit):?>[<a href="<?php echo $this->urlToEdit($this->walk); ?>">Edit</a>]<?php endif;?> 
+<?php if ($this->canLead):?>[<a href="<?php echo $this->urlToLead($this->walk); ?>">Lead</a>]<?php endif;?>
 <dl>
   <dt>General area</dt>
     <dd><?php echo $this->walk->location ?></dd>
@@ -89,4 +91,5 @@ defined('_JEXEC') or die('Restricted access');
 <?php else: ?>
   <p>This walk has never been led.</p>
 <?php endif;?>
-<?php if ($this->canEdit):?><a href="<?php echo $this->urlToEdit($this->walk); ?>">Edit</a><?php endif;?>
+<?php if ($this->canEdit):?>[<a href="<?php echo $this->urlToEdit($this->walk); ?>">Edit</a>]<?php endif;?> 
+<?php if ($this->canLead):?>[<a href="<?php echo $this->urlToLead($this->walk); ?>">Lead</a>]<?php endif;?>

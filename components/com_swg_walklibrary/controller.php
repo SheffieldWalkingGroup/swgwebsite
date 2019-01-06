@@ -36,6 +36,14 @@ class SWG_WalkLibraryController extends JControllerLegacy
 		}
 	}
 	
+	function canLead($walkOrID)
+	{
+        return (
+            JFactory::getUser()->authorise("walkproposal.addown","com_swg_leaderutils") &&
+            JRequest::getInt('leadWalkPage') != ''
+        );
+	}
+	
 	function canEditAll()
 	{
 		return JFactory::getUser()->authorise("walk.editall","com_swg_walklibrary");
