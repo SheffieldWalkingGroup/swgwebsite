@@ -42,7 +42,7 @@
                 setDayValue(7, value);
                 break;
             case 'weekdays':
-                var weekdays = document.getElements('#weekdays input');
+                var weekdays = document.getElements('#jform_weekdays input');
                 for (var i=0; i<weekdays.length; i++) {
                     weekdays[i].disabled = (!value);
                     // Set this day to enabled if weekdays AND this day are enabled
