@@ -10,6 +10,7 @@ JLoader::register('Facebook', JPATH_SITE."/libraries/facebook/facebook.php");
 JLoader::register('Event', JPATH_SITE."/swg/Models/Event.php");
 JLoader::register('WalkProgramme', JPATH_SITE."/swg/Models/WalkProgramme.php");
 JLoader::register('WalkProposal', JPATH_SITE."/swg/Models/WalkProposal.php");
+JLoader::register('BankHolidayService', JPATH_BASE."/swg/Services/BankHolidayService.php");
 /**
  * A collection of general functions and constants
  * @author peter

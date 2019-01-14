@@ -173,7 +173,7 @@ class WalkProposal extends SWGBaseModel {
             $db->query();
 		}
 		
-		$db->commit();
+		$db->transactionCommit();
     }
     
     /**
@@ -190,17 +190,11 @@ class WalkProposal extends SWGBaseModel {
     {
         $date = DateTime::createFromFormat('U', $this->programme->startDate);
         $endDate = DateTime::createFromFormat('U', $this->programme->endDate);
-echo "Populating dates from ".$date->format('Y-m-d')." to ".$endDate->format('Y-m-d')."<br>";
-echo "<prE>";
-print_r($dates);
-echo "</pre>";
         $this->dates = array();
         
         do {
             $dateString = $date->format('Y-m-d'); 
-var_dump($dateString);
             $availability = (int)$dates[$dateString]; // TODO: Should default to 0 if not set
-var_dump($availability);
             $this->dates[$dateString] = $availability;
             $date->add(new DateInterval('P1D'));
         } while ($date < $endDate);
@@ -232,7 +226,6 @@ var_dump($availability);
                 break;
             case 'walk':
             case 'walkId':
-echo "Walk: ".$value."<br>";
                 if ($value instanceof Walk)
                     $this->walk = $value;
                 else 

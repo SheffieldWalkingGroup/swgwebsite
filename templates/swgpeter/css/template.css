@@ -1358,12 +1358,23 @@ div.invisibleBacking {
     border-right:none;
 }
 
-.availabilitycalendar label
+.availabilitycalendar label,
+.availabilitykey dt
 {
     display:inline-block;
-    width:100%;
-    height:100%;
-    background-color:#FF9555;
+    background-repeat:no-repeat !important;
+    background-position:50% 50% !important;
+}
+
+.availabilitycalendar label
+{
+/*     width:100%; */
+/*     height:100%; */
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
 }
 
 .availabilitycalendar input
@@ -1372,19 +1383,26 @@ div.invisibleBacking {
     opacity:0;
 }
 
-.availabilitycalendar input:indeterminate ~ label
+.availabilitycalendar label,
+.availabilitykey dt.no
 {
-    background-color:#F6F5D4;
+    background:url('../images/icons/icons8-cross-32.png') #FFEBEE;
 }
 
-.availabilitycalendar input:checked ~ label
+.availabilitycalendar input:indeterminate ~ label,
+.availabilitykey dt.maybe
 {
-    background-color:#8dab6a
+    background:url('../images/icons/icons8-tick-box-32.png') #EEFEEB;
+}
+
+.availabilitycalendar input:checked ~ label,
+.availabilitykey dt.yes
+{
+    background:url('../images/icons/icons8-star-filled-32.png') #EBEEFE;
 }
 
 .availabilitykey dt
 {
-    style:inline-block;
     width:60px;
     height:35px;
     float:left;
@@ -1396,19 +1414,4 @@ div.invisibleBacking {
     height:35px;
     padding:9px 0;
     margin: 0 0 0 70px;
-}
-
-.availabilitykey dt.no
-{
-    background-color:#FF9555;
-}
-
-.availabilitykey dt.yes
-{
-    background-color:#8dab6a;
-}
-
-.availabilitykey dt.maybe
-{
-    background-color:#F6F5D4;
 }

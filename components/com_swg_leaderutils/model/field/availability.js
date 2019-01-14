@@ -40,6 +40,7 @@
             case 'weekends':
                 setDayValue(6, value);
                 setDayValue(7, value);
+                setBankHolidays(value);
                 break;
             case 'weekdays':
                 var weekdays = document.getElements('#jform_weekdays input');
@@ -69,12 +70,6 @@
         }
     }
     
-    function setWeekendsEnabled(enabled)
-    {
-        setDayValue(6, enabled);
-        setDayValue(7, enabled);
-    }
-    
     function setDayValue(dayOfWeek, enabled)
     {
         var rows = calendarTable.getElementsByTagName('tr');
@@ -87,25 +82,44 @@
             for (var j=0; j<inputEls.length; j++) {
                 var input = inputEls[j];
                 
-                if (input.dataset.dow == dayOfWeek) {
-                    if (input.type == 'checkbox') {
-                        // If it's already set to a preferred day, don't reduce it to normal
-                        if (enabled && !input.checked && !input.indeterminate) {
-                            input.readOnly = true;
-                            input.indeterminate = true;
-                        } else if (!enabled) {
-                            input.readOnly = false;
-                            input.indeterminate = false;
-                            input.checked = false;
-                        }
-                    } else if (input.type == 'hidden') {
-                        if (enabled) {
-                            input.value = Math.max(1, input.value);
-                        } else {
-                            input.value = 0;
-                        }
-                    }
+                if (input.dataset.dow == dayOfWeek && input.dataset.bankholiday == "") {
+                    setInputCellValue(input, enabled);
                 }
+            }
+        }
+    }
+    
+    /**
+     * Marks a checkbox or hidden field as enabled or disabled
+     */
+    function setInputCellValue(input, enabled)
+    {
+        if (input.type == 'checkbox') {
+            // If it's already set to a preferred day, don't reduce it to normal
+            if (enabled && !input.checked && !input.indeterminate) {
+                input.readOnly = true;
+                input.indeterminate = true;
+            } else if (!enabled) {
+                input.readOnly = false;
+                input.indeterminate = false;
+                input.checked = false;
+            }
+        } else if (input.type == 'hidden') {
+            if (enabled) {
+                input.value = Math.max(1, input.value);
+            } else {
+                input.value = 0;
+            }
+        }
+    }
+    
+    function setBankHolidays(enabled)
+    {
+        var inputEls = calendarTable.getElementsByTagName('input');
+        for (var i=0; i<inputEls.length; i++) {
+            var input = inputEls[i];
+            if (input.dataset.bankholiday != "") {
+                setInputCellValue(input, enabled);
             }
         }
     }
@@ -118,3 +132,33 @@
         wireUp();
     }
 }());
+
+/* TODO: Move inside closure */
+/**
+ * Handle tri-state checkbox
+ * 
+ * Checked = Best days, value = 2
+ * Indeterminate = Can lead, value = 1
+ * Unckecked = Can't lead, value = 0
+ * 
+ * Order:
+ * Off -> indeterminate -> on -> off...
+ */
+function triState(cb) {
+    var real = document.getElementById(cb.id + "_real");
+    if (real.value == 2) {
+        // Go to off
+        cb.checked = cb.readOnly = false;
+        real.value = 0;
+    } else if (real.value == 1) {
+        // Go to fully on
+        cb.checked = true;
+        cb.readOnly = false;
+        real.value = 2;
+    } else {
+        // Go to half on
+        cb.readOnly = cb.indeterminate = true;
+        cb.checked = false;
+        real.value = 1;
+    }
+}

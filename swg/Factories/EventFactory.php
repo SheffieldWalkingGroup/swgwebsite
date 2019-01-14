@@ -11,6 +11,15 @@
  * numEvents() - list the total number of events matching the current filters
  * getNext($num) - gets the next $num events from today. Ignores start & end date, limit & offset filters ($num is the limit)
  * getSingle($id) - gets the event with ID $id, from the cache if stored. If you pass an actual event in, it will be returned unchanged
+ *
+ * Standard filters:
+ * Set filters with $factory->filterName = value
+ *
+ * startDate       - Return only events ON OR AFTER this date. Understands day constants. Default is today.
+ * endDate         - Return only events ON OR BEFORE this date. Understands day constants. Default is the end of time
+ * limit           - Return no more than this many events. Default is no limit (-1)
+ * offset          - Skip this many events before returning them. Default is none (0)
+ * showUnpublished - Show events that haven't been published yet. Default is to only show published events.
  */
 abstract class EventFactory
 {

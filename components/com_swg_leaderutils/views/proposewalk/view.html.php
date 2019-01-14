@@ -44,7 +44,6 @@ class SWG_LeaderUtilsViewProposeWalk extends SWG_EventsHelperEventInfo
 		$this->form->getField('availability')->setProgramme($this->programme);
 		// Set default leader (only relevant if user can select leader)
 		$myLeader = Leader::fromJoomlaUser(JFactory::getUser()->id);
-		var_dump($myLeader);
 		$this->form->setValue("leader", "leader", $myLeader->id);
 		$this->leader = $this->get("leader");
 		

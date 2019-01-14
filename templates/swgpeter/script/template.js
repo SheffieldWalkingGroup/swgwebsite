@@ -469,18 +469,3 @@ function shortDate(date)
 {
 	return date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
 }
-
-/* Leader availability calendar */
-function triState(cb) {
-    if (cb.readOnly) cb.checked=cb.readOnly=false;
-    else if (!cb.checked) cb.readOnly=cb.indeterminate=true;
-  
-    var real = document.getElementById(cb.id + "_real");
-    if (cb.checked) {
-        real.value = 2;
-    } else if (cb.indeterminate) {
-        real.value = 1;
-    } else {
-        real.value = 0;
-    }
-}
