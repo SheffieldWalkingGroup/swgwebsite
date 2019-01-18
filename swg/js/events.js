@@ -120,12 +120,16 @@ var Event = new Class({
 		}
 		
 		// End time might be a full date, or just a time on the start date
-		var endTime = container.getElement(".dtend").getProperty("datetime");
-		if (endTime.indexOf("T") == -1)
-		{
-			var endTime = startTime.substring(0, 10) + "T" + endTime;
-		}
-		this.end = new Date(endTime);
+		var endTime;
+        var endTimeField = container.getElement(".dtend");
+        if (endTimeField != null) {
+            endTime = endTimeField.getProperty("datetime");
+            if (endTime.indexOf("T") == -1)
+            {
+                var endTime = startTime.substring(0, 10) + "T" + endTime;
+            }
+            this.end = new Date(endTime);
+        }
 		
 		// Look for remaining alterations
 		
