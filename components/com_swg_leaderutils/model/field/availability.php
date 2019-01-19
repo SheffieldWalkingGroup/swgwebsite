@@ -4,7 +4,7 @@ defined('_JEXEC') or die('Restricted access');
 
 require_once JPATH_BASE."/swg/swg.php";
 JLoader::register('WalkProgramme', JPATH_BASE."/swg/Models/WalkProgramme.php");
-JFactory::getDocument()->addScript(JURI::base().'/components/com_swg_leaderutils/model/field/availability.js');
+JFactory::getDocument()->addScript(JURI::base().'components/com_swg_leaderutils/model/field/availability.js');
 
 class JFormFieldAvailability extends JFormField
 {

@@ -43,13 +43,13 @@
 		<fieldset name="route">
 			<field name="miles" type="text" label="Estimated distance (miles)" />
 			<field name="difficultyGrade" type="radio" label="Difficulty grade">
-				<option value="1">1 (easy)</option>
-				<option value="2">2 (medium)</option>
-				<option value="3">3 (hard)</option>
+				<option value="1">Easy (easy terrain with a couple of mild climbs)</option>
+				<option value="2">Moderate (moderate terrain with some tricky parts and steady climbs)</option>
+				<option value="3">Hard (hard terrain, possibly with exposure and scrambling, with steep and long ascents)</option>
 			</field>
 			<field
 				name="information" type="textarea" rows="10" cols="56" 
-				label="Extra info for walk planners/leaders"
+				label="Extra info for other leaders"
 			/>
 			<field name="dogFriendly" type="checkbox" label="Route doesn't forbid dogs" value="1" default="0" />
 			<field name="childFriendly" type="checkbox" label="Route can take infant pushchairs/buggies" value="1" default="0" />

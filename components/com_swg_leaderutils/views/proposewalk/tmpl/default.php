@@ -40,7 +40,7 @@ JHtml::_('behavior.tooltip');
             
             <fieldset>
                 <legend>When are you available for walk leading?</legend>
-                
+                <p>These options mark certain day(s) available every week through the programme. You can then mark individual days by clicking in the calendar.</p>
                 <dl>
                     <dt><?php echo $this->form->getField('basicavailability')->label; ?></dt>
                     <dd><?php echo $this->form->getField('basicavailability')->input; ?></dd>
@@ -50,7 +50,6 @@ JHtml::_('behavior.tooltip');
                 </dl>
                             
                 <h4>Key</h4>
-                <p>Click a date to switch between these three options, or use the switches to select which days you're available in general</p>
                 <dl class='availabilitykey'>
                     <dt class='no'>&nbsp;</dt>
                     <dd>I can't lead a walk on this day</dd>
@@ -64,6 +63,7 @@ JHtml::_('behavior.tooltip');
             </fieldset>
             <fieldset>
                 <legend>Other details</legend>
+                <p>If you're travelling by public transport, remember to check if the times are different on different days.</p>
                 <?php foreach ($this->form->getFieldset('details') as $field): ?>
                     <div>
                         <?php echo $field->label; ?>

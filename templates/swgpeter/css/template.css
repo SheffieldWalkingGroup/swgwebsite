@@ -1105,6 +1105,10 @@ nav .moduletable_menu h3
 	float:left;
 	padding-top:5px;
 }
+#jform_difficultyGrade label:after {
+    content:"\a";
+    white-space:pre;
+}
 .olMap {
 	position:relative;
 }
