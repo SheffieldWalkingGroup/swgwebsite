@@ -1151,6 +1151,178 @@ LatLon.prototype.rhumbMidpointTo = function(point) {
   return new LatLon(lat3.toDeg(), lon3.toDeg());
 }
 
+/* Datum conversion based on multiple functions from movable-type.co.uk */
+
+LatLon.prototype.wgs84ToOsgb36 = function() {
+    var oldLatLon = this;
+    var transform = [ -446.448, 125.157, -542.060,  20.4894, -0.1502, -0.2470, -0.8421 ];
+    var airy1830 = { a: 6377563.396, b: 6356256.909, f: 1/299.3249646   };
+    var wgs84Ellipsoid = { a: 6377563.396, b: 6356256.909,    f: 1/299.3249646   };
+    var oldCartesian = oldLatLon.toCartesian(airy1830);                // convert polar to cartesian...
+    var newCartesian = oldCartesian.applyTransform(transform); // ...apply transform...
+    var newLatLon = newCartesian.toLatLonE(wgs84Ellipsoid);           // ...and convert cartesian to polar
+    
+    return newLatLon;
+}
+
+LatLon.prototype.osgb36ToWgs84 = function() {
+    var oldLatLon = this;
+    var invTransform = [ -446.448, 125.157, -542.060,  20.4894, -0.1502, -0.2470, -0.8421 ];
+    var transform = [];
+    for (var p=0; p<7; p++) transform[p] = -invTransform[p];
+    var airy1830 = { a: 6377563.396, b: 6356256.909, f: 1/299.3249646   };
+    var wgs84Ellipsoid = { a: 6377563.396, b: 6356256.909,    f: 1/299.3249646   };
+    var oldCartesian = oldLatLon.toCartesian(wgs84Ellipsoid);                // convert polar to cartesian...
+    var newCartesian = oldCartesian.applyTransform(transform); // ...apply transform...
+    var newLatLon = newCartesian.toLatLonE(airy1830);           // ...and convert cartesian to polar
+    
+    return newLatLon;
+}
+
+/**
+ * Converts ‘this’ point from (geodetic) latitude/longitude coordinates to (geocentric) cartesian
+ * (x/y/z) coordinates.
+ *
+ * @returns {Vector3d} Vector pointing to lat/lon point, with x, y, z in metres from earth centre.
+ */
+LatLon.prototype.toCartesian = function(ellipsoid) {
+    var φ = this.lat().toRad(), λ = this.lon().toRad();
+    var h = 0; // height above ellipsoid - not currently used
+    var a = ellipsoid.a, f = ellipsoid.f;
+
+    var sinφ = Math.sin(φ), cosφ = Math.cos(φ);
+    var sinλ = Math.sin(λ), cosλ = Math.cos(λ);
+
+    var eSq = 2*f - f*f;                      // 1st eccentricity squared ≡ (a²-b²)/a²
+    var ν = a / Math.sqrt(1 - eSq*sinφ*sinφ); // radius of curvature in prime vertical
+
+    var x = (ν+h) * cosφ * cosλ;
+    var y = (ν+h) * cosφ * sinλ;
+    var z = (ν*(1-eSq)+h) * sinφ;
+
+    var point = new Vector3d(x, y, z);
+
+    return point;
+};
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+/* Vector handling functions                                          (c) Chris Veness 2011-2019  */
+/*                                                                                   MIT Licence  */
+/* www.movable-type.co.uk/scripts/geodesy-library.html#vector3d                                   */
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+/**
+ * Library of 3-d vector manipulation routines.
+ *
+ * @module vector3d
+ */
+
+/* Vector3d - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+/**
+ * Functions for manipulating generic 3-d vectors.
+ *
+ * Functions return vectors as return results, so that operations can be chained.
+ *
+ * @example
+ *   const v = v1.cross(v2).dot(v3) // ≡ v1×v2⋅v3
+ */
+class Vector3d {
+
+    /**
+     * Creates a 3-d vector.
+     *
+     * @param {number} x - X component of vector.
+     * @param {number} y - Y component of vector.
+     * @param {number} z - Z component of vector.
+     *
+     * @example
+     *   import Vector3d from '/js/geodesy/vector3d.js';
+     *   const v = new Vector3d(0.267, 0.535, 0.802);
+     */
+    constructor(x, y, z) {
+        this.x = Number(x);
+        this.y = Number(y);
+        this.z = Number(z);
+    }
+
+    /**
+     * String representation of vector.
+     *
+     * @param   {number} [dp=3] - Number of decimal places to be used.
+     * @returns {string} Vector represented as [x,y,z].
+     */
+    toString(dp=3) {
+        return '[' + this.x.toFixed(dp) + ',' + this.y.toFixed(dp) + ',' + this.z.toFixed(dp) + ']';
+    }
+}
+
+/**
+ * Converts ‘this’ (geocentric) cartesian (x/y/z) point to (ellipsoidal geodetic) latitude/longitude
+ * coordinates on specified datum.
+ *
+ * Uses Bowring’s (1985) formulation for μm precision in concise form.
+ *
+ * @param {LatLon.datum.transform} ellipsoid - Ellipsoid to use when converting point.
+ */
+Vector3d.prototype.toLatLonE = function(ellipsoid) {
+    var x = this.x, y = this.y, z = this.z;
+    var a = ellipsoid.a, b = ellipsoid.b, f = ellipsoid.f;
+
+    var e2 = 2*f - f*f;   // 1st eccentricity squared ≡ (a²-b²)/a²
+    var ε2 = e2 / (1-e2); // 2nd eccentricity squared ≡ (a²-b²)/b²
+    var p = Math.sqrt(x*x + y*y); // distance from minor axis
+    var R = Math.sqrt(p*p + z*z); // polar radius
+
+    // parametric latitude (Bowring eqn 17, replacing tanβ = z·a / p·b)
+    var tanβ = (b*z)/(a*p) * (1+ε2*b/R);
+    var sinβ = tanβ / Math.sqrt(1+tanβ*tanβ);
+    var cosβ = sinβ / tanβ;
+
+    // geodetic latitude (Bowring eqn 18: tanφ = z+ε²bsin³β / p−e²cos³β)
+    var φ = isNaN(cosβ) ? 0 : Math.atan2(z + ε2*b*sinβ*sinβ*sinβ, p - e2*a*cosβ*cosβ*cosβ);
+
+    // longitude
+    var λ = Math.atan2(y, x);
+
+    // height above ellipsoid (Bowring eqn 7) [not currently used]
+    var sinφ = Math.sin(φ), cosφ = Math.cos(φ);
+    var ν = a/Math.sqrt(1-e2*sinφ*sinφ); // length of the normal terminated by the minor axis
+    var h = p*cosφ + z*sinφ - (a*a/ν);
+
+    var point = new LatLon(φ.toDeg(), λ.toDeg());
+
+    return point;
+};
+
+/**
+ * Applies Helmert transform to ‘this’ point using transform parameters t.
+ *
+ * @private
+ * @param   {number[]} t - Transform to apply to this point.
+ * @returns {Vector3} Transformed point.
+ */
+Vector3d.prototype.applyTransform = function(t)   {
+    // this point
+    var x1 = this.x, y1 = this.y, z1 = this.z;
+
+    // transform parameters
+    var tx = t[0];                    // x-shift
+    var ty = t[1];                    // y-shift
+    var tz = t[2];                    // z-shift
+    var s1 = t[3]/1e6 + 1;            // scale: normalise parts-per-million to (s+1)
+    var rx = (t[4]/3600).toRad(); // x-rotation: normalise arcseconds to radians
+    var ry = (t[5]/3600).toRad(); // y-rotation: normalise arcseconds to radians
+    var rz = (t[6]/3600).toRad(); // z-rotation: normalise arcseconds to radians
+
+    // apply transform
+    var x2 = tx + x1*s1 - y1*rz + z1*ry;
+    var y2 = ty + x1*rz + y1*s1 - z1*rx;
+    var z2 = tz - x1*ry + y1*rx + z1*s1;
+
+    return new Vector3d(x2, y2, z2);
+};
+
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
@@ -1510,7 +1682,7 @@ OsGridRef.osGridToLatLong = function(gridref) {
   var E = gridref.easting;
   var N = gridref.northing;
 
-  var a = 6377563.396, b = 6356256.910;              // Airy 1830 major & minor semi-axes
+  var a = 6377563.396, b = 6356256.909;              // Airy 1830 major & minor semi-axes
   var F0 = 0.9996012717;                             // NatGrid scale factor on central meridian
   var lat0 = 49*Math.PI/180, lon0 = -2*Math.PI/180;  // NatGrid true origin
   var N0 = -100000, E0 = 400000;                     // northing & easting of true origin, metres

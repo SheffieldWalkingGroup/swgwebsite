@@ -473,7 +473,7 @@ var JFormFieldLocation = new Class({
 		// Make sure this is valid
 		// TODO: Maybe put the validator on the gridref field?
 		if (!isNaN(OSRef.easting) && !isNaN(OSRef.northing))
-			return OsGridRef.osGridToLatLong(OSRef);
+			return OsGridRef.osGridToLatLong(OSRef).osgb36ToWgs84();
 		else
 			return null;
 	},
@@ -482,7 +482,7 @@ var JFormFieldLocation = new Class({
 	{
 		// Convert location to OS Grid reference
 		var locLatLon = new LatLon(location.lat, location.lon);
-		var OSRef = OsGridRef.latLongToOsGrid(locLatLon);
+		var OSRef = OsGridRef.latLongToOsGrid(locLatLon.wgs84ToOsgb36());
 		field.value = OSRef.toString(6);
 	},
 	
