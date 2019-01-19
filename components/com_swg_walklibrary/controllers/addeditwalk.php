@@ -38,7 +38,7 @@ class SWG_WalkLibraryControllerAddEditWalk extends JControllerForm
 		$model->updateWalk($data);
 		
 		// If this is a new walk, set the suggester to the current user
-		if (!isset($model->getWalk()->id))
+		if (!isset($model->getWalk()->id) && empty($model->getWalk()->suggestedBy))
 		{
 			$model->getWalk()->suggestedBy = Leader::fromJoomlaUser(JFactory::getUser()->id);
 		}
