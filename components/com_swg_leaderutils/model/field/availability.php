@@ -32,8 +32,9 @@ class JFormFieldAvailability extends JFormField
         {
             throw new LogicException("Walk programme was not specified: call setProgramme() first");
         }
-        $start = new DateTimeImmutable('@'.$this->programme->startDate);
-        $end = new DateTimeImmutable('@'.$this->programme->endDate);
+        // TODO: Should be DateTimeImmutable but we're stuck on PHP 5.4
+        $start = new DateTime('@'.$this->programme->startDate);
+        $end = new DateTime('@'.$this->programme->endDate);
         
         // Start at the Monday before or on the date the programme starts
         if ($start->format('N') == 1) {
@@ -112,11 +113,11 @@ $html .= "</tbody></table>";
      *
      * Pub meet is currently set as the first Tuesday of the month, which may not be the case around bank holidays
      *
-     * @param DateTimeInterface $date Date to check
+     * @param DateTime $date Date to check // TODO: Should be DateTimeImmutable but we're stuck on PHP 5.4
      *
      * @return boolean True if new members walk weekend
      */
-    private function isNewMembersWalkWeekend(DateTimeInterface $date)
+    private function isNewMembersWalkWeekend(DateTime $date)
     {
         $firstTuesday = new DateTime($date->format('Y-m-01'));
         $firstTuesday->modify(DateInterval::createFromDateString('First tuesday'));

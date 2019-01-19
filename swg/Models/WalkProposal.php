@@ -56,7 +56,7 @@ class WalkProposal extends SWGBaseModel {
     
     /**
      * The last date the leader updated their proposal
-     * @var DateTimeInterface
+     * @var DateTime // TODO: Should be DateTimeImmutable but we're stuck on PHP 5.4
      * @todo Maybe also record when the vice chair last checked it
      */
     private $lastUpdated;
@@ -249,7 +249,8 @@ class WalkProposal extends SWGBaseModel {
     
     public function updateTimestamp()
     {
-        $this->lastUpdated = new DateTimeImmutable();
+    // TODO: Should be DateTimeImmutable but we're stuck on PHP 5.4
+        $this->lastUpdated = new DateTime();
     }
     
     

@@ -10,7 +10,7 @@ if ($this->showSearchResults()):?>
 	<p><?php echo count($this->walks); ?> walks found</p>
 <?php endif;
 if ($this->controller->canAdd()):?>
-	<p><a href="/walk-planning/add-new-walk">Suggest a walk</a></p>
+	<p><a href="/volunteer/lead/new-walk">Plan a new walk</a></p>
 <?php endif;
 
 if ($this->showList())
@@ -18,5 +18,5 @@ if ($this->showList())
 	$this->display("list");
 }
 if ($this->controller->canAdd()):?>
-	<p><a href="/walk-planning/add-new-walk">Suggest a walk</a></p>
+	<p><a href="/volunteer/lead/new-walk">Plan a new walk</a></p>
 <?php endif;?>

@@ -80,11 +80,11 @@ class BankHolidayService
     /**
      * Get the bank holiday code for a given date
      *
-     * @param DateTimeInterface $date The date to search for
+     * @param DateTime $date The date to search for // TODO: Should be DateTimeImmutable but we're stuck on PHP 5.4
      *
      * @return int Bank holiday code
      */
-    public function getBankHoliday(DateTimeInterface $date)
+    public function getBankHoliday(DateTime $date)
     {
         $month = $date->format('n');
         $bankHoliday = self::NO_HOLIDAY;
@@ -133,11 +133,11 @@ class BankHolidayService
     /**
      * Get the bank holiday name for a given date
      *
-     * @param DateTimeInterface $date The date to search for
+     * @param DateTime $date The date to search for// TODO: Should be DateTimeImmutable but we're stuck on PHP 5.4
      *
      * @return string Bank holiday name, null if none
      */
-    public function getBankHolidayName(DateTimeInterface $date)
+    public function getBankHolidayName(DateTime $date)
     {
         $bankHoliday = $this->getBankHoliday($date);
         
@@ -154,11 +154,11 @@ class BankHolidayService
     /**
      * Checks if the given date is a bank holiday
      *
-     * @param DateTimeInterface $date The date to check
+     * @param DateTime $date The date to check // TODO: Should be DateTimeImmutable but we're stuck on PHP 5.4
      *
      * @return bool
      */
-    public function isBankHoliday(DateTimeInterface $date)
+    public function isBankHoliday(DateTime $date)
     {
         return ($this->getBankHoliday($date) != self::NO_HOLIDAY);
     }
@@ -191,7 +191,7 @@ class BankHolidayService
         return $result;
     }
     
-    public function isNewYearsDay(DateTimeInterface $date)
+    public function isNewYearsDay(DateTime $date)
     {
         if ($date->format('n') != 1) { // Check for January
             return false;
@@ -205,14 +205,14 @@ class BankHolidayService
         );
     }
     
-    public function isGoodFriday(DateTimeInterface $date)
+    public function isGoodFriday(DateTime $date)
     {
         $date = $date->setTime(0, 0, 0);
         $easter = $this->getEasterSunday($date->format('Y'));
         return ($easter->sub("P2D") == $date);
     }
     
-    public function isEasterMonday(DateTimeInterface $date)
+    public function isEasterMonday(DateTime $date)
     {
         $date = $date->setTime(0, 0, 0);
         $easter = $this->getEasterSunday($date->format('Y'));
@@ -224,14 +224,14 @@ class BankHolidayService
      *
      * @param int $year The year
      *
-     * @return DateTimeInterface
+     * @return DateTime // TODO: Should be DateTimeImmutable but we're stuck on PHP 5.4
      */
     public function getEasterSunday($year)
     {
-        return new DateTimeImmutable('@'.easter_date($year));
+        return new DateTime('@'.easter_date($year));
     }
     
-    public function isMayDay(DateTimeInterface $date)
+    public function isMayDay(DateTime $date)
     {
         if ($date->format('n') != 5) { // Check for May
             return false;
@@ -240,7 +240,7 @@ class BankHolidayService
         return ($date->format('N') == 1 && $date->format('j') <= 7); // A Monday within the first 7 days of the month
     }
     
-    public function isSpringBankHoliday(DateTimeInterface $date)
+    public function isSpringBankHoliday(DateTime $date)
     {
         if ($date->format('n') != 5) { // Check for May
             return false;
@@ -249,7 +249,7 @@ class BankHolidayService
         return ($date->format('N') == 1 && $date->format('j') >= (31-7)); // A Monday within the last 7 days of the month
     }
     
-    public function isAugustBankHoliday(DateTimeInterface $date)
+    public function isAugustBankHoliday(DateTime $date)
     {
         if ($date->format('n') != 8) { // Check for August
             return false;
@@ -258,7 +258,7 @@ class BankHolidayService
         return ($date->format('N') == 1 && $date->format('j') >= (31-7)); // A Monday within the last 7 days of the month
     }
     
-    public function isChristmasDay(DateTimeInterface $date)
+    public function isChristmasDay(DateTime $date)
     {
         if ($date->format('n') != 12) { // Check for December
             return false;
@@ -272,7 +272,7 @@ class BankHolidayService
         );
     }
     
-    public function isBoxingDay(DateTimeInterface $date)
+    public function isBoxingDay(DateTime $date)
     {
         if ($date->format('n') != 12) { // Check for December
             return false;
