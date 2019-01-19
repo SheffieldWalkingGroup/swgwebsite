@@ -9,7 +9,7 @@ JHtml::_('behavior.tooltip');
 
 <?php if ($this->saved): ?>
     <h3>Edit walk proposal: <?php echo $this->programme->description; ?></h3>
-    <p>Thanks, your availability has been saved.</p>
+    <p>Thanks, your availability has been saved. The vice chair will let you know when the programme is put together. Please contact the club if you need to change your dates.</p>
     <p><a href="<?php echo JRoute::_('index.php')?>">Edit availability</a></p>
 <?php else: ?>
 
