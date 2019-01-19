@@ -3,5 +3,9 @@
 	<layout title="Add/Edit walk">
 		<message>Sheffield Walking Group</message>
 	</layout>
-	
+	<fields name="request">
+		<fieldset name="request">
+            <field name="leadWalkPage" type="menuitem" label="Lead walk page" description="Page to propose leading a walk in the next programme" />
+		</fieldset>
+	</fields>
 </metadata>
