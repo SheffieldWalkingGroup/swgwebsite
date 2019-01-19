@@ -59,27 +59,12 @@ JHtml::_('behavior.tooltip');
 			echo $linear->label;
 			echo $linear->input;
 		?>
-			<fieldset class="walklocationgroup">
-				<legend>Start</legend>
-				<?php
-					$placeName = $this->form->getField("startPlaceName");
-					$gridRef = $this->form->getField("startGridRef");
-					echo $gridRef->label.$gridRef->input."<br />";
-					echo $placeName->label.$placeName->input."<br />";
-				?>
-				<input type="button" id="start_place" value="Place here" title="Place the start marker at the centre of the map. You can drag the marker into place." />
-			</fieldset>
-			<fieldset class="walklocationgroup">
-				<legend>End</legend>
-				<?php
-					$placeName = $this->form->getField("endPlaceName");
-					$gridRef = $this->form->getField("endGridRef");
-					echo $gridRef->label.$gridRef->input."<br />";
-					echo $placeName->label.$placeName->input."<br />";
-				?>
-				<input type="button" id="end_place" value="Place here" title="Place the end marker at the centre of the map. You can drag the marker into place." />
-			</fieldset>
+			
 			<div class="clear"><!-- --></div>
+        <fieldset>
+            <legend>Map</legend>
+            <input type="button" id="start_place" value="Place start marker" title="Place the start marker at the centre of the map. You can drag the marker into place." />
+            <input type="button" id="end_place" value="Place end marker" title="Place the end marker at the centre of the map. You can drag the marker into place." />
 		<?php 
 			$map = $this->form->getField("locMap");
 			// Moronic Joomla design means I apparently can't attach this data in the model, because if I instantiate the field before displaying the form it's just destroyed and recreated. GENIUS.
@@ -87,6 +72,24 @@ JHtml::_('behavior.tooltip');
 				$map->attachRoute($this->walk->route);
 			echo $map->input;
 		?>
+            <fieldset class="walklocationgroup">
+				<legend>Start</legend>
+				<?php
+					$placeName = $this->form->getField("startPlaceName");
+					$gridRef = $this->form->getField("startGridRef");
+					echo $gridRef->label.$gridRef->input."<br />";
+					echo $placeName->label.$placeName->input."<span class='loading'></span><br />";
+				?>
+			</fieldset>
+			<fieldset class="walklocationgroup">
+				<legend>End</legend>
+				<?php
+					$placeName = $this->form->getField("endPlaceName");
+					$gridRef = $this->form->getField("endGridRef");
+					echo $gridRef->label.$gridRef->input."<br />";
+					echo $placeName->label.$placeName->input."<span class='loading'></span><br />";
+				?>
+			</fieldset>
 		</fieldset>
 		<fieldset>
 			<legend>The route itself</legend>

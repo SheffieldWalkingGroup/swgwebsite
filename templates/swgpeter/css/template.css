@@ -1109,6 +1109,20 @@ nav .moduletable_menu h3
     content:"\a";
     white-space:pre;
 }
+#addeditwalk .olMap {
+    margin-top:10px !important;
+}
+
+.walklocationgroup .loading {
+    position:relative;
+    right:24px;
+    top:2px;
+    width:16px;
+    height:16px;
+    z-index:10;
+    background:url('../images/ajax-loader-small.gif') transparent no-repeat right center;
+    display:none;
+}
 .olMap {
 	position:relative;
 }

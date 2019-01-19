@@ -166,14 +166,14 @@ var JFormFieldLocation = new Class({
 			{
 				if (locationNameFieldIds[i] != undefined)
 				{
-					field = document.id("jform_"+locationNameFieldIds[i]);
+					var field = document.id("jform_"+locationNameFieldIds[i]);
 					if (field)
 					{
 						this.locations[i].locationNameField = field;
 						
 						// If a value is entered manually, prevent it from being overwritten
 						field.addEvent("change", function() {
-							field.store("nameFromGeocoding", false);
+							this.store("nameFromGeocoding", false);
 						});
 					}
 				}
@@ -313,6 +313,8 @@ var JFormFieldLocation = new Class({
 									// Do we have a grid reference field
 									if (self.locations[j].gridRefField != null)
 										self.writeLocationToGridRefField(loc, self.locations[j].gridRefField);
+                                    if (self.locations[j].locationNameField != null)
+                                        self.writeLocationToNameField(loc, self.locations[j].locationNameField);
 									
 									// Don't set the location name here - unlikely to be correct until the user drags the marker into place
 									break;
@@ -495,6 +497,7 @@ var JFormFieldLocation = new Class({
 				url: "/api/nominatim?lat="+location.lat+"&lon="+location.lon+"&format=json",
 				onSuccess: function(placeName)
 				{
+                    field.getNext(".loading").style.display = "none";
 					if (placeName)
 					{
 						field.value = placeName;
@@ -503,6 +506,7 @@ var JFormFieldLocation = new Class({
 				}
 				// TODO: onFailure
 			});
+            field.getNext(".loading").style.display = "inline-block"; // Make sure the next element is the throbber!
 			lookup.get();
 		}
 	},
