@@ -197,7 +197,7 @@ class WalkProposal extends SWGBaseModel {
             $availability = (int)$dates[$dateString]; // TODO: Should default to 0 if not set
             $this->dates[$dateString] = $availability;
             $date->add(new DateInterval('P1D'));
-        } while ($date < $endDate);
+        } while ($date <= $endDate);
     }
     
     public function __set($name, $value)
