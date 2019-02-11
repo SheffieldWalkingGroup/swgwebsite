@@ -1,16 +1,22 @@
 <?php
+JLoader::register('SWGFactory', JPATH_SITE."/swg/Factories/SWGFactory.php");
 JLoader::register('SocialFactory', JPATH_SITE."/swg/Factories/SocialFactory.php");
 JLoader::register('WalkInstanceFactory', JPATH_SITE."/swg/Factories/WalkInstanceFactory.php");
 JLoader::register('WeekendFactory', JPATH_SITE."/swg/Factories/WeekendFactory.php");
 JLoader::register('DummyEventFactory', JPATH_SITE."/swg/Factories/DummyEventFactory.php");
+JLoader::register('WalkProposalFactory', JPATH_SITE."/swg/Factories/WalkProposalFactory.php");
+
 JLoader::register('UnitConvert', JPATH_SITE."/swg/UnitConvert.php");
 JLoader::register('UserException', JPATH_SITE."/swg/Exceptions/UserException.php");
-JLoader::register('Leader', JPATH_SITE."/swg/Models/Leader.php");
 JLoader::register('Facebook', JPATH_SITE."/libraries/facebook/facebook.php");
+
+JLoader::register('Leader', JPATH_SITE."/swg/Models/Leader.php");
 JLoader::register('Event', JPATH_SITE."/swg/Models/Event.php");
 JLoader::register('WalkProgramme', JPATH_SITE."/swg/Models/WalkProgramme.php");
 JLoader::register('WalkProposal', JPATH_SITE."/swg/Models/WalkProposal.php");
-JLoader::register('BankHolidayService', JPATH_BASE."/swg/Services/BankHolidayService.php");
+JLoader::register('BankHolidayService', JPATH_SITE."/swg/Services/BankHolidayService.php");
+
+JLoader::register('Walk', JPATH_SITE."/swg/Models/Walk.php");
 /**
  * A collection of general functions and constants
  * @author peter

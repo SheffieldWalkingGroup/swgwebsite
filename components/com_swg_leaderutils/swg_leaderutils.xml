@@ -20,6 +20,7 @@
 		<filename>index.html</filename>
 		<filename>swg_leaderutils.php</filename>
 		<folder>views</folder>
+        <folder>model</folder>
 		<folder>models</folder>
 		<folder>controllers</folder>
 	</files>

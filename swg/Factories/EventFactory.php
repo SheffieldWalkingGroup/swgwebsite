@@ -21,7 +21,7 @@
  * offset          - Skip this many events before returning them. Default is none (0)
  * showUnpublished - Show events that haven't been published yet. Default is to only show published events.
  */
-abstract class EventFactory
+abstract class EventFactory extends SWGFactory
 {
 	/**
 	 * Return only events ON OR AFTER this date. Understands day constants. Default is today.

@@ -18,4 +18,4 @@ $controller = JControllerLegacy::getInstance('SWG_LeaderUtils');
 $controller->execute(JRequest::getCmd('task'));
  
 // Redirect if set by the controller
-//$controller->redirect();
+$controller->redirect();

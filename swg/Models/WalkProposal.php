@@ -94,12 +94,11 @@ class WalkProposal extends SWGBaseModel {
         }
         
         // Load the dates
-        
-        
+        $db = JFactory::getDBO();
         $query = $db->getQuery(true);
-        $query->select("walk_date", "availability");
+        $query->select("walk_date, availability");
         $query->from("walkproposaldate");
-        $query->where("proposal_id = ".$this->proposalId);
+        $query->where("proposal_id = ".$this->id);
         $db->setQuery($query);
         $data = $db->loadAssocList('walk_date', 'availability');
         
@@ -203,6 +202,9 @@ class WalkProposal extends SWGBaseModel {
     public function __set($name, $value)
     {
         switch ($name) {
+            case 'id':
+                $this->id = (int)$value;
+                break;
             case 'leader':
             case 'leaderId':
                 if ($value instanceof Leader) 
@@ -247,10 +249,66 @@ class WalkProposal extends SWGBaseModel {
         }
     }
     
+    public function __get($name)
+    {
+        return $this->$name;
+    }
+    
     public function updateTimestamp()
     {
     // TODO: Should be DateTimeImmutable but we're stuck on PHP 5.4
         $this->lastUpdated = new DateTime();
+    }
+    
+    /**
+     * Get a string summary of the dates available in this proposal
+     * 
+     * Doesn't mention preferred dates (yet)
+     *
+     * * Display up to 3 dates in full
+     * * Otherwise just say how many dates were selected
+     *
+     * @return string
+     */
+    public function getDateSummary()
+    {
+        $dates = $this->getAvailableDates();
+        $output = "";
+        
+        if (count($dates) <= 3) {
+            for ($i=0; $i<count($dates); $i++) {
+                $output .= $dates[$i]->format("l d/m");
+                if ($i+2 < count($dates))
+                    $output .= ', ';
+                elseif ($i+1 < count($dates))
+                    $output .= ' or ';
+            }
+        } else {
+            $output = sprintf('%d possible dates');
+        }
+        
+        return $output;
+    }
+    
+    /**
+     * Get an array of all dates available for this proposal
+     */
+    private function getAvailableDates()
+    {
+        $available = array();
+        
+        foreach ($this->dates as $date => $availability) {
+            if ($availability > 0) {
+                $available[] = new DateTime($date);
+            }
+        }
+        
+        return $available;
+    }
+    
+    public function getAvailabilityForDate(DateTime $date)
+    {
+        return $this->dates[$date->format('Y-m-d')];
     }
     
     

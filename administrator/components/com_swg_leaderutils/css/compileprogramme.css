@@ -1,0 +1,60 @@
+.compileprogramme {
+    border-collapse: collapse;
+    table-layout:fixed;
+}
+
+.compileprogramme, .compileprogramme th, .compileprogramme td {
+    border: 1px solid #555;
+}
+
+.compileprogramme thead th {
+    width:200px;
+    overflow:hidden;
+}
+
+.compileprogramme thead th p {
+    margin:2px 0;
+    width:200px;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+.compileprogramme thead th p.walkname {
+}
+
+.compileprogramme .weekend {
+    height:50px;
+}
+
+.compileprogramme .saturday th {
+    background-color: #8dab6a;
+}
+
+.compileprogramme .sunday th {
+    background-color: #6b8eac;
+}
+
+.compileprogramme .bankholiday th {
+    background-color: #ab6a8d;
+}
+
+.compileprogramme tbody th {
+    text-align:left;
+    vertical-align:top;
+}
+
+.compileprogramme tbody td {
+    background-repeat:no-repeat !important;
+}
+
+.compileprogramme .not-available {
+    background-color:#fff;
+}
+
+.compileprogramme .available {
+    background:url('../../../../templates/swgpeter/images/icons/icons8-tick-box-32.png') #EEFEEB;
+}
+
+.compileprogramme .preferred {
+    background:url('../../../../templates/swgpeter/images/icons/icons8-star-filled-32.png') #EBEEFE;
+}
