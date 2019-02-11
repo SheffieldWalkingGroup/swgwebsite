@@ -1,7 +1,7 @@
 <?php
 jimport('joomla.application.component.modelitem');
 require_once("SWGBaseModel.php");
-include_once(JPATH_BASE."/swg/lib/phpcoord/phpcoord-2.3.php");
+include_once(JPATH_SITE."/swg/lib/phpcoord/phpcoord-2.3.php");
 /**
 * Any event organised by the group
 * @author peter

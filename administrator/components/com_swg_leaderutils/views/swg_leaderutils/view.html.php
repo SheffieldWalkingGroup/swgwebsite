@@ -26,18 +26,10 @@ class SWG_LeaderUtilsViewSWG_LeaderUtils extends JViewLegacy
       JError::raiseError(500, implode('<br />', $errors));
       return false;
     }
-    // Assign data to the view
-    $this->items = $items;
-    $this->pagination = $pagination;
-
-    // Set the toolbar
-	$this->addToolBar();
-
+    
 	// Display the template
 	parent::display($tpl);
 
-	// Set the document
-	$this->setDocument();
   }
   
   

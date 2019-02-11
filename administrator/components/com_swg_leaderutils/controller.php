@@ -10,6 +10,7 @@ jimport('joomla.application.component.controller');
  */
 class SWG_LeaderUtilsController extends JControllerLegacy
 {
+
   /**
    * display task
    *

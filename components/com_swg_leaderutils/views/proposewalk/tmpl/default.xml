@@ -3,5 +3,9 @@
 	<layout title="Propose walk">
 		<message>Allow leaders to propose a walk for the next programme</message>
 	</layout>
-	
+	<fields name="request">
+		<fieldset name="request">
+            <field name="introText" type="editor" label="Intro Text" description="Content to display above the list of proposals" />
+		</fieldset>
+	</fields>
 </metadata>
