@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="2.5.0" method="upgrade">
  
-	<name>SWG Leader Utils</name>
+	<name>SWG Programme Management</name>
 	<!-- The following elements are optional and free of formatting constraints -->
 	<creationDate>January 2014</creationDate>
 	<author>Peter Copeland</author>

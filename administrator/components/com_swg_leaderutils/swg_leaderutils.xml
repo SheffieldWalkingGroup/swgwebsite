@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.0" method="upgrade">
+    <name>SWG Programme Management</name>
+    <version>0.0.1</version>
+    <description>SWG programme management &amp; leader utilities</description>
+    
+    <administration>
+        <menu>com_swg_leaderutils</menu>
+        <submenu>
+            <menu link='option=com_swg_leaderutils&amp;view=ListProgrammes'>List Programmes</menu>
+            <menu link='option=com_swg_leaderutils&amp;view=CompileProgramme'>Compile Programme</menu>
+        </submenu>
+    </administration>
+</extension>
