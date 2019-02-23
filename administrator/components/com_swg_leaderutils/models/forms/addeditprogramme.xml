@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form name="addeditprogramme">
+    <fieldset name="programme" label="Programme">
+        <field name="id" type="hidden" />
+        <field name="startDate" type="calendar" label="Start date" maxyear="1" />
+        <field name="endDate" type="calendar" label="End date" maxyear="1" />
+        <field name="title" type="text" label="Title" />
+        <field name="special" type="checkbox" label="Special?" value="1" default="0" />
+    </fieldset>
+</form>
+

@@ -2,26 +2,26 @@
 require_once("SWGBaseModel.php");
 class WalkProgramme extends SWGBaseModel
 {
-	private $id;
+	protected $id;
 	/**
 	 * The start date of the programme. For a normal programme, this will be the first day of the first month,
 	 * not necessarily a day with an event planned.
 	 * @var int
 	 */
-	private $startDate;
+	protected $startDate;
 	/**
 	 * The end date of the programme. For a normal programme, this will be the last day of the last month,
 	 * not necessarily a day with an event planned.
 	 * @var int
 	 */
-	private $endDate;
+	protected $endDate;
 	/**
 	 * Dates on which walks are planned for this programme
 	 * @var int[]
 	 */
-	private $dates;
-	private $description;
-	private $special;
+	protected $dates;
+	protected $title;
+	protected $special;
 	
 	/**
 	 * Array of leader availability.
@@ -56,9 +56,19 @@ class WalkProgramme extends SWGBaseModel
 		'id'			=> "SequenceID",
 		'startDate'		=> "StartDate",
 		'endDate'		=> "EndDate",
-		'description'	=> "Description",
+		'title'	        => "Description",
 		'special'		=> "special",
 	);
+	
+	/**
+	 * Caches the next programme ID
+	 */
+	private static $nextProgrammeId = null;
+	
+	/**
+	 * Caches the current programme ID
+	 */
+	private static $currentProgrammeId = null;
 	
 	public function __get($name)
 	{
@@ -89,7 +99,7 @@ class WalkProgramme extends SWGBaseModel
 				// TODO
 				echo ("WalkProgramme.__set('dates') not implemented yet");
 				break;
-			case "description":
+			case "title":
 				$this->$name = $value;
 				break;
 			case "special":
@@ -230,8 +240,6 @@ class WalkProgramme extends SWGBaseModel
 		$db->transactionStart();
 		$query = $db->getQuery(true);
 		
-		$this->toDatabase($query);
-		
 		// Update or insert?
 		if (!isset($this->id))
 		{
@@ -242,6 +250,7 @@ class WalkProgramme extends SWGBaseModel
 			$query->where("SequenceID = ".(int)$this->id);
 			$query->update("walksprogramme");
 		}
+		$this->toDatabase($query);
 		$db->setQuery($query);
 		$db->query();
 		
@@ -251,12 +260,56 @@ class WalkProgramme extends SWGBaseModel
 			$this->id = $db->insertid();
 		}
 		// TODO: Handle walkprogrammedates
+		$this->updateWalkProgrammeDates();
 		
 		// TODO: Handle failure
 		
 		// Commit the transaction
 		$db->transactionCommit();
 	}
+	
+	/**
+	 * Update the walk programme dates
+	 * Runs after saving to the database (needs an ID)
+	 */
+	private function updateWalkProgrammeDates() {
+        $db = JFactory::getDbo();
+	
+		// Delete old dates
+		$query = $db->getQuery(true);
+		$query->delete("walkprogrammedates");
+		$query->where("ProgrammeID = ".(int)$this->id);
+		$db->setQuery($query);
+		$db->execute();
+		
+		// Populate new dates
+		$date = new DateTime('@'.$this->startDate);
+		$endDate = new DateTime('@'.$this->endDate);
+		do {
+			$query = $db->getQuery(true);
+			$query->insert("walkprogrammedates");
+			$query->set("ProgrammeID = ".(int)$this->id);
+			$query->set("WalkDate = '".$date->format('Y-m-d')."'");
+			$db->setQuery($query);
+			$db->execute();
+			
+			$date->add(new DateInterval('P1D'));
+		} while ($date <= $endDate);
+	}
+	
+	public function toDatabase(JDatabaseQuery &$query)
+    {
+        foreach ($this->dbmappings as $var => $dbField)
+		{
+			if (isset($this->$var)) {
+                if ($var == 'startDate' || $var == 'endDate') {
+                    $query->set($dbField." = '".$query->escape(strftime('%Y-%m-%d', $this->$var))."'");
+                } else {
+                    $query->set($dbField." = '".$query->escape($this->$var)."'");
+                }
+            }
+		}
+    }
 	
 	public static function get($programmeID)
 	{
@@ -287,14 +340,23 @@ class WalkProgramme extends SWGBaseModel
 	
 	private static function getProgrammeID($next)
 	{
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
-		$query->select("val");
-		$query->from("oneoffs");
-		$query->where("name = '".($next ? "next" : "publ")."prog'");
-		$query->limit(1);
-		$db->setQuery($query);
-		return $db->loadResult();
+        if ($next)
+            $cacheVar = 'nextProgrammeId';
+        else
+            $cacheVar = 'currentProgrammeId';
+        
+        if (!isset(self::$$cacheVar)) {
+            $db = JFactory::getDbo();
+            $query = $db->getQuery(true);
+            $query->select("val");
+            $query->from("oneoffs");
+            $query->where("name = '".($next ? "next" : "publ")."prog'");
+            $query->limit(1);
+            $db->setQuery($query);
+            self::$$cacheVar = $db->loadResult();
+        }
+        
+        return self::$$cacheVar;
 	}
 	
 	public static function getProgrammeDates($includeSpecial = false, $start = null, $end = null)
@@ -315,4 +377,17 @@ class WalkProgramme extends SWGBaseModel
 		
 		return $db->loadColumn(0);
 	}
+	
+	public function valuesToForm()
+	{
+		$values = array(
+            'id'            => $this->id,
+            'startDate'     => $this->startDate,
+            'endDate'       => $this->endDate,
+            'title'         => $this->title,
+            'special'       => $this->special
+        );
+        
+        return $values;
+    }
 }

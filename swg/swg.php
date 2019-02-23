@@ -5,6 +5,7 @@ JLoader::register('WalkInstanceFactory', JPATH_SITE."/swg/Factories/WalkInstance
 JLoader::register('WeekendFactory', JPATH_SITE."/swg/Factories/WeekendFactory.php");
 JLoader::register('DummyEventFactory', JPATH_SITE."/swg/Factories/DummyEventFactory.php");
 JLoader::register('WalkProposalFactory', JPATH_SITE."/swg/Factories/WalkProposalFactory.php");
+JLoader::register('WalkProgrammeFactory', JPATH_SITE."/swg/Factories/WalkProgrammeFactory.php");
 
 JLoader::register('UnitConvert', JPATH_SITE."/swg/UnitConvert.php");
 JLoader::register('UserException', JPATH_SITE."/swg/Exceptions/UserException.php");
