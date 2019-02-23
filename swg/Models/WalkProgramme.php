@@ -252,7 +252,7 @@ class WalkProgramme extends SWGBaseModel
 		}
 		$this->toDatabase($query);
 		$db->setQuery($query);
-		$db->query();
+		$db->execute();
 		
 		if (!isset($this->id))
 		{
@@ -357,6 +357,31 @@ class WalkProgramme extends SWGBaseModel
         }
         
         return self::$$cacheVar;
+	}
+	
+	public static function setCurrentProgrammeID($programmeId)
+	{
+        self::setProgrammeID(false, $programmeId);
+	}
+	
+	public static function setNextProgrammeID($programmeId)
+	{
+        self::setProgrammeID(true, $programmeId);
+	}
+	
+	private static function setProgrammeID($next, $programmeId)
+	{
+        $programmeId = (int)$programmeId;
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true);
+        $query->update('oneoffs');
+        $query->set("val = '$programmeId'");
+        $query->where("name = '".($next ? 'nextprog' : 'publprog')."'");
+        $db->setQuery($query);
+        $db->execute();
+        
+        self::$nextProgrammeId = null;
+        self::$currentProgrammeId = null;
 	}
 	
 	public static function getProgrammeDates($includeSpecial = false, $start = null, $end = null)

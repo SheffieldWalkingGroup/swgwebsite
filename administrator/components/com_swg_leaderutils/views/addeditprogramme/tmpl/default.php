@@ -12,8 +12,8 @@ JHtml::_('behavior.tooltip');
 		<input type="hidden" name="view" value="addeditprogramme">
 		<input type="hidden" name="option" value="com_swg_leaderutils">
 		<input type="hidden" name="task" value="addeditprogramme.submit">
-		<?php echo JHtml::_('form.token'); echo $this->form->getInput('id'); ?>
-		<?php foreach ($this->form->getFieldsets() as $fieldset): echo "<pre>"; print_r($fieldset); echo "</pre>"?>
+		<?php echo JHtml::_('form.token'); if ($this->editing) echo $this->form->getInput('id'); ?>
+		<?php foreach ($this->form->getFieldsets() as $fieldset):?>
             <fieldset>
                 <legend><?php echo $fieldset->label; ?></legend>
                 <?php foreach ($this->form->getFieldset($fieldset->name) as $field): ?>

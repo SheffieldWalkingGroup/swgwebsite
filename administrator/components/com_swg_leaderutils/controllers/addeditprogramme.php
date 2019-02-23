@@ -27,18 +27,16 @@ class SWG_LeaderUtilsControllerAddEditProgramme extends JControllerForm
 
 		// Initialise variables.
 		$app	= JFactory::getApplication();
-		$model	= $this->getModel('addeditprogramme');
-		$view = $this->getView('addeditprogramme','html');
-		$view->setModel($model, true);
+		$saveModel	= $this->getModel('addeditprogramme');
 
 		// Get the data from the form POST
 		$data = JRequest::getVar('jform', array(), 'post', 'array');
 		
 		// Send the data to the model
-		$model->updateProgramme($data);
-		
-        $model->getProgramme()->save();
+		$saveModel->updateProgramme($data);
+        $saveModel->getProgramme()->save();
 			
+		$this->setRedirect(JUri::base().'?option=com_swg_leaderutils&view=ListProgrammes', $saveModel->getProgramme()->title.' programme saved');
         return true;
 	}
 	

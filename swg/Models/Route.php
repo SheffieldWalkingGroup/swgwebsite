@@ -374,7 +374,7 @@ class Route extends SWGBaseModel implements Iterator {
 			$query->update("routes");
 		}
 		else
-		$query->insert("routes");
+            $query->insert("routes");
 		
 		$db->setQuery($query);
 		$db->query();

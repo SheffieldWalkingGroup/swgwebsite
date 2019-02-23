@@ -23,7 +23,7 @@ class SWG_LeaderUtilsModelAddEditProgramme extends JModelForm
 	private $programme;
 
 	/**
-	* True if we're editing a walk, false if we're adding
+	* True if we're editing a programme, false if we're adding
 	*/
 	public function editing()
 	{
@@ -40,6 +40,9 @@ class SWG_LeaderUtilsModelAddEditProgramme extends JModelForm
 		// Update all basic fields
 		// Fields that can't be saved are just ignored
 		// Invalid fields throw an exception - display this to the user and continue
+		if (!isset($formData['special']))
+            $formData['special'] = false;
+        
 		foreach ($formData as $name=>$value)
 		{
 			try
@@ -80,13 +83,14 @@ class SWG_LeaderUtilsModelAddEditProgramme extends JModelForm
         $oldEndDate = new DateTime('@'.$oldProgramme->endDate);
         $newStartDate = $oldEndDate->add(new DateInterval('P1D'));
         
-        // Go to the end of the month, then step forward a day at a time until we reach a Friday or Sunday.
+        // Go to the end of the month, then step forward a day at a time to finish on a Friday or Sunday.
         $newEndDate = new DateTime($oldEndDate->format('Y-m-01'));
         $newEndDate->add(new DateInterval('P1M'));
         $newEndDate->sub(new DateInterval('P1D'));
         
-        while ($newEndDate->format('N') != 5 || $newEndDate->format('N') != 7)
+        while ($newEndDate->format('N') != 6 && $newEndDate->format('N') != 1) {
             $newEndDate = $newEndDate->add(new DateInterval('P1D'));
+        }
         
         $newProgramme->startDate = $newStartDate->format('U');
         $newProgramme->endDate = $newEndDate->format('U');

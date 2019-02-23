@@ -86,7 +86,6 @@ class WalkProposalFactory extends SWGFactory
         }
         
         $db->setQuery($query);
-        echo $query;
         $data = $db->loadAssocList();
         
         // Build an array of proposals
