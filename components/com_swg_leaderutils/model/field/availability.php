@@ -38,7 +38,7 @@ class JFormFieldAvailability extends JFormField
         
         // Start at the Monday before or on the date the programme starts
         if ($start->format('N') == 1) {
-            $date = new DateTime($start);
+            $date = $start;
         } else {
             $date = new DateTime('@'.strtotime('last Monday', $this->programme->startDate));
         }
