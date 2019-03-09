@@ -8,7 +8,7 @@ JHtml::_('behavior.tooltip');
 ?>
 
 <?php if ($this->walkInstance): ?>
-    <h3>Propose to lead a walk in <?php echo $this->programme->description; ?></h3>
+    <h3>Propose to lead a walk in <?php echo $this->programme->title; ?></h3>
     <?php $event = $this->walkInstance; include JPATH_SITE."/components/com_swg_events/helpers/tmpl/eventinfo.php";?>
 
         

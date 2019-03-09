@@ -14,52 +14,52 @@ class WalkProposal extends SWGBaseModel {
      * Walk proposal ID
      * @var int 
      */
-    private $id;
+    protected $id;
     
     /**
      * @var Leader
      */
-    private $leader;
+    protected $leader;
     
     /**
      * @var Leader
      */
-    private $backmarker;
+    protected $backmarker;
     
     /**
      * @var WalkProgramme
      */
-    private $programme;
+    protected $programme;
     
     /**
      * @var Walk
      */
-    private $walk;
+    protected $walk;
     
     /**
      * Proposed walk timing and transport information
      * @var string
      */
-    private $timingAndTransport;
+    protected $timingAndTransport;
     
     /**
      * General comments from the leader
      * @var string
      */
-    private $comments;
+    protected $comments;
     
     /**
      * The walk instance once the walk has been added to the programme
      * @var WalkInstance
      */
-    private $walkInstance;
+    protected $walkInstance;
     
     /**
      * The last date the leader updated their proposal
      * @var DateTime // TODO: Should be DateTimeImmutable but we're stuck on PHP 5.4
      * @todo Maybe also record when the vice chair last checked it
      */
-    private $lastUpdated;
+    protected $lastUpdated;
     
     /**
      * Array of dates available in this programme
@@ -69,13 +69,37 @@ class WalkProposal extends SWGBaseModel {
      * So it should be safe to write to DB/display
      * @var int[]
      */
-    private $dates;
+    protected $dates;
     
     protected $dbmappings = array(
         'id' => 'proposal_id',
         'timingAndTransport' => 'timing_transport',
         'comments' => 'comments'
     );
+    
+    /**
+     * Load a proposal by ID
+     *
+     * @param int $proposalId
+     *
+     * @return WalkProposal
+     */
+    public static function get($proposalId)
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select("*");
+		$query->from("walkproposal");
+		$query->where("proposal_id = ".(int)$proposalId);
+		$db->setQuery($query);
+		$db->query();
+		if ($db->getNumRows())
+		{
+			$proposal = new WalkProposal();
+			$proposal->fromDatabase($db->loadAssoc());
+			return $proposal;
+		}
+	}
     
     public function fromDatabase(array $dbArr)
     {
@@ -273,18 +297,33 @@ class WalkProposal extends SWGBaseModel {
     public function getDateSummary()
     {
         $dates = $this->getAvailableDates();
+        $preferred = $this->getPreferredDates();
         $output = "";
         
         if (count($dates) <= 3) {
             for ($i=0; $i<count($dates); $i++) {
                 $output .= $dates[$i]->format("l d/m");
+                if (in_array($preferred, $dates[$i]))
+                    $output .= ' (preferred)';
                 if ($i+2 < count($dates))
                     $output .= ', ';
                 elseif ($i+1 < count($dates))
                     $output .= ' or ';
             }
         } else {
-            $output = sprintf('%d possible dates');
+            $output = sprintf('%1$d possible %2$s', count($dates), (count($dates) == 1 ? 'date' : 'dates'));
+            if (count($preferred) > 3) {
+                $output .= sprintf(', %1$d preferred %2$s', count($preferred), (count($preferred) == 1 ? 'date' : 'dates'));
+            } elseif (count($preferred) > 0) {
+                $output .= sprintf(', preferred %1$s: ', (count($preferred) == 1 ? 'date' : 'dates'));
+                for ($i=0; $i<count($preferred); $i++) {
+                    $output .= $preferred[$i]->format("l d/m");
+                    if ($i+2 < count($preferred))
+                        $output .= ', ';
+                    elseif ($i+1 < count($preferred))
+                        $output .= ' or ';
+                }
+            }
         }
         
         return $output;
@@ -295,20 +334,51 @@ class WalkProposal extends SWGBaseModel {
      */
     private function getAvailableDates()
     {
-        $available = array();
+        return $this->getDatesByAvailability(self::AVAILABLE, true);
+    }
+    
+    /**
+     * Get an array of all preferred dates for this proposal
+     */
+    private function getPreferredDates()
+    {
+        return $this->getDatesByAvailability(self::PREFERRED_DATE, false);
+    }
+    
+    /**
+     * Get an array of all dates available for this proposal with the specified availability
+     *
+     * @param int  $requiredAvailability Minimum availability level for a date
+     * @param bool $allowHigher          If true, include dates with a higher availability level than $requiredAvailability (default)
+     *
+     * @return DateTime[]
+     */
+    private function getDatesByAvailability($requiredAvailability, $allowHigher=true)
+    {
+        $found = array();
         
         foreach ($this->dates as $date => $availability) {
-            if ($availability > 0) {
-                $available[] = new DateTime($date);
+            if ($availability == $requiredAvailability || ($allowHigher && $availability > $requiredAvailability)) {
+                $found[] = new DateTime($date);
             }
         }
         
-        return $available;
+        return $found;
     }
     
     public function getAvailabilityForDate(DateTime $date)
     {
         return $this->dates[$date->format('Y-m-d')];
+    }
+    
+    /**
+     * Checks if the walk proposal has been added to the programme
+     *
+     * @return boolean
+     */
+    public function isInProgramme()
+    {
+        return (isset($this->walkInstance));
     }
     
     

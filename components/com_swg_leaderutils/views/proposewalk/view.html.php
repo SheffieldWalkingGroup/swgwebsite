@@ -37,23 +37,45 @@ class SWG_LeaderUtilsViewProposeWalk extends SWG_EventsHelperEventInfo
 		
 		$this->form = $this->get("form");
 		$this->programme = $this->get("programme");
+		$this->proposal = $this->get("proposal");
 		$this->walk = $this->get("walk");
+        $myLeader = Leader::fromJoomlaUser(JFactory::getUser()->id);
 		
-		$this->walkInstance = $this->get("walkInstance");
+		if (isset($this->walk) || isset($this->proposal)) {
 		
-		$this->form->getField('availability')->setProgramme($this->programme);
-		// Set default leader (only relevant if user can select leader)
-		$myLeader = Leader::fromJoomlaUser(JFactory::getUser()->id);
-		$this->form->setValue("leader", "leader", $myLeader->id);
-		$this->leader = $this->get("leader");
-		
-		// Pre-load the dates of weekends away during this programme (only check start and end dates now, we'll check exact dates when using them)
-		$weFactory = SWG::WeekendFactory();
-		$weFactory->reset();
-		$weFactory->startDate = $this->programme->startDate;
-		$weFactory->endDate = $this->programme->endDate;
-		$weFactory->showUnpublished = true;
-		$this->weekends = $weFactory->get();
+            $this->walkInstance = $this->get("walkInstance");
+            
+            $this->form->getField('availability')->setProgramme($this->programme);
+            // Set default leader (only relevant if user can select leader)
+            $this->form->setValue("leader", "leader", $myLeader->id);
+            $this->leader = $this->get("leader");
+            
+            // Pre-load the dates of weekends away during this programme (only check start and end dates now, we'll check exact dates when using them)
+            $weFactory = SWG::WeekendFactory();
+            $weFactory->reset();
+            $weFactory->startDate = $this->programme->startDate;
+            $weFactory->endDate = $this->programme->endDate;
+            $weFactory->showUnpublished = true;
+            $this->weekends = $weFactory->get();
+            
+            // Populate any existing data
+            if (isset($this->proposal)) {
+                try {
+                    //$this->form->getField('availability')->setValue($this->proposal);
+                } catch (InvalidArgumentException $e) {
+                    
+                }
+            }
+            
+        } else {
+            $this->introText = JRequest::getString('introText');
+            
+            $proposalFactory = new WalkProposalFactory();
+            $proposalFactory->startProgramme = $this->programme;
+            $proposalFactory->endProgramme = $this->programme;
+            $proposalFactory->leader = $myLeader;
+            $this->proposals = $proposalFactory->get();
+        }
 		
 		parent::display($tpl);
 	}

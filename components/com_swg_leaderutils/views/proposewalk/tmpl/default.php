@@ -7,4 +7,4 @@ JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.tooltip');
 ?>
 
-<?php if ($this->walk) $this->display('propose'); else $this->display('list'); ?>
+<?php if ($this->walk || $this->proposal) $this->display('propose'); else $this->display('list'); ?>

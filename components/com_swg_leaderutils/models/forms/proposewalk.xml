@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form name="proposewalk">
+    <field name="id" type="hidden" />
+    <field name="programme" type="hidden" />
     <fieldset name="walk" label="Choose a walk to lead">
         <field name="walkid" type="sql" label="Walk in library" query="SELECT ID, CONCAT(walkname,' (id ',ID,': ',distancegrade,difficultygrade,')') AS name FROM walks ORDER BY walkname ASC" key_field="ID" value_field="name" default="">
             <option value="">-- Select --</option>

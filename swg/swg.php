@@ -9,6 +9,7 @@ JLoader::register('WalkProgrammeFactory', JPATH_SITE."/swg/Factories/WalkProgram
 
 JLoader::register('UnitConvert', JPATH_SITE."/swg/UnitConvert.php");
 JLoader::register('UserException', JPATH_SITE."/swg/Exceptions/UserException.php");
+JLoader::register('AccessDeniedException', JPATH_SITE."/swg/Exceptions/AccessDeniedException.php");
 JLoader::register('Facebook', JPATH_SITE."/libraries/facebook/facebook.php");
 
 JLoader::register('Leader', JPATH_SITE."/swg/Models/Leader.php");

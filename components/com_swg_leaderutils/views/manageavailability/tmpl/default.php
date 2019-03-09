@@ -8,7 +8,7 @@ JHtml::_('behavior.tooltip');
 ?>
 
 <?php if ($this->saved): ?>
-	<h3><?php echo $this->programme->description; ?></h3>
+	<h3><?php echo $this->programme->title; ?></h3>
 	<p>Thanks, your availability has been saved.</p>
 	<p><a href="<?php echo JRoute::_('index.php')?>">Edit availability</a></p>
 <?php else: ?>
@@ -18,7 +18,7 @@ JHtml::_('behavior.tooltip');
 		<input type="hidden" name="task" value="manageavailability.submit">
 		<?php echo JHtml::_('form.token'); echo $this->form->getInput('id'), $this->form->getField("programmeid")->input; ?>
 		
-		<h3><?php echo $this->programme->description; ?></h3>
+		<h3><?php echo $this->programme->title; ?></h3>
 		
 		<fieldset>
 			<legend>When are you available for walk leading?</legend>

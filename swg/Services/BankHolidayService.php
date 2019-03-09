@@ -209,14 +209,14 @@ class BankHolidayService
     {
         $date = $date->setTime(0, 0, 0);
         $easter = $this->getEasterSunday($date->format('Y'));
-        return ($easter->sub("P2D") == $date);
+        return ($easter->sub(new DateInterval("P2D")) == $date);
     }
     
     public function isEasterMonday(DateTime $date)
     {
         $date = $date->setTime(0, 0, 0);
         $easter = $this->getEasterSunday($date->format('Y'));
-        return ($easter->add("P1D") == $date);
+        return ($easter->add(new DateInterval("P1D")) == $date);
     }
     
     /**

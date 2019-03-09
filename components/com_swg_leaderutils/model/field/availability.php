@@ -64,11 +64,9 @@ HTM;
             $notes = array();
             for ($i=0; $i<7; $i++) {
                 if ($date <= $end) {
-                    $isBH = false;
                     // Check for notes to apply to this week
                     if ($bhFinder->isBankHoliday($date)) {
                         $notes[] = $bhFinder->getBankHolidayName($date);
-                        $isBH = true;
                     }
                     foreach ($weekends as $we) {
                         if ($we->start == $date->format('U'))
@@ -78,10 +76,7 @@ HTM;
                         $notes[] = "New members walk normally happens weekend after pub meet";
                     }
 
-                    // TODO: initial values
-                    $html .= "<td>
-                    <input id='".$this->id."_".$date->format('Y-m-d')."_real' type='hidden' name='".$this->name."[".$date->format('Y-m-d')."]' value='0' data-dow='".$date->format('N')."' data-bankholiday='".($isBH ? htmlentities($bhFinder->getBankHolidayName($date), ENT_QUOTES) : "")."'>
-                    <input id='".$this->id."_".$date->format('Y-m-d')."' type='checkbox' onclick='triState(this)' data-dow='".$date->format('N')."' data-bankholiday='".($isBH ? htmlentities($bhFinder->getBankHolidayName($date), ENT_QUOTES) : "")."'/>
+                    $html .= "<td>".$this->makeInputField($date)."
                     <label onclick='console.log(e)' for='".$this->id."_".$date->format('Y-m-d')."'>".$date->format('d')."</label>
                     </td>";
                 } else {
@@ -108,6 +103,51 @@ $html .= "</tbody></table>";
         return $html;
     }
     
+    private function makeInputField(DateTime $date)
+    {
+        $bhFinder = BankHolidayService::getInstance();
+        $isBH = ($bhFinder->isBankHoliday($date));
+        
+        $hiddenField = array(
+            'id'                => $this->id.'_'.$date->format('Y-m-d').'_real',
+            'type'              => 'hidden',
+            'name'              => $this->name.'['.$date->format('Y-m-d').']',
+            'data-dow'          => $date->format('N'),
+            'data-bankholiday'  => ($isBH ? htmlentities($bhFinder->getBankHolidayName($date), ENT_QUOTES) : ""),
+            'value'             => (isset($this->data) ? $this->data->getAvailabilityForDate($date) : 0)
+        );
+        
+        $checkbox = array(
+            'id'                => $this->id.'_'.$date->format('Y-m-d'),
+            'type'              => 'checkbox',
+            'onclick'           => 'triState(this)',
+            'data-dow'          => $date->format('N'),
+            'data-bankholiday'  => ($isBH ? htmlentities($bhFinder->getBankHolidayName($date), ENT_QUOTES) : ''),
+        );
+        
+        if (!empty($this->value)) {
+            $availability = $this->value[$date->format('Y-m-d')];
+            if (!isset($availability)) {
+                $availability = 0;
+            }
+            
+            $hiddenField['value'] = $availability;
+        } else {
+            if ($date->format('N') == 6 || $date->format('N') == 7 || $isBH) {
+                $hiddenField['value'] = WalkProposal::AVAILABLE;
+            }
+        }
+        
+        array_walk($hiddenField, function(&$value, $key) {
+            $value = $key.'="'.$value.'"';
+        });
+        array_walk($checkbox, function(&$value, $key) {
+            $value = $key.'="'.$value.'"';
+        });
+        
+        return '<input '.implode(' ', $hiddenField).'><input '.implode(' ', $checkbox).'>';
+    }
+    
     /**
      * Check whether the current day is on the weekend after the pub meet
      *
@@ -120,7 +160,7 @@ $html .= "</tbody></table>";
     private function isNewMembersWalkWeekend(DateTime $date)
     {
         $firstTuesday = new DateTime($date->format('Y-m-01'));
-        $firstTuesday->modify(DateInterval::createFromDateString('First tuesday'));
+        $firstTuesday->modify('First tuesday');
         return ($firstTuesday->add(new DateInterval('P4D')) == $date); // Use Saturday to represent the weekend
     }
     

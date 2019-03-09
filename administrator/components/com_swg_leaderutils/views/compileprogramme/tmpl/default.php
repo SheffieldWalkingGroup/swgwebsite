@@ -14,7 +14,7 @@ $date = clone $startDate;
 $columns = $this->proposals; // TODO: Will be populated by model
 
 ?>
-<h1>Walk proposals for <?php echo $this->programme->description; ?></h1>
+<h1>Walk proposals for <?php echo $this->programme->title; ?></h1>
 <table class="compileprogramme">
     <thead>
         <tr>

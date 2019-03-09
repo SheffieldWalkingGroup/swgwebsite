@@ -1,5 +1,5 @@
 (function(){
-    var checkboxes, calendarTable;
+    var checkboxes, calendarTable, dateFields;
     
     
     var wireUp = function()
@@ -14,6 +14,30 @@
             thursdays  : document.getElementById('jform_weekdays3'),
             fridays    : document.getElementById('jform_weekdays4'),
         };
+        
+        checkboxes.mondays.dataset.master = checkboxes.weekdays.id;
+        checkboxes.tuesdays.dataset.master = checkboxes.weekdays.id;
+        checkboxes.wednesdays.dataset.master = checkboxes.weekdays.id;
+        checkboxes.thursdays.dataset.master = checkboxes.weekdays.id;
+        checkboxes.fridays.dataset.master = checkboxes.weekdays.id;
+        
+        dateFields = {
+            weekends : [],
+            
+            mondays: [],
+            tuesdays: [],
+            wednesdays: [],
+            thursdays: [],
+            fridays: [],
+ 
+            weekdays: [
+                checkboxes.mondays,
+                checkboxes.tuesdays,
+                checkboxes.wednesdays,
+                checkboxes.thursdays,
+                checkboxes.fridays
+            ]
+        }
         
         calendarTable = document.getElementsByClassName('availabilitycalendar')[0];
             
@@ -30,8 +54,118 @@
             });
         }
         
-        onChangeCheckbox(checkboxes.weekends.value, checkboxes.weekends.checked);
-        onChangeCheckbox(checkboxes.weekdays.value, checkboxes.weekdays.checked);
+        syncHiddenFieldsToCheckboxes();
+        updateDayCheckbox(dateFields.weekends, checkboxes.weekends);
+        updateDayCheckbox(dateFields.mondays, checkboxes.mondays);
+        updateDayCheckbox(dateFields.tuesdays, checkboxes.tuesdays);
+        updateDayCheckbox(dateFields.wednesdays, checkboxes.wednesdays);
+        updateDayCheckbox(dateFields.thursdays, checkboxes.thursdays);
+        updateDayCheckbox(dateFields.fridays, checkboxes.fridays);
+        updateDayCheckbox(dateFields.weekdays, checkboxes.weekdays);
+        
+        // If the weekdays checkbox is off, set all the weekday checkboxes to checked
+        // So if we tick the weekdays checkbox it enables all days
+        if (!checkboxes.weekdays.checked) {
+            checkboxes.mondays.checked = checkboxes.tuesdays.checked = checkboxes.wednesdays.checked = checkboxes.thursdays.checked = checkboxes.fridays.checked = true;
+        }
+        
+    }
+    
+    function syncHiddenFieldsToCheckboxes()
+    {
+        var rows = calendarTable.getElementsByTagName('tr');
+        for (var i in rows) {
+            if (!rows.hasOwnProperty(i)) {
+                continue;
+            }
+            
+            var inputEls = rows[i].getElementsByTagName('input');
+            for (var j=0; j<inputEls.length; j++) {
+                var input = inputEls[j];
+                
+                if (input.type != 'hidden')
+                    continue;
+                
+                var checkbox = document.getElementById(input.id.substring(0, input.id.indexOf('_real')));
+                
+                switch (input.value) {
+                    case "0":
+                        checkbox.checked = checkbox.readOnly = checkbox.indeterminate = false;
+                        break;
+                    case "1":
+                        checkbox.readOnly = checkbox.indeterminate = true;
+                        checkbox.checked = false;
+                        break;
+                    case "2":
+                        checkbox.checked = true;
+                        checkbox.indeterminate = checkbox.readOnly = false;
+                        break;
+                }
+                
+                switch (input.dataset.dow) {
+                    case "1":
+                        dateFields.mondays.push(input);
+                        break;
+                    case "2":
+                        dateFields.tuesdays.push(input);
+                        break;
+                    case "3":
+                        dateFields.wednesdays.push(input);
+                        break;
+                    case "4":
+                        dateFields.thursdays.push(input);
+                        break;
+                    case "5":
+                        dateFields.fridays.push(input);
+                        break;
+                    default:
+                        dateFields.weekends.push(input);
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Update the checkboxes that indicate the leader is available every (Monday) (for example)
+     * based on which dates have been set in the calendar
+     * Will be checked if all relevant days are checked, unckecked if none are, and indeterminate otherwise
+     * This doesn't check if matching input fields and checkbox are passed in
+     * 
+     * @param {HTMLInputElement[]} fields The hidden input fields in the calendar
+     * @param {HTMLInputElement} checkbox The checkbox to update
+     */
+    function updateDayCheckbox(fields, checkbox)
+    {
+        var anyChecked = false;
+        var allChecked = true;
+        
+        for (var i in fields) {
+            if (!fields.hasOwnProperty(i)) {
+                continue;
+            }
+            
+            if ((fields[i].type == 'checkbox' && fields[i].checked) || fields[i].value > 0) {
+                anyChecked = true;
+            } else {
+                allChecked = false;
+            }
+        }
+        
+        if (allChecked) {
+            checkbox.checked = true;
+            checkbox.disabled = false;
+        } else if (anyChecked) {
+            checkbox.indeterminate = true;
+            checkbox.disabled = false;
+        } else {
+            checkbox.checked = false;
+        }
+        
+        // If this is a weekday, update the weekdays checkbox too
+        if (checkbox.dataset.master) {
+             // TODO
+        }
     }
     
     function onChangeCheckbox(type, value)

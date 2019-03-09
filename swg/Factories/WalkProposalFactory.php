@@ -51,7 +51,7 @@ class WalkProposalFactory extends SWGFactory
         }
         
 		if ($startProgramme instanceof WalkProgramme) {
-            $startProgramme = $startPrograme->id;
+            $startProgramme = $startProgramme->id;
         } elseif (!is_numeric($startProgramme)) {
             throw new InvalidArgumentException("Start programme must be a WalkProgramme or a programme ID");
         }
@@ -84,7 +84,6 @@ class WalkProposalFactory extends SWGFactory
                 $query->where("leader_id = ".(int)($this->leader));
             }
         }
-        
         $db->setQuery($query);
         $data = $db->loadAssocList();
         
