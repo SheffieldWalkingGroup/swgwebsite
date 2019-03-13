@@ -226,14 +226,16 @@
 			<?php if ($event instanceof WalkInstance):?>
 				<p class="icons">
 				<?php if ($event->isLinear):?>
-					<img src="/images/stories/linearwalk.png" border="0" alt="Linear walks start at one place and finish at another; usually this means we have to use public transport" title="Linear walks start at one place and finish at another; usually this means we have to use public transport" />
+					<img src="<?php echo JUri::base();?>/images/stories/linearwalk.png" border="0" alt="Linear walks start at one place and finish at another; usually this means we have to use public transport" title="Linear walks start at one place and finish at another; usually this means we have to use public transport" />
 				<?php endif; if ($event->dogFriendly):?>
-					<img src="/images/stories/dogs.png" border="0" alt="Dog-friendly: the route is suitable for bringing dogs along." title="Dog-friendly: the route is suitable for bringing dogs along." width="19" height="16" />
+					<img src="<?php echo JUri::base();?>/images/stories/dogs.png" border="0" alt="Dog-friendly: the route is suitable for bringing dogs along." title="Dog-friendly: the route is suitable for bringing dogs along." width="19" height="16" />
 				<?php endif; if ($event->childFriendly):?>
-					<img src="/images/stories/pushchair.png" border="0" alt="Kiddy-friendly: route (and pace) of walk are suitable for bringing infants. Check with the walk leader what kind of prams/buggies can be used." title="Kiddy-friendly: route (and pace) of walk are suitable for bringing infants. Check with the walk leader what kind of prams/buggies can be used." width="30" height="28" />
+					<img src="<?php echo JUri::base();?>/images/stories/pushchair.png" border="0" alt="Kiddy-friendly: route (and pace) of walk are suitable for bringing infants. Check with the walk leader what kind of prams/buggies can be used." title="Kiddy-friendly: route (and pace) of walk are suitable for bringing infants. Check with the walk leader what kind of prams/buggies can be used." width="30" height="28" />
 				<?php endif; if ($event->speedy):?>
-					<img src="/images/stories/speedy.png" border="0" alt="Fast-paced walk. This kind of walk will be done faster than usual, aiming for an early finish." title="Fast-paced walk. This kind of walk will be done faster than usual, aiming for an early finish." width="24" height="30" />
-				<?php endif; ?>
+					<img src="<?php echo JUri::base();?>/images/stories/speedy.png" border="0" alt="Fast-paced walk. This kind of walk will be done faster than usual, aiming for an early finish." title="Fast-paced walk. This kind of walk will be done faster than usual, aiming for an early finish." width="24" height="30" />
+				<?php endif; if ($event->challenge):?>
+                    <img src="<?php echo JUri::base();?>/images/stories/challenge.png" border="0" alt="Challenge walk: a particularly long walk that sets a challenge, often taking place over more than one day." title="Challenge walk: a particularly long walk that sets a challenge, often taking place over more than one day." width="19" height="34" />
+                <?php endif;?>
 				</p>
 			<?php elseif ($event instanceof Weekend && $event->challenge): ?>
 				<p class="icons">

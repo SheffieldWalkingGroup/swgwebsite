@@ -8,7 +8,8 @@ JHtml::_('behavior.tooltip');
 ?>
 <h3><?php if ($this->editing):?>Edit<?php else:?>Add<?php endif;?> walk</h3>
 <?php if ($this->showForm): ?>
-    <p>Please enter the details of your planned walk here. This will add it to the walk library; adding it to the walks programme is the next step</p>
+    <p>Please enter the details of your planned walk here. This will add it to the walk library; adding it to the walks programme is the next step.</p>
+    <?php if ($this->editing): ?><p>Editing the walk here <strong>will not</strong> update the walks programme. Please <a href='mailto:sheffieldwalkinggroup@hotmail.com'>email the Vice Chair</a> if you need to edit a walk in the programme.</p><?php endif; ?>
 	<form name="addeditwalk" action="<?php echo JRoute::_('index.php')?>" method="post" id="addeditwalk" enctype="multipart/form-data">
 		<input type="hidden" name="view" value="addeditwalk">
 		<input type="hidden" name="option" value="com_swg_walklibrary">
