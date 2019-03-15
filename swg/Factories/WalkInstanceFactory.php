@@ -1,5 +1,5 @@
 <?php
-require_once(JPATH_BASE."/swg/Models/WalkInstance.php");
+require_once(JPATH_SITE."/swg/Models/WalkInstance.php");
 require_once("EventFactory.php");
 
 /**
