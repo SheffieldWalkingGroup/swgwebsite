@@ -6,13 +6,13 @@ class WalkProgramme extends SWGBaseModel
 	/**
 	 * The start date of the programme. For a normal programme, this will be the first day of the first month,
 	 * not necessarily a day with an event planned.
-	 * @var int
+	 * @var DateTime
 	 */
 	protected $startDate;
 	/**
 	 * The end date of the programme. For a normal programme, this will be the last day of the last month,
 	 * not necessarily a day with an event planned.
-	 * @var int
+	 * @var DateTime
 	 */
 	protected $endDate;
 	/**
@@ -90,10 +90,10 @@ class WalkProgramme extends SWGBaseModel
 				break;
 			case "startDate":
 			case "endDate":
-				if (is_numeric($value))
-					$this->$name = (int)$value;
+				if ($value instanceof DateTime)
+					$this->$name = clone($value);
 				else
-					$this->$name = strtotime($value);
+					$this->$name = new DateTime($value);
 				break;
 			case "dates":
 				// TODO
@@ -283,8 +283,8 @@ class WalkProgramme extends SWGBaseModel
 		$db->execute();
 		
 		// Populate new dates
-		$date = new DateTime('@'.$this->startDate);
-		$endDate = new DateTime('@'.$this->endDate);
+		$date = clone($this->startDate);
+		$endDate = $this->endDate;
 		do {
 			$query = $db->getQuery(true);
 			$query->insert("walkprogrammedates");
@@ -303,7 +303,7 @@ class WalkProgramme extends SWGBaseModel
 		{
 			if (isset($this->$var)) {
                 if ($var == 'startDate' || $var == 'endDate') {
-                    $query->set($dbField." = '".$query->escape(strftime('%Y-%m-%d', $this->$var))."'");
+                    $query->set($dbField." = '".$query->escape($this->$var->format('Y-m-d'))."'");
                 } else {
                     $query->set($dbField." = '".$query->escape($this->$var)."'");
                 }
@@ -407,8 +407,8 @@ class WalkProgramme extends SWGBaseModel
 	{
 		$values = array(
             'id'            => $this->id,
-            'startDate'     => $this->startDate,
-            'endDate'       => $this->endDate,
+            'startDate'     => $this->startDate->format('Y-m-d'),
+            'endDate'       => $this->endDate->format('Y-m-d'),
             'title'         => $this->title,
             'special'       => $this->special
         );

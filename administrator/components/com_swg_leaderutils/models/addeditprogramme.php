@@ -80,7 +80,7 @@ class SWG_LeaderUtilsModelAddEditProgramme extends JModelForm
         $newProgramme = new WalkProgramme();
         
         $oldProgramme = WalkProgramme::get(WalkProgramme::getNextProgrammeId());
-        $oldEndDate = new DateTime('@'.$oldProgramme->endDate);
+        $oldEndDate = clone($oldProgramme->endDate);
         $newStartDate = $oldEndDate->add(new DateInterval('P1D'));
         
         // Go to the end of the month, then step forward a day at a time to finish on a Friday or Sunday.
@@ -92,8 +92,8 @@ class SWG_LeaderUtilsModelAddEditProgramme extends JModelForm
             $newEndDate = $newEndDate->add(new DateInterval('P1D'));
         }
         
-        $newProgramme->startDate = $newStartDate->format('U');
-        $newProgramme->endDate = $newEndDate->format('U');
+        $newProgramme->startDate = clone($newStartDate);
+        $newProgramme->endDate = clone($newEndDate);
         $newProgramme->title = $newStartDate->format('F Y');
         
         return $newProgramme;

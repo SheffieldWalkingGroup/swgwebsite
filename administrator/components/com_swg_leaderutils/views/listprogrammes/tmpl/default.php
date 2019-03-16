@@ -26,8 +26,8 @@ defined('_JEXEC') or die('Restricted access');
             <?php foreach($this->programmes as $programme): ?>
                 <tr>
                     <td><?php if ($programme->special): ?>Special<?php else: ?>&nbsp;<?php endif; ?></td>
-                    <td><?php echo date("Y-m-d", $programme->startDate); ?></td>
-                    <td><?php echo date("Y-m-d", $programme->endDate); ?></td>
+                    <td><?php echo $programme->startDate->format('Y-m-d'); ?></td>
+                    <td><?php echo $programme->endDate->format('Y-m-d'); ?></td>
                     <td><?php echo $programme->title; ?></td>
                     <td><input type='radio' name='currentProgramme' value='<?php echo $programme->id;?>'<?php if ($programme->id == WalkProgramme::getCurrentProgrammeID()): ?> checked='checked'<?php endif ?>></td>
                     <td><input type='radio' name='nextProgramme' value='<?php echo $programme->id;?>'<?php if ($programme->id == WalkProgramme::getNextProgrammeID()): ?> checked='checked'<?php endif ?>></td>

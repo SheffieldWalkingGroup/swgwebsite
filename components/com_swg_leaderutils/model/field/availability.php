@@ -33,14 +33,15 @@ class JFormFieldAvailability extends JFormField
             throw new LogicException("Walk programme was not specified: call setProgramme() first");
         }
         // TODO: Should be DateTimeImmutable but we're stuck on PHP 5.4
-        $start = new DateTime('@'.$this->programme->startDate);
-        $end = new DateTime('@'.$this->programme->endDate);
+        $start = $this->programme->startDate;
+        $end   = $this->programme->endDate;
         
         // Start at the Monday before or on the date the programme starts
         if ($start->format('N') == 1) {
             $date = $start;
         } else {
-            $date = new DateTime('@'.strtotime('last Monday', $this->programme->startDate));
+            $date = clone($this->programme->startDate);
+            $date->modify('last Monday');
         }
         $day = new DateInterval('P1D');
         

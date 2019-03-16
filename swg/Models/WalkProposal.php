@@ -211,8 +211,8 @@ class WalkProposal extends SWGBaseModel {
      */
     public function populateDatesFromArray(array $dates)
     {
-        $date = DateTime::createFromFormat('U', $this->programme->startDate);
-        $endDate = DateTime::createFromFormat('U', $this->programme->endDate);
+        $date = clone($this->programme->startDate);
+        $endDate = clone($this->programme->endDate);
         $this->dates = array();
         
         do {

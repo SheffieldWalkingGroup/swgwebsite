@@ -6,8 +6,8 @@ defined('_JEXEC') or die('Restricted Access');
  * One column for each day at the weekend/bank holiday, plus one column for each week.
  * i.e. 3 columns per full week
  */
-$startDate = new DateTime('@'.$this->programme->startDate);
-$endDate = new DateTime('@'.$this->programme->endDate);
+$startDate = $this->programme->startDate;
+$endDate = $this->programme->endDate;
 
 $bankHoliday = BankHolidayService::getInstance(); 
 $date = clone $startDate;
