@@ -415,4 +415,50 @@ class WalkProgramme extends SWGBaseModel
         
         return $values;
     }
+    
+    /**
+     * Add a WalkInstance to this programme, if it isn't already there
+     *
+     * @param WalkInstance $w Walk to add
+     *
+     * @return void
+     */
+    public function addWalk(WalkInstance $w)
+    {
+        // Joomla doesn't have an SQL REPLACE statement, so we have to do it ourselves :-(
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true);
+        $query->select("COUNT(1)");
+        $query->from("walkprogrammewalklinks");
+        $query->where("ProgrammeID = ".$this->id." AND WalkProgrammeWalkID = ".$w->id);
+        $db->setQuery($query);
+        $r = $db->loadResult();
+        $db->execute();
+        if ($r === '0') {
+            // Programme doesn't contain walk, and no errors, so add it
+            $query = $db->getQuery(true);
+            $query->insert("walkprogrammewalklinks");
+            $query->set("ProgrammeID = ".$this->id);
+            $query->set("WalkProgrammeWalkID = ".$w->id);
+            $db->setQuery($query);
+            $db->execute();
+        }
+    }
+    
+    /**
+     * Remove a WalkInstance from this programme, unless it isn't there
+     *
+     * @param WalkInstance $w Walk to add
+     *
+     * @return void
+     */
+    public function removeWalk(WalkInstance $w)
+    {
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true);
+        $query->delete("walkprogrammewalklinks");
+        $query->where("ProgrammeID = ".$this->id." AND WalkProgrammeWalkID = ".$w->id);
+        $db->setQuery($query);
+        $db->execute();
+    }
 }

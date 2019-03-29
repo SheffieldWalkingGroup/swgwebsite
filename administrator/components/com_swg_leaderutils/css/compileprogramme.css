@@ -7,7 +7,7 @@
     border: 1px solid #555;
 }
 
-.compileprogramme thead th {
+.compileprogramme thead th.proposal {
     width:200px;
     overflow:hidden;
 }
@@ -41,20 +41,72 @@
 .compileprogramme tbody th {
     text-align:left;
     vertical-align:top;
+    white-space:nowrap;
 }
 
 .compileprogramme tbody td {
     background-repeat:no-repeat !important;
 }
 
+.compileprogramme tbody td div {
+    position:relative;
+}
+
+.compileprogramme tbody td label {
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+}
+
+.compileprogramme tbody td input {
+    float:right;
+    margin:0 5px;
+}
+
 .compileprogramme .not-available {
     background-color:#fff;
+}
+
+.compileprogramme .occupied td {
+    background-color:#e0e0e0;
 }
 
 .compileprogramme .available {
     background:url('../../../../templates/swgpeter/images/icons/icons8-tick-box-32.png') #EEFEEB;
 }
 
+.compileprogramme .occupied .available {
+    background-color:#E0EDDE;
+}
+
 .compileprogramme .preferred {
     background:url('../../../../templates/swgpeter/images/icons/icons8-star-filled-32.png') #EBEEFE;
+}
+
+.compileprogramme .occupied .preferred {
+    background-color:#DBDDEB;
+}
+
+.compileprogramme .instance {
+    border:1px solid #555;
+    margin:15px 0 0 10px;
+    padding:0 2px;
+    width:184px;
+}
+
+.compileprogramme .available .instance {
+    background-colour: #EEFEEB;
+}
+
+.compileprogramme .preferred .instance {
+    background-color: #EBEEFE;
+}
+
+.compileprogramme .instance p {
+    margin:0;
+    width:100%;
+    overflow:hidden;
+    white-space:nowrap;
 }

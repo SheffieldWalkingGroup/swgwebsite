@@ -21,6 +21,11 @@ class WalkProgrammeFactory extends SWGFactory
      * @var boolean If true (default), include normal programmes
      */
     public $includeNormalProgrammes;
+    
+    /**
+     * @var int[] If set, only return programmes containing these walk instance IDs (will cast integer to array)
+     */
+    public $containingWalkInstanceIds;
 	
 	/**
 	 * Return no more than this many events. Default is no limit (-1)
@@ -49,6 +54,7 @@ class WalkProgrammeFactory extends SWGFactory
 		$this->endDate = null;
 		$this->includeSpecialProgrammes = true;
 		$this->includeNormalProgrammes = true;
+		$this->containingWalkInstanceIds = null;
 		
 		$this->limit = -1;
 		$this->offset = 0;
@@ -78,6 +84,13 @@ class WalkProgrammeFactory extends SWGFactory
         
         if ($this->includeNormalProgrammes === false) {
             $query->where("special == 1");
+        }
+        
+        if (!empty($this->containingWalkInstanceIds)) {
+            if (!is_array($this->containingWalkInstanceIds))
+                $this->containingWalkInstanceIds = array($this->containingWalkInstanceIds);
+            $query->join('INNER', 'walkprogrammewalklinks ON ProgrammeID = walksprogramme.SequenceID');
+            $query->where('WalkProgrammeWalkID IN ('.implode(',', $this->containingWalkInstanceIds).')');
         }
         
         if ($this->reverse)

@@ -1,5 +1,6 @@
 <?php
 require_once JPATH_SITE . '/swg/swg.php';
+require_once JPATH_SITE . '/swg/Factories/WalkProposalFactory.php';
 
 class SWG_LeaderUtilsModelCompileProgramme extends JModelItem
 {
