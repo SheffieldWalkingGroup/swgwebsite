@@ -37,7 +37,7 @@
                             $inDist = $event->distance;
                             $inUnit = UnitConvert::Metre;
                         }
-                        echo str_replace(".0","",UnitConvert::displayDistance($inDist,$inUnit, UnitConvert::Mile))."/<span class='unit2'>".UnitConvert::displayDistance($inDist, $inUnit, UnitConvert::Kilometre);
+                        echo str_replace(".0","",UnitConvert::displayDistance($inDist,$inUnit, UnitConvert::Mile))."<span class='unit2'>/".UnitConvert::displayDistance($inDist, $inUnit, UnitConvert::Kilometre);
                     ?></span>,
 				<span class="rating"><?php
                         switch($event->difficultyGrade) {
