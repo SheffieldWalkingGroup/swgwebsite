@@ -685,11 +685,27 @@ function displayEvent(event, container, newMembers) {
 			else if (event.start.getDay() == 6)
 				day = "saturday";
 			container.addClass("walk"+day);
+            
+            var difficultyText;
+            switch (event.difficultyGrade) {
+                case 1:
+                    difficultyText = 'easy';
+                    break;
+                case 2:
+                    difficultyText = 'moderate';
+                    break;
+                case 3:
+                    difficultyText = 'hard';
+                    break;
+                default:
+                    difficultyText = event.difficultyGrade;
+            }
 			
-			var rating = new Element("span", {"class":"rating", "text":event.distanceGrade+event.difficultyGrade});
-			var distance = new Element("span", {"class":"distance", "text":" ("+event.miles+" miles)"});
-			extraHead.adopt(rating);
+			var rating = new Element("span", {"class":"rating", "text":difficultyText});
+			var distance = new Element("span", {"class":"distance", "text":""+event.miles+" miles"});
 			extraHead.adopt(distance);
+            extraHead.appendText(', ');
+            extraHead.adopt(rating);
 			
 			// TODO: icons
 			var start = new Element("p", {
@@ -893,10 +909,6 @@ function displayEvent(event, container, newMembers) {
 		
 		makeScrollbar(description,scrollbar,scrollHandle,false,false);
 	}
-	
-	// Register this popup for rating tooltips
-	if (event.type.toLowerCase() == "walk")
-		ratingTips.attach(rating);
 }
 
 function displayDate(date) {

@@ -541,16 +541,7 @@ div.slideshow {
     width:582px;
 }
 
-.ratingTip {
-	z-index:200;
-	width:320px !important;
-}
-
-.ratingTip h4 {
-	margin-left:40px;
-}
-
-.popup .content, .ratingTip, .ratingTip {
+.popup .content {
     background-color:rgba(255,255,255,0.92) !important;
     background-color:rgb(255,255,255) !important; /* For old browsers */
     min-height:250px;
@@ -570,7 +561,7 @@ div.slideshow {
 	width:582px;
 }
 
-.popup .header, .popup .eventheader, .ratingTip .tip-title {
+.popup .header, .popup .eventheader {
     background-color:#A8D3A9;
     border-top-left-radius:15px;
     border-top-right-radius:15px;
@@ -596,14 +587,8 @@ div.slideshow {
 	clear:both;
 }
 
-.popup h3, .ratingTip .tip-title {
+.popup h3 {
     text-align:center;
-}
-
-.ratingTip .tip-title {
-	font-size:20px;
-	font-weight:bold;
-	padding:5px 0;
 }
 
 .popup .description {
@@ -702,13 +687,6 @@ div.slideshow {
 	height:250px;
 	margin:10px 15px !important;
 	clear:both;
-}
-
-.ratingTip .tip-text {
-	margin:0;
-	padding:10px;
-    border-bottom-left-radius:15px;
-    border-bottom-right-radius:15px;
 }
 
 /*
@@ -817,12 +795,12 @@ nav .moduletable h3,
     background:linear-gradient( 90deg, rgba(155,182,124,0), rgba(155,182,124,0.38) 8%, rgba(155,182,124,0.38) 92%, rgba(155,182,124,0) );
 }
 
-.walksunday .eventheader, .ratingTip .tip-title {
+.walksunday .eventheader {
 	background-color:#7c9bb6;
     background:linear-gradient( 90deg, rgba(124,155,182,0), rgba(124,155,182,1) 12.5%, rgba(124,155,182,1) 87.5%, rgba(124,155,182,0) );
 }
 
-.walksunday, .ratingTip .tip-text {
+.walksunday {
     background:linear-gradient( 90deg, rgba(124,155,182,0), rgba(124,155,182,0.38) 8%, rgba(124,155,182,0.38) 92%, rgba(124,155,182,0) );
 }
 
@@ -1051,15 +1029,6 @@ nav .moduletable_menu h3
 
 .event .map {
 	height:400px;
-}
-
-/* Mark that you can get info about ratings */
-.rating {
-	cursor:help;
-}
-
-.eventlisting .rating, .popup .rating {
-	border-bottom:1px dotted #555;
 }
 
 /* Bar to go on events list during loading */

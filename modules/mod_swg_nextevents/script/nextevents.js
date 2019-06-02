@@ -152,7 +152,7 @@ var showPopup = function(eventType, eventID, link, newMembers) {
 		// Request data for this event (will be displayed when available)
 		// TODO: Variable URL
 		var a = new Request.JSON({
-			url:"/api/eventlisting",
+ 			url:"/api/eventlisting",
 			format:"json",
 			data:{"eventtype":eventType,"id":eventID},
 			method:"get",

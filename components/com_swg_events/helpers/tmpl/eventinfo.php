@@ -26,23 +26,36 @@
         <?php endif; ?>
 		<?php if ($event instanceof WalkInstance):?>
 			<p class="headerextra">
-				<span class="rating">
-					<?php echo $event->distanceGrade.$event->difficultyGrade;?>
-				</span>
-				<span class="distance">
-				(<?php // No space after bracket
-					if (empty($event->distance))
-					{
-						$inDist = $event->miles;
-						$inUnit = UnitConvert::Mile;
-					}
-					else
-					{
-						$inDist = $event->distance;
-						$inUnit = UnitConvert::Metre;
-					}
-					echo str_replace(".0","",UnitConvert::displayDistance($inDist,$inUnit, UnitConvert::Mile))."<span class='unit2'>, ".UnitConvert::displayDistance($inDist, $inUnit, UnitConvert::Kilometre)."</span>";
-					?>)
+                <span class="distance"><?php
+                        if (empty($event->distance))
+                        {
+                            $inDist = $event->miles;
+                            $inUnit = UnitConvert::Mile;
+                        }
+                        else
+                        {
+                            $inDist = $event->distance;
+                            $inUnit = UnitConvert::Metre;
+                        }
+                        echo str_replace(".0","",UnitConvert::displayDistance($inDist,$inUnit, UnitConvert::Mile))."/<span class='unit2'>".UnitConvert::displayDistance($inDist, $inUnit, UnitConvert::Kilometre);
+                    ?></span>,
+				<span class="rating"><?php
+                        switch($event->difficultyGrade) {
+                            case '1':
+                                echo 'easy';
+                                break;
+                            case '2':
+                                echo 'moderate';
+                                break;
+                            case '3':
+                                echo 'hard';
+                                break;
+                            default:
+                                echo $event->difficultyGrade;
+                                break;
+                        }
+					
+					?></span>
 			</p>
 			<?php if (!empty($event->start)): ?>
                 <time datetime="<?php echo date("H:iO", $event->estimateFinishTime());?>" class="dtend date"></time>
