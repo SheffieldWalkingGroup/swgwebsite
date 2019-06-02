@@ -241,7 +241,7 @@ class WalkProgramme extends SWGBaseModel
 		$query = $db->getQuery(true);
 		
 		// Update or insert?
-		if (!isset($this->id))
+		if (empty($this->id))
 		{
 			$query->insert("walksprogramme");
 		}
@@ -254,7 +254,7 @@ class WalkProgramme extends SWGBaseModel
 		$db->setQuery($query);
 		$db->execute();
 		
-		if (!isset($this->id))
+		if (empty($this->id))
 		{
 			// Get the ID from the database
 			$this->id = $db->insertid();
@@ -304,6 +304,8 @@ class WalkProgramme extends SWGBaseModel
 			if (isset($this->$var)) {
                 if ($var == 'startDate' || $var == 'endDate') {
                     $query->set($dbField." = '".$query->escape($this->$var->format('Y-m-d'))."'");
+		} elseif ($var == 'id' && empty($this->id)) {
+			continue;
                 } else {
                     $query->set($dbField." = '".$query->escape($this->$var)."'");
                 }

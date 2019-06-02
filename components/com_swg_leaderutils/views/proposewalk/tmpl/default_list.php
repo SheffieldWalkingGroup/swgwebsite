@@ -22,7 +22,7 @@ JHtml::_('behavior.tooltip');
         <h4><?php echo $proposal->walk->name;?></h4>
         <p><?php echo $proposal->getDateSummary(); ?></p>
         <?php if ($proposal->isInProgramme()): ?>
-            <p>In the <?php if (!$proposal->walkInstance->okToPublish):?>draft <?php endif;?>programme for <?php echo strftime('%A %e %M', $proposal->walkInstance->start);?>. Please <a href='mailto:sheffieldwalkinggroup@hotmail.com'>email the vice chair</a> ASAP if you need to make changes.</p>
+            <p>In the <?php if (!$proposal->walkInstance->okToPublish):?>draft <?php endif;?>programme for <?php echo strftime('%A %e %B', $proposal->walkInstance->start);?>. Please <a href='mailto:sheffieldwalkinggroup@hotmail.com'>email the vice chair</a> ASAP if you need to make changes.</p>
         <?php else: ?>
             <p>
                 <?php if ($proposal->walk->leader == Leader::fromJoomlaUser(JFactory::getUser()->id)): ?>[<a href='../your-walks?view=addeditwalk&amp;walkid=<?php echo $proposal->walk->id;?>'>Edit walk</a>]<?php endif;?>
