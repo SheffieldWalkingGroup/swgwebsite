@@ -1,27 +1,3 @@
-var ratingTips
-var setupRatingTips = function() {
-	ratingTips = new Tips(".rating",{
-    	showDelay:250,
-    	hideDelay:250,
-    	className:"ratingTip",
-    	fixed:true,
-    	id:"ratingTooltip",
-    	waiAria:true,
-    	title:function(el) {
-    		return "Walk grades";
-    	},
-    	text:function(el) {
-    		return "<h4>Distance</h4>" +
-    				"<ol style='list-style-type:upper-alpha'>" +
-    				"<li>Short - up to 8 miles</li><li>Medium - 8 to 12 miles</li><li>Long - more than 12 miles</li>" +
-    				"</ol>"+
-    				"<h4>Difficulty</h4>" +
-    				"<ol style='list-style-type:numeric;'>" +
-    				"<li>Easy terrain with a couple of mild climbs</li><li>Moderate terrain with some tricky parts and steady climbs</li><li>Hard terrain, possibly with exposure and scrambling, with steep and long ascents</li>" +
-    				"</ol>";
-    	}
-    });
-}
 
 var hasLocalStorage = function() {
 	try {
@@ -31,8 +7,6 @@ var hasLocalStorage = function() {
 	}
 }
 // TODO: Js for mobile template - matchMedia - http://www.sitepoint.com/javascript-media-queries/ - https://developer.mozilla.org/en-US/docs/Web/API/Window.matchMedia#Browser_compatibility
-
-window.addEvent('domready', setupRatingTips);
 
 /**
  * Display a popup message on top of the page
@@ -81,10 +55,10 @@ function Popup(title, body, type)
 	popup.position({position:"center"});
 	
 	// TODO: Only run if on mobile - and preferably on Android only
-	window.addEvent('backbutton', function(evt)
-	{
-		alert("Back");
-	});
+// 	window.addEvent('backbutton', function(evt)
+// 	{
+// 		alert("Back");
+// 	});
 	
 	mask.show();
 }
